@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabla pitagórica — hAppYpUkIng</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page-wrap">
+  <header>
+    <div class="brand">hAppYpUkIng · learn · expand · vomit happiness</div>
+    <h1>Tablas de Multiplicar</h1>
+    <p>La tabla pitagórica — descubre los patrones ocultos</p>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-pill">
+      <span class="dot" style="background:var(--muted)"></span>
+      Total de celdas:
+      <span class="count" style="color:var(--text)">100</span>
+    </div>
+    <div class="stat-pill">
+      <span class="dot" style="background:var(--comm-a)"></span>
+      Únicas (triángulo superior):
+      <span class="count" style="color:#93c5fd">45</span>
+    </div>
+    <div class="stat-pill">
+      <span class="dot" style="background:var(--square-color)"></span>
+      Cuadrados perfectos:
+      <span class="count" style="color:var(--square-color)">10</span>
+    </div>
+    <div class="stat-pill">
+      <span class="dot" style="background:var(--same-result)"></span>
+      Resultados repetidos entre pares:
+      <span class="count" style="color:#f9a8d4" id="dup-count">—</span>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="legend-btn active" data-mode="squares">
+      <span class="swatch" style="background:var(--square-color)"></span>
+      Cuadrados perfectos
+    </button>
+    <button class="legend-btn active" data-mode="commutative">
+      <span class="swatch" style="background:var(--comm-a)"></span>
+      Propiedad conmutativa
+    </button>
+    <button class="legend-btn" data-mode="sameresult">
+      <span class="swatch" style="background:var(--same-result)"></span>
+      Mismo resultado
+    </button>
+  </div>
+
+  <!-- 3-column layout -->
+  <div class="outer-layout">
+
+    <!-- COL 1: table + insight below -->
+    <div class="left-col">
+      <div class="table-scroll">
+        <table id="pythagorean-table"></table>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">💡 ¿Por qué no son 100?</div>
+        <p>La tabla parece tener <strong>100 multiplicaciones</strong>, pero gracias a la <strong>propiedad conmutativa</strong> (3×7 = 7×3), solo hay <strong>45 pares únicos</strong> más <strong>10 cuadrados</strong> en la diagonal.</p>
+        <p>En total: <strong>55 resultados distintos</strong> en lugar de 100.</p>
+        <div class="reduction-visual">
+          <div class="red-bar red-total" style="width:80px">100 total</div>
+          <span style="color:var(--muted);font-size:0.8rem">→</span>
+          <div class="red-bar red-unique" style="width:80px">45 pares</div>
+          <span style="color:var(--muted);font-size:0.8rem">+</span>
+          <div class="red-bar red-diag" style="width:38px">10 □</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 2: cell detail + suma repetida -->
+    <div class="centre-col">
+      <div class="panel-box" id="cell-detail">
+        <h3><span class="dot" style="background:var(--muted)"></span>Selecciona una celda</h3>
+        <p style="color:var(--muted);font-size:0.85rem;font-style:italic">Haz clic en cualquier número de la tabla para ver sus propiedades.</p>
+      </div>
+      <div class="panel-box" id="suma-visual-box" style="display:none">
+        <h3> 💡Una multiplicación es una suma repetida</h3>
+        <div id="suma-visual"></div>
+      </div>
+    </div>
+
+    <!-- COL 3: repeated results — visible only when relevant -->
+    <div class="right-col">
+      <div class="panel-box" id="right-col-panel">
+        <h3><span class="dot" style="background:var(--same-result)"></span>Se repite en…</h3>
+        <div id="dup-panel" style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);line-height:1.9;max-height:320px;overflow-y:auto;padding-right:0.3rem"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+</footer>
+
+<script>
+const N = 10;
+let modes = { squares: true, commutative: true, sameresult: false };
+let selectedCell = null;
+let activeFamilyVal = null; // currently highlighted result family
+
+// Precompute same-result groups (ALL cells sharing a result, not just canonical)
+function buildSameResultMap() {
+  const map = {}; // result -> array of ALL [r,c] with that result
+  for (let r = 1; r <= N; r++) {
+    for (let c = 1; c <= N; c++) {
+      const v = r * c;
+      if (!map[v]) map[v] = [];
+      map[v].push([r, c]);
+    }
+  }
+  return map;
+}
+
+// dupMap: only results with >1 canonical (r<=c) pair — for the side panel
+function buildDupMap(allMap) {
+  const dups = {};
+  for (const [val, cells] of Object.entries(allMap)) {
+    const canonical = cells.filter(([r,c]) => r <= c);
+    if (canonical.length > 1) dups[val] = canonical;
+  }
+  return dups;
+}
+
+const allResultMap = buildSameResultMap();
+const dupMap = buildDupMap(allResultMap);
+
+// Count duplicates for stat pill
+const dupResultCount = Object.keys(dupMap).length;
+document.getElementById('dup-count').textContent = dupResultCount + ' resultados';
+
+
+
+// Build table
+function buildTable() {
+  const table = document.getElementById('pythagorean-table');
+  table.innerHTML = '';
+
+  // Header row
+  const headRow = document.createElement('tr');
+  const corner = document.createElement('th');
+  corner.className = 'th-corner';
+  corner.innerHTML = '<span style="color:rgba(255,255,255,0.15);font-size:0.8em">×</span>';
+  headRow.appendChild(corner);
+
+  for (let c = 1; c <= N; c++) {
+    const th = document.createElement('th');
+    th.className = 'th-col';
+    th.id = `col-${c}`;
+    th.textContent = c;
+    headRow.appendChild(th);
+  }
+  table.appendChild(headRow);
+
+  // Data rows
+  for (let r = 1; r <= N; r++) {
+    const tr = document.createElement('tr');
+
+    // Row header
+    const th = document.createElement('th');
+    th.className = 'th-row';
+    th.id = `row-${r}`;
+    th.textContent = r;
+    tr.appendChild(th);
+
+    for (let c = 1; c <= N; c++) {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      td.dataset.r = r;
+      td.dataset.c = c;
+      td.dataset.val = r * c;
+      td.id = `cell-${r}-${c}`;
+      td.textContent = r * c;
+
+      // Apply visual classes based on mode
+      applyClasses(td, r, c);
+
+      td.addEventListener('click', () => onCellClick(r, c));
+      td.addEventListener('mouseenter', () => onCellHover(r, c, true));
+      td.addEventListener('mouseleave', () => onCellHover(r, c, false));
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+}
+
+function applyClasses(td, r, c) {
+  td.classList.remove('is-square','comm-upper','comm-lower','same-result-hl');
+
+  if (modes.squares && r === c) {
+    td.classList.add('is-square');
+  } else if (modes.commutative) {
+    if (r < c) td.classList.add('comm-upper');
+    else if (r > c) td.classList.add('comm-lower');
+  }
+
+  if (modes.sameresult) {
+    const val = r * c;
+    if (dupMap[val]) {
+      td.classList.add('same-result-hl');
+    }
+  }
+}
+
+function refreshAllClasses() {
+  clearFamilyHighlight();
+  for (let r = 1; r <= N; r++) {
+    for (let c = 1; c <= N; c++) {
+      const td = document.getElementById(`cell-${r}-${c}`);
+      if (td) applyClasses(td, r, c);
+    }
+  }
+  if (selectedCell) {
+    const {r, c} = selectedCell;
+    document.getElementById(`cell-${r}-${c}`)?.classList.add('selected');
+  }
+}
+
+function clearFamilyHighlight() {
+  document.querySelectorAll('.cell.family-hl').forEach(el => el.classList.remove('family-hl'));
+  document.querySelectorAll('.family-header').forEach(el => el.classList.remove('family-header'));
+  document.getElementById('pythagorean-table').classList.remove('table-dimmed');
+  activeFamilyVal = null;
+}
+
+function highlightFamily(val) {
+  // Toggle off if same family clicked again
+  if (activeFamilyVal === val) {
+    clearFamilyHighlight();
+    return;
+  }
+  clearFamilyHighlight();
+  activeFamilyVal = val;
+
+  const family = allResultMap[val] || [];
+  const canonical = family.filter(([r,c]) => r <= c);
+  if (canonical.length < 2) return;
+
+  // Collect which row/col headers to highlight
+  const familyRows = new Set();
+  const familyCols = new Set();
+
+  family.forEach(([r, c]) => {
+    document.getElementById(`cell-${r}-${c}`)?.classList.add('family-hl');
+    familyRows.add(r);
+    familyCols.add(c);
+  });
+
+  familyRows.forEach(r => document.getElementById(`row-${r}`)?.classList.add('family-header'));
+  familyCols.forEach(c => document.getElementById(`col-${c}`)?.classList.add('family-header'));
+
+  document.getElementById('pythagorean-table').classList.add('table-dimmed');
+}
+
+function onCellHover(r, c, entering) {
+  const rh = document.getElementById(`row-${r}`);
+  const ch = document.getElementById(`col-${c}`);
+  if (entering) {
+    rh?.classList.add('row-active');
+    ch?.classList.add('col-active');
+  } else {
+    rh?.classList.remove('row-active');
+    ch?.classList.remove('col-active');
+  }
+}
+
+function onCellClick(r, c) {
+  const val = r * c;
+
+  // Deselect previous selected ring
+  if (selectedCell) {
+    document.getElementById(`cell-${selectedCell.r}-${selectedCell.c}`)?.classList.remove('selected');
+  }
+  selectedCell = {r, c};
+  document.getElementById(`cell-${r}-${c}`)?.classList.add('selected');
+
+  // Highlight family
+  highlightFamily(val);
+
+  renderDetail(r, c);
+}
+
+function renderDetail(r, c) {
+  const val = r * c;
+  const panel = document.getElementById('cell-detail');
+
+  const isSquare = (r === c);
+  const isCommUpper = (r < c);
+  const isCommLower = (r > c);
+  const canonicalPairs = dupMap[val] || null; // unique pairs (r<=c) with >1 entry
+  const allPairs = allResultMap[val] || []; // all cells including commutative
+
+  const badges = [];
+  if (isSquare) badges.push(`<span class="badge badge-square">⬜ Cuadrado de ${r}</span>`);
+  if (isCommUpper) badges.push(`<span class="badge badge-comm">↔ Par conmutativo: ${c}×${r} = ${val}</span>`);
+  if (isCommLower) badges.push(`<span class="badge badge-comm">↔ Par conmutativo: ${c}×${r} = ${val}</span>`);
+  if (canonicalPairs) badges.push(`<span class="badge badge-same">= ${canonicalPairs.length} formas distintas de obtener ${val}</span>`);
+
+  let sameSection = '';
+  if (canonicalPairs) {
+    sameSection = `<div class="same-list">
+      <div style="margin-bottom:0.3rem;color:var(--muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:.06em">Todas las celdas resaltadas (${allPairs.length}):</div>
+      ${allPairs.map(([pr,pc]) => {
+        const isThis = pr===r && pc===c;
+        return `<span style="${isThis ? 'border-color:rgba(236,72,153,0.6);background:rgba(236,72,153,0.2)' : ''}">${pr}×${pc}</span>`;
+      }).join(' ')}
+    </div>`;
+  }
+
+  panel.innerHTML = `
+    <h3><span class="dot" style="background:${isSquare ? 'var(--square-color)' : isCommUpper ? 'var(--comm-a)' : isCommLower ? 'var(--comm-b)' : 'var(--muted)'}"></span>${r} × ${c}</h3>
+    <div class="detail-main">${val}</div>
+    <div class="detail-eq">${r} × ${c} = ${val}</div>
+    <div class="detail-badges">${badges.join('')}</div>
+    ${canonicalPairs ? '<div style="margin-top:0.6rem;font-size:0.72rem;color:var(--muted);font-style:italic">Clic de nuevo para desactivar el resaltado</div>' : ''}
+  `;
+
+  // Show/hide right column with same-result info
+  const rightPanel = document.getElementById('right-col-panel');
+  const dupPanel   = document.getElementById('dup-panel');
+  if (canonicalPairs) {
+    // Build right-col content: all canonical pairs with their commutative siblings
+    dupPanel.innerHTML = allPairs.map(([pr, pc]) => {
+      const isThis = pr === r && pc === c;
+      return `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem">
+        <span style="font-family:'DM Mono',monospace;font-size:0.85rem;
+          ${isThis ? 'color:#f9a8d4;font-weight:700' : 'color:rgba(240,242,255,0.55)'}">
+          ${pr} × ${pc}
+        </span>
+        <span style="color:var(--muted);font-size:0.75rem">= ${pr*pc}</span>
+        ${isThis ? '<span style="background:rgba(236,72,153,0.2);color:#f9a8d4;border:1px solid rgba(236,72,153,0.4);border-radius:4px;font-size:0.65rem;padding:0.1rem 0.4rem;font-weight:700">esta</span>' : ''}
+      </div>`;
+    }).join('');
+    rightPanel.style.display = 'block';
+  } else {
+    rightPanel.style.display = 'none';
+    dupPanel.innerHTML = '';
+  }
+
+  renderSumaVisual(r, c);
+}
+
+// Row palette — cycles through soft colours for each row stripe
+const ROW_COLORS = [
+  '#818cf8','#34d399','#f472b6','#fb923c','#38bdf8',
+  '#a3e635','#e879f9','#facc15','#2dd4bf','#f87171'
+];
+
+function renderSumaVisual(r, c) {
+  const box  = document.getElementById('suma-visual-box');
+  const area = document.getElementById('suma-visual');
+
+  // Use the smaller as "how many groups", larger as "group size"
+  // so the dot rows stay compact
+  const groups = Math.min(r, c);
+  const size   = Math.max(r, c);
+  const val    = r * c;
+
+  // Build the equation string: size + size + … = val
+  const addends = Array.from({length: groups}, () => size);
+  const eqStr   = addends.join(' + ') + ' = ' + val;
+
+  let rowsHTML = '';
+  let acc = 0;
+  for (let g = 0; g < groups; g++) {
+    acc += size;
+    const col = ROW_COLORS[g % ROW_COLORS.length];
+    const dots = Array.from({length: size},
+      () => `<div class="suma-dot" style="background:${col};opacity:0.85"></div>`
+    ).join('');
+    rowsHTML += `
+      <div class="suma-row">
+        <div class="suma-dots">${dots}</div>
+        <div class="suma-arrow">+${size} → <span class="acc">${acc}</span></div>
+      </div>`;
+  }
+
+  area.innerHTML = `
+    ${rowsHTML}
+    <div class="suma-equation">
+      ${addends.map((v,i) => `<span style="color:${ROW_COLORS[i % ROW_COLORS.length]}">${v}</span>`).join('<span style="color:var(--muted)"> + </span>')}
+      <span style="color:var(--muted)"> = </span>
+      <span class="eq-result">${val}</span>
+    </div>
+  `;
+
+  box.style.display = 'block';
+}
+
+// Mode toggle buttons
+document.querySelectorAll('.legend-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const m = btn.dataset.mode;
+    modes[m] = !modes[m];
+    btn.classList.toggle('active', modes[m]);
+    refreshAllClasses();
+  });
+});
+
+// Init
+buildTable();
+</script>
+</body>
+</html>

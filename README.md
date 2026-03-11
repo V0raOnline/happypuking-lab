@@ -1,0 +1,108 @@
+# 🦄 hAppYpUkIng — Lab
+
+> **Ix(A+H) = Expanded heart and brain!**  
+> Recursos educativos interactivos, abiertos y gratuitos para mentes que aprenden diferente.
+
+---
+
+## ¿Qué es esto?
+
+hAppYpUkIng nació de una necesidad real: crear materiales que funcionaran de verdad para estudiantes neurodivergentes — con TDAH, dislexia, altas capacidades o simplemente con dificultad para conectar con los formatos convencionales.
+
+Empezó en casa, para mis hijos. Lo que funcionó, lo comparto con todos.
+
+Aquí no hay PDFs estáticos ni libros de texto digitalizados.  
+Aquí hay recursos interactivos que el alumno puede explorar a su ritmo, desde distintos puntos de entrada, con retroalimentación visual inmediata.
+
+Todo el contenido está alineado con el currículo oficial de la ESO (España).
+
+---
+
+## 📁 Estructura del repo
+
+```
+happypuking-lab/
+├── Reinos/
+│   └── reinos_venn_9.html          # Explorador interactivo de los 5 Reinos
+├── Reino Plantas/
+│   ├── plantas_explorador.html     # Tema 6 ESO — Reino de las Plantas
+│   └── imagenes/                   # Ilustraciones científicas del tema
+├── Quimica/
+│   └── tabla_periodica.html        # Tabla periódica interactiva
+├── Mates/
+│   └── tablas_multiplicar.html     # Tablas de multiplicar interactivas
+└── HappyPuking.jpeg / HeartIco.png # Identidad de marca
+```
+
+---
+
+## 🧪 Recursos disponibles
+
+### ✅ Publicados
+
+| Recurso | Materia | Nivel | Archivo |
+|--------|---------|-------|---------|
+| Explorador de los 5 Reinos | Ciencias Naturales | 1º ESO | `Reinos/reinos_venn_9.html` |
+| Reino de las Plantas | Ciencias Naturales | 1º ESO | `Reino Plantas/plantas_explorador.html` |
+| Tabla Periódica | Química | ESO | `Quimica/tabla_periodica.html` |
+| Tablas de Multiplicar | Matemáticas | Primaria / 1º ESO | `Mates/tablas_multiplicar.html` |
+
+### 🔧 En desarrollo
+
+| Recurso | Materia | Nivel |
+|--------|---------|-------|
+| Morfología española interactiva | Lengua Castellana | 1º–2º ESO |
+| Verbos irregulares inglés | Inglés | ESO |
+| Verbos irregulares español | Lengua Castellana | ESO |
+
+---
+
+## 🎮 ¿Cómo funcionan los recursos?
+
+Los recursos son archivos HTML autocontenidos — sin instalación, sin login, sin servidor.  
+Se abren directamente en el navegador.
+
+Cada recurso incluye múltiples modos de navegación:
+- **Modo explorador** — navegación libre por secciones
+- **Modo historia** — recorrido guiado paso a paso con narración
+
+---
+
+## 🎨 Identidad visual
+
+Fondo oscuro · Verde bioluminiscente · Tipografía Unbounded  
+Diseño pensado para reducir fatiga visual y maximizar contraste.  
+Weird, pero funcional. Así somos.
+
+---
+
+## 📺 Canal de YouTube
+
+[@h4ppypuk1ng](https://www.youtube.com/@h4ppypuk1ng) — 30 vídeos y contando.
+
+---
+
+## 📬 Contacto
+
+¿Preguntas, colaboraciones o simplemente quieres decir algo?  
+✉️ [h4ppypuk1ng@gmail.com](mailto:h4ppypuk1ng@gmail.com)
+
+---
+
+## 📄 Licencia
+
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
+Puedes usar, adaptar y compartir — siempre que sea sin fines comerciales y mantengas esta misma licencia.  
+Cita la fuente. Es lo mínimo.
+
+---
+
+## 🤝 Contribuciones
+
+¿Tienes una idea o encontraste un error?  
+Abre un issue o un PR. Esto es un taller abierto, no un producto terminado.
+
+---
+
+*Hecho con IA, con intención y con experiencia propia.*  
+*Para los que ya han escuchado demasiadas veces que "no se esfuerzan lo suficiente".*

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 Reino de las Plantas — hAppYpUkIng</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">hAppYpUkIng · learn · expand · vomit happiness</div>
+  <h1>🌿 Reino de las Plantas</h1>
+  <p>Eucariotas, pluricelulares, autótrofas y fijas al suelo. Las jefas silenciosas del planeta.</p>
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="setMode('explorer', this)">🗂 Explorador</button>
+    <button class="mode-btn" onclick="setMode('story', this)">📖 Historia</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══════════ EXPLORADOR ══════════ -->
+  <div id="view-explorer" class="view active">
+    <div class="section-nav">
+      <button class="sec-btn active" onclick="showSection('caract', this)">🌱 Características</button>
+      <button class="sec-btn" onclick="showSection('clasif', this)">🌳 Clasificación</button>
+      <button class="sec-btn" onclick="showSection('partes', this)">🪴 Partes</button>
+      <button class="sec-btn" onclick="showSection('nutricion', this)">☀️ Nutrición</button>
+      <button class="sec-btn" onclick="showSection('relacion', this)">🌀 Relación</button>
+      <button class="sec-btn" onclick="showSection('repro', this)">🌸 Reproducción</button>
+    </div>
+
+    <!-- CARACTERÍSTICAS -->
+    <div id="sec-caract" class="section-panel active">
+      <div class="section-header">
+        <span class="sec-icon">🌱</span>
+        <div>
+          <h2>Características generales</h2>
+          <div class="subtitle">¿Qué tienen en común todas las plantas?</div>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">🔬 Tipo de organismo</div>
+          <p>Pluricelulares. Formadas por muchas células eucariotas con <strong style="color:var(--glow)">pared celular</strong> y <strong style="color:var(--glow)">cloroplastos</strong>.</p>
+          <div class="tag-row">
+            <span class="tag">Eucariota</span>
+            <span class="tag">Pluricelular</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🍽️ Nutrición</div>
+          <p><strong style="color:var(--glow)">Autótrofas</strong>. Fabrican su propio alimento a partir de sustancias inorgánicas. No necesitan comer.</p>
+          <div class="tag-row">
+            <span class="tag">Fotosíntesis</span>
+            <span class="tag">Autótrofa</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📌 Movilidad</div>
+          <p>Incapaces de desplazarse. Viven <strong style="color:var(--glow)">fijas al suelo</strong>. Pero responden a estímulos (tropismos y nastias).</p>
+          <div class="tag-row">
+            <span class="tag">Inmóvil</span>
+            <span class="tag">Sésil</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🌍 Importancia</div>
+          <ul>
+            <li>Producen la mayor parte del O₂</li>
+            <li>Absorben CO₂ atmosférico</li>
+            <li>Son los <strong style="color:var(--glow)">productores</strong> de los ecosistemas</li>
+            <li>Evitan la erosión del suelo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="fact-box">Sin plantas no habría cadenas alimentarias. Todo lo que come cualquier animal — incluso los carnívoros — depende en última instancia de que alguien haya hecho fotosíntesis.</div>
+    </div>
+
+    <!-- CLASIFICACIÓN -->
+    <div id="sec-clasif" class="section-panel">
+      <div class="section-header">
+        <span class="sec-icon">🌳</span>
+        <div>
+          <h2>Clasificación</h2>
+          <div class="subtitle">De las más antiguas a las más evolucionadas</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1rem">
+        <div class="card" style="margin-bottom:0.8rem">
+          <div class="card-title" style="color:var(--amber)">🌊 Sin semillas — reproducción por esporas</div>
+          <div class="card-grid cols-2" style="margin-top:0.6rem">
+            <div>
+              <p><strong style="color:var(--glow)">Musgos y hepáticas</strong> — las más sencillas. Sin vasos conductores, sin raíz/tallo/hojas verdaderos. Absorben agua por todo el cuerpo. Viven en lugares húmedos y sombríos.</p>
+              <div class="tag-row"><span class="tag amber">Sin vasos</span><span class="tag amber">Húmedo</span><span class="tag amber">Esporas</span></div>
+            </div>
+            <div>
+              <p><strong style="color:var(--glow)">Helechos</strong> — más grandes. Tienen vasos conductores. Presentan rizoma (tallo subterráneo), frondes (hojas) y raíces a lo largo del rizoma.</p>
+              <div class="tag-row"><span class="tag amber">Con vasos</span><span class="tag amber">Rizoma</span><span class="tag amber">Frondes</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--blue)">🌱 Con semillas — Espermatófitas</div>
+        <table class="compare-table" style="margin-top:0.8rem">
+          <thead>
+            <tr>
+              <th class="th-a">GIMNOSPERMAS</th>
+              <th class="th-b">ANGIOSPERMAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-a">Semillas en <strong>piñas</strong> (desnudas)</td>
+              <td class="td-b">Semillas en <strong>frutos</strong> (protegidas)</td>
+            </tr>
+            <tr>
+              <td class="td-a">Flores pequeñas, poco llamativas</td>
+              <td class="td-b">Flores vistosas y coloridas</td>
+            </tr>
+            <tr>
+              <td class="td-a">Hoja perenne</td>
+              <td class="td-b">Hoja perenne o caduca</td>
+            </tr>
+            <tr>
+              <td class="td-a">Pinos, abetos, cipreses</td>
+              <td class="td-b">Encinas, tulipanes, árboles frutales</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="fact-box">Los helechos llevan más de 360 millones de años en la Tierra. Existían antes que los dinosaurios. Los pinos de hoy son casi iguales a los que pisaban los tiranosaurios.</div>
+    </div>
+
+    <!-- PARTES -->
+    <div id="sec-partes" class="section-panel">
+      <div class="section-header">
+        <span class="sec-icon">🪴</span>
+        <div>
+          <h2>Partes de la planta</h2>
+          <div class="subtitle">Cada parte tiene su función. Ninguna está de adorno.</div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">🌿 Raíz</div>
+          <div class="diagram-box">
+            <img src="./imagenes/raiz.png" alt="Partes de la raíz">
+          </div>
+          <p>Generalmente subterránea, estructura ramificada.</p>
+          <ul>
+            <li>Absorbe agua y sales minerales del suelo</li>
+            <li>Fija la planta al suelo</li>
+            <li>Almacena sustancias de reserva</li>
+          </ul>
+          <div class="tag-row"><span class="tag">Pelos absorbentes</span><span class="tag">Anclaje</span><span class="tag">Reserva</span></div>
+          <div class="fact-box" style="margin-top:0.7rem;font-size:0.75rem">La zanahoria y la remolacha son raíces con tanto almacén de reservas que nos las comemos.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🌲 Tallo</div>
+          <div class="diagram-box">
+          <img src="./imagenes/tallo.png" alt="Partes del tallo">
+          </div>
+          <p>Partes clave: <strong style="color:var(--glow)">nudos</strong> (donde nacen hojas y ramas), <strong style="color:var(--glow)">yemas axilares</strong> (crecimiento lateral), <strong style="color:var(--glow)">yema terminal</strong> (crecimiento en longitud).</p>
+          <ul>
+            <li>Transporta savia bruta y elaborada</li>
+            <li>Sostiene la planta</li>
+            <li>Expone hojas a la luz</li>
+            <li>Almacena sustancias</li>
+          </ul>
+          <div class="tag-row"><span class="tag">Xilema</span><span class="tag">Floema</span><span class="tag">Yemas</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🍃 Hojas</div>
+          <div class="diagram-box">
+          <img src="./imagenes/hoja-partes.png" alt="Partes de la hoja">
+          </div>
+          <p>Expansiones en forma de lámina, verdes por la <strong style="color:var(--glow)">clorofila</strong>. El lugar donde ocurre todo lo importante.</p>
+          <ul>
+            <li>Fotosíntesis</li>
+            <li>Intercambio gaseoso (por los estomas)</li>
+            <li>Transpiración</li>
+          </ul>
+          <div class="tag-row"><span class="tag">Clorofila</span><span class="tag">Estomas</span><span class="tag">Fotosíntesis</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUTRICIÓN -->
+    <div id="sec-nutricion" class="section-panel">
+      <div class="section-header">
+        <span class="sec-icon">☀️</span>
+        <div>
+          <h2>Nutrición</h2>
+          <div class="subtitle">Del suelo a la luz. Una cadena perfecta.</div>
+        </div>
+      </div>
+      <div class="diagram-box">
+      <img src="./imagenes/nutricion.png" alt="Proceso de nutrición vegetal">
+      </div>
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>💧 Absorción</h4>
+            <p>Los <strong style="color:var(--glow)">pelos absorbentes</strong> de la raíz toman agua y sales minerales del suelo. Se mezclan y forman la <strong style="color:var(--glow)">savia bruta</strong>.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>🔼 Transporte</h4>
+            <p>La savia bruta sube por el <strong style="color:var(--glow)">xilema</strong> hasta las hojas. En las hojas, la fotosíntesis la transforma en <strong style="color:var(--glow)">savia elaborada</strong>, que baja por el <strong style="color:var(--glow)">floema</strong> al resto de la planta.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>🌞 Fotosíntesis</h4>
+            <div class="equation">H₂O + CO₂ + luz solar → O₂ + materia orgánica</div>
+            <p>Se realiza en los <strong style="color:var(--glow)">cloroplastos</strong>. La <strong style="color:var(--glow)">clorofila</strong> capta la luz. Parte del O₂ la usa la planta; el resto se libera al exterior.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>🔋 Respiración celular</h4>
+            <p>En las <strong style="color:var(--glow)">mitocondrias</strong> de todas las células. La planta obtiene energía a partir de materia orgánica + O₂. Produce agua y CO₂. <strong style="color:var(--amber)">Las plantas respiran todo el rato, igual que tú.</strong></p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>💨 Intercambio gaseoso</h4>
+            <p>A través de los <strong style="color:var(--glow)">estomas</strong> — orificios en las hojas. Intercambian O₂, CO₂ y vapor de agua con el exterior.</p>
+            <div class="diagram-box">
+              <img src="./imagenes/estomas.png" alt="Estomas de la hoja">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fact-box">De noche las plantas no hacen fotosíntesis — solo respiran. Por eso el aire del bosque a primera hora de la mañana es especialmente fresco: llevan toda la noche respirando y toda la mañana produciendo O₂.</div>
+    </div>
+
+    <!-- RELACIÓN -->
+    <div id="sec-relacion" class="section-panel">
+      <div class="section-header">
+        <span class="sec-icon">🌀</span>
+        <div>
+          <h2>Función de relación</h2>
+          <div class="subtitle">Las plantas no se mueven... pero responden.</div>
+        </div>
+      </div>
+    <div class="diagram-box">
+      <img src="./imagenes/tropismos.png" alt="Tropismos">
+    </div>
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:0.8rem;color:var(--glow);letter-spacing:0.08em;margin-bottom:0.8rem">TROPISMOS — respuestas permanentes</h3>
+      <p style="font-size:0.8rem;opacity:0.75;margin-bottom:0.8rem">Cambios permanentes en el crecimiento. <strong style="color:var(--glow)">Positivo</strong>: hacia el estímulo. <strong style="color:var(--glow)">Negativo</strong>: en dirección contraria.</p>
+
+      <div class="tropism-grid">
+        <div class="tropism-card">
+          <span class="t-icon">🌞</span>
+          <div class="t-name">FOTOTROPISMO</div>
+          <p>Respuesta a la luz. El tallo crece hacia ella (positivo). Las raíces, al revés (negativo).</p>
+        </div>
+        <div class="tropism-card">
+          <span class="t-icon">🌍</span>
+          <div class="t-name">GEOTROPISMO</div>
+          <p>Respuesta a la gravedad. Raíces hacia abajo, tallo hacia arriba.</p>
+        </div>
+        <div class="tropism-card">
+          <span class="t-icon">🤲</span>
+          <div class="t-name">TIGMOTROPISMO</div>
+          <p>Respuesta al contacto. Las plantas trepadoras se enrollan alrededor de apoyos.</p>
+        </div>
+        <div class="tropism-card">
+          <span class="t-icon">💧</span>
+          <div class="t-name">HIDROTROPISMO</div>
+          <p>Respuesta al agua. Las raíces crecen hacia donde hay humedad.</p>
+        </div>
+      </div>
+    <div class="diagram-box">
+      <img src="./imagenes/nastias.png" alt="Nastias">
+    </div>
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:0.8rem;color:var(--pink);letter-spacing:0.08em;margin-bottom:0.8rem;margin-top:1.2rem">NASTIAS — respuestas temporales</h3>
+      <p style="font-size:0.8rem;opacity:0.75;margin-bottom:0.8rem">Cuando desaparece el estímulo, la planta vuelve a su estado anterior.</p>
+
+      <div class="tropism-grid">
+        <div class="tropism-card nastia-card">
+          <span class="t-icon">🌸</span>
+          <div class="t-name">FOTONASTIA</div>
+          <p>Respuesta a la luz. Flores que abren de día y cierran de noche.</p>
+        </div>
+        <div class="tropism-card nastia-card">
+          <span class="t-icon">🌡️</span>
+          <div class="t-name">TERMONASTIA</div>
+          <p>Respuesta a la temperatura. El tulipán abre con calor y cierra con frío.</p>
+        </div>
+      </div>
+
+      <div class="fact-box">La Mimosa pudica cierra sus hojas en milisegundos al tocarla. Es tigmotropismo — una nastia de contacto tan rápida que puedes verla en tiempo real.</div>
+    </div>
+
+    <!-- REPRODUCCIÓN -->
+    <div id="sec-repro" class="section-panel">
+      <div class="section-header">
+        <span class="sec-icon">🌸</span>
+        <div>
+          <h2>Reproducción sexual</h2>
+          <div class="subtitle">De flor a planta nueva. El ciclo completo.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">🌺 La flor — estructura reproductora</div>
+        <div class="diagram-box">
+          <img src="./imagenes/flor-partes.png" alt="Partes de la flor">
+        </div>
+        <div class="card-grid cols-2" style="margin-top:0.6rem">
+          <div>
+            <p><strong style="color:var(--glow)">Envoltura floral:</strong> cubre y protege.</p>
+            <ul>
+              <li><strong style="color:var(--glow)">Corola</strong> → conjunto de pétalos</li>
+              <li><strong style="color:var(--glow)">Cáliz</strong> → conjunto de sépalos</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong style="color:var(--glow)">Órganos reproductores:</strong></p>
+            <ul>
+              <li><strong style="color:var(--glow)">Estambres</strong> → producen polen (♂)</li>
+              <li><strong style="color:var(--glow)">Pistilo</strong> → contiene el ovario con óvulos (♀)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>🐝 Polinización</h4>
+            <p>El polen viaja desde los estambres de una flor hasta el estigma de otra. Transportado por <strong style="color:var(--glow)">viento</strong> o por <strong style="color:var(--glow)">animales</strong> (abejas, mariposas, pájaros...).</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>🔗 Fecundación</h4>
+            <p>El grano de polen forma un <strong style="color:var(--glow)">tubo polínico</strong> que recorre el pistilo hasta el óvulo. El gameto ♂ se une al óvulo ♀. Fecundación lograda.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>🌰 Formación de la semilla</h4>
+            <p>El óvulo fecundado se convierte en <strong style="color:var(--glow)">semilla</strong>. Contiene el embrión y cubiertas protectoras.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>🍎 Formación del fruto</h4>
+            <p>El ovario se transforma en <strong style="color:var(--glow)">fruto</strong>. Protege las semillas y colabora en su dispersión.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>🌱 Germinación</h4>
+            <p>La semilla cae al suelo. Si hay suficiente humedad, absorbe agua y se hincha hasta romper la cubierta. Aparece la <strong style="color:var(--glow)">radícula</strong> (primera raíz) y luego los <strong style="color:var(--glow)">cotiledones</strong> (primeras hojas). Comienza la nueva planta.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="fact-box">Las semillas pueden sobrevivir cientos de años esperando las condiciones ideales. En 2012 se germinó una semilla de 30.000 años encontrada en permafrost siberiano.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+     HISTORIA — VISTA B
+  ══════════════════════════════ -->
+  <div id="view-story" class="view">
+    <div class="story-wrapper">
+      <div class="progress-bar" id="story-progress"></div>
+
+      <!-- PASO 1 -->
+      <div class="story-step active" data-step="0">
+        <div class="step-label">Paso 1 de 7 · Características</div>
+        <div class="story-title">Las plantas<br>son raras.<br>Y geniales.</div>
+        <span class="story-emoji">🌿</span>
+        <div class="story-body">
+          No se mueven. No gritan. No hacen nada visible. Pero llevan millones de años dominando el planeta en silencio.<br><br>
+          Son <strong>eucariotas y pluricelulares</strong>. Sus células tienen pared celular y cloroplastos. Son <strong>autótrofas</strong> — fabrican su propio alimento a partir de agua, CO₂ y luz solar. Y viven <strong>fijas al suelo</strong>.
+        </div>
+        <div class="story-fact">Producen la mayor parte del oxígeno del planeta y son la base de todas las cadenas alimentarias terrestres. Sin plantas, en unos miles de años el aire sería irrespirable.</div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="story-step" data-step="1">
+        <div class="step-label">Paso 2 de 7 · Clasificación</div>
+        <div class="story-title">No todas<br>tienen semillas.</div>
+        <span class="story-emoji">🍃</span>
+        <div class="story-body">
+          Las más antiguas — <strong>musgos, hepáticas y helechos</strong> — se reproducen por <em>esporas</em>. Sin flores, sin frutos, sin semillas. Solo esporas.<br><br>
+          Luego vinieron las plantas con semillas. Las <strong>gimnospermas</strong> las guardan en piñas, desnudas. Las <strong>angiospermas</strong> las protegen dentro de frutos y se anuncian con flores de colores.
+        </div>
+        <div class="story-fact">Los helechos llevan en la Tierra más de 360 millones de años. Existían antes que los dinosaurios — y siguen aquí.</div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="story-step" data-step="2">
+        <div class="step-label">Paso 3 de 7 · Partes</div>
+        <div class="story-title">Raíz, tallo,<br>hoja. Cada una<br>manda en lo suyo.</div>
+        <span class="story-emoji">🪴</span>
+        <div class="story-body">
+          La <strong>raíz</strong> absorbe agua y sales del suelo, ancla la planta y almacena reservas. La <strong>zanahoria</strong> que comes es literalmente una raíz llena de almidón.<br><br>
+          El <strong>tallo</strong> transporta, sostiene y expone las hojas a la luz. Tiene <strong>nudos</strong> (donde nacen ramas y hojas) y <strong>yemas</strong> (donde crece).<br><br>
+          Las <strong>hojas</strong> son la fábrica. Clorofila verde, fotosíntesis constante, estomas para respirar.
+        </div>
+        <div class="diagram-box diagram-large">
+          <img src="./imagenes/planta-partes.png" alt="Partes de la planta">
+        </div>
+      <div class="story-fact">Una sola hoja puede tener más de 100.000 estomas por centímetro cuadrado. Cada uno se abre y cierra de forma independiente.</div>
+    </div>
+  </div>
+
+      <!-- PASO 4 -->
+      <div class="story-step" data-step="3">
+        <div class="step-label">Paso 4 de 7 · Nutrición</div>
+        <div class="story-title">Agua + CO₂<br>+ luz = magia.</div>
+        <span class="story-emoji">☀️</span>
+        <div class="story-body">
+          La <strong>fotosíntesis</strong> es la ecuación más importante de la vida en la Tierra:<br><br>
+          <em>H₂O + CO₂ + luz → O₂ + materia orgánica</em><br><br>
+          Ocurre en los <strong>cloroplastos</strong>. La <strong>clorofila</strong> capta la luz. El agua y las sales suben por el <strong>xilema</strong> desde la raíz. La savia elaborada baja por el <strong>floema</strong> al resto de la planta.<br><br>
+          Y sí: las plantas también <strong>respiran</strong>, en las mitocondrias, todo el rato — exactamente igual que tú.
+        </div>
+        <div class="story-fact">De noche las plantas solo respiran, no hacen fotosíntesis. Por eso el bosque huele especialmente bien al amanecer: llevan horas acumulando O₂ fresco.</div>
+      </div>
+
+      <!-- PASO 5 -->
+      <div class="story-step" data-step="4">
+        <div class="step-label">Paso 5 de 7 · Relación</div>
+        <div class="story-title">Inmóviles.<br>Pero no<br>indiferentes.</div>
+        <span class="story-emoji">🌀</span>
+        <div class="story-body">
+          Las plantas responden a su entorno. Los <strong>tropismos</strong> son movimientos permanentes de crecimiento: hacia la luz (fototropismo), contra la gravedad (geotropismo), hacia el agua (hidrotropismo), hacia el contacto (tigmotropismo).<br><br>
+          Las <strong>nastias</strong> son respuestas temporales — cuando desaparece el estímulo, la planta vuelve a su estado original. Las flores que abren y cierran según la luz (fotonastia) o la temperatura (termonastia).
+        </div>
+        <div class="story-fact">La Mimosa pudica cierra sus hojas al instante si la tocas. Es tigmotropismo tan rápido que parece animado. Búscala en YouTube — es fascinante.</div>
+      </div>
+
+      <!-- PASO 6 -->
+      <div class="story-step" data-step="5">
+        <div class="step-label">Paso 6 de 7 · La flor</div>
+        <div class="story-title">La flor<br>no es decorativa.<br>Es un plan.</div>
+        <span class="story-emoji">🌺</span>
+        <div class="story-body">
+          La flor es la estructura reproductora de las plantas con semillas. La <strong>envoltura floral</strong> (corola + cáliz) protege lo importante: los <strong>estambres</strong> producen el <em>polen</em> — gametos masculinos — y el <strong>pistilo</strong> contiene el ovario con los <em>óvulos</em> — gametos femeninos.<br><br>
+          Los colores y olores son publicidad. Atraen polinizadores para que transporten el polen.
+        </div>
+        <div class="diagram-box">
+          <img src="./imagenes/flor-partes.png" alt="Partes de la flor">
+        </div>
+        <div class="story-fact">Las flores y los insectos coevolucionaron. Llevan 130 millones de años adaptándose mutuamente — por eso hay tantas formas y colores de flores: cada una optimizada para su polinizador.</div>
+      </div>
+
+      <!-- PASO 7 -->
+      <div class="story-step" data-step="6">
+        <div class="step-label">Paso 7 de 7 · Reproducción</div>
+        <div class="story-title">De semilla<br>a planta.<br>El ciclo completo.</div>
+        <span class="story-emoji">🌱</span>
+        <div class="story-body">
+          El polen llega al estigma → forma un <strong>tubo polínico</strong> → gameto ♂ se une al óvulo → <strong>semilla</strong> (embrión + cubiertas protectoras) → ovario se convierte en <strong>fruto</strong>.<br><br>
+          La semilla cae al suelo. Si hay humedad suficiente, absorbe agua, se hincha, rompe la cubierta. Sale la <strong>radícula</strong> (primera raíz) hacia abajo. Salen los <strong>cotiledones</strong> (primeras hojas) hacia arriba. Empieza una nueva planta.
+        </div>
+        <div class="story-fact">Algunas semillas pueden sobrevivir miles de años esperando las condiciones adecuadas. En 2012 se germinó con éxito una semilla de 30.000 años encontrada en permafrost siberiano.</div>
+      </div>
+
+      <div class="story-nav">
+        <button class="nav-btn prev" id="btn-prev" onclick="storyNav(-1)" disabled>← Atrás</button>
+        <span class="step-counter" id="step-counter">1 / 7</span>
+        <button class="nav-btn next" id="btn-next" onclick="storyNav(1)">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+</footer>
+
+<script>
+// ── MODE SWITCH ──
+function setMode(mode, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + mode).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── EXPLORER SECTIONS ──
+function showSection(id, btn) {
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── STORY ──
+const steps = document.querySelectorAll('.story-step');
+const totalSteps = steps.length;
+let currentStep = 0;
+
+// Build progress dots
+const progressContainer = document.getElementById('story-progress');
+for (let i = 0; i < totalSteps; i++) {
+  if (i > 0) {
+    const line = document.createElement('div');
+    line.className = 'prog-line';
+    line.id = 'pline-' + i;
+    progressContainer.appendChild(line);
+  }
+  const dot = document.createElement('div');
+  dot.className = 'prog-dot' + (i === 0 ? ' current' : '');
+  dot.id = 'pdot-' + i;
+  dot.onclick = () => goToStep(i);
+  progressContainer.appendChild(dot);
+}
+
+function updateProgress() {
+  for (let i = 0; i < totalSteps; i++) {
+    const dot = document.getElementById('pdot-' + i);
+    dot.className = 'prog-dot';
+    if (i < currentStep) dot.classList.add('done');
+    if (i === currentStep) dot.classList.add('current');
+    if (i > 0) {
+      const line = document.getElementById('pline-' + i);
+      line.className = 'prog-line' + (i <= currentStep ? ' done' : '');
+    }
+  }
+  document.getElementById('btn-prev').disabled = currentStep === 0;
+  document.getElementById('btn-next').disabled = currentStep === totalSteps - 1;
+  document.getElementById('step-counter').textContent = `${currentStep + 1} / ${totalSteps}`;
+}
+
+function goToStep(n) {
+  steps[currentStep].classList.remove('active');
+  currentStep = n;
+  steps[currentStep].classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: document.querySelector('header').offsetHeight, behavior: 'smooth' });
+}
+
+function storyNav(dir) {
+  const next = currentStep + dir;
+  if (next >= 0 && next < totalSteps) goToStep(next);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Los 5 Reinos — Explorador de Conexiones</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">hAppYpUkIng · learn · expand · vomit happiness</div>
+  <h1>Los 5 reinos — Explorador de conexiones</h1>
+  <p>Selecciona uno o dos reinos para explorar qué comparten y qué los diferencia</p>
+</header>
+
+<div class="layout">
+  <div class="left-col">
+    <!-- Reino selector -->
+    <div class="reino-grid" id="reino-btns">
+      <button class="btn-reino" data-r="moneras">🦠 Moneras</button>
+      <button class="btn-reino" data-r="protistas">🔬 Protistas</button>
+      <button class="btn-reino" data-r="hongos">🍄 Hongos</button>
+      <button class="btn-reino" data-r="animales">🐾 Animales</button>
+      <button class="btn-reino" data-r="plantas">🌿 Plantas</button>
+    </div>
+    <div class="interaction-hint">Clic para seleccionar · clic de nuevo para deseleccionar · máximo dos a la vez</div>
+
+    <div class="venn-container">
+      <svg id="venn-svg" viewBox="0 0 760 240"></svg>
+      <div class="venn-hint" id="venn-hint">Haz clic en un círculo o en los botones de arriba</div>
+    </div>
+
+    <!-- Bottom row: shared + diff side by side -->
+    <div class="bottom-row">
+      <div class="panel-box" id="panel-shared" style="display:none">
+        <h3><span class="dot" style="background:#FFD700"></span> En común</h3>
+        <div class="tag-list" id="shared-tags"></div>
+      </div>
+      <div class="panel-box" id="panel-diff" style="display:none">
+        <h3 id="diff-title">Diferencias</h3>
+        <div id="diff-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info panel -->
+  <div class="info-panel">
+    <div class="mode-tabs">
+      <div class="mode-tab active" id="tab-ficha" onclick="setMode('ficha')">Ficha</div>
+      <div class="mode-tab" id="tab-comparar" onclick="setMode('comparar')">Comparar</div>
+    </div>
+
+    <div class="panel-box" id="panel-main">
+      <div class="empty-state">← Selecciona un reino</div>
+    </div>
+  </div>
+<footer>
+  <div class="brand-footer">
+  <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>  
+</footer>
+</div>
+
+<script>
+const DATA = {
+  moneras: {
+    label: 'Moneras',
+    emoji: '🦠',
+    color: '#3B82F6',
+    celula: 'Procariota',
+    ncelulas: 'Unicelular',
+    nutricion: 'Autótrofa / Heterótrofa',
+    reproduccion: 'Asexual',
+    tejidos: 'Sin tejidos',
+    movilidad: 'Flagelos / Inmóvil',
+    ecosistema: 'Productores, Descomponedores',
+    ejemplos: 'Bacterias, Cianobacterias',
+    complejidad: 1,
+    tags: ['procariota','unicelular','sin tejidos','asexual','descomponedores','productores']
+  },
+  protistas: {
+    label: 'Protistas',
+    emoji: '🔬',
+    color: '#10B981',
+    celula: 'Eucariota',
+    ncelulas: 'Principalmente unicelular',
+    nutricion: 'Autótrofa / Heterótrofa',
+    reproduccion: 'Asexual y Sexual',
+    tejidos: 'Sin tejidos',
+    movilidad: 'Móvil (cilios, flagelos) / Inmóvil',
+    ecosistema: 'Productores, Descomponedores, Consumidores',
+    ejemplos: 'Algas, Protozoos',
+    complejidad: 2,
+    tags: ['eucariota','unicelular','sin tejidos','asexual','sexual','productores','descomponedores','consumidores']
+  },
+  hongos: {
+    label: 'Hongos',
+    emoji: '🍄',
+    color: '#F59E0B',
+    celula: 'Eucariota',
+    ncelulas: 'Uni / Pluricelular',
+    nutricion: 'Heterótrofa (absorción)',
+    reproduccion: 'Asexual y Sexual',
+    tejidos: 'Sin tejidos',
+    movilidad: 'Inmóvil',
+    ecosistema: 'Descomponedores',
+    ejemplos: 'Levaduras, Setas, Moho',
+    complejidad: 3,
+    tags: ['eucariota','sin tejidos','asexual','sexual','descomponedores','heterótrofa','inmóvil']
+  },
+  animales: {
+    label: 'Animales',
+    emoji: '🐾',
+    color: '#EF4444',
+    celula: 'Eucariota',
+    ncelulas: 'Pluricelular',
+    nutricion: 'Heterótrofa (ingestión)',
+    reproduccion: 'Sexual (principalmente)',
+    tejidos: 'Con tejidos y órganos',
+    movilidad: 'Móvil (múltiples mecanismos)',
+    ecosistema: 'Consumidores',
+    ejemplos: 'Vertebrados, Invertebrados',
+    complejidad: 4,
+    tags: ['eucariota','pluricelular','con tejidos','sexual','consumidores','heterótrofa','móvil']
+  },
+  plantas: {
+    label: 'Plantas',
+    emoji: '🌿',
+    color: '#8B5CF6',
+    celula: 'Eucariota',
+    ncelulas: 'Pluricelular',
+    nutricion: 'Autótrofa (fotosíntesis)',
+    reproduccion: 'Asexual y Sexual',
+    tejidos: 'Con tejidos y órganos',
+    movilidad: 'Inmóvil',
+    ecosistema: 'Productores',
+    ecosistema: 'Productores',
+    ejemplos: 'Musgos, Helechos, Árboles',
+    complejidad: 4,
+    tags: ['eucariota','pluricelular','con tejidos','asexual','sexual','productores','autótrofa','inmóvil']
+  }
+};
+
+const CHARS = [
+  {key:'celula', label:'Tipo célula'},
+  {key:'ncelulas', label:'Nº células'},
+  {key:'nutricion', label:'Nutrición'},
+  {key:'reproduccion', label:'Reproducción'},
+  {key:'tejidos', label:'Tejidos'},
+  {key:'movilidad', label:'Movilidad'},
+  {key:'ecosistema', label:'Ecosistema'},
+  {key:'ejemplos', label:'Ejemplos'},
+];
+
+let selected = [];
+let mode = 'ficha';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tab-ficha').classList.toggle('active', m === 'ficha');
+  document.getElementById('tab-comparar').classList.toggle('active', m === 'comparar');
+  render();
+}
+
+// ── VENN SVG ──
+const positions = {
+  moneras:  {cx: 76,  cy: 90, r: 58},
+  protistas:{cx: 228, cy: 90, r: 58},
+  hongos:   {cx: 380, cy: 90, r: 58},
+  animales: {cx: 532, cy: 90, r: 58},
+  plantas:  {cx: 684, cy: 90, r: 58},
+};
+
+function drawVenn() {
+  const svg = document.getElementById('venn-svg');
+  svg.innerHTML = '';
+
+  const keys = Object.keys(DATA);
+
+  // Draw circles
+  keys.forEach(k => {
+    const p = positions[k];
+    const d = DATA[k];
+    const isSelected = selected.includes(k);
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor = 'pointer';
+    g.onclick = () => toggleReino(k);
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', p.cx);
+    circle.setAttribute('cy', p.cy);
+    circle.setAttribute('r', p.r);
+    circle.setAttribute('fill', d.color);
+    circle.setAttribute('fill-opacity', isSelected ? '0.35' : '0.12');
+    circle.setAttribute('stroke', d.color);
+    circle.setAttribute('stroke-width', isSelected ? '2.5' : '1.5');
+    circle.setAttribute('stroke-opacity', isSelected ? '1' : '0.4');
+    circle.style.transition = 'all 0.3s';
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', p.cx);
+    text.setAttribute('y', p.cy - 8);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', isSelected ? d.color : '#6B7280');
+    text.setAttribute('font-family', 'Nunito, sans-serif');
+    text.setAttribute('font-weight', '900');
+    text.setAttribute('font-size', '13');
+    text.style.transition = 'all 0.3s';
+    text.textContent = DATA[k].emoji;
+
+    const text2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text2.setAttribute('x', p.cx);
+    text2.setAttribute('y', p.cy + 10);
+    text2.setAttribute('text-anchor', 'middle');
+    text2.setAttribute('fill', isSelected ? d.color : '#6B7280');
+    text2.setAttribute('font-family', 'Nunito, sans-serif');
+    text2.setAttribute('font-weight', '900');
+    text2.setAttribute('font-size', '11');
+    text2.style.transition = 'all 0.3s';
+    text2.textContent = d.label;
+
+    const compTxt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    compTxt.setAttribute('x', p.cx);
+    compTxt.setAttribute('y', p.cy + 26);
+    compTxt.setAttribute('text-anchor', 'middle');
+    compTxt.setAttribute('fill', isSelected ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)');
+    compTxt.setAttribute('font-family', 'DM Mono, monospace');
+    compTxt.setAttribute('font-size', '9');
+    compTxt.textContent = `nivel ${d.complejidad}`;
+
+    g.appendChild(circle);
+    g.appendChild(text);
+    g.appendChild(text2);
+    g.appendChild(compTxt);
+    svg.appendChild(g);
+  });
+
+  // Shared indicator below circles, centered between the two selected
+  if (selected.length === 2) {
+    const [a, b] = selected;
+    const pa = positions[a], pb = positions[b];
+    const mx = (pa.cx + pb.cx) / 2;
+    const iy = 185; // indicator strip y
+    const shared = DATA[a].tags.filter(t => DATA[b].tags.includes(t));
+
+    // Connector line from each circle bottom to indicator
+    [pa, pb].forEach(p => {
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', p.cx); line.setAttribute('y1', p.cy + p.r + 4);
+      line.setAttribute('x2', mx);   line.setAttribute('y2', iy - 14);
+      line.setAttribute('stroke', '#FFD700');
+      line.setAttribute('stroke-width', '1');
+      line.setAttribute('stroke-opacity', '0.3');
+      line.setAttribute('stroke-dasharray', '3 3');
+      svg.appendChild(line);
+    });
+
+    // Pill background
+    const pillW = 32, pillH = 26;
+    const pill = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    pill.setAttribute('x', mx - pillW/2); pill.setAttribute('y', iy - pillH/2);
+    pill.setAttribute('width', pillW); pill.setAttribute('height', pillH);
+    pill.setAttribute('rx', '13');
+    pill.setAttribute('fill', '#FFD700');
+    pill.setAttribute('fill-opacity', shared.length ? '0.15' : '0.06');
+    pill.setAttribute('stroke', '#FFD700');
+    pill.setAttribute('stroke-width', '1');
+    pill.setAttribute('stroke-opacity', shared.length ? '0.55' : '0.2');
+    svg.appendChild(pill);
+
+    // Count
+    const cnt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    cnt.setAttribute('x', mx); cnt.setAttribute('y', iy);
+    cnt.setAttribute('text-anchor','middle');
+    cnt.setAttribute('dominant-baseline','central');
+    cnt.setAttribute('fill', '#FFD700');
+    cnt.setAttribute('font-family','DM Mono, monospace');
+    cnt.setAttribute('font-size','12');
+    cnt.setAttribute('font-weight','700');
+    cnt.textContent = shared.length ? `${shared.length}` : '0';
+    svg.appendChild(cnt);
+  }
+
+  // Hint
+  document.getElementById('venn-hint').textContent = selected.length === 0
+    ? 'Haz clic en un círculo o en los botones de arriba'
+    : selected.length === 1
+    ? `${DATA[selected[0]].label} seleccionado — añade otro para comparar`
+    : `Comparando ${DATA[selected[0]].label} y ${DATA[selected[1]].label}`;
+}
+
+function toggleReino(k) {
+  if (selected.includes(k)) {
+    selected = selected.filter(s => s !== k);
+  } else if (selected.length < 2) {
+    selected.push(k);
+  }
+  // if already 2 selected and user taps a 3rd, do nothing
+  document.querySelectorAll('.btn-reino').forEach(b => {
+    b.classList.toggle('active', selected.includes(b.dataset.r));
+  });
+  drawVenn();
+  render();
+}
+
+// ── PANEL RENDER ──
+function render() {
+  const pm = document.getElementById('panel-main');
+  const ps = document.getElementById('panel-shared');
+  const pd = document.getElementById('panel-diff');
+
+  if (selected.length === 0) {
+    pm.innerHTML = '<div class="empty-state">← Selecciona un reino</div>';
+    ps.style.display = 'none';
+    pd.style.display = 'none';
+    return;
+  }
+
+  if (mode === 'ficha' || selected.length === 1) {
+    const k = selected[selected.length - 1];
+    const d = DATA[k];
+    pm.innerHTML = `
+      <h3><span class="dot" style="background:${d.color}"></span> ${d.emoji} ${d.label}</h3>
+      <div class="char-grid">
+        ${CHARS.map(c => `
+          <div class="char-item" style="border-left-color:${d.color}">
+            <div class="char-label">${c.label}</div>
+            <div class="char-value">${d[c.key]}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    ps.style.display = 'none';
+    pd.style.display = 'none';
+
+    return;
+  }
+
+  if (mode === 'comparar' && selected.length === 2) {
+    const [a, b] = selected;
+    const da = DATA[a], db = DATA[b];
+    pm.innerHTML = `
+      <h3 style="font-size:0.95rem">
+        <span style="color:${da.color}">${da.emoji} ${da.label}</span>
+        <span style="color:var(--muted); margin: 0 0.3rem">vs</span>
+        <span style="color:${db.color}">${db.emoji} ${db.label}</span>
+      </h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem">
+        ${CHARS.map(c => {
+          const same = da[c.key] === db[c.key];
+          return `
+            <div style="grid-column:1/-1;font-size:0.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:0.4rem">${c.label}</div>
+            <div style="background:${same ? 'rgba(255,215,0,0.08)' : `color-mix(in srgb, ${da.color} 10%, var(--surface2))`};border-left:3px solid ${da.color};padding:0.4rem 0.6rem;border-radius:8px;font-size:0.75rem;font-weight:700">${da[c.key]}</div>
+            <div style="background:${same ? 'rgba(255,215,0,0.08)' : `color-mix(in srgb, ${db.color} 10%, var(--surface2))`};border-left:3px solid ${db.color};padding:0.4rem 0.6rem;border-radius:8px;font-size:0.75rem;font-weight:700">${db[c.key]}</div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    renderComparison();
+    return;
+  }
+
+  // Always show shared/diff below venn when 2 selected
+  if (selected.length === 2) renderComparison();
+  else {
+    document.getElementById('panel-shared').style.display = 'none';
+    document.getElementById('panel-diff').style.display = 'none';
+  }
+}
+
+function renderComparison() {
+  if (selected.length < 2) return;
+  const [a, b] = selected;
+  const da = DATA[a], db = DATA[b];
+  const shared = da.tags.filter(t => db.tags.includes(t));
+  const onlyA = da.tags.filter(t => !db.tags.includes(t));
+  const onlyB = db.tags.filter(t => !da.tags.includes(t));
+
+  const ps = document.getElementById('panel-shared');
+  const pd = document.getElementById('panel-diff');
+
+  ps.style.display = 'block';
+  pd.style.display = 'block';
+
+  document.getElementById('shared-tags').innerHTML = shared.length
+    ? shared.map(t => `<span class="tag shared">${t}</span>`).join('')
+    : '<span style="color:var(--muted);font-size:0.8rem;font-style:italic">Sin características comunes directas</span>';
+
+  document.getElementById('diff-title').innerHTML = `
+    <span class="dot" style="background:${da.color}"></span> Solo en ${da.label} &nbsp;/&nbsp;
+    <span class="dot" style="background:${db.color}"></span> Solo en ${db.label}
+  `;
+
+  document.getElementById('diff-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-top:0.4rem">
+      <div style="display:flex;flex-wrap:wrap;gap:0.35rem;align-content:start">
+        ${onlyA.map(t => `<span class="tag unique" style="border-color:color-mix(in srgb,${da.color} 40%,transparent);color:${da.color}">${t}</span>`).join('')}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.35rem;align-content:start">
+        ${onlyB.map(t => `<span class="tag unique" style="border-color:color-mix(in srgb,${db.color} 40%,transparent);color:${db.color}">${t}</span>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// Init
+document.querySelectorAll('.btn-reino').forEach(b => {
+  b.addEventListener('click', () => toggleReino(b.dataset.r));
+});
+
+drawVenn();
+</script>
+</body>
+</html>
