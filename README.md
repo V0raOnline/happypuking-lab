@@ -1,4 +1,6 @@
-# 🦄 hAppYpUkIng — Lab
+<img src="file:///G:/GHU%20Codexsphere/_Misc/HappypukingNuevoBanner.jpg" title="" alt="HappypukingNuevoBanner.jpg" width="642">
+
+### hAppYpUkIng — Lab
 
 > **Ix(A+H) = Expanded heart and brain!**  
 > Recursos educativos interactivos, abiertos y gratuitos para mentes que aprenden diferente.
@@ -7,7 +9,7 @@
 
 ## ¿Qué es esto?
 
-hAppYpUkIng nació de una necesidad real: crear materiales que funcionaran de verdad para estudiantes neurodivergentes — con TDAH, dislexia, altas capacidades o simplemente con dificultad para conectar con los formatos convencionales.
+hAppYpUkIng nació de una necesidad real: crear materiales que funcionaran de verdad para estudiantes que piensan distinto o simplemente con dificultad para conectar con los formatos convencionales.
 
 Empezó en casa, para mis hijos. Lo que funcionó, lo comparto con todos.
 
@@ -23,14 +25,14 @@ Todo el contenido está alineado con el currículo oficial de la ESO (España).
 ```
 happypuking-lab/
 ├── Reinos/
-│   └── reinos_venn_9.html          # Explorador interactivo de los 5 Reinos
+│   └── bio-5reinos.html          # Explorador interactivo de los 5 Reinos
 ├── Reino Plantas/
-│   ├── plantas_explorador.html     # Tema 6 ESO — Reino de las Plantas
+│   ├── bio-reinoplantas.html     # Tema 6 ESO — Reino de las Plantas
 │   └── imagenes/                   # Ilustraciones científicas del tema
 ├── Quimica/
 │   └── tabla_periodica.html        # Tabla periódica interactiva
 ├── Mates/
-│   └── tablas_multiplicar.html     # Tablas de multiplicar interactivas
+│   └── tabla-pitagorica.html     # Tablas de multiplicar interactivas
 └── HappyPuking.jpeg / HeartIco.png # Identidad de marca
 ```
 
@@ -40,20 +42,21 @@ happypuking-lab/
 
 ### ✅ Publicados
 
-| Recurso | Materia | Nivel | Archivo |
-|--------|---------|-------|---------|
-| Explorador de los 5 Reinos | Ciencias Naturales | 1º ESO | `Reinos/reinos_venn_9.html` |
-| Reino de las Plantas | Ciencias Naturales | 1º ESO | `Reino Plantas/plantas_explorador.html` |
-| Tabla Periódica | Química | ESO | `Quimica/tabla_periodica.html` |
-| Tablas de Multiplicar | Matemáticas | Primaria / 1º ESO | `Mates/tablas_multiplicar.html` |
+| Recurso                    | Materia            | Nivel             | Archivo                               |
+| -------------------------- | ------------------ | ----------------- | ------------------------------------- |
+| Explorador de los 5 Reinos | Ciencias Naturales | 1º ESO            | `Reinos/bio-5reinos.html`             |
+| Reino de las Plantas       | Ciencias Naturales | 1º ESO            | `Reino Plantas/bio-reinoplantas.html` |
+| Tabla Periódica            | Química            | ESO               | `Quimica/tabla_periodica.html`        |
+| Tablas de Multiplicar      | Matemáticas        | Primaria / 1º ESO | `Mates/tabla-pitagorica.html`         |
 
 ### 🔧 En desarrollo
 
-| Recurso | Materia | Nivel |
-|--------|---------|-------|
+| Recurso                         | Materia           | Nivel     |
+| ------------------------------- | ----------------- | --------- |
 | Morfología española interactiva | Lengua Castellana | 1º–2º ESO |
-| Verbos irregulares inglés | Inglés | ESO |
-| Verbos irregulares español | Lengua Castellana | ESO |
+| Verbos irregulares inglés       | Inglés            | ESO       |
+| Verbos irregulares español      | Lengua Castellana | ESO       |
+| Chuletarios interactivos        | Todas             | VARIOS    |
 
 ---
 
@@ -63,6 +66,7 @@ Los recursos son archivos HTML autocontenidos — sin instalación, sin login, s
 Se abren directamente en el navegador.
 
 Cada recurso incluye múltiples modos de navegación:
+
 - **Modo explorador** — navegación libre por secciones
 - **Modo historia** — recorrido guiado paso a paso con narración
 
@@ -75,6 +79,12 @@ Diseño pensado para reducir fatiga visual y maximizar contraste.
 Weird, pero funcional. Así somos.
 
 ---
+
+## <img title="" src="file:///G:/GHU%20Codexsphere/arkinesis/AX0.png" alt="AX0.png" width="77" data-align="inline">##   Otros recursos
+
+#### [ARKINESIS](%5BARKINESIS%5D(https://v0raonline.github.io/arkinesis/))
+
+Simulador de física interactivo para Bachillerato
 
 ## 📺 Canal de YouTube
 
@@ -101,6 +111,8 @@ Cita la fuente. Es lo mínimo.
 
 ¿Tienes una idea o encontraste un error?  
 Abre un issue o un PR. Esto es un taller abierto, no un producto terminado.
+
+[Issues · V0raOnline/happypuking-lab](https://github.com/V0raOnline/happypuking-lab/issues)
 
 ---
 
