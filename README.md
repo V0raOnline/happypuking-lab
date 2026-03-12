@@ -1,4 +1,4 @@
-<img src="file:///G:/GHU%20Codexsphere/_Misc/HappypukingNuevoBanner.jpg" title="" alt="HappypukingNuevoBanner.jpg" width="642">
+<img title="" src="file:///G:/GHU%20Codexsphere/happypuking-lab/assets/HappypukingNuevoBanner.jpg" alt="HappypukingNuevoBanner.jpg" width="590">
 
 ### hAppYpUkIng — Lab
 
