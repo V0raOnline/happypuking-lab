@@ -1,4 +1,4 @@
-<img title="" src="file:////assets/HappypukingNuevoBanner.jpg" alt="HappypukingNuevoBanner.jpg" width="590">
+ <img src="assets/HappypukingNuevoBanner.jpg" alt="HappypukingNuevoBanner.jpg" width="590">
 
 ### hAppYpUkIng — Lab
 
@@ -80,7 +80,7 @@ Weird, pero funcional. Así somos.
 
 ---
 
-## <img title="" src="file:///G:/GHU%20Codexsphere/arkinesis/AX0.png" alt="AX0.png" width="77" data-align="inline">##   Otros recursos
+## <img title="" src="assets/AX0.png" alt="AX0.png" width="77" data-align="inline">##   Otros recursos
 
 #### [ARKINESIS](%5BARKINESIS%5D(https://v0raonline.github.io/arkinesis/))
 
