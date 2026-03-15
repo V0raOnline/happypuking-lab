@@ -513,14 +513,15 @@
     font-weight: 700;
     font-size: 1rem;
   }
-      .brand {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
+  .header-tagline {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
   }
+  .header-tagline span { margin: 0 0.4rem; opacity: 0.4; }
   /* ── FOOTER ── */
   footer {
     text-align: center;
@@ -531,3 +532,19 @@
     z-index: 1;
     border-top: 1px solid var(--border);
   }
+  .btn-inicio {
+    display: inline-block;
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 0.88rem;
+    padding: 0.35rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #D946EF;
+    color: var(--text);
+    background: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-bottom: 1.2rem;
+  }
+  .btn-inicio:hover { background: rgba(217,70,239,0.08); }
