@@ -1,0 +1,2761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morfosintaxis — hAppYpUkIng lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --surface2: #22263A;
+  --surface3: #2A2F45;
+  --border: rgba(255,255,255,0.07);
+  --text: #F0F2FF;
+  --muted: #6B7280;
+  --muted2: #4B5563;
+
+  /* Categorías morfológicas — colores consistentes en toda la herramienta */
+  --sustantivo: #60A5FA;
+  --verbo: #F87171;
+  --adjetivo: #FB923C;
+  --determinante: #FBBF24;
+  --pronombre: #34D399;
+  --adverbio: #22D3EE;
+  --preposicion: #A78BFA;
+  --conjuncion: #F472B6;
+  --interjeccion: #94A3B8;
+
+  /* Funciones sintácticas */
+  --sujeto: #60A5FA;
+  --predicado: #F87171;
+  --cd: #34D399;
+  --ci: #22D3EE;
+  --cc: #A78BFA;
+  --atributo: #FBBF24;
+  --cpred: #FB923C;
+  --creg: #F472B6;
+  --cag: #94A3B8;
+  --cn: #6EE7B7;
+
+  --magenta: #D946EF;
+  --green-lab: #4ADE80;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 2rem 2rem 1.8rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.header-tagline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.header-tagline span { margin: 0 0.4rem; opacity: 0.4; }
+
+.btn-inicio {
+  display: inline-block;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--magenta);
+  color: var(--text);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-bottom: 1.2rem;
+}
+
+.btn-inicio:hover {
+  background: rgba(217,70,239,0.08);
+}
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  line-height: 1.1;
+}
+
+.header-subtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.4rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  color: var(--muted2);
+  font-weight: 600;
+}
+
+.footer-text strong {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+/* ── BTN YAML (ahora dentro de la interfaz) ── */
+.btn-yaml {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-yaml:hover {
+  border-color: var(--green-lab);
+  color: var(--green-lab);
+}
+
+/* ── TABS — píldoras estilo lab ── */
+.main-tabs {
+  display: flex;
+  gap: 0.6rem;
+  padding: 1.2rem 2rem;
+  position: relative;
+  z-index: 1;
+  justify-content: center;
+}
+
+.main-tab {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.4rem;
+  border-radius: 100px;
+  border: 2px solid transparent;
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.main-tab.active {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  background: color-mix(in srgb, var(--magenta) 12%, var(--surface2));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--magenta) 28%, transparent);
+}
+
+.main-tab:hover:not(.active) {
+  border-color: color-mix(in srgb, var(--magenta) 40%, transparent);
+  color: color-mix(in srgb, var(--magenta) 70%, white);
+}
+
+/* ── LAYOUT ── */
+.tab-content { display: none; position: relative; z-index: 1; }
+.tab-content.active { display: block; }
+
+/* ── PESTAÑA ANALIZA ── */
+.analiza-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Selector de oraciones */
+.oracion-selector {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+
+.btn-oracion {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-oracion.active {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  background: rgba(217,70,239,0.08);
+}
+
+.btn-oracion.completada {
+  border-color: var(--green-lab);
+  color: var(--green-lab);
+  background: rgba(74,222,128,0.06);
+}
+
+.nivel-badge {
+  font-size: 0.58rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: var(--surface3);
+  color: var(--muted2);
+}
+
+/* Zona de oración */
+.oracion-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.oracion-nota {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tokens-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-bottom: 1.2rem;
+}
+
+.token {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  line-height: 1.2;
+  user-select: none;
+}
+
+.token:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: var(--surface2);
+}
+
+.token.seleccionado {
+  border-color: var(--magenta);
+  background: rgba(217,70,239,0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217,70,239,0.2);
+}
+
+.token.correcto {
+  cursor: default;
+  transform: none;
+}
+
+.token.correcto:hover {
+  border-color: inherit;
+}
+
+.token .token-label {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 500;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.token.correcto .token-label {
+  opacity: 1;
+}
+
+/* Paso actual */
+.paso-box {
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.paso-numero {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--magenta);
+  background: rgba(217,70,239,0.1);
+  border: 1px solid rgba(217,70,239,0.25);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.paso-contenido {
+  flex: 1;
+}
+
+.paso-busca {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.paso-pista {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 0.7rem;
+}
+
+.btn-confirmar {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--magenta);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+
+.btn-confirmar:hover {
+  background: #c026d3;
+  transform: translateY(-1px);
+}
+
+.btn-confirmar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Feedback */
+.feedback-box {
+  margin-top: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  line-height: 1.5;
+  display: none;
+}
+
+.feedback-box.ok {
+  background: rgba(74,222,128,0.08);
+  border: 1px solid rgba(74,222,128,0.25);
+  color: var(--green-lab);
+  display: block;
+}
+
+.feedback-box.error {
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.25);
+  color: #F87171;
+  display: block;
+}
+
+/* Panel lateral Analiza */
+.analiza-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.sidebar-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.1rem;
+}
+
+.sidebar-box h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+  color: var(--muted);
+}
+
+/* Leyenda de categorías */
+.leyenda-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.leyenda-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Resumen del análisis */
+.resumen-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.resumen-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: var(--surface2);
+  font-size: 0.75rem;
+}
+
+.resumen-fn {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+}
+
+.resumen-palabra {
+  font-weight: 700;
+}
+
+/* Trampa box */
+.trampa-box {
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.75rem;
+  color: rgba(251,191,36,0.9);
+  line-height: 1.5;
+}
+
+.trampa-label {
+  font-weight: 900;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #FBBF24;
+}
+
+/* Completado */
+.completado-banner {
+  background: rgba(74,222,128,0.06);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  display: none;
+}
+
+.completado-banner.visible { display: block; }
+
+.completado-banner h3 {
+  font-family: 'DM Serif Display', serif;
+  color: var(--green-lab);
+  margin-bottom: 0.3rem;
+}
+
+.completado-banner p {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.btn-siguiente {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid var(--green-lab);
+  background: rgba(74,222,128,0.1);
+  color: var(--green-lab);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.7rem;
+}
+
+.btn-siguiente:hover { background: rgba(74,222,128,0.2); }
+
+/* ── PESTAÑA EXPLORA ── */
+.explora-layout {
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.explora-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Toggle morfología / sintaxis */
+.explora-toggle {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--surface2);
+  padding: 0.3rem;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.toggle-btn {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* Grid de categorías */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: var(--c, transparent);
+  transition: width 0.2s;
+}
+
+.cat-card:hover::before,
+.cat-card.activa::before {
+  width: 5px;
+}
+
+.cat-card.activa {
+  background: color-mix(in srgb, var(--c) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--c) 40%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--c) 15%, transparent);
+}
+
+.cat-card.atenuada {
+  opacity: 0.35;
+}
+
+.cat-card.relacionada {
+  border-color: color-mix(in srgb, var(--c) 25%, transparent);
+  background: color-mix(in srgb, var(--c) 5%, var(--surface));
+}
+
+.cat-nombre {
+  font-weight: 900;
+  font-size: 0.82rem;
+  color: var(--c, var(--text));
+  margin-bottom: 0.2rem;
+}
+
+.cat-desc {
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.cat-ejemplos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+}
+
+.cat-ej {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--muted);
+}
+
+/* Panel de detalle en Explora */
+.explora-sidebar {
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detalle-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.2rem;
+  min-height: 200px;
+}
+
+.detalle-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  color: var(--muted2);
+  font-size: 0.82rem;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.detalle-vacio .hint-icon {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+.detalle-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.detalle-color-bar {
+  width: 4px;
+  height: 2rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.detalle-nombre {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.detalle-tipo {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.1rem;
+}
+
+.detalle-section {
+  margin-bottom: 0.9rem;
+}
+
+.detalle-section-label {
+  font-size: 0.63rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 0.4rem;
+}
+
+.detalle-def {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+}
+
+.detalle-ejemplo {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+
+.detalle-error {
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.75rem;
+  color: rgba(251,191,36,0.85);
+  line-height: 1.5;
+}
+
+/* Relaciones */
+.relaciones-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.2rem;
+}
+
+.relaciones-box h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
+}
+
+.rel-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.rel-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rel-tag:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+}
+
+/* ── YAML MODAL ── */
+.yaml-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.yaml-modal.visible { display: flex; }
+
+.yaml-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.yaml-modal-inner h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.yaml-modal-inner p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.yaml-textarea {
+  width: 100%;
+  height: 220px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 0.8rem;
+}
+
+.yaml-textarea:focus {
+  border-color: var(--green-lab);
+}
+
+.yaml-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.btn-modal {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-modal.primary {
+  background: var(--green-lab);
+  color: var(--bg);
+}
+
+.btn-modal.secondary {
+  background: var(--surface2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.btn-modal:hover { filter: brightness(1.1); }
+
+.yaml-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.6rem;
+  display: none;
+}
+
+.yaml-status.ok {
+  background: rgba(74,222,128,0.08);
+  color: var(--green-lab);
+  display: block;
+}
+
+.yaml-status.error {
+  background: rgba(248,113,113,0.08);
+  color: #F87171;
+  display: block;
+}
+
+/* ── LEYENDA INLINE (bajo la oración, ancho completo) ── */
+.leyenda-inline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 1.2rem;
+  margin-top: 0.5rem;
+}
+
+.leyenda-label {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 0.6rem;
+}
+
+.leyenda-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.3rem 1.5rem;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+
+.leyenda-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Botón saltar/ayuda */
+.paso-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-saltar {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-saltar:hover {
+  border-color: rgba(251,191,36,0.4);
+  color: rgba(251,191,36,0.8);
+}
+
+/* Tabla de convenciones */
+.convenciones-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.1rem;
+}
+
+.convenciones-box h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+  color: var(--muted);
+}
+
+.conv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+}
+
+.conv-table tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.conv-table tr:last-child {
+  border-bottom: none;
+}
+
+.conv-table td {
+  padding: 0.35rem 0.4rem;
+  line-height: 1.4;
+}
+
+.conv-table td:first-child {
+  font-family: 'DM Mono', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  white-space: nowrap;
+  padding-right: 0.7rem;
+  width: 1%;
+}
+
+.conv-group {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  padding: 0.5rem 0.4rem 0.2rem;
+  grid-column: 1 / -1;
+}
+
+.header-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 0;
+}
+
+.btn-about {
+  font-family: 'DM Mono', monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-about:hover {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  background: rgba(217,70,239,0.08);
+}
+
+/* ── MODAL ABOUT ── */
+.about-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  align-items: flex-start;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+  padding: 2rem 1rem;
+}
+
+.about-modal.visible { display: flex; }
+
+.about-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 680px;
+  position: relative;
+}
+
+.about-close {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.about-close:hover { color: var(--text); }
+
+.about-modal-inner h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.about-modal-inner .about-tagline {
+  font-size: 0.75rem;
+  color: var(--magenta);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.about-section {
+  margin-bottom: 1.6rem;
+}
+
+.about-section h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.about-section p {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin-bottom: 0.6rem;
+}
+
+.about-section ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.about-section ul li {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.about-section ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--magenta);
+  font-size: 0.7rem;
+}
+
+.about-code {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+  margin-top: 0.6rem;
+}
+
+.about-code .yaml-key { color: var(--adverbio); }
+.about-code .yaml-val { color: var(--green-lab); }
+.about-code .yaml-comment { color: var(--muted); font-style: italic; }
+
+/* Modal solución */
+.solucion-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.solucion-modal.visible { display: flex; }
+
+.solucion-modal-inner {
+  background: var(--surface);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 480px;
+}
+
+.solucion-modal-inner h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  color: rgba(251,191,36,0.9);
+}
+
+.solucion-modal-inner .solucion-aviso {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.solucion-respuesta {
+  background: rgba(251,191,36,0.07);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: rgba(251,191,36,0.95);
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.solucion-explicacion {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.solucion-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .analiza-layout,
+  .explora-layout { grid-template-columns: 1fr; padding: 1rem; }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .analiza-sidebar, .explora-sidebar { position: static; }
+  header { padding: 1rem; }
+  .main-tabs { padding: 0 1rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tagline">
+    HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS
+  </div>
+  <div class="header-top-actions">
+    <a class="btn-inicio" href="../index.html">← happypuking-lab</a>
+  </div>
+  <div class="header-title">Morfosintaxis</div>
+  <div class="header-subtitle">Explora la lengua como sistema · Analiza oraciones paso a paso</div>
+</header>
+
+<div class="main-tabs">
+  <button class="main-tab active" onclick="setTab('analiza')">Analiza</button>
+  <button class="main-tab" onclick="setTab('explora')">Explora</button>
+</div>
+
+<!-- ══════════ PESTAÑA ANALIZA ══════════ -->
+<div class="tab-content active" id="tab-analiza">
+  <div class="analiza-layout">
+    <div class="analiza-main">
+      <div class="oracion-selector" id="oracion-selector"></div>
+      <div style="margin-top:-0.6rem;margin-bottom:1rem;display:flex;gap:0.5rem;align-items:center">
+        <button class="btn-yaml" onclick="abrirYamlModal()">
+          <span>⚙</span> Cargar mis oraciones
+        </button>
+        <button class="btn-about" onclick="abrirAbout()" title="Instrucciones y formato YAML">?</button>
+      </div>
+
+      <div class="oracion-box" id="oracion-box">
+        <div class="oracion-nota" id="oracion-nota"></div>
+        <div class="tokens-container" id="tokens-container"></div>
+        <div class="paso-box" id="paso-box">
+          <div class="paso-numero" id="paso-numero"></div>
+          <div class="paso-contenido">
+            <div class="paso-busca" id="paso-busca"></div>
+            <div class="paso-pista" id="paso-pista"></div>
+            <div class="paso-actions">
+              <button class="btn-confirmar" id="btn-confirmar" onclick="confirmarPaso()" disabled>
+                Confirmar selección
+              </button>
+              <button class="btn-saltar" onclick="mostrarSolucion()">
+                ¿Me ayudas?
+              </button>
+            </div>
+            <div class="feedback-box" id="feedback-box"></div>
+          </div>
+        </div>
+        <div class="completado-banner" id="completado-banner">
+          <h3>✓ Análisis completado</h3>
+          <p id="completado-msg"></p>
+          <button class="btn-siguiente" id="btn-siguiente" onclick="siguienteOracion()">
+            Siguiente oración →
+          </button>
+        </div>
+      </div>
+
+      <!-- Leyenda a ancho completo bajo la oración -->
+      <div class="leyenda-inline">
+        <div class="leyenda-label">Categorías morfológicas</div>
+        <div class="leyenda-inline-grid" id="leyenda-grid"></div>
+      </div>
+    </div>
+
+    <div class="analiza-sidebar">
+      <div class="sidebar-box" id="trampa-box" style="display:none">
+        <div class="trampa-box">
+          <span class="trampa-label">⚠ Trampa frecuente</span>
+          <span id="trampa-texto"></span>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <h4>Análisis parcial</h4>
+        <div class="resumen-grid" id="resumen-grid">
+          <div style="font-size:0.75rem;color:var(--muted);font-style:italic">Aquí aparecerán los elementos identificados</div>
+        </div>
+      </div>
+
+      <div class="convenciones-box">
+        <h4>Convenciones</h4>
+        <table class="conv-table">
+          <tr><td colspan="2" class="conv-group">Sintagmas</td></tr>
+          <tr><td style="color:var(--sustantivo)">SN</td><td>Sintagma Nominal</td></tr>
+          <tr><td style="color:var(--verbo)">SV</td><td>Sintagma Verbal</td></tr>
+          <tr><td style="color:var(--adjetivo)">SAdj</td><td>Sintagma Adjetival</td></tr>
+          <tr><td style="color:var(--adverbio)">SAdv</td><td>Sintagma Adverbial</td></tr>
+          <tr><td style="color:var(--preposicion)">SPrep</td><td>Sintagma Preposicional</td></tr>
+          <tr><td colspan="2" class="conv-group">Funciones del predicado</td></tr>
+          <tr><td style="color:var(--cd)">CD</td><td>Complemento Directo</td></tr>
+          <tr><td style="color:var(--ci)">CI</td><td>Complemento Indirecto</td></tr>
+          <tr><td style="color:var(--cc)">CC</td><td>Complemento Circunstancial</td></tr>
+          <tr><td style="color:var(--cc)">CCT/CCL/CCM</td><td>Tiempo / Lugar / Modo</td></tr>
+          <tr><td style="color:var(--creg)">CRég</td><td>Complemento de Régimen</td></tr>
+          <tr><td style="color:var(--cpred)">CPred</td><td>Complemento Predicativo</td></tr>
+          <tr><td style="color:var(--cag)">CAg</td><td>Complemento Agente</td></tr>
+          <tr><td style="color:var(--atributo)">Atr</td><td>Atributo</td></tr>
+          <tr><td colspan="2" class="conv-group">Complementos del nombre</td></tr>
+          <tr><td style="color:var(--cn)">CN</td><td>Complemento del Nombre</td></tr>
+          <tr><td colspan="2" class="conv-group">Oraciones subordinadas</td></tr>
+          <tr><td style="color:var(--conjuncion)">Sub. Sust.</td><td>Subordinada Sustantiva</td></tr>
+          <tr><td style="color:var(--pronombre)">Sub. Adj.</td><td>Subordinada Adjetiva</td></tr>
+          <tr><td style="color:var(--adverbio)">Sub. Adv.</td><td>Subordinada Adverbial</td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL SOLUCIÓN ══════════ -->
+<div class="solucion-modal" id="solucion-modal">
+  <div class="solucion-modal-inner">
+    <h3>Pista completa</h3>
+    <p class="solucion-aviso">La respuesta correcta para este paso es:</p>
+    <div class="solucion-respuesta" id="solucion-respuesta"></div>
+    <p class="solucion-explicacion" id="solucion-explicacion"></p>
+    <div class="solucion-modal-actions">
+      <button class="btn-modal secondary" onclick="cerrarSolucion()">Cerrar</button>
+      <button class="btn-modal primary" onclick="aplicarSolucionYAvanzar()">Entendido, siguiente paso →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PESTAÑA EXPLORA ══════════ -->
+<div class="tab-content" id="tab-explora">
+  <div class="explora-layout">
+    <div class="explora-main">
+      <div class="explora-toggle">
+        <button class="toggle-btn active" onclick="setExploraMode('morfologia')">Morfología</button>
+        <button class="toggle-btn" onclick="setExploraMode('sintaxis')">Sintaxis</button>
+      </div>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+
+    <div class="explora-sidebar">
+      <div class="detalle-box" id="detalle-box">
+        <div class="detalle-vacio">
+          <div class="hint-icon">↖</div>
+          <div>Selecciona una categoría o función para ver su definición, ejemplos y errores frecuentes</div>
+        </div>
+      </div>
+      <div class="relaciones-box" id="relaciones-box" style="display:none">
+        <h4>Relaciones con otras categorías</h4>
+        <div class="rel-tag-list" id="rel-tags"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ABOUT MODAL ══════════ -->
+<div class="about-modal" id="about-modal">
+  <div class="about-modal-inner">
+    <button class="about-close" onclick="cerrarAbout()">✕ cerrar</button>
+    <h2>Morfosintaxis ESO</h2>
+    <div class="about-tagline">hAppYpUkIng Lab · Instrucciones y documentación</div>
+
+    <div class="about-section">
+      <p>Dos pestañas para explorar el análisis morfosintáctico como sistema:</p>
+    </div>
+
+    <div class="about-section">
+      <h3>Pestaña Analiza</h3>
+      <p>Guía paso a paso para analizar oraciones morfológica y sintácticamente. Cada paso te indica qué buscar y te da una pista contextual.</p>
+      <ul>
+        <li>Selecciona una oración con los botones superiores (N1–N4 indica el nivel de dificultad).</li>
+        <li>Haz clic en las palabras de la oración para seleccionarlas.</li>
+        <li>Pulsa <strong>Confirmar selección</strong> cuando hayas marcado las palabras del elemento que se pide.</li>
+        <li>¿Te atascaste? Pulsa <strong>¿Me ayudas?</strong> para ver la respuesta y avanzar al siguiente paso.</li>
+        <li>Los elementos identificados quedan marcados con su color de categoría y su etiqueta de función.</li>
+        <li>Usa <strong>Cargar mis oraciones</strong> para trabajar con oraciones propias en formato YAML.</li>
+      </ul>
+    </div>
+
+    <div class="about-section">
+      <h3>Pestaña Explora</h3>
+      <p>Mapa visual de relaciones entre categorías morfológicas y funciones sintácticas. Úsalo para entender cómo se conectan las piezas del sistema.</p>
+      <ul>
+        <li>Alterna entre <strong>Morfología</strong> y <strong>Sintaxis</strong> con el toggle superior.</li>
+        <li>Haz clic en cualquier tarjeta para ver su definición, propiedades, ejemplos y el error frecuente asociado.</li>
+        <li>Las tarjetas relacionadas se iluminan. Haz clic en las etiquetas de relación para saltar entre categorías y funciones.</li>
+      </ul>
+    </div>
+
+    <div class="about-section">
+      <h3>Formato YAML para oraciones propias</h3>
+      <p style="margin-bottom:0.8rem;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:0.7rem 0.9rem">💡 <strong>Tip:</strong> El formato YAML es ideal para generarlo con un chatbot. Usa este prompt:</p>
+      <div class="about-code" style="margin-bottom:1rem"><span class="yaml-comment">Genera X oraciones nuevas para este formato YAML de análisis morfosintáctico.</span>
+<span class="yaml-comment">Reglas:</span>
+<span class="yaml-comment">- Usa frases totalmente distintas entre sí.</span>
+<span class="yaml-comment">- Longitud variable (3–10 palabras).</span>
+<span class="yaml-comment">- Cada palabra debe aparecer en tokens.</span>
+<span class="yaml-comment">- Todos los tokens deben aparecer en al menos un paso.</span>
+<span class="yaml-comment">- Actualiza siempre tokens_correctos, feedback_ok y feedback_error.</span>
+<span class="yaml-comment">- Mantén exactamente la estructura YAML.</span>
+<span class="yaml-comment">Niveles:</span>
+<span class="yaml-comment">1 = muy simple</span>
+<span class="yaml-comment">2 = simple con CD o CC</span>
+<span class="yaml-comment">3 = estructuras un poco más complejas</span>
+<span class="yaml-comment">4 = subordinadas o estructuras complejas</span>
+<span class="yaml-comment">Devuelve solo YAML listo para pegar.</span></div>
+      <p>Puedes personalizar la guía de resolución con tus propias frases. Descarga el YAML plantilla desde <a href="https://github.com/V0raOnline/happypuking-lab" target="_blank" style="color:var(--green-lab);text-decoration:none;font-weight:700">github.com/V0raOnline/happypuking-lab</a> y edítalo siguiendo esta estructura:</p>
+      <div class="about-code"><span class="yaml-key">oraciones</span>:
+  - <span class="yaml-key">id</span>: <span class="yaml-val">1</span>              <span class="yaml-comment"># un id único por frase</span>
+    <span class="yaml-key">nivel</span>: <span class="yaml-val">1</span>           <span class="yaml-comment"># nivel de dificultad (1–4)</span>
+    <span class="yaml-key">texto</span>: <span class="yaml-val">"Mi perro compró un libro."</span>
+    <span class="yaml-key">nota</span>: <span class="yaml-val">"Instrucciones básicas sobre la frase."</span>
+    <span class="yaml-key">trampa</span>: <span class="yaml-val">"En qué suelen fallar habitualmente."</span>
+
+    <span class="yaml-key">tokens</span>:            <span class="yaml-comment"># un token por palabra</span>
+      - <span class="yaml-key">palabra</span>: <span class="yaml-val">"Mi"</span>
+        <span class="yaml-key">categoria</span>: <span class="yaml-val">determinante</span>
+        <span class="yaml-key">subtipo</span>: <span class="yaml-val">posesivo</span>    <span class="yaml-comment"># opcional</span>
+        <span class="yaml-key">funcion</span>: <span class="yaml-val">determinante</span>
+        <span class="yaml-key">sintagma</span>: <span class="yaml-val">SN-sujeto</span>
+
+    <span class="yaml-key">pasos</span>:             <span class="yaml-comment"># uno por unidad de análisis</span>
+      - <span class="yaml-key">id</span>: <span class="yaml-val">1</span>
+        <span class="yaml-key">busca</span>: <span class="yaml-val">verbo</span>
+        <span class="yaml-key">pista</span>: <span class="yaml-val">"¿Qué acción ocurre? Busca la palabra que indica lo que se hace."</span>
+        <span class="yaml-key">tokens_correctos</span>: [<span class="yaml-val">"compró"</span>]
+        <span class="yaml-key">feedback_ok</span>: <span class="yaml-val">"Perfecto. 'Compró' es el verbo: núcleo del predicado verbal."</span>
+        <span class="yaml-key">feedback_error</span>: <span class="yaml-val">"Piensa en qué acción describe la oración. ¿Quién hace qué?"</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ YAML MODAL ══════════ -->
+<div class="yaml-modal" id="yaml-modal">
+  <div class="yaml-modal-inner">
+    <h3>Cargar oraciones propias</h3>
+    <p>Pega aquí el contenido de tu archivo YAML con el formato del banco de oraciones incluido en el repositorio. La estructura debe seguir el mismo esquema para funcionar correctamente.</p>
+    <div class="yaml-status" id="yaml-status"></div>
+    <textarea class="yaml-textarea" id="yaml-textarea" placeholder="Pega aquí el contenido de tu YAML..."></textarea>
+    <div class="yaml-modal-actions">
+      <button class="btn-modal secondary" onclick="cerrarYamlModal()">Cancelar</button>
+      <button class="btn-modal primary" onclick="cargarYamlPersonalizado()">Cargar oraciones</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-text">
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>
+</footer>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+
+<script>
+// ══════════════════════════════════════════════
+// DATOS
+// ══════════════════════════════════════════════
+
+const CATEGORIAS_COLOR = {
+  sustantivo: 'var(--sustantivo)',
+  verbo: 'var(--verbo)',
+  adjetivo: 'var(--adjetivo)',
+  determinante: 'var(--determinante)',
+  pronombre: 'var(--pronombre)',
+  adverbio: 'var(--adverbio)',
+  preposicion: 'var(--preposicion)',
+  conjuncion: 'var(--conjuncion)',
+  interjeccion: 'var(--interjeccion)',
+};
+
+const FUNCIONES_COLOR = {
+  'nucleo-sujeto': 'var(--sujeto)',
+  'sujeto': 'var(--sujeto)',
+  'nucleo-SV': 'var(--predicado)',
+  'nucleo-SV-principal': 'var(--predicado)',
+  'nucleo-SV1': 'var(--predicado)',
+  'nucleo-SV2': 'var(--predicado)',
+  'nucleo-SV-subord': 'var(--predicado)',
+  'nucleo-SV-concesiva': 'var(--predicado)',
+  'nucleo-SV-causal': 'var(--predicado)',
+  'nucleo-SV-subord-adj': 'var(--predicado)',
+  'nucleo-SV-subord-sust': 'var(--predicado)',
+  'nucleo-SV-subord2': 'var(--predicado)',
+  'nucleo-CD': 'var(--cd)',
+  'nucleo-CI': 'var(--ci)',
+  'CI-duplicado': 'var(--ci)',
+  'nucleo-CCL': 'var(--cc)',
+  'nucleo-CCT': 'var(--cc)',
+  'nucleo-CCM': 'var(--cc)',
+  'CCT': 'var(--cc)',
+  'CCL': 'var(--cc)',
+  'CCM': 'var(--cc)',
+  'CCN': 'var(--cc)',
+  'nucleo-atributo': 'var(--atributo)',
+  'cuantificador-atributo': 'var(--atributo)',
+  'CPred-sujeto': 'var(--cpred)',
+  'nucleo-CReg': 'var(--creg)',
+  'nucleo-CAg': 'var(--cag)',
+};
+
+const DATOS_MORFOLOGIA = [
+  {
+    id: 'sustantivo',
+    nombre: 'Sustantivo',
+    color: 'var(--sustantivo)',
+    tipo: 'morfologia',
+    variable: true,
+    definicion: 'Nombra personas, animales, cosas, lugares, ideas o sentimientos. Es el núcleo del sintagma nominal.',
+    propiedades: 'Género (masc/fem), número (sg/pl), clasificación (común/propio, concreto/abstracto, contable/incontable, colectivo/individual).',
+    ejemplos: ['La <b>mesa</b> está rota.', 'El <b>amor</b> es invisible.', '<b>Madrid</b> es enorme.'],
+    error: 'Confundir sustantivos abstractos con adjetivos. "La <i>tristeza</i>" es sustantivo, "el chico <i>triste</i>" es adjetivo.',
+    funciones_posibles: ['nucleo-sujeto', 'nucleo-CD', 'nucleo-CI', 'nucleo-CC', 'nucleo-atributo', 'CN', 'nucleo-CReg'],
+    ejemplos_ej: ['mesa', 'amor', 'Madrid', 'libro'],
+    relacionadas: ['determinante', 'adjetivo', 'pronombre'],
+  },
+  {
+    id: 'verbo',
+    nombre: 'Verbo',
+    color: 'var(--verbo)',
+    tipo: 'morfologia',
+    variable: true,
+    definicion: 'Expresa acciones, estados o procesos. Es el núcleo del sintagma verbal y el centro organizador de la oración.',
+    propiedades: 'Conjugación, persona, número, tiempo, modo, aspecto. Puede ser copulativo (ser, estar, parecer), transitivo, intransitivo, pronominal o impersonal.',
+    ejemplos: ['El gato <b>duerme</b>.', 'María <b>compró</b> flores.', 'El cielo <b>parece</b> azul.'],
+    error: 'No identificar la perífrasis verbal como unidad: "estaba <i>estudiando</i>" son dos piezas de un solo verbo. Confundir el participio de una pasiva con un adjetivo.',
+    funciones_posibles: ['nucleo-SV', 'nucleo-SV-principal', 'auxiliar-pasiva'],
+    ejemplos_ej: ['corre', 'ha comido', 'será visto', 'quejarse'],
+    relacionadas: ['adverbio', 'sustantivo', 'pronombre', 'conjuncion'],
+  },
+  {
+    id: 'adjetivo',
+    nombre: 'Adjetivo',
+    color: 'var(--adjetivo)',
+    tipo: 'morfologia',
+    variable: true,
+    definicion: 'Califica o clasifica al sustantivo. Concuerda con él en género y número. Puede ser calificativo, demostrativo, posesivo, numeral o indefinido.',
+    propiedades: 'Género, número (concuerda con el sustantivo). Grados: positivo, comparativo, superlativo.',
+    ejemplos: ['Una casa <b>pequeña</b>.', 'Llegaron <b>agotados</b>.', 'El <b>primer</b> día.'],
+    error: 'Confundir adjetivo con adverbio cuando modifica al verbo: "corre <i>rápido</i>" (adverbio) vs "es un corredor <i>rápido</i>" (adjetivo). Confundir CPred con CCM: si concuerda con el sujeto, es CPred.',
+    funciones_posibles: ['CN', 'atributo', 'CPred-sujeto', 'CPred-CD'],
+    ejemplos_ej: ['bonito', 'pequeño', 'agotado', 'primero'],
+    relacionadas: ['sustantivo', 'adverbio', 'determinante'],
+  },
+  {
+    id: 'determinante',
+    nombre: 'Determinante',
+    color: 'var(--determinante)',
+    tipo: 'morfologia',
+    variable: true,
+    definicion: 'Acompaña al sustantivo y lo presenta o delimita. Siempre va junto a un sustantivo. Sin sustantivo al lado, pasa a ser pronombre.',
+    propiedades: 'Tipos: artículo (el/un), demostrativo (este/ese/aquel), posesivo (mi/tu/su), numeral (dos/primero), indefinido (algún/mucho), interrogativo/exclamativo (qué/cuánto).',
+    ejemplos: ['<b>Esta</b> mesa es mía.', 'Dame <b>tres</b> libros.', '<b>Mis</b> amigos llegaron.'],
+    error: '¡La confusión más frecuente de la ESO! Si la palabra va ANTES del sustantivo y lo acompaña → determinante. Si va SOLA, en lugar del sustantivo → pronombre. "Este libro" (det.) vs "Este me gusta" (pron.).',
+    funciones_posibles: ['determinante'],
+    ejemplos_ej: ['el', 'esta', 'mis', 'tres', 'algún'],
+    relacionadas: ['pronombre', 'sustantivo'],
+  },
+  {
+    id: 'pronombre',
+    nombre: 'Pronombre',
+    color: 'var(--pronombre)',
+    tipo: 'morfologia',
+    variable: true,
+    definicion: 'Sustituye al sustantivo o a todo un sintagma nominal. Funciona como el sustantivo: puede ser sujeto, CD, CI, etc.',
+    propiedades: 'Tipos: personal (yo/me/lo), demostrativo (este/ese), posesivo (mío/tuyo), relativo (que/quien), indefinido (alguien/nadie), interrogativo (qué/quién).',
+    ejemplos: ['<b>Ella</b> llegó tarde.', '<b>Me</b> lo dijo.', 'El libro <b>que</b> leí.'],
+    error: 'Confundir pronombres átonos con determinantes. "Me lo dio" → "me" es CI y "lo" es CD, ambos pronombres. Los pronombres relativos ("que", "quien") tienen una función sintáctica DENTRO de su propia proposición.',
+    funciones_posibles: ['sujeto', 'CD', 'CI', 'CN', 'CReg', 'sujeto-subord-adj', 'nexo-CN'],
+    ejemplos_ej: ['yo', 'me', 'lo', 'este', 'que', 'quien'],
+    relacionadas: ['determinante', 'sustantivo', 'verbo'],
+  },
+  {
+    id: 'adverbio',
+    nombre: 'Adverbio',
+    color: 'var(--adverbio)',
+    tipo: 'morfologia',
+    variable: false,
+    definicion: 'Modifica al verbo, al adjetivo o a otro adverbio. Es invariable: no cambia de género ni número.',
+    propiedades: 'Tipos: modo (bien/mal), tiempo (ayer/hoy), lugar (aquí/allí), cantidad (muy/bastante), afirmación, negación, duda.',
+    ejemplos: ['Corre <b>rápidamente</b>.', '<b>Bastante</b> difícil.', '<b>No</b> vino.'],
+    error: 'Confundir "bastante", "mucho", "poco" que pueden ser adverbio (modifican adjetivo/verbo) o determinante/pronombre (acompañan/sustituyen sustantivo). "Bastante <i>difícil</i>" → adverbio. "Bastante <i>gente</i>" → determinante.',
+    funciones_posibles: ['CCM', 'CCT', 'CCL', 'CCN', 'cuantificador-atributo', 'cuantificador-adjetivo', 'modificador-adverbio'],
+    ejemplos_ej: ['bien', 'ayer', 'aquí', 'muy', 'bastante', 'no'],
+    relacionadas: ['verbo', 'adjetivo', 'determinante'],
+  },
+  {
+    id: 'preposicion',
+    nombre: 'Preposición',
+    color: 'var(--preposicion)',
+    tipo: 'morfologia',
+    variable: false,
+    definicion: 'Palabra invariable que encabeza un sintagma preposicional y establece una relación entre este y el elemento que lo rige.',
+    propiedades: 'Invariable. Formas: a, ante, bajo, con, contra, de, desde, durante, en, entre, hacia, hasta, mediante, para, por, según, sin, sobre, tras, versus. Contracciones: al (a+el), del (de+el).',
+    ejemplos: ['Voy <b>a</b> Madrid.', 'Habla <b>de</b> todo.', 'Confía <b>en</b> ella.'],
+    error: 'Confundir el sintagma preposicional que actúa como CC con el que actúa como CRég. Si la preposición es exigida por el verbo y no puede cambiarse ni suprimirse → es CRég. Si es opcional y circunstancial → es CC.',
+    funciones_posibles: ['nexo-CC', 'nexo-CI', 'nexo-CReg', 'nexo-CAg', 'nexo-CN', 'nexo-subord'],
+    ejemplos_ej: ['a', 'de', 'en', 'por', 'para', 'con'],
+    relacionadas: ['sustantivo', 'verbo', 'conjuncion'],
+  },
+  {
+    id: 'conjuncion',
+    nombre: 'Conjunción',
+    color: 'var(--conjuncion)',
+    tipo: 'morfologia',
+    variable: false,
+    definicion: 'Palabra invariable que une oraciones o elementos de la misma categoría. Puede ser coordinante o subordinante.',
+    propiedades: 'Coordinantes: copulativas (y/e/ni), adversativas (pero/sino/mas), disyuntivas (o/u), distributivas (ya...ya), explicativas (es decir/o sea). Subordinantes: que, si, porque, aunque, cuando, donde, como, para que, etc.',
+    ejemplos: ['Pan <b>y</b> agua.', 'Llegó <b>pero</b> tarde.', 'Dijo <b>que</b> vendría.'],
+    error: 'Confundir el "que" conjunción (introduce una subordinada sustantiva) con el "que" pronombre relativo (sustituye a un antecedente). "Dijo <i>que</i> vendría" → conjunción. "El libro <i>que</i> leí" → pronombre relativo (= el cual).',
+    funciones_posibles: ['nexo-coordinacion', 'nexo-subord-sustantiva', 'nexo-subord-adjetiva', 'nexo-subord-adverbial'],
+    ejemplos_ej: ['y', 'pero', 'que', 'aunque', 'porque', 'si'],
+    relacionadas: ['verbo', 'pronombre'],
+  },
+  {
+    id: 'interjeccion',
+    nombre: 'Interjección',
+    color: 'var(--interjeccion)',
+    tipo: 'morfologia',
+    variable: false,
+    definicion: 'Expresión invariable que manifiesta emociones, estados de ánimo o sirve para llamar la atención. Generalmente funciona como enunciado independiente.',
+    propiedades: 'Invariable. Pueden ser propias (¡ay!, ¡oh!, ¡uf!) o impropias (¡vaya!, ¡fuera!, ¡ojo!).',
+    ejemplos: ['<b>¡Ay!</b>, me duele.', '<b>¡Vaya</b> sorpresa!', '<b>¡Ojo!</b>, que hay un escalón.'],
+    error: 'Confundir interjecciones impropias con verbos o adjetivos usados expresivamente. "¡Fuera!" puede ser interjección en un contexto expresivo aunque sea morfológicamente un adverbio.',
+    funciones_posibles: ['enunciado-independiente'],
+    ejemplos_ej: ['¡ay!', '¡oh!', '¡uf!', '¡vaya!'],
+    relacionadas: [],
+  },
+];
+
+const DATOS_SINTAXIS = [
+  {
+    id: 'sujeto',
+    nombre: 'Sujeto',
+    color: 'var(--sujeto)',
+    tipo: 'sintaxis',
+    definicion: 'Sintagma nominal que concuerda en persona y número con el verbo. Puede ser expreso, elíptico o pospuesto. No lleva preposición.',
+    prueba: 'Cambia el sujeto al plural: si el verbo cambia también, has encontrado el sujeto. No uses "¿quién?" como única prueba.',
+    ejemplos: ['<b>El perro</b> ladra.', 'Llegaron <b>mis amigos</b>.', '<b>[Yo]</b> no lo sabía.'],
+    error: '1) Asumir que el sujeto va siempre al principio. 2) Usar "¿quién?" como única prueba (falla en pasivas e impersonales). 3) En verbos tipo "gustar": "A María le gusta el cine" → sujeto = "el cine", no "a María".',
+    categorias_posibles: ['sustantivo', 'pronombre', 'conjuncion'],
+    relacionadas: ['cd', 'ci', 'atributo', 'predicado'],
+  },
+  {
+    id: 'predicado',
+    nombre: 'Predicado',
+    color: 'var(--predicado)',
+    tipo: 'sintaxis',
+    definicion: 'Sintagma verbal cuyo núcleo es el verbo. Puede ser nominal (con verbo copulativo + atributo) o verbal (con cualquier otro verbo).',
+    prueba: 'Todo lo que no es sujeto es predicado. En el predicado nominal el núcleo verbal es ser/estar/parecer.',
+    ejemplos: ['El niño <b>come rápido</b>.', 'María <b>es médica</b>.', 'Los alumnos <b>estudiaron mucho</b>.'],
+    error: 'Confundir predicado nominal con verbal. "Está en casa" → verbal (está = verbo pleno de estado). "Está cansado" → nominal (está es copulativo, "cansado" es atributo).',
+    categorias_posibles: ['verbo', 'adjetivo', 'sustantivo', 'adverbio'],
+    relacionadas: ['sujeto', 'cd', 'ci', 'atributo', 'cc'],
+  },
+  {
+    id: 'cd',
+    nombre: 'Complemento Directo',
+    color: 'var(--cd)',
+    tipo: 'sintaxis',
+    definicion: 'Complemento verbal que recibe directamente la acción del verbo transitivo. Se puede sustituir por los pronombres "lo/la/los/las".',
+    prueba: '1) Sustitución: ¿se puede reemplazar por "lo/la/los/las"? 2) Transformación a pasiva: el CD se convierte en sujeto paciente.',
+    ejemplos: ['Compró <b>un libro</b> → lo compró.', 'Vi <b>a Carmen</b> → la vi.', 'Comieron <b>la tarta</b> → fue comida.'],
+    error: 'CD con preposición "a" personal: "Recogió a Carmen" → CD (porque se sustituye por "la"). No confundir con CI: el CI responde a "¿a quién?" + persona que recibe el beneficio/daño, y se sustituye por "le/les".',
+    categorias_posibles: ['sustantivo', 'pronombre', 'conjuncion'],
+    relacionadas: ['sujeto', 'ci', 'cpred', 'predicado'],
+  },
+  {
+    id: 'ci',
+    nombre: 'Complemento Indirecto',
+    color: 'var(--ci)',
+    tipo: 'sintaxis',
+    definicion: 'Complemento que indica la persona o cosa que recibe el daño o el beneficio de la acción verbal. Se sustituye por "le/les".',
+    prueba: 'Sustitución por "le" (sg) o "les" (pl). Puede ir duplicado: "A María le dieron el premio" → "le" y "a María" son ambos CI.',
+    ejemplos: ['Dio flores <b>a su madre</b> → le dio flores.', '<b>Le</b> escribí una carta.', 'A ellos <b>les</b> encanta el fútbol.'],
+    error: 'Confundir CI con CD cuando hay "a" de persona: la prueba de sustitución resuelve la duda. CD → lo/la. CI → le/les. En "Vi a Carmen" → "la vi" (CD). En "Di un libro a Carmen" → "le di un libro" (CI).',
+    categorias_posibles: ['sustantivo', 'pronombre'],
+    relacionadas: ['cd', 'sujeto', 'predicado'],
+  },
+  {
+    id: 'cc',
+    nombre: 'Complemento Circunstancial',
+    color: 'var(--cc)',
+    tipo: 'sintaxis',
+    definicion: 'Complemento que expresa las circunstancias de la acción: tiempo, lugar, modo, causa, finalidad, compañía, instrumento, cantidad. Es opcional y puede suprimirse sin que la oración pierda sentido básico.',
+    prueba: 'Si se puede suprimir sin que el verbo quede incompleto → CC. Si no puede suprimirse → puede ser CRég.',
+    ejemplos: ['Llegó <b>ayer</b> (CCT).', 'Vive <b>en Madrid</b> (CCL).', 'Habla <b>con cariño</b> (CCM).'],
+    error: 'Confundir CC con CRég: si la preposición la exige el verbo y no puede cambiarse → CRég. "Confía en su amigo" → CRég (confiar en). "Vive en Madrid" → CCL (la preposición no la impone el verbo).',
+    categorias_posibles: ['sustantivo', 'adverbio', 'preposicion'],
+    relacionadas: ['creg', 'cd', 'predicado', 'sujeto'],
+  },
+  {
+    id: 'atributo',
+    nombre: 'Atributo',
+    color: 'var(--atributo)',
+    tipo: 'sintaxis',
+    definicion: 'Complemento exclusivo de los verbos copulativos (ser, estar, parecer). Indica una cualidad o estado del sujeto. Concuerda en género y número con el sujeto. Se sustituye por "lo".',
+    prueba: 'Solo aparece con ser/estar/parecer. Concuerda con el sujeto en género y número. Se puede sustituir por "lo": "está cansado → lo está".',
+    ejemplos: ['El cielo está <b>azul</b>.', 'María parece <b>cansada</b>.', 'Eso es <b>un problema</b>.'],
+    error: 'Confundir "está en casa" (predicativo verbal, "en casa" = CCL) con "está cansado" (predicativo nominal, "cansado" = atributo). La prueba: si se puede sustituir por "lo" → atributo.',
+    categorias_posibles: ['adjetivo', 'sustantivo', 'pronombre', 'adverbio'],
+    relacionadas: ['sujeto', 'cpred', 'predicado'],
+  },
+  {
+    id: 'cpred',
+    nombre: 'Complemento Predicativo',
+    color: 'var(--cpred)',
+    tipo: 'sintaxis',
+    definicion: 'Complemento que predica simultáneamente del sujeto o del CD y del verbo. Es un adjetivo que concuerda con el sujeto (o CD) y modifica también al verbo.',
+    prueba: 'Debe ser adjetivo que concuerde con el sujeto o CD, y la oración debe poder parafrasearse con "y además era/estaba": "Llegó cansado" → "Llegó y además estaba cansado".',
+    ejemplos: ['Llegaron <b>agotados</b>.', 'La encontraron <b>dormida</b>.', 'Bebió el agua <b>fría</b>.'],
+    error: 'Confundir CPred con CCM. Pregunta: ¿es un adjetivo que concuerda con el sujeto o CD? Si sí → CPred. Si es adverbio → CCM. "Llegó cansado" (CPred, adjetivo) vs "Llegó cansadamente" (CCM, adverbio).',
+    categorias_posibles: ['adjetivo'],
+    relacionadas: ['atributo', 'cc', 'sujeto', 'cd'],
+  },
+  {
+    id: 'creg',
+    nombre: 'Complemento de Régimen',
+    color: 'var(--creg)',
+    tipo: 'sintaxis',
+    definicion: 'Sintagma preposicional exigido por el verbo. La preposición viene impuesta por el propio verbo y no puede cambiarse ni suprimirse. También llamado suplemento.',
+    prueba: '1) ¿Puede suprimirse? Si su ausencia deja el verbo incompleto → CRég. 2) ¿La preposición viene fijada por el verbo? "Confiar en", "depender de", "quejarse de", "hablar de", "insistir en".',
+    ejemplos: ['Confía <b>en su equipo</b>.', 'Se quejó <b>del frío</b>.', 'Depende <b>de ti</b>.'],
+    error: 'Es el complemento que más se confunde con CC porque ambos son SP. La diferencia: en el CRég la preposición la exige el verbo; en el CC la preposición es libre. Prueba: cambia la preposición → si el significado cambia radicalmente o la oración es agramatical → CRég.',
+    categorias_posibles: ['preposicion', 'sustantivo', 'pronombre', 'conjuncion'],
+    relacionadas: ['cc', 'cd', 'predicado'],
+  },
+  {
+    id: 'cag',
+    nombre: 'Complemento Agente',
+    color: 'var(--cag)',
+    tipo: 'sintaxis',
+    definicion: 'Complemento exclusivo de las oraciones pasivas. Indica quién realiza la acción. Siempre va introducido por la preposición "por".',
+    prueba: 'Solo aparece en oraciones pasivas. Siempre con "por". Al transformar a activa, el CAg se convierte en sujeto.',
+    ejemplos: ['Fue escrito <b>por el autor</b>.', 'Fue inaugurado <b>por el alcalde</b>.'],
+    error: 'Confundir CAg con CC. La diferencia: CAg solo existe en pasiva, siempre con "por", y al pasar a activa se convierte en sujeto. El CC con "por" indica causa: "Lo hizo por amor" → CCausa, no CAg (no hay pasiva).',
+    categorias_posibles: ['preposicion', 'sustantivo'],
+    relacionadas: ['sujeto', 'predicado', 'cd'],
+  },
+];
+
+// ══════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════
+
+// YAML embebido por defecto (las 8 oraciones curadas)
+const YAML_DEFAULT = `oraciones:
+  - id: 1
+    nivel: 1
+    texto: "Mi hermano pequeño compró un libro ayer."
+    nota: "Oración básica — sujeto con CN adjetival, CD, CCT"
+    trampa: "Distinguir el determinante 'mi' del pronombre 'mí'."
+    tokens:
+      - {palabra: "Mi", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "hermano", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "pequeño", categoria: adjetivo, funcion: CN, sintagma: SN-sujeto}
+      - {palabra: "compró", categoria: verbo, funcion: nucleo-SV, sintagma: SV}
+      - {palabra: "un", categoria: determinante, funcion: determinante, sintagma: SN-CD}
+      - {palabra: "libro", categoria: sustantivo, funcion: nucleo-CD, sintagma: SN-CD}
+      - {palabra: "ayer", categoria: adverbio, funcion: CCT, sintagma: SAdv-CCT}
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "¿Qué acción ocurre en esta oración? Busca la palabra que indica lo que se hace."
+        tokens_correctos: ["compró"]
+        feedback_ok: "Perfecto. 'Compró' es el verbo: núcleo del predicado verbal."
+        feedback_error: "Piensa en qué acción describe la oración. ¿Quién hace qué?"
+      - id: 2
+        busca: sujeto
+        pista: "Pregúntale al verbo: ¿quién compró? El sujeto incluye el sustantivo y todo lo que lo acompaña."
+        tokens_correctos: ["Mi", "hermano", "pequeño"]
+        feedback_ok: "Exacto. El sujeto es todo el sintagma nominal: determinante + sustantivo + adjetivo."
+        feedback_error: "El sujeto no es solo 'hermano'. Incluye el determinante y el adjetivo que lo acompañan."
+      - id: 3
+        busca: CD
+        pista: "¿Qué compró? El complemento directo responde a esa pregunta. Prueba a sustituirlo por 'lo'."
+        tokens_correctos: ["un", "libro"]
+        feedback_ok: "Correcto. 'Un libro' es el CD — se puede sustituir por 'lo'."
+        feedback_error: "Pregúntale al verbo: ¿compró qué? ¿Puedes sustituirlo por 'lo'?"
+      - id: 4
+        busca: CCT
+        pista: "¿Cuándo ocurrió la acción?"
+        tokens_correctos: ["ayer"]
+        feedback_ok: "'Ayer' es el CCT. Los adverbios de tiempo suelen cumplir esta función."
+        feedback_error: "¿Cuándo compró el libro? Esa palabra indica el tiempo de la acción."
+
+  - id: 2
+    nivel: 1
+    texto: "La circulación por la carretera principal es muy peligrosa."
+    nota: "Predicado nominal — sujeto con CN preposicional, atributo con cuantificador"
+    trampa: "'Por la carretera principal' parece CCL pero es un CN dentro del sujeto."
+    tokens:
+      - {palabra: "La", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "circulación", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "por", categoria: preposicion, funcion: nexo-CN, sintagma: SPrep-CN}
+      - {palabra: "la", categoria: determinante, funcion: determinante, sintagma: SPrep-CN}
+      - {palabra: "carretera", categoria: sustantivo, funcion: nucleo-CN, sintagma: SPrep-CN}
+      - {palabra: "principal", categoria: adjetivo, funcion: CN, sintagma: SPrep-CN}
+      - {palabra: "es", categoria: verbo, funcion: nucleo-SV, sintagma: SV}
+      - {palabra: "muy", categoria: adverbio, funcion: cuantificador-atributo, sintagma: SAdj-atributo}
+      - {palabra: "peligrosa", categoria: adjetivo, funcion: nucleo-atributo, sintagma: SAdj-atributo}
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "¿Qué palabra une el sujeto con su característica? Busca el verbo copulativo."
+        tokens_correctos: ["es"]
+        feedback_ok: "Sí. 'Es' es un verbo copulativo: une el sujeto con el atributo."
+        feedback_error: "Busca 'ser', 'estar' o 'parecer'. El verbo copulativo actúa como nexo."
+      - id: 2
+        busca: sujeto
+        pista: "¿De qué se habla? El sujeto incluye todo su sintagma, aunque tenga complementos dentro."
+        tokens_correctos: ["La", "circulación", "por", "la", "carretera", "principal"]
+        feedback_ok: "Correcto. 'La circulación por la carretera principal' es el sujeto. 'Por la carretera principal' es un CN, no un CCL."
+        feedback_error: "Ojo: 'por la carretera principal' no es CCL, es un CN dentro del sujeto."
+      - id: 3
+        busca: atributo
+        pista: "En la oración copulativa, el atributo dice cómo es el sujeto. Incluye todo el sintagma adjetival."
+        tokens_correctos: ["muy", "peligrosa"]
+        feedback_ok: "Exacto. 'Muy peligrosa' es el atributo, incluyendo el adverbio cuantificador."
+        feedback_error: "El atributo no es solo 'peligrosa'. ¿Qué más acompaña al adjetivo?"
+
+  - id: 3
+    nivel: 2
+    texto: "A mis padres les encanta esa película estadounidense."
+    nota: "Verbo tipo 'gustar' — sujeto pospuesto, CI duplicado"
+    trampa: "Los alumnos identifican 'a mis padres' como sujeto. La concordancia revela que el sujeto es 'esa película'."
+    tokens:
+      - {palabra: "A", categoria: preposicion, funcion: nexo-CI, sintagma: SPrep-CI}
+      - {palabra: "mis", categoria: determinante, funcion: determinante, sintagma: SPrep-CI}
+      - {palabra: "padres", categoria: sustantivo, funcion: nucleo-CI, sintagma: SPrep-CI}
+      - {palabra: "les", categoria: pronombre, funcion: CI-duplicado, sintagma: SV}
+      - {palabra: "encanta", categoria: verbo, funcion: nucleo-SV, sintagma: SV}
+      - {palabra: "esa", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "película", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "estadounidense", categoria: adjetivo, funcion: CN, sintagma: SN-sujeto}
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "¿Qué acción o estado describe la oración?"
+        tokens_correctos: ["encanta"]
+        feedback_ok: "Correcto. 'Encanta' es el núcleo verbal."
+        feedback_error: "Busca la palabra que expresa el estado principal."
+      - id: 2
+        busca: sujeto
+        pista: "Prueba la concordancia: ¿'les encantan...' qué? Cambia a plural y comprueba qué concuerda con el verbo."
+        tokens_correctos: ["esa", "película", "estadounidense"]
+        feedback_ok: "Exacto. Sujeto pospuesto: 'esa película'. Prueba: 'les encantan esas películas' → el verbo concuerda con 'películas', no con 'padres'."
+        feedback_error: "¡Trampa clásica! 'A mis padres' no es el sujeto. Prueba la concordancia: ¿qué hace cambiar al verbo al plural?"
+      - id: 3
+        busca: CI
+        pista: "¿A quiénes les encanta? El CI puede aparecer duplicado: forma tónica + pronombre átono."
+        tokens_correctos: ["A", "mis", "padres", "les"]
+        feedback_ok: "Perfecto. CI duplicado: 'a mis padres' (tónico) y 'les' (átono). Ambos son CI."
+        feedback_error: "El CI responde a '¿a quién?'. Aparece dos veces: una explícita y una como pronombre."
+
+  - id: 4
+    nivel: 2
+    texto: "Las pruebas fueron analizadas cuidadosamente por los investigadores del laboratorio."
+    nota: "Oración pasiva — sujeto paciente, complemento agente, CCM"
+    trampa: "El sujeto paciente se puede confundir con CD. El complemento agente parece un CCL."
+    tokens:
+      - {palabra: "Las", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "pruebas", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "fueron", categoria: verbo, funcion: nucleo-SV, sintagma: SV}
+      - {palabra: "analizadas", categoria: verbo, funcion: nucleo-SV, sintagma: SV}
+      - {palabra: "cuidadosamente", categoria: adverbio, funcion: CCM, sintagma: SAdv-CCM}
+      - {palabra: "por", categoria: preposicion, funcion: nexo-CAg, sintagma: SPrep-CAg}
+      - {palabra: "los", categoria: determinante, funcion: determinante, sintagma: SPrep-CAg}
+      - {palabra: "investigadores", categoria: sustantivo, funcion: nucleo-CAg, sintagma: SPrep-CAg}
+      - {palabra: "del", categoria: preposicion, funcion: nexo-CN, sintagma: SPrep-CN}
+      - {palabra: "laboratorio", categoria: sustantivo, funcion: nucleo-CN, sintagma: SPrep-CN}
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "Esta oración tiene una perífrasis pasiva: 'ser + participio'. Busca ambas formas verbales."
+        tokens_correctos: ["fueron", "analizadas"]
+        feedback_ok: "Correcto. La perífrasis pasiva 'fueron analizadas' es el núcleo del predicado."
+        feedback_error: "En la pasiva el verbo tiene dos partes: auxiliar 'ser' conjugado + participio del verbo principal."
+      - id: 2
+        busca: sujeto
+        pista: "En una pasiva, el sujeto recibe la acción. ¿Qué cosa fue analizada? Ese es el sujeto paciente."
+        tokens_correctos: ["Las", "pruebas"]
+        feedback_ok: "Exacto. 'Las pruebas' es el sujeto paciente: recibe la acción y concuerda con el verbo."
+        feedback_error: "En la pasiva el sujeto no actúa, recibe la acción. ¿Qué fue analizado?"
+      - id: 3
+        busca: complemento-agente
+        pista: "¿Quién realizó la acción? En la pasiva, el agente va introducido por 'por'."
+        tokens_correctos: ["por", "los", "investigadores", "del", "laboratorio"]
+        feedback_ok: "Bien. El complemento agente es 'por los investigadores del laboratorio'. Exclusivo de la voz pasiva."
+        feedback_error: "En la pasiva, quien actúa aparece con 'por'. No es un CC: es el complemento agente."
+      - id: 4
+        busca: CCM
+        pista: "¿Cómo se realizó la acción? Busca el adverbio que indica el modo."
+        tokens_correctos: ["cuidadosamente"]
+        feedback_ok: "'Cuidadosamente' es el CCM. Los adverbios en -mente suelen indicar modo."
+        feedback_error: "Busca el adverbio que responde a '¿cómo fueron analizadas?'"
+
+  - id: 5
+    nivel: 3
+    texto: "Los excursionistas llegaron agotados al refugio y se quejaron amargamente del intenso frío."
+    nota: "Oración coordinada — CPred del sujeto, CRég, verbo pronominal, CCM"
+    trampa: "'Agotados' parece CCM pero es CPred. 'Del frío' parece CC pero es CRég exigido por 'quejarse de'."
+    tokens:
+      - {palabra: "Los", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "excursionistas", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "llegaron", categoria: verbo, funcion: nucleo-SV1, sintagma: SV1}
+      - {palabra: "agotados", categoria: adjetivo, funcion: CPred-sujeto, sintagma: SAdj-CPred}
+      - {palabra: "al", categoria: preposicion, funcion: nexo-CCL, sintagma: SPrep-CCL}
+      - {palabra: "refugio", categoria: sustantivo, funcion: nucleo-CCL, sintagma: SPrep-CCL}
+      - {palabra: "y", categoria: conjuncion, funcion: nexo-coordinacion, sintagma: null}
+      - {palabra: "se", categoria: pronombre, funcion: parte-del-verbo, sintagma: SV2}
+      - {palabra: "quejaron", categoria: verbo, funcion: nucleo-SV2, sintagma: SV2}
+      - {palabra: "amargamente", categoria: adverbio, funcion: CCM, sintagma: SAdv-CCM}
+      - {palabra: "del", categoria: preposicion, funcion: nexo-CReg, sintagma: SPrep-CReg}
+      - {palabra: "intenso", categoria: adjetivo, funcion: CN, sintagma: SPrep-CReg}
+      - {palabra: "frío", categoria: sustantivo, funcion: nucleo-CReg, sintagma: SPrep-CReg}
+    pasos:
+      - id: 1
+        busca: verbos
+        pista: "Hay dos verbos coordinados. El 'se' forma parte del segundo verbo pronominal."
+        tokens_correctos: ["llegaron", "se", "quejaron"]
+        feedback_ok: "Correcto. 'Llegaron' y 'se quejaron' (pronominal: 'se' forma parte del verbo)."
+        feedback_error: "Hay dos acciones. El 'se' no es reflexivo: 'quejarse' siempre lleva 'se'."
+      - id: 2
+        busca: sujeto
+        pista: "¿Quién llegó y se quejó? El sujeto es compartido por los dos verbos coordinados."
+        tokens_correctos: ["Los", "excursionistas"]
+        feedback_ok: "'Los excursionistas' es el sujeto de ambos verbos coordinados."
+        feedback_error: "Busca quién realiza las dos acciones. El sujeto incluye el determinante."
+      - id: 3
+        busca: CPred
+        pista: "¿Cómo llegaron? Si es adjetivo que concuerda con el sujeto y se puede parafrasear como 'llegaron Y ESTABAN...', es CPred, no CCM."
+        tokens_correctos: ["agotados"]
+        feedback_ok: "Exacto. 'Agotados' es CPred del sujeto: adjetivo que concuerda con 'los excursionistas'."
+        feedback_error: "¿'Agotado' o 'agotadamente'? Como es adjetivo que concuerda con el sujeto, es CPred."
+      - id: 4
+        busca: CCL
+        pista: "¿Adónde llegaron? Busca el complemento circunstancial de lugar."
+        tokens_correctos: ["al", "refugio"]
+        feedback_ok: "'Al refugio' es el CCL: indica el lugar al que llegaron."
+        feedback_error: "Pregúntale al verbo 'llegaron': ¿adónde? Esa respuesta es el CCL."
+      - id: 5
+        busca: coordinacion
+        pista: "¿Qué palabra une las dos proposiciones coordinadas?"
+        tokens_correctos: ["y"]
+        feedback_ok: "'Y' es la conjunción copulativa que coordina las dos proposiciones."
+        feedback_error: "Busca la conjunción que une 'llegaron agotados al refugio' con 'se quejaron'."
+      - id: 6
+        busca: CCM
+        pista: "¿Cómo se quejaron? Busca el adverbio de modo."
+        tokens_correctos: ["amargamente"]
+        feedback_ok: "'Amargamente' es el CCM del segundo verbo. Adverbio en -mente = modo."
+        feedback_error: "Busca el adverbio que responde a '¿cómo se quejaron?'"
+      - id: 7
+        busca: CReg
+        pista: "El verbo 'quejarse' exige 'de'. Ese complemento no puede suprimirse ni cambiar la preposición → CRég."
+        tokens_correctos: ["del", "intenso", "frío"]
+        feedback_ok: "'Del intenso frío' es el CRég: la preposición 'de' la exige el verbo 'quejarse de algo'."
+        feedback_error: "¿Puedes decir 'se quejaron'? Queda incompleto → es CRég, no CC."
+
+  - id: 6
+    nivel: 3
+    texto: "En este pueblo se vive tranquilamente, pero no se encontraron las llaves del almacén."
+    nota: "Coordinada adversativa — 'se' impersonal vs 'se' de pasiva refleja"
+    trampa: "Distinguir el 'se' impersonal (verbo en singular, sin sujeto) del 'se' de pasiva refleja (hay sujeto paciente)."
+    tokens:
+      - {palabra: "En", categoria: preposicion, funcion: nexo-CCL, sintagma: SPrep-CCL}
+      - {palabra: "este", categoria: determinante, funcion: determinante, sintagma: SPrep-CCL}
+      - {palabra: "pueblo", categoria: sustantivo, funcion: nucleo-CCL, sintagma: SPrep-CCL}
+      - {palabra: "se", categoria: pronombre, funcion: marca-impersonal, sintagma: SV1}
+      - {palabra: "vive", categoria: verbo, funcion: nucleo-SV1, sintagma: SV1}
+      - {palabra: "tranquilamente", categoria: adverbio, funcion: CCM, sintagma: SAdv-CCM}
+      - {palabra: "pero", categoria: conjuncion, funcion: nexo-coordinacion, sintagma: null}
+      - {palabra: "no", categoria: adverbio, funcion: CCN, sintagma: SAdv-CCN}
+      - {palabra: "se", categoria: pronombre, funcion: marca-pasiva-refleja, sintagma: SV2}
+      - {palabra: "encontraron", categoria: verbo, funcion: nucleo-SV2, sintagma: SV2}
+      - {palabra: "las", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "llaves", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "del", categoria: preposicion, funcion: nexo-CN, sintagma: SPrep-CN}
+      - {palabra: "almacén", categoria: sustantivo, funcion: nucleo-CN, sintagma: SPrep-CN}
+    pasos:
+      - id: 1
+        busca: verbos
+        pista: "Hay dos proposiciones coordinadas. Encuentra los dos verbos principales."
+        tokens_correctos: ["vive", "encontraron"]
+        feedback_ok: "Correcto. 'Vive' y 'encontraron': uno en cada proposición coordinada."
+        feedback_error: "Busca los dos núcleos verbales, uno en cada parte de la oración."
+      - id: 2
+        busca: se-impersonal
+        pista: "En 'se vive', prueba el plural: ¿'se viven tranquilamente'? Si no funciona, es impersonal."
+        tokens_correctos: ["se", "vive"]
+        feedback_ok: "'Se vive' es impersonal: el verbo no puede ir en plural y no hay sujeto."
+        feedback_error: "Intenta: ¿'se viven tranquilamente'? Suena mal → impersonal, sin sujeto."
+      - id: 3
+        busca: sujeto-pasiva-refleja
+        pista: "En 'se encontraron', ¿qué palabra hace que el verbo vaya en plural? Eso es el sujeto paciente de la pasiva refleja."
+        tokens_correctos: ["las", "llaves", "del", "almacén"]
+        feedback_ok: "'Las llaves del almacén' es el sujeto paciente. Prueba: 'se encontró la llave' (singular) → concuerda → es sujeto de pasiva refleja."
+        feedback_error: "Prueba: ¿'se encontró la llave'? Sí funciona en singular → 'las llaves' concuerda con el verbo → es el sujeto."
+      - id: 4
+        busca: CCL
+        pista: "¿Dónde ocurre la primera acción? Busca el complemento circunstancial de lugar."
+        tokens_correctos: ["En", "este", "pueblo"]
+        feedback_ok: "'En este pueblo' es el CCL de la primera proposición."
+        feedback_error: "Pregunta al primer verbo: ¿dónde se vive así? Esa respuesta es el CCL."
+      - id: 5
+        busca: CCM
+        pista: "¿Cómo se vive en ese pueblo? Busca el adverbio de modo."
+        tokens_correctos: ["tranquilamente"]
+        feedback_ok: "'Tranquilamente' es el CCM de la primera proposición."
+        feedback_error: "Busca el adverbio que responde a '¿cómo se vive?'"
+      - id: 6
+        busca: coordinacion
+        pista: "¿Qué palabra une las dos proposiciones de forma adversativa?"
+        tokens_correctos: ["pero"]
+        feedback_ok: "'Pero' es la conjunción coordinante adversativa: introduce una idea que contrasta con la anterior."
+        feedback_error: "Busca la conjunción adversativa que une las dos proposiciones."
+      - id: 7
+        busca: CCN
+        pista: "¿Hay alguna negación en la segunda proposición?"
+        tokens_correctos: ["no"]
+        feedback_ok: "'No' es un adverbio de negación — funciona como complemento circunstancial de negación."
+        feedback_error: "Busca el adverbio que niega la segunda acción."
+
+  - id: 7
+    nivel: 4
+    texto: "El profesor que nos explicó la lección dijo que el examen sería bastante difícil."
+    nota: "Oración compleja — subordinada adjetiva especificativa + subordinada sustantiva de CD"
+    trampa: "Identificar la función del 'que' relativo dentro de su proposición y distinguirlo del 'que' conjunción."
+    tokens:
+      - {palabra: "El", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "profesor", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "que", categoria: pronombre, funcion: sujeto-subord-adj, sintagma: prop-subordinada-adjetiva}
+      - {palabra: "nos", categoria: pronombre, funcion: CI-subord, sintagma: prop-subordinada-adjetiva}
+      - {palabra: "explicó", categoria: verbo, funcion: nucleo-SV-subord, sintagma: prop-subordinada-adjetiva}
+      - {palabra: "la", categoria: determinante, funcion: determinante, sintagma: SN-CD-subord}
+      - {palabra: "lección", categoria: sustantivo, funcion: nucleo-CD-subord, sintagma: SN-CD-subord}
+      - {palabra: "dijo", categoria: verbo, funcion: nucleo-SV-principal, sintagma: SV-principal}
+      - {palabra: "que", categoria: conjuncion, funcion: nexo-subord-sustantiva, sintagma: prop-subordinada-sustantiva}
+      - {palabra: "el", categoria: determinante, funcion: determinante, sintagma: SN-sujeto-subord}
+      - {palabra: "examen", categoria: sustantivo, funcion: nucleo-sujeto-subord, sintagma: SN-sujeto-subord}
+      - {palabra: "sería", categoria: verbo, funcion: nucleo-SV-subord2, sintagma: prop-subordinada-sustantiva}
+      - {palabra: "bastante", categoria: adverbio, funcion: cuantificador-atributo, sintagma: SAdj-atributo}
+      - {palabra: "difícil", categoria: adjetivo, funcion: nucleo-atributo, sintagma: SAdj-atributo}
+    pasos:
+      - id: 1
+        busca: verbo-principal
+        pista: "Hay tres verbos. El principal es el que no depende de ninguna conjunción ni pronombre relativo."
+        tokens_correctos: ["dijo"]
+        feedback_ok: "Correcto. 'Dijo' es el verbo de la oración principal."
+        feedback_error: "Hay tres verbos. ¿Cuál podría estar solo en una oración simple sin depender de otro?"
+      - id: 2
+        busca: sujeto
+        pista: "¿Quién dijo algo? El sujeto incluye al sustantivo y toda la subordinada que lo especifica."
+        tokens_correctos: ["El", "profesor"]
+        feedback_ok: "'El profesor' es el núcleo del sujeto. La subordinada adjetiva que sigue lo especifica pero no forma parte del núcleo en este paso."
+        feedback_error: "Busca quién realiza la acción principal. El sujeto es el SN que concuerda con 'dijo'."
+      - id: 3
+        busca: subordinada-adjetiva
+        pista: "Localiza la subordinada de relativo que especifica de qué profesor se habla. El primer 'que' es pronombre relativo."
+        tokens_correctos: ["que", "nos", "explicó", "la", "lección"]
+        feedback_ok: "Perfecto. 'Que nos explicó la lección' es la subordinada adjetiva especificativa. Dentro de ella, 'que' es el sujeto."
+        feedback_error: "Busca el bloque que describe al profesor. El primer 'que' es pronombre relativo (= 'el cual')."
+      - id: 4
+        busca: subordinada-sustantiva-CD
+        pista: "¿Qué dijo? Esa respuesta es la subordinada sustantiva que funciona como CD del verbo principal."
+        tokens_correctos: ["que", "el", "examen", "sería", "bastante", "difícil"]
+        feedback_ok: "Correcto. El CD de 'dijo' es toda la proposición sustantiva. El segundo 'que' es conjunción subordinante, no pronombre relativo."
+        feedback_error: "El CD responde a '¿qué dijo?'. Toda esa proposición funciona como un sustantivo."
+
+  - id: 8
+    nivel: 4
+    texto: "Aunque llovía intensamente, los vecinos que vivían cerca del río no abandonaron sus casas porque confiaban en que las obras resistirían."
+    nota: "Subordinación múltiple — concesiva + adjetiva + causal con CRég que contiene sustantiva"
+    trampa: "Tres niveles de subordinación. El CRég 'en que las obras resistirían' contiene una subordinada sustantiva."
+    tokens:
+      - {palabra: "Aunque", categoria: conjuncion, funcion: nexo-subord-concesiva, sintagma: prop-concesiva}
+      - {palabra: "llovía", categoria: verbo, funcion: nucleo-SV-concesiva, sintagma: prop-concesiva}
+      - {palabra: "intensamente", categoria: adverbio, funcion: CCM, sintagma: SAdv-CCM}
+      - {palabra: "los", categoria: determinante, funcion: determinante, sintagma: SN-sujeto}
+      - {palabra: "vecinos", categoria: sustantivo, funcion: nucleo-sujeto, sintagma: SN-sujeto}
+      - {palabra: "que", categoria: pronombre, funcion: sujeto-subord-adj, sintagma: prop-subord-adjetiva}
+      - {palabra: "vivían", categoria: verbo, funcion: nucleo-SV-subord-adj, sintagma: prop-subord-adjetiva}
+      - {palabra: "cerca", categoria: adverbio, funcion: CCL, sintagma: SAdv-CCL}
+      - {palabra: "del", categoria: preposicion, funcion: nexo-CAdv, sintagma: SPrep-CAdv}
+      - {palabra: "río", categoria: sustantivo, funcion: nucleo-CAdv, sintagma: SPrep-CAdv}
+      - {palabra: "no", categoria: adverbio, funcion: CCN, sintagma: SAdv-CCN}
+      - {palabra: "abandonaron", categoria: verbo, funcion: nucleo-SV-principal, sintagma: SV-principal}
+      - {palabra: "sus", categoria: determinante, funcion: determinante, sintagma: SN-CD}
+      - {palabra: "casas", categoria: sustantivo, funcion: nucleo-CD, sintagma: SN-CD}
+      - {palabra: "porque", categoria: conjuncion, funcion: nexo-subord-causal, sintagma: prop-causal}
+      - {palabra: "confiaban", categoria: verbo, funcion: nucleo-SV-causal, sintagma: prop-causal}
+      - {palabra: "en", categoria: preposicion, funcion: nexo-CReg, sintagma: SPrep-CReg}
+      - {palabra: "que", categoria: conjuncion, funcion: nexo-subord-sustantiva, sintagma: prop-sustantiva-CReg}
+      - {palabra: "las", categoria: determinante, funcion: determinante, sintagma: SN-sujeto-subord}
+      - {palabra: "obras", categoria: sustantivo, funcion: nucleo-sujeto-subord, sintagma: SN-sujeto-subord}
+      - {palabra: "resistirían", categoria: verbo, funcion: nucleo-SV-subord-sust, sintagma: prop-sustantiva-CReg}
+    pasos:
+      - id: 1
+        busca: verbo-principal
+        pista: "Hay 5 verbos. El principal no depende de ninguna conjunción. Elimina mentalmente las subordinadas."
+        tokens_correctos: ["abandonaron"]
+        feedback_ok: "Correcto. 'Abandonaron' es el verbo principal."
+        feedback_error: "Elimina los verbos que van después de una conjunción. ¿Cuál queda?"
+      - id: 2
+        busca: sujeto
+        pista: "¿Quiénes no abandonaron? El sujeto incluye el sustantivo y la subordinada que lo especifica."
+        tokens_correctos: ["los", "vecinos"]
+        feedback_ok: "'Los vecinos' es el núcleo del sujeto. La subordinada adjetiva que sigue lo especifica."
+        feedback_error: "Busca quiénes realizan la acción principal. El sujeto concuerda con 'abandonaron' en plural."
+      - id: 3
+        busca: subordinada-adjetiva
+        pista: "¿Qué vecinos? La subordinada de relativo especifica cuáles. Empieza por el pronombre relativo 'que'."
+        tokens_correctos: ["que", "vivían", "cerca", "del", "río"]
+        feedback_ok: "'Que vivían cerca del río' es la subordinada adjetiva especificativa dentro del sujeto."
+        feedback_error: "Busca el bloque que especifica qué vecinos. Empieza en 'que' y acaba antes de 'no'."
+      - id: 4
+        busca: CCN
+        pista: "¿Hay una negación en la oración principal?"
+        tokens_correctos: ["no"]
+        feedback_ok: "'No' es el adverbio de negación de la oración principal."
+        feedback_error: "Busca la palabra que niega la acción principal."
+      - id: 5
+        busca: CD
+        pista: "¿Qué no abandonaron? Esa respuesta es el complemento directo."
+        tokens_correctos: ["sus", "casas"]
+        feedback_ok: "'Sus casas' es el CD: lo que no abandonaron. Se puede sustituir por 'las'."
+        feedback_error: "Pregunta: ¿no abandonaron qué? Esa respuesta es el CD."
+      - id: 6
+        busca: subordinada-concesiva
+        pista: "'Aunque' introduce un obstáculo que no impide la acción principal. ¿Hasta dónde llega ese bloque?"
+        tokens_correctos: ["Aunque", "llovía", "intensamente"]
+        feedback_ok: "'Aunque llovía intensamente' es la subordinada concesiva: expresa un obstáculo que no impidió la acción."
+        feedback_error: "La concesiva empieza por 'aunque'. ¿Hasta dónde llega antes de la pausa?"
+      - id: 7
+        busca: subordinada-causal
+        pista: "'Porque' introduce la causa de la acción principal. ¿Cuál es el verbo de esa proposición?"
+        tokens_correctos: ["porque", "confiaban"]
+        feedback_ok: "'Porque confiaban...' es la subordinada causal. Indica la razón por la que no abandonaron."
+        feedback_error: "Busca la proposición que empieza por 'porque' — explica la razón de la acción principal."
+      - id: 8
+        busca: CReg-sustantiva
+        pista: "'Confiar' exige 'en algo'. Ese 'algo' es el CRég — y dentro hay una subordinada sustantiva introducida por 'que'."
+        tokens_correctos: ["en", "que", "las", "obras", "resistirían"]
+        feedback_ok: "Perfecto. 'En que las obras resistirían' es el CRég de 'confiaban'. Dentro, 'que las obras resistirían' es una subordinada sustantiva como término del SP."
+        feedback_error: "'Confiar' necesita 'en algo'. Ese bloque introducido por 'en' es el CRég. ¿Qué hay dentro?"
+`;
+
+let ORACIONES = [];
+let oracionActual = 0;
+let pasoActual = 0;
+let seleccionados = [];
+let resumenAnalisis = {};
+let exploraMode = 'morfologia';
+let catActiva = null;
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+
+function init() {
+  try {
+    const parsed = jsyaml.load(YAML_DEFAULT);
+    ORACIONES = parsed.oraciones;
+  } catch(e) {
+    console.error('Error cargando YAML por defecto:', e);
+    ORACIONES = [];
+  }
+  construirLeyenda();
+  construirSelector();
+  cargarOracion(0);
+  construirExplora();
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+
+function setTab(tab) {
+  document.querySelectorAll('.main-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'analiza') || (i === 1 && tab === 'explora'));
+  });
+  document.getElementById('tab-analiza').classList.toggle('active', tab === 'analiza');
+  document.getElementById('tab-explora').classList.toggle('active', tab === 'explora');
+}
+
+// ══════════════════════════════════════════════
+// ANALIZA
+// ══════════════════════════════════════════════
+
+function construirLeyenda() {
+  const grid = document.getElementById('leyenda-grid');
+  // Orden pedagógico: variables primero (más protagonismo sintáctico), luego invariables
+  const orden = [
+    'sustantivo', 'verbo', 'adjetivo',
+    'determinante', 'pronombre', 'adverbio',
+    'preposicion', 'conjuncion', 'interjeccion'
+  ];
+  grid.innerHTML = orden.map(cat => {
+    const color = CATEGORIAS_COLOR[cat];
+    const nombre = cat.charAt(0).toUpperCase() + cat.slice(1);
+    return `<div class="leyenda-item">
+      <div class="leyenda-dot" style="background:${color}"></div>
+      <span style="color:rgba(255,255,255,0.75)">${nombre}</span>
+    </div>`;
+  }).join('');
+}
+
+function construirSelector() {
+  const sel = document.getElementById('oracion-selector');
+  sel.innerHTML = ORACIONES.map((o, i) => `
+    <button class="btn-oracion ${i === 0 ? 'active' : ''}" onclick="cargarOracion(${i})">
+      <span class="nivel-badge">N${o.nivel}</span>
+      Oración ${o.id}
+    </button>
+  `).join('');
+}
+
+function cargarOracion(idx) {
+  oracionActual = idx;
+  pasoActual = 0;
+  seleccionados = [];
+  resumenAnalisis = {};
+
+  // Update selector buttons
+  document.querySelectorAll('.btn-oracion').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+
+  const o = ORACIONES[idx];
+
+  // Trampa
+  const trampaBox = document.getElementById('trampa-box');
+  const trampaTxt = document.getElementById('trampa-texto');
+  if (o.trampa) {
+    trampaTxt.textContent = o.trampa;
+    trampaBox.style.display = 'block';
+  } else {
+    trampaBox.style.display = 'none';
+  }
+
+  // Nota
+  document.getElementById('oracion-nota').textContent = o.nota || '';
+
+  // Tokens
+  renderTokens();
+
+  // Primer paso
+  renderPaso();
+
+  // Limpiar completado
+  document.getElementById('completado-banner').classList.remove('visible');
+  document.getElementById('paso-box').style.display = 'flex';
+
+  // Limpiar resumen
+  document.getElementById('resumen-grid').innerHTML = `<div style="font-size:0.75rem;color:var(--muted);font-style:italic">Aquí aparecerán los elementos identificados</div>`;
+
+  // Limpiar feedback
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.textContent = '';
+}
+
+function renderTokens() {
+  const o = ORACIONES[oracionActual];
+  const paso = o.pasos[pasoActual];
+  const correctosHastaAhora = Object.values(resumenAnalisis).flat();
+
+  const container = document.getElementById('tokens-container');
+  container.innerHTML = o.tokens.map((t, i) => {
+    const esCorrecto = correctosHastaAhora.includes(t.palabra + '_' + i);
+    const esSel = seleccionados.includes(i);
+    const color = CATEGORIAS_COLOR[t.categoria] || 'var(--muted)';
+    const fnColor = FUNCIONES_COLOR[t.funcion] || color;
+
+    let clases = 'token';
+    if (esCorrecto) {
+      clases += ' correcto';
+    } else if (esSel) {
+      clases += ' seleccionado';
+    }
+
+    const labelText = esCorrecto ? (t.funcion || t.categoria) : '';
+
+    return `<span class="token ${clases}" 
+      style="${esCorrecto ? `color:${fnColor};border-color:${fnColor};background:color-mix(in srgb,${fnColor} 12%,var(--surface2))` : ''}"
+      onclick="toggleToken(${i})"
+      title="${t.categoria}${t.funcion ? ' · ' + t.funcion : ''}">
+      ${t.palabra}
+      <span class="token-label" style="background:color-mix(in srgb,${fnColor} 20%,var(--surface2));color:${fnColor}">${labelText}</span>
+    </span>`;
+  }).join('');
+}
+
+function toggleToken(idx) {
+  const correctosHastaAhora = Object.values(resumenAnalisis).flat();
+  const o = ORACIONES[oracionActual];
+  const key = o.tokens[idx].palabra + '_' + idx;
+
+  if (correctosHastaAhora.includes(key)) return; // ya identificado
+
+  if (seleccionados.includes(idx)) {
+    seleccionados = seleccionados.filter(i => i !== idx);
+  } else {
+    seleccionados.push(idx);
+  }
+
+  renderTokens();
+  document.getElementById('btn-confirmar').disabled = seleccionados.length === 0;
+
+  // Limpiar feedback al cambiar selección
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.textContent = '';
+}
+
+function renderPaso() {
+  const o = ORACIONES[oracionActual];
+  if (pasoActual >= o.pasos.length) return;
+  const paso = o.pasos[pasoActual];
+
+  document.getElementById('paso-numero').textContent = `PASO ${pasoActual + 1} / ${o.pasos.length}`;
+  document.getElementById('paso-busca').textContent = `Busca: ${paso.busca.replace(/-/g, ' ').toUpperCase()}`;
+  document.getElementById('paso-pista').textContent = paso.pista;
+  document.getElementById('btn-confirmar').disabled = true;
+  seleccionados = [];
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.textContent = '';
+}
+
+function confirmarPaso() {
+  const o = ORACIONES[oracionActual];
+  const paso = o.pasos[pasoActual];
+  const palabrasSeleccionadas = seleccionados.map(i => o.tokens[i].palabra);
+  const correctas = paso.tokens_correctos;
+
+  const esCorrecta =
+    palabrasSeleccionadas.length === correctas.length &&
+    correctas.every(c => palabrasSeleccionadas.includes(c)) &&
+    palabrasSeleccionadas.every(p => correctas.includes(p));
+
+  const fb = document.getElementById('feedback-box');
+
+  if (esCorrecta) {
+    fb.className = 'feedback-box ok';
+    fb.textContent = '✓ ' + paso.feedback_ok;
+
+    // Guardar en resumen (con índices para identificación única)
+    const label = paso.busca;
+    resumenAnalisis[label] = seleccionados.map(i => o.tokens[i].palabra + '_' + i);
+
+    actualizarResumen();
+    renderTokens();
+
+    // Avanzar paso después de un momento
+    setTimeout(() => {
+      pasoActual++;
+      seleccionados = [];
+      if (pasoActual >= o.pasos.length) {
+        mostrarCompletado();
+      } else {
+        renderPaso();
+        renderTokens();
+      }
+    }, 1400);
+
+  } else {
+    fb.className = 'feedback-box error';
+    fb.textContent = '✗ ' + paso.feedback_error;
+  }
+}
+
+function actualizarResumen() {
+  const o = ORACIONES[oracionActual];
+  const grid = document.getElementById('resumen-grid');
+
+  if (Object.keys(resumenAnalisis).length === 0) {
+    grid.innerHTML = `<div style="font-size:0.75rem;color:var(--muted);font-style:italic">Aquí aparecerán los elementos identificados</div>`;
+    return;
+  }
+
+  grid.innerHTML = Object.entries(resumenAnalisis).map(([fn, claves]) => {
+    const palabras = claves.map(k => k.split('_')[0]).join(' ');
+    // Buscar color de la función
+    const primerToken = o.tokens.find(t => claves.includes(t.palabra + '_' + o.tokens.indexOf(t)));
+    const color = primerToken ? (FUNCIONES_COLOR[primerToken.funcion] || CATEGORIAS_COLOR[primerToken.categoria] || 'var(--muted)') : 'var(--muted)';
+
+    return `<div class="resumen-item" style="border-left:3px solid ${color}">
+      <span class="resumen-fn" style="color:${color}">${fn.toUpperCase()}</span>
+      <span class="resumen-palabra">${palabras}</span>
+    </div>`;
+  }).join('');
+}
+
+function mostrarCompletado() {
+  document.getElementById('paso-box').style.display = 'none';
+  const banner = document.getElementById('completado-banner');
+  banner.classList.add('visible');
+  const o = ORACIONES[oracionActual];
+  document.getElementById('completado-msg').textContent =
+    `Has identificado todos los elementos de la oración ${o.id} (nivel ${o.nivel}).`;
+
+  // Marcar como completada en el selector
+  document.querySelectorAll('.btn-oracion')[oracionActual].classList.add('completada');
+
+  // Mostrar/ocultar botón siguiente
+  const btnSig = document.getElementById('btn-siguiente');
+  btnSig.style.display = oracionActual < ORACIONES.length - 1 ? 'inline-block' : 'none';
+}
+
+function siguienteOracion() {
+  if (oracionActual < ORACIONES.length - 1) {
+    cargarOracion(oracionActual + 1);
+  }
+}
+
+// ══════════════════════════════════════════════
+// EXPLORA
+// ══════════════════════════════════════════════
+
+function setExploraMode(mode) {
+  exploraMode = mode;
+  catActiva = null;
+  document.querySelectorAll('.toggle-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && mode === 'morfologia') || (i === 1 && mode === 'sintaxis'));
+  });
+  construirExplora();
+  resetDetalle();
+}
+
+function construirExplora() {
+  const datos = exploraMode === 'morfologia' ? DATOS_MORFOLOGIA : DATOS_SINTAXIS;
+  const grid = document.getElementById('cat-grid');
+
+  grid.innerHTML = datos.map(d => `
+    <div class="cat-card" id="cat-${d.id}" style="--c:${d.color}" onclick="seleccionarCat('${d.id}')">
+      <div class="cat-nombre">${d.nombre}</div>
+      <div class="cat-desc">${d.definicion.substring(0, 70)}…</div>
+      ${d.ejemplos_ej ? `<div class="cat-ejemplos">${d.ejemplos_ej.slice(0,3).map(e => `<span class="cat-ej">${e}</span>`).join('')}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function seleccionarCat(id) {
+  const datos = exploraMode === 'morfologia' ? DATOS_MORFOLOGIA : DATOS_SINTAXIS;
+  const d = datos.find(x => x.id === id);
+  if (!d) return;
+
+  catActiva = id;
+
+  // Actualizar cards
+  document.querySelectorAll('.cat-card').forEach(card => {
+    const cardId = card.id.replace('cat-', '');
+    const esActiva = cardId === id;
+    const relacionada = d.relacionadas && d.relacionadas.includes(cardId);
+
+    card.classList.remove('activa', 'atenuada', 'relacionada');
+    if (esActiva) card.classList.add('activa');
+    else if (relacionada) card.classList.add('relacionada');
+    else card.classList.add('atenuada');
+  });
+
+  // Renderizar detalle
+  renderDetalle(d);
+
+  // Renderizar relaciones
+  renderRelaciones(d);
+}
+
+function renderDetalle(d) {
+  const box = document.getElementById('detalle-box');
+
+  const ejemplosHTML = (d.ejemplos || []).map(e =>
+    `<div class="detalle-ejemplo">${e}</div>`
+  ).join('');
+
+  box.innerHTML = `
+    <div class="detalle-header">
+      <div class="detalle-color-bar" style="background:${d.color}"></div>
+      <div>
+        <div class="detalle-nombre">${d.nombre}</div>
+        <div class="detalle-tipo">${d.tipo} · ${d.variable !== undefined ? (d.variable ? 'variable' : 'invariable') : ''}</div>
+      </div>
+    </div>
+    <div class="detalle-section">
+      <div class="detalle-section-label">Definición</div>
+      <div class="detalle-def">${d.definicion}</div>
+    </div>
+    ${d.propiedades ? `<div class="detalle-section">
+      <div class="detalle-section-label">Propiedades</div>
+      <div class="detalle-def" style="font-size:0.78rem">${d.propiedades}</div>
+    </div>` : ''}
+    ${d.prueba ? `<div class="detalle-section">
+      <div class="detalle-section-label">Prueba de identificación</div>
+      <div class="detalle-def" style="font-size:0.78rem">${d.prueba}</div>
+    </div>` : ''}
+    ${ejemplosHTML ? `<div class="detalle-section">
+      <div class="detalle-section-label">Ejemplos</div>
+      ${ejemplosHTML}
+    </div>` : ''}
+    <div class="detalle-error">
+      <strong style="display:block;margin-bottom:0.2rem;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase">⚠ Error frecuente</strong>
+      ${d.error}
+    </div>
+  `;
+}
+
+function renderRelaciones(d) {
+  const box = document.getElementById('relaciones-box');
+  const tagsContainer = document.getElementById('rel-tags');
+  const datos = exploraMode === 'morfologia' ? DATOS_MORFOLOGIA : DATOS_SINTAXIS;
+
+  if (!d.relacionadas || d.relacionadas.length === 0) {
+    box.style.display = 'none';
+    return;
+  }
+
+  box.style.display = 'block';
+  tagsContainer.innerHTML = d.relacionadas.map(rid => {
+    // Buscar en ambos conjuntos de datos
+    const rel = [...DATOS_MORFOLOGIA, ...DATOS_SINTAXIS].find(x => x.id === rid);
+    if (!rel) return '';
+    return `<span class="rel-tag" 
+      style="border-color:${rel.color};color:${rel.color};background:color-mix(in srgb,${rel.color} 8%,var(--surface2))"
+      onclick="saltarA('${rid}', '${rel.tipo}')">
+      ${rel.nombre}
+    </span>`;
+  }).join('');
+}
+
+function saltarA(id, tipo) {
+  // Cambiar modo si es necesario (sin pasar por setExploraMode para evitar resetDetalle)
+  if (tipo !== exploraMode) {
+    exploraMode = tipo;
+    catActiva = null;
+    document.querySelectorAll('.toggle-btn').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0 && tipo === 'morfologia') || (i === 1 && tipo === 'sintaxis'));
+    });
+    construirExplora(); // Reconstruye el grid con los datos del nuevo modo
+  }
+  // Seleccionar directamente — el grid ya existe en el DOM
+  seleccionarCat(id);
+}
+
+function resetDetalle() {
+  document.getElementById('detalle-box').innerHTML = `
+    <div class="detalle-vacio">
+      <div class="hint-icon">↖</div>
+      <div>Selecciona una categoría o función para ver su definición, ejemplos y errores frecuentes</div>
+    </div>`;
+  document.getElementById('relaciones-box').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════
+// ABOUT MODAL
+// ══════════════════════════════════════════════
+
+function abrirAbout() {
+  document.getElementById('about-modal').classList.add('visible');
+}
+
+function cerrarAbout() {
+  document.getElementById('about-modal').classList.remove('visible');
+}
+
+document.getElementById('about-modal').addEventListener('click', function(e) {
+  if (e.target === this) cerrarAbout();
+});
+
+// ══════════════════════════════════════════════
+// YAML MODAL
+// ══════════════════════════════════════════════
+
+function abrirYamlModal() {
+  document.getElementById('yaml-modal').classList.add('visible');
+  document.getElementById('yaml-status').className = 'yaml-status';
+  document.getElementById('yaml-textarea').value = '';
+}
+
+function cerrarYamlModal() {
+  document.getElementById('yaml-modal').classList.remove('visible');
+}
+
+function cargarYamlPersonalizado() {
+  const texto = document.getElementById('yaml-textarea').value.trim();
+  const status = document.getElementById('yaml-status');
+
+  if (!texto) {
+    status.className = 'yaml-status error';
+    status.textContent = '✗ El campo está vacío. Pega el contenido de tu YAML.';
+    return;
+  }
+
+  try {
+    const parsed = jsyaml.load(texto);
+    if (!parsed.oraciones || !Array.isArray(parsed.oraciones) || parsed.oraciones.length === 0) {
+      throw new Error('El YAML debe tener una clave "oraciones" con al menos una oración.');
+    }
+
+    ORACIONES = parsed.oraciones;
+    oracionActual = 0;
+    pasoActual = 0;
+    seleccionados = [];
+    resumenAnalisis = {};
+
+    construirSelector();
+    cargarOracion(0);
+
+    status.className = 'yaml-status ok';
+    status.textContent = `✓ Cargadas ${ORACIONES.length} oración(es) correctamente.`;
+
+    setTimeout(() => cerrarYamlModal(), 1200);
+
+  } catch(e) {
+    status.className = 'yaml-status error';
+    status.textContent = `✗ Error en el YAML: ${e.message}`;
+  }
+}
+
+function mostrarSolucion() {
+  const o = ORACIONES[oracionActual];
+  const paso = o.pasos[pasoActual];
+  const correctas = paso.tokens_correctos;
+
+  document.getElementById('solucion-respuesta').textContent = correctas.join(' ');
+  document.getElementById('solucion-explicacion').textContent = paso.feedback_ok;
+  document.getElementById('solucion-modal').classList.add('visible');
+}
+
+function cerrarSolucion() {
+  document.getElementById('solucion-modal').classList.remove('visible');
+}
+
+function aplicarSolucionYAvanzar() {
+  cerrarSolucion();
+  const o = ORACIONES[oracionActual];
+  const paso = o.pasos[pasoActual];
+  const correctas = paso.tokens_correctos;
+
+  // Marcar como resuelto en el resumen (con índices)
+  const label = paso.busca;
+  resumenAnalisis[label] = o.tokens
+    .map((t, i) => ({ t, i }))
+    .filter(({ t }) => correctas.includes(t.palabra))
+    .map(({ t, i }) => t.palabra + '_' + i);
+
+  actualizarResumen();
+  renderTokens();
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box ok';
+  fb.textContent = '→ ' + paso.feedback_ok;
+
+  setTimeout(() => {
+    pasoActual++;
+    seleccionados = [];
+    if (pasoActual >= o.pasos.length) {
+      mostrarCompletado();
+    } else {
+      renderPaso();
+      renderTokens();
+    }
+  }, 1200);
+}
+
+// Cerrar modal solución al clic fuera
+document.getElementById('solucion-modal').addEventListener('click', function(e) {
+  if (e.target === this) cerrarSolucion();
+});
+
+// Cerrar modal YAML al clic fuera
+document.getElementById('yaml-modal').addEventListener('click', function(e) {
+  if (e.target === this) cerrarYamlModal();
+});
+
+// ══════════════════════════════════════════════
+// START
+// ══════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,712 @@
+# ─────────────────────────────────────────────────────────────
+# PLANTILLA DE ORACIONES — hAppYpUkIng · Morfosintaxis ESO
+# ─────────────────────────────────────────────────────────────
+# Este fichero es una PLANTILLA DE EJEMPLO para crear bancos
+# de oraciones personalizados. NO es la fuente de verdad —
+# las oraciones por defecto están embebidas en sintaxis.html.
+#
+# USO: copia este fichero, edita las oraciones, y cárgalo
+# en la herramienta con el botón "Cargar mis oraciones".
+#
+# CAMPOS OBLIGATORIOS POR ORACIÓN:
+#   id       → número único
+#   nivel    → 1 (básico) a 4 (avanzado)
+#   texto    → la oración completa como string
+#   tokens   → lista de palabras con categoria y funcion
+#   pasos    → lista de pasos con busca, pista y tokens_correctos
+#
+# CAMPOS OPCIONALES:
+#   nota     → descripción pedagógica (aparece en cursiva)
+#   trampa   → error frecuente asociado (aparece en amarillo)
+# ─────────────────────────────────────────────────────────────
+
+oraciones:
+
+  - id: 1
+    nivel: 1
+    texto: "Mi perro compró un libro ayer."
+    nota: "Oración básica. Introduce sujeto con CN adjetival, CD, CCT."
+    trampa: "Distinguir el determinante 'mi' del pronombre 'mí'."
+    tokens:
+      - palabra: "Mi"
+        categoria: determinante
+        subtipo: posesivo
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "perro"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "compró"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV
+        sintagma: SV
+      - palabra: "un"
+        categoria: determinante
+        subtipo: articulo-indefinido
+        funcion: determinante
+        sintagma: SN-CD
+      - palabra: "libro"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CD
+        sintagma: SN-CD
+      - palabra: "ayer"
+        categoria: adverbio
+        subtipo: tiempo
+        funcion: CCT
+        sintagma: SAdv-CCT
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "¿Qué acción ocurre en esta oración? Busca la palabra que indica lo que se hace."
+        tokens_correctos: ["compró"]
+        feedback_ok: "Perfecto. 'Compró' es el verbo: núcleo del predicado verbal."
+        feedback_error: "Piensa en qué acción describe la oración. ¿Quién hace qué?"
+      - id: 2
+        busca: sujeto
+        pista: "Pregúntale al verbo: ¿quién compró? El sujeto incluye el sustantivo y todo lo que lo acompaña."
+        tokens_correctos: ["Mi", "perro"]
+        feedback_ok: "Exacto. El sujeto es todo el sintagma nominal: determinante + sustantivo + adjetivo."
+        feedback_error: "El sujeto no es solo 'perro'. Incluye el determinante y el adjetivo que lo acompañan."
+      - id: 3
+        busca: CD
+        pista: "¿Qué compró? El complemento directo responde a esa pregunta. Prueba a sustituirlo por 'lo'."
+        tokens_correctos: ["un", "libro"]
+        feedback_ok: "Correcto. 'Un libro' es el CD — se puede sustituir por 'lo': 'lo compró'."
+        feedback_error: "Pregúntale al verbo: ¿compró qué? ¿Puedes sustituirlo por 'lo'?"
+      - id: 4
+        busca: CCT
+        pista: "¿Cuándo ocurrió la acción? Busca el complemento circunstancial de tiempo."
+        tokens_correctos: ["ayer"]
+        feedback_ok: "'Ayer' es el CCT. Los adverbios de tiempo suelen cumplir esta función."
+        feedback_error: "¿Cuándo compró el libro? Esa palabra indica el tiempo de la acción."
+
+  - id: 2
+    nivel: 1
+    texto: "La circulación por la carretera principal es muy peligrosa."
+    nota: "Predicado nominal. Sujeto con CN preposicional anidado. Atributo con cuantificador."
+    trampa: "El CN 'por la carretera principal' parece CCL pero pertenece al SN sujeto."
+    tokens:
+      - palabra: "La"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "circulación"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "por"
+        categoria: preposicion
+        subtipo: null
+        funcion: nexo-CN
+        sintagma: SPrep-CN
+      - palabra: "la"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SPrep-CN
+      - palabra: "carretera"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CN
+        sintagma: SPrep-CN
+      - palabra: "principal"
+        categoria: adjetivo
+        subtipo: calificativo
+        funcion: CN
+        sintagma: SPrep-CN
+      - palabra: "es"
+        categoria: verbo
+        subtipo: copulativo
+        funcion: nucleo-SV
+        sintagma: SV
+      - palabra: "muy"
+        categoria: adverbio
+        subtipo: cantidad
+        funcion: cuantificador-atributo
+        sintagma: SAdj-atributo
+      - palabra: "peligrosa"
+        categoria: adjetivo
+        subtipo: calificativo
+        funcion: nucleo-atributo
+        sintagma: SAdj-atributo
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "¿Qué palabra une el sujeto con su característica? En oraciones copulativas el verbo es 'ser', 'estar' o 'parecer'."
+        tokens_correctos: ["es"]
+        feedback_ok: "Sí. 'Es' es un verbo copulativo: une el sujeto con el atributo."
+        feedback_error: "Busca 'ser', 'estar' o 'parecer'. El verbo copulativo actúa como nexo."
+      - id: 2
+        busca: sujeto
+        pista: "¿De qué se habla en la oración? El sujeto incluye todo su sintagma, aunque tenga complementos dentro."
+        tokens_correctos: ["La", "circulación", "por", "la", "carretera", "principal"]
+        feedback_ok: "Correcto. El sujeto es todo el SN: 'La circulación por la carretera principal'. El SP 'por la carretera principal' es un CN, no un CCL."
+        feedback_error: "Ojo: 'por la carretera principal' no es un CCL, es un CN que complementa a 'circulación'. Todo el bloque es el sujeto."
+      - id: 3
+        busca: atributo
+        pista: "En una oración copulativa, el atributo dice cómo es el sujeto. ¿Cómo es la circulación?"
+        tokens_correctos: ["muy", "peligrosa"]
+        feedback_ok: "Exacto. 'Muy peligrosa' es el atributo. Incluye el adverbio cuantificador 'muy' dentro del SAdj."
+        feedback_error: "El atributo no es solo 'peligrosa'. ¿Qué más acompaña al adjetivo en ese sintagma?"
+
+  - id: 3
+    nivel: 2
+    texto: "A mis padres les encanta esa película estadounidense."
+    nota: "Verbo tipo 'gustar'. Sujeto pospuesto. CI duplicado."
+    trampa: "Los alumnos identifican 'a mis padres' como sujeto. La prueba de concordancia revela que el sujeto es 'esa película'."
+    tokens:
+      - palabra: "A"
+        categoria: preposicion
+        subtipo: null
+        funcion: nexo-CI
+        sintagma: SPrep-CI
+      - palabra: "mis"
+        categoria: determinante
+        subtipo: posesivo
+        funcion: determinante
+        sintagma: SPrep-CI
+      - palabra: "padres"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CI
+        sintagma: SPrep-CI
+      - palabra: "les"
+        categoria: pronombre
+        subtipo: personal-atono
+        funcion: CI-duplicado
+        sintagma: SV
+      - palabra: "encanta"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV
+        sintagma: SV
+      - palabra: "esa"
+        categoria: determinante
+        subtipo: demostrativo
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "película"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "estadounidense"
+        categoria: adjetivo
+        subtipo: calificativo
+        funcion: CN
+        sintagma: SN-sujeto
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "¿Qué acción o estado describe la oración?"
+        tokens_correctos: ["encanta"]
+        feedback_ok: "Correcto. 'Encanta' es el núcleo verbal."
+        feedback_error: "Busca la palabra que expresa el estado o acción principal."
+      - id: 2
+        busca: sujeto
+        pista: "Prueba la concordancia: cambia el sujeto a plural y comprueba si el verbo cambia también. ¿'Les encantan...' qué?"
+        tokens_correctos: ["esa", "película", "estadounidense"]
+        feedback_ok: "Exacto. 'Esa película' es el sujeto, aunque aparezca al final. Prueba: 'les encantan esas películas' → el verbo concuerda con 'películas', no con 'padres'."
+        feedback_error: "¡Trampa clásica! 'A mis padres' parece el sujeto pero no lo es. Prueba: ¿'les encantan los padres'? No tiene sentido. El sujeto es lo que concuerda con el verbo."
+      - id: 3
+        busca: CI
+        pista: "¿A quiénes les encanta? El CI puede aparecer duplicado: una forma tónica ('a mis padres') y una átona ('les')."
+        tokens_correctos: ["A", "mis", "padres", "les"]
+        feedback_ok: "Perfecto. El CI está duplicado: 'a mis padres' (forma tónica) y 'les' (pronombre átono). Ambos son CI."
+        feedback_error: "El CI responde a '¿a quién?' o '¿para quién?'. Aquí aparece dos veces: una explícita y una como pronombre."
+
+  - id: 4
+    nivel: 2
+    texto: "Las pruebas fueron analizadas cuidadosamente por los investigadores del laboratorio."
+    nota: "Oración pasiva. Sujeto paciente. Complemento agente. CCM adverbio."
+    trampa: "El alumno puede confundir el sujeto paciente con CD, o el complemento agente con un CCL."
+    tokens:
+      - palabra: "Las"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "pruebas"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "fueron"
+        categoria: verbo
+        subtipo: auxiliar-pasiva
+        funcion: nucleo-SV
+        sintagma: SV
+      - palabra: "analizadas"
+        categoria: verbo
+        subtipo: participio
+        funcion: nucleo-SV
+        sintagma: SV
+      - palabra: "cuidadosamente"
+        categoria: adverbio
+        subtipo: modo
+        funcion: CCM
+        sintagma: SAdv-CCM
+      - palabra: "por"
+        categoria: preposicion
+        subtipo: null
+        funcion: nexo-CAg
+        sintagma: SPrep-CAg
+      - palabra: "los"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SPrep-CAg
+      - palabra: "investigadores"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CAg
+        sintagma: SPrep-CAg
+      - palabra: "del"
+        categoria: preposicion
+        subtipo: contracta
+        funcion: nexo-CN
+        sintagma: SPrep-CN
+      - palabra: "laboratorio"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CN
+        sintagma: SPrep-CN
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "Esta oración tiene una perífrasis verbal pasiva: 'ser + participio'. Busca ambas formas."
+        tokens_correctos: ["fueron", "analizadas"]
+        feedback_ok: "Correcto. La perífrasis pasiva 'fueron analizadas' es el núcleo del predicado."
+        feedback_error: "En la pasiva, el verbo tiene dos partes: el auxiliar 'ser' conjugado + el participio del verbo principal."
+      - id: 2
+        busca: sujeto
+        pista: "En una oración pasiva, el sujeto recibe la acción en lugar de realizarla. ¿Qué cosa fue analizada?"
+        tokens_correctos: ["Las", "pruebas"]
+        feedback_ok: "Exacto. 'Las pruebas' es el sujeto paciente: recibe la acción pero concuerda con el verbo."
+        feedback_error: "En la pasiva el sujeto no actúa, recibe la acción. ¿Qué fue analizado? Eso es el sujeto."
+      - id: 3
+        busca: complemento-agente
+        pista: "¿Quién realizó la acción? En la pasiva, el agente va introducido por la preposición 'por'."
+        tokens_correctos: ["por", "los", "investigadores", "del", "laboratorio"]
+        feedback_ok: "Bien. El complemento agente es 'por los investigadores del laboratorio'. Es exclusivo de las oraciones pasivas."
+        feedback_error: "En la pasiva, quien realiza la acción aparece introducido por 'por'. No es un CC: es el complemento agente."
+
+  - id: 5
+    nivel: 3
+    texto: "Los excursionistas llegaron agotados al refugio y se quejaron amargamente del intenso frío."
+    nota: "Oración coordinada. CPred del sujeto. CRég. Verbo pronominal. CCM."
+    trampa: "'Agotados' parece CCM pero es CPred (concuerda con el sujeto). 'Del intenso frío' parece CC pero es CRég exigido por 'quejarse de'."
+    tokens:
+      - palabra: "Los"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "excursionistas"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "llegaron"
+        categoria: verbo
+        subtipo: intransitivo
+        funcion: nucleo-SV1
+        sintagma: SV1
+      - palabra: "agotados"
+        categoria: adjetivo
+        subtipo: calificativo
+        funcion: CPred-sujeto
+        sintagma: SAdj-CPred
+      - palabra: "al"
+        categoria: preposicion
+        subtipo: contracta
+        funcion: nexo-CCL
+        sintagma: SPrep-CCL
+      - palabra: "refugio"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CCL
+        sintagma: SPrep-CCL
+      - palabra: "y"
+        categoria: conjuncion
+        subtipo: coordinante-copulativa
+        funcion: nexo-coordinacion
+        sintagma: null
+      - palabra: "se"
+        categoria: pronombre
+        subtipo: verbo-pronominal
+        funcion: parte-del-verbo
+        sintagma: SV2
+      - palabra: "quejaron"
+        categoria: verbo
+        subtipo: pronominal
+        funcion: nucleo-SV2
+        sintagma: SV2
+      - palabra: "amargamente"
+        categoria: adverbio
+        subtipo: modo
+        funcion: CCM
+        sintagma: SAdv-CCM
+      - palabra: "del"
+        categoria: preposicion
+        subtipo: contracta
+        funcion: nexo-CReg
+        sintagma: SPrep-CReg
+      - palabra: "intenso"
+        categoria: adjetivo
+        subtipo: calificativo
+        funcion: CN
+        sintagma: SPrep-CReg
+      - palabra: "frío"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CReg
+        sintagma: SPrep-CReg
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "Esta oración tiene dos verbos coordinados. Búscalos ambos. El 'se' forma parte del segundo verbo."
+        tokens_correctos: ["llegaron", "se", "quejaron"]
+        feedback_ok: "Correcto. Dos verbos coordinados: 'llegaron' y 'se quejaron' (verbo pronominal: el 'se' es parte del verbo, no reflexivo)."
+        feedback_error: "Hay dos acciones. El 'se' no es reflexivo aquí — 'quejarse' es un verbo pronominal que siempre lleva 'se'."
+      - id: 2
+        busca: CPred
+        pista: "¿Cómo llegaron? Busca un adjetivo que describa al sujeto en el momento de la acción. Si concuerda con el sujeto, es CPred, no CCM."
+        tokens_correctos: ["agotados"]
+        feedback_ok: "Exacto. 'Agotados' es un CPred del sujeto: es adjetivo, concuerda con 'los excursionistas' y podría parafrasearse como 'llegaron y estaban agotados'."
+        feedback_error: "Pregunta: ¿'agotado' o 'agotadamente'? Como es adjetivo que concuerda con el sujeto, es CPred, no CCM."
+      - id: 3
+        busca: CReg
+        pista: "El verbo 'quejarse' exige la preposición 'de'. Ese complemento no es un CC: es el CRég, exigido por el verbo."
+        tokens_correctos: ["del", "intenso", "frío"]
+        feedback_ok: "Bien. 'Del intenso frío' es el CRég: la preposición 'de' la exige el propio verbo 'quejarse de algo'. No puede suprimirse ni cambiarse."
+        feedback_error: "Prueba: ¿puedes suprimir 'del frío' y que la oración tenga sentido? 'Se quejaron...' queda incompleto. Eso indica que es CRég, no CC."
+
+  - id: 6
+    nivel: 3
+    texto: "En este pueblo se vive tranquilamente, pero no se encontraron las llaves del almacén."
+    nota: "Oración coordinada adversativa. 'Se' impersonal vs 'se' de pasiva refleja."
+    trampa: "Distinguir el 'se' impersonal (verbo en singular, sin sujeto) del 'se' de pasiva refleja (sujeto paciente que concuerda con el verbo)."
+    tokens:
+      - palabra: "En"
+        categoria: preposicion
+        subtipo: null
+        funcion: nexo-CCL
+        sintagma: SPrep-CCL
+      - palabra: "este"
+        categoria: determinante
+        subtipo: demostrativo
+        funcion: determinante
+        sintagma: SPrep-CCL
+      - palabra: "pueblo"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CCL
+        sintagma: SPrep-CCL
+      - palabra: "se"
+        categoria: pronombre
+        subtipo: impersonal
+        funcion: marca-impersonal
+        sintagma: SV1
+      - palabra: "vive"
+        categoria: verbo
+        subtipo: impersonal-refleja
+        funcion: nucleo-SV1
+        sintagma: SV1
+      - palabra: "tranquilamente"
+        categoria: adverbio
+        subtipo: modo
+        funcion: CCM
+        sintagma: SAdv-CCM
+      - palabra: "pero"
+        categoria: conjuncion
+        subtipo: coordinante-adversativa
+        funcion: nexo-coordinacion
+        sintagma: null
+      - palabra: "no"
+        categoria: adverbio
+        subtipo: negacion
+        funcion: CCN
+        sintagma: SAdv-CCN
+      - palabra: "se"
+        categoria: pronombre
+        subtipo: pasiva-refleja
+        funcion: marca-pasiva-refleja
+        sintagma: SV2
+      - palabra: "encontraron"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV2
+        sintagma: SV2
+      - palabra: "las"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "llaves"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "del"
+        categoria: preposicion
+        subtipo: contracta
+        funcion: nexo-CN
+        sintagma: SPrep-CN
+      - palabra: "almacén"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CN
+        sintagma: SPrep-CN
+    pasos:
+      - id: 1
+        busca: verbo
+        pista: "Hay dos proposiciones coordinadas. Encuentra los dos verbos."
+        tokens_correctos: ["vive", "encontraron"]
+        feedback_ok: "Correcto. Dos verbos: 'vive' (primera proposición) y 'encontraron' (segunda)."
+        feedback_error: "Busca los dos núcleos verbales, uno en cada parte de la oración coordinada."
+      - id: 2
+        busca: se-impersonal
+        pista: "En 'se vive', ¿puedes encontrar el sujeto? Prueba a poner el verbo en plural: ¿'se viven'? Si no funciona, es impersonal."
+        tokens_correctos: ["se", "vive"]
+        feedback_ok: "Exacto. 'Se vive' es impersonal: el verbo no puede ir en plural y no hay sujeto posible. El 'se' es marca de impersonalidad."
+        feedback_error: "Intenta: ¿'se viven tranquilamente'? Suena mal. Eso indica que es impersonal — no tiene sujeto."
+      - id: 3
+        busca: sujeto-pasiva
+        pista: "En 'se encontraron', prueba el plural: ¿qué palabra hace que el verbo vaya en plural? Eso es el sujeto paciente."
+        tokens_correctos: ["las", "llaves", "del", "almacén"]
+        feedback_ok: "Perfecto. 'Las llaves del almacén' es el sujeto paciente: 'se encontraron las llaves' (plural) porque el sujeto es plural. Es una pasiva refleja."
+        feedback_error: "Prueba: ¿'se encontró la llave'? Sí funciona. Eso significa que 'las llaves' concuerda con el verbo — es el sujeto de una pasiva refleja."
+
+  - id: 7
+    nivel: 4
+    texto: "El profesor que nos explicó la lección dijo que el examen sería bastante difícil."
+    nota: "Oración compleja. Subordinada adjetiva especificativa. Subordinada sustantiva de CD."
+    trampa: "El alumno debe identificar la función del 'que' relativo dentro de su proposición, y distinguirlo del 'que' conjunción."
+    tokens:
+      - palabra: "El"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "profesor"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "que"
+        categoria: pronombre
+        subtipo: relativo
+        funcion: sujeto-subord-adj
+        sintagma: prop-subordinada-adjetiva
+      - palabra: "nos"
+        categoria: pronombre
+        subtipo: personal-atono
+        funcion: CI-subord
+        sintagma: prop-subordinada-adjetiva
+      - palabra: "explicó"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV-subord
+        sintagma: prop-subordinada-adjetiva
+      - palabra: "la"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-CD-subord
+      - palabra: "lección"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CD-subord
+        sintagma: SN-CD-subord
+      - palabra: "dijo"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV-principal
+        sintagma: SV-principal
+      - palabra: "que"
+        categoria: conjuncion
+        subtipo: subordinante
+        funcion: nexo-subord-sustantiva
+        sintagma: prop-subordinada-sustantiva
+      - palabra: "el"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto-subord
+      - palabra: "examen"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto-subord
+        sintagma: SN-sujeto-subord
+      - palabra: "sería"
+        categoria: verbo
+        subtipo: copulativo
+        funcion: nucleo-SV-subord2
+        sintagma: prop-subordinada-sustantiva
+      - palabra: "bastante"
+        categoria: adverbio
+        subtipo: cantidad
+        funcion: cuantificador-atributo
+        sintagma: SAdj-atributo
+      - palabra: "difícil"
+        categoria: adjetivo
+        subtipo: calificativo
+        funcion: nucleo-atributo
+        sintagma: SAdj-atributo
+    pasos:
+      - id: 1
+        busca: verbo-principal
+        pista: "Esta oración tiene varios verbos. El principal es el que no está dentro de ninguna subordinada. ¿Cuál es la acción central?"
+        tokens_correctos: ["dijo"]
+        feedback_ok: "Correcto. 'Dijo' es el verbo de la oración principal."
+        feedback_error: "Hay tres verbos. El principal no depende de ningún otro. ¿Cuál podría estar solo en una oración simple?"
+      - id: 2
+        busca: subordinada-adjetiva
+        pista: "Localiza la subordinada de relativo que especifica de qué profesor se habla. Empieza por el pronombre relativo 'que'."
+        tokens_correctos: ["que", "nos", "explicó", "la", "lección"]
+        feedback_ok: "Perfecto. 'Que nos explicó la lección' es una subordinada adjetiva especificativa: el 'que' es pronombre relativo con función de sujeto dentro de su propia proposición."
+        feedback_error: "Busca el bloque que describe al profesor. El primer 'que' es un pronombre relativo (sustituye a 'el profesor')."
+      - id: 3
+        busca: subordinada-sustantiva
+        pista: "¿Qué dijo el profesor? Esa respuesta es una subordinada sustantiva que funciona como CD del verbo principal."
+        tokens_correctos: ["que", "el", "examen", "sería", "bastante", "difícil"]
+        feedback_ok: "Correcto. 'Que el examen sería bastante difícil' es la subordinada sustantiva de CD. El segundo 'que' es conjunción subordinante, no pronombre relativo."
+        feedback_error: "El CD responde a '¿qué dijo?'. Toda esa proposición funciona como un sustantivo — es el CD de 'dijo'."
+
+  - id: 8
+    nivel: 4
+    texto: "Aunque llovía intensamente, los vecinos que vivían cerca del río no abandonaron sus casas porque confiaban en que las obras resistirían."
+    nota: "Subordinación múltiple: concesiva + adjetiva + causal con CRég que contiene sustantiva."
+    trampa: "Tres niveles de subordinación encadenados. El CRég 'en que las obras resistirían' contiene una subordinada sustantiva dentro."
+    tokens:
+      - palabra: "Aunque"
+        categoria: conjuncion
+        subtipo: subordinante-concesiva
+        funcion: nexo-subord-concesiva
+        sintagma: prop-concesiva
+      - palabra: "llovía"
+        categoria: verbo
+        subtipo: impersonal-meteorologico
+        funcion: nucleo-SV-concesiva
+        sintagma: prop-concesiva
+      - palabra: "intensamente"
+        categoria: adverbio
+        subtipo: modo
+        funcion: CCM
+        sintagma: SAdv-CCM
+      - palabra: "los"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto
+      - palabra: "vecinos"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto
+        sintagma: SN-sujeto
+      - palabra: "que"
+        categoria: pronombre
+        subtipo: relativo
+        funcion: sujeto-subord-adj
+        sintagma: prop-subord-adjetiva
+      - palabra: "vivían"
+        categoria: verbo
+        subtipo: intransitivo
+        funcion: nucleo-SV-subord-adj
+        sintagma: prop-subord-adjetiva
+      - palabra: "cerca"
+        categoria: adverbio
+        subtipo: lugar
+        funcion: CCL
+        sintagma: SAdv-CCL
+      - palabra: "del"
+        categoria: preposicion
+        subtipo: contracta
+        funcion: nexo-CAdv
+        sintagma: SPrep-CAdv
+      - palabra: "río"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CAdv
+        sintagma: SPrep-CAdv
+      - palabra: "no"
+        categoria: adverbio
+        subtipo: negacion
+        funcion: CCN
+        sintagma: SAdv-CCN
+      - palabra: "abandonaron"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV-principal
+        sintagma: SV-principal
+      - palabra: "sus"
+        categoria: determinante
+        subtipo: posesivo
+        funcion: determinante
+        sintagma: SN-CD
+      - palabra: "casas"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-CD
+        sintagma: SN-CD
+      - palabra: "porque"
+        categoria: conjuncion
+        subtipo: subordinante-causal
+        funcion: nexo-subord-causal
+        sintagma: prop-causal
+      - palabra: "confiaban"
+        categoria: verbo
+        subtipo: transitivo
+        funcion: nucleo-SV-causal
+        sintagma: prop-causal
+      - palabra: "en"
+        categoria: preposicion
+        subtipo: null
+        funcion: nexo-CReg
+        sintagma: SPrep-CReg
+      - palabra: "que"
+        categoria: conjuncion
+        subtipo: subordinante
+        funcion: nexo-subord-sustantiva
+        sintagma: prop-sustantiva-CReg
+      - palabra: "las"
+        categoria: determinante
+        subtipo: articulo-definido
+        funcion: determinante
+        sintagma: SN-sujeto-subord
+      - palabra: "obras"
+        categoria: sustantivo
+        subtipo: comun
+        funcion: nucleo-sujeto-subord
+        sintagma: SN-sujeto-subord
+      - palabra: "resistirían"
+        categoria: verbo
+        subtipo: intransitivo
+        funcion: nucleo-SV-subord-sust
+        sintagma: prop-sustantiva-CReg
+    pasos:
+      - id: 1
+        busca: verbo-principal
+        pista: "Hay 5 verbos en esta oración. El principal es el de la proposición independiente. Busca el verbo que no depende de ninguna conjunción."
+        tokens_correctos: ["abandonaron"]
+        feedback_ok: "Correcto. 'Abandonaron' es el verbo principal. Todo lo demás son subordinadas que dependen de él o de otros verbos."
+        feedback_error: "Elimina mentalmente las subordinadas (las que van introducidas por conjunciones). ¿Qué verbo queda?"
+      - id: 2
+        busca: subordinada-concesiva
+        pista: "'Aunque' introduce una subordinada concesiva: expresa un obstáculo que no impide la acción principal."
+        tokens_correctos: ["Aunque", "llovía", "intensamente"]
+        feedback_ok: "Bien. 'Aunque llovía intensamente' es la subordinada concesiva: expresa un obstáculo que no impidió la acción."
+        feedback_error: "La subordinada concesiva empieza por 'aunque'. ¿Hasta dónde llega ese bloque?"
+      - id: 3
+        busca: CReg-con-sustantiva
+        pista: "El verbo 'confiar' exige la preposición 'en'. Lo que sigue es el CRég — y dentro de él hay una subordinada sustantiva introducida por 'que'."
+        tokens_correctos: ["en", "que", "las", "obras", "resistirían"]
+        feedback_ok: "Perfecto. 'En que las obras resistirían' es el CRég de 'confiaban' (confiar EN algo). Dentro, 'que las obras resistirían' es una subordinada sustantiva que funciona como término del SP."
+        feedback_error: "El verbo 'confiar' no puede ir solo: necesita 'en algo'. Ese 'algo' es el CRég. ¿Qué bloque introducido por 'en' complementa a 'confiaban'?"
