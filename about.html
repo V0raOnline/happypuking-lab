@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobre hAppYpUkIng — Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09080d;
+  --surface: #13111a;
+  --surface2: #1c1926;
+  --magenta: #d4006a;
+  --magenta-glow: rgba(212,0,106,0.25);
+  --magenta-soft: rgba(212,0,106,0.12);
+  --text: #f0eeff;
+  --muted: #6b6480;
+  --border: rgba(255,255,255,0.07);
+  --green: #39ff6a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(212,0,106,0.15) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+/* ── NAV ── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+}
+
+.nav-brand {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.btn-inicio {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--magenta);
+  color: var(--text);
+  background: none;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-inicio:hover { background: var(--magenta-soft); }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.hero-unicorn {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(212,0,106,0.4));
+}
+
+.hero-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: 0.8rem;
+}
+
+.hero-title .accent { color: var(--magenta); }
+
+.hero-claim {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── SECCIONES ── */
+.section {
+  margin-bottom: 3.5rem;
+}
+
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-tag::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
+}
+
+.section p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(240,238,255,0.8);
+  margin-bottom: 1rem;
+}
+
+.section p:last-child { margin-bottom: 0; }
+
+.section p strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Cita destacada */
+.pullquote {
+  border-left: 3px solid var(--magenta);
+  padding: 0.8rem 1.2rem;
+  margin: 1.5rem 0;
+  background: var(--magenta-soft);
+  border-radius: 0 8px 8px 0;
+}
+
+.pullquote p {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text) !important;
+  margin-bottom: 0 !important;
+  line-height: 1.6;
+}
+
+/* Pills de colaboración */
+.collab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.collab-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  transition: border-color 0.2s;
+}
+
+.collab-card:hover { border-color: var(--magenta); }
+
+.collab-card .collab-emoji {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.collab-card .collab-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--magenta);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.collab-card .collab-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.collab-card a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.collab-card a:hover { text-decoration: underline; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0 0;
+  margin-top: 4rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+footer strong { color: rgba(240,238,255,0.6); }
+
+@media (max-width: 600px) {
+  .nav-brand { display: none; }
+  .collab-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <div class="nav-brand">hAppYpUkIng · Lab</div>
+    <a class="btn-inicio" href="./index.html">← happypuking-lab</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <img src="./assets/HappyPuking.jpeg" alt="hAppYpUkIng logo" style="width:180px;height:180px;object-fit:cover;border-radius:50%;margin-bottom:1.5rem;filter:drop-shadow(0 0 24px rgba(212,0,106,0.4))">
+    <h1 class="hero-title">
+      h<span class="accent">A</span>pp<span class="accent">Y</span>p<span class="accent">U</span>k<span class="accent">I</span>ng
+    </h1>
+    <p class="hero-claim">No hay nada más punk que infiltrarse en el sistema para cambiarlo desde dentro. Con amor y neuronas bien locas.</p>
+  </div>
+
+  <!-- EL NOMBRE -->
+  <div class="section">
+    <div class="section-tag">El nombre</div>
+    <h2>Un unicornio muerto vomitando arcoíris</h2>
+    <p>
+      Vivimos en una cultura donde todo tiene que ser arcoíris y unicornios. Felicidad por bandera, conformismo como virtud. Y si no encajas en ese molde, el problema claramente eres tú.
+    </p>
+    <p>
+      hAppYpUkIng nace de esta herida. Del dolor de ser diferente. De que te etiqueten como "muy sensible", "exagerada", "especialita"... de que te exijan esforzarte por adaptarte a un sistema que ignora tus propias necesidades y te hace sentir rota. 
+    </p>
+    <div class="pullquote">
+      <p>El unicornio de hAppYpUkIng está muerto por dentro. Pero sigue vomitando arcoíris y felicidad. Porque eso es lo que se nos pide. Y a veces, funciona.</p>
+    </div>
+    <p>
+      No es estética random — es una declaración.
+    </p>
+  </div>
+
+<!-- POR QUÉ EXISTE -->
+  <div class="section">
+    <div class="section-tag">El proyecto</div>
+    <h2>Infiltrarse en el sistema para cambiarlo desde dentro</h2>
+    <p>
+      El sistema educativo falla a una parte enorme del alumnado. Por inercia, por recursos, por una concepción del aprendizaje que lleva décadas sin actualizarse. Industrialización. Contenido estático. Memorización. Un solo ritmo y formato para cerebros muy distintos.
+    </p>
+    <p>
+      hAppYpUkIng es la respuesta personal a eso. Si no puedo cambiar el sistema desde fuera, me cuelo dentro. Con herramientas interactivas, visuales, no lineales. Con una estética cool que no infantiliza. Con pedagogía de verdad detrás de cada decisión de diseño.
+    </p>
+    <p>
+      Y con IA. No como hype — como herramienta real de atención a la diversidad. La IA puede generar contenido adaptado, múltiples niveles de dificultad, explicaciones alternativas. Puede hacer en horas lo que antes requería meses de trabajo especializado. <strong>Eso es lo que más me importa de esta tecnología: su potencial para atender a quien el sistema ya dejó atrás.</strong>
+    </p>
+  </div>
+
+  <!-- QUIÉN -->
+  <div class="section">
+    <div class="section-tag">Quién hay detrás</div>
+    <h2>Una persona con un cerebro lokito.<br>+ Una IA bien entrenada.</h2>
+    <p>
+      No hay equipo. No hay financiación. No hay una startup detrás con deck y ronda de inversión.
+    </p>
+    <p>
+      Hay una persona neurodivergente que un día decidió que si iba a hacer recursos educativos para sus hijos, también podía compartirlos con el mundo. Y que la combinación de pedagogía real, buen diseño e inteligencia artificial podía producir algo que valiera la pena.
+    </p>
+    <p>
+      Todo lo que ves aquí — cada herramienta, cada interacción, cada decisión de diseño — es el resultado de esa combinación. Cerebro humano con estructura no lineal + IA como amplificador. No sustitución: <strong>colaboración</strong>.
+    </p>
+  </div>
+
+
+  <!-- ND COMO ADN -->
+  <div class="section">
+    <div class="section-tag">Neurodivergencia</div>
+    <h2>Ni superpoderes ni tragedia.<br>Las dos cosas. Según el día.</h2>
+    <p>
+      Estoy cansada del relato binario de la neurodivergencia. El de los superpoderes y el del talento especial. El de las dificultades y el de la superación. Ninguno de los dos es honesto. Ninguno me identifica totalmente.
+    </p>
+    <p>
+      La ND, en mi, es una <strong>bendición y una maldición dependiendo del día y del entorno</strong>. Es lo que me hace ver el mundo de una manera que la mayoría no ve. Es también lo que hace que algunos días solo existir sea un trabajo a tiempo completo.
+    </p>
+    <p>
+      Lo abrazo como lo que es: <strong>estructura, semilla y ADN de innovación</strong>. No a pesar de las dificultades — con ellas incluidas. Sin romanticismos y sin disculpas.
+    </p>
+    <div class="pullquote">
+      <p>La neurodivergencia no es un rasgo que lleve con orgullo los días buenos y esconda los malos. La llevo entera. Y eso es exactamente lo que hace hAppYpUkIng.</p>
+    </div>
+  </div>
+
+  
+
+  <!-- OPEN SOURCE -->
+  <div class="section">
+    <div class="section-tag">Open source</div>
+    <h2>El conocimiento no debería tener precio.<br>Especialmente este.</h2>
+    <p>
+      Los recursos de hAppYpUkIng son gratuitos, sin registro, sin instalación, sin anuncios. Siempre.
+    </p>
+    <p>
+      El conocimiento que atiende a quien el sistema ya dejó atrás no puede estar detrás de un muro de pago. Si algo de lo que hay aquí le sirve a un alumno, a un docente o a una familia — eso ya justifica todo el tiempo invertido.
+    </p>
+    <p>
+      El código es abierto en <a href="https://github.com/V0raOnline/happypuking-lab" style="color:var(--green);font-weight:600;text-decoration:none">GitHub</a> con licencia CC BY-NC-SA 4.0. Úsalo, adáptalo, mejóralo. Cita la fuente.
+    </p>
+  </div>
+
+  <!-- ARQUITECTURA -->
+  <div class="section">
+    <div class="section-tag">Arquitectura</div>
+    <h2>Simple por decisión,<br>no por limitación</h2>
+    <p>
+      Todas las herramientas de hAppYpUkIng son ficheros HTML autónomos. Sin frameworks, sin servidores, sin bases de datos. Una decisión deliberada con tres consecuencias importantes:
+    </p>
+    <p>
+      <strong>Funcionan sin conexión.</strong> Descarga el fichero y úsalo donde quieras — en clase, en casa, sin wifi. El conocimiento no debería depender de una buena señal.
+    </p>
+    <p>
+      <strong>Son fáciles de ampliar.</strong> El contenido está separado del código. Las herramientas que lo permiten usan YAML — un formato de texto legible que cualquiera puede editar. Sin tocar una línea de código.
+    </p>
+    <p>
+      <strong>Cualquiera puede contribuir.</strong> HTML, CSS, YAML — tecnologías con décadas de documentación y comunidad. Y para quien no quiera aprender ninguna de las tres: un prompt bien construido y un chatbot generan contenido nuevo en minutos. La barrera de entrada es intencionalmente baja.
+    </p>
+    <div class="pullquote">
+      <p>La herramienta más poderosa es la que llega a más manos. No la más sofisticada.</p>
+    </div>
+  </div>
+
+  <!-- COLABORAR -->
+  <div class="section">
+    <div class="section-tag">Colaborar</div>
+    <h2>Si quieres sumar</h2>
+    <p>hAppYpUkIng es un proyecto pequeño con ambición grande. Estas son las formas más útiles de colaborar:</p>
+
+    <div class="collab-grid">
+      <div class="collab-card">
+        <span class="collab-emoji">🐛</span>
+        <div class="collab-title">Reportar errores</div>
+        <div class="collab-desc">¿Algo no funciona bien? Abre un issue en <a href="https://github.com/V0raOnline/happypuking-lab/issues">GitHub</a>.</div>
+      </div>
+      <div class="collab-card">
+        <span class="collab-emoji">🌍</span>
+        <div class="collab-title">Traducir</div>
+        <div class="collab-desc">Las herramientas están en español. Si quieres adaptarlas a otro idioma, hablamos.</div>
+      </div>
+      <div class="collab-card">
+        <span class="collab-emoji">📝</span>
+        <div class="collab-title">Contenido</div>
+        <div class="collab-desc">¿Eres docente y quieres proponer nuevas herramientas o contenidos? Escríbeme.</div>
+      </div>
+      <div class="collab-card">
+        <span class="collab-emoji">📢</span>
+        <div class="collab-title">Difundir</div>
+        <div class="collab-desc">Comparte con quien creas que puede necesitarlo. Es la colaboración más valiosa.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem">
+      Contacto directo: <a href="mailto:h4ppypuk1ng@gmail.com" style="color:var(--green);font-weight:600;text-decoration:none">h4ppypuk1ng@gmail.com</a>
+    </p>
+  </div>
+
+  <footer>
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto<br>
+    <span style="margin-top:0.4rem;display:block">CC BY-NC-SA 4.0 · <a href="https://github.com/V0raOnline/happypuking-lab" style="color:var(--muted);text-decoration:none">GitHub</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
