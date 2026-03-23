@@ -1,4 +1,4 @@
- <img src="assets/HappypukingNuevoBanner.jpg" alt="HappypukingNuevoBanner.jpg" width="590">
+<img src="assets/HappypukingNuevoBanner.jpg" alt="HappypukingNuevoBanner.jpg" width="590">
 
 ### hAppYpUkIng — Lab
 
@@ -63,12 +63,24 @@ happypuking-lab/
 ## 🎮 ¿Cómo funcionan los recursos?
 
 Los recursos son archivos HTML autocontenidos — sin instalación, sin login, sin servidor.  
-Se abren directamente en el navegador.
+Se abren directamente en el navegador. También funcionan **sin conexión** — descarga el archivo y úsalo donde quieras.
 
 Cada recurso incluye múltiples modos de navegación:
 
 - **Modo explorador** — navegación libre por secciones
 - **Modo historia** — recorrido guiado paso a paso con narración
+
+---
+
+## 🗂 Contenido extensible con YAML
+
+Algunas herramientas (como el analizador morfosintáctico) separan el contenido del código mediante archivos YAML. Esto permite:
+
+- Añadir o modificar contenido sin tocar el HTML
+- Generar nuevas oraciones o ejercicios con un chatbot usando la plantilla incluida
+- Adaptar los recursos a cualquier nivel o contexto sin conocimientos técnicos avanzados
+
+Plantilla y prompt de ejemplo incluidos en cada herramienta que lo soporte.
 
 ---
 
@@ -116,5 +128,15 @@ Abre un issue o un PR. Esto es un taller abierto, no un producto terminado.
 
 ---
 
-*Hecho con IA, con intención y con experiencia propia.*  
-*Para los que ya han escuchado demasiadas veces que "no se esfuerzan lo suficiente".*
+---
+
+## 🦄 Sobre el proyecto
+
+Lee el [ABOUT.html](./ABOUT.html) para entender de dónde viene esto, por qué se llama así y quién hay detrás.
+
+Spoiler: una persona, un cerebro lokito y una IA bien entrenada.
+
+---
+
+*Built with AI, with intention, and with lived experience.*  
+*For those who've heard "you're just not trying hard enough" one too many times.*

@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sing & learn — hAppYpUkIng Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --surface2: #22263A;
+  --surface3: #2A2F45;
+  --border: rgba(255,255,255,0.07);
+  --text: #F0F2FF;
+  --muted: #6B7280;
+  --muted2: #4B5563;
+  --magenta: #D946EF;
+  --green-lab: #4ADE80;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 0.55rem 1.4rem 0.6rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.header-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+.header-tagline {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.header-tagline span { margin: 0 0.35rem; opacity: 0.4; }
+.btn-inicio {
+  position: absolute;
+  right: 0;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--magenta);
+  color: var(--text);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-inicio:hover { background: rgba(217,70,239,0.08); }
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.1rem;
+  line-height: 1.2;
+}
+header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
+
+/* ── MAIN LAYOUT ── */
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+}
+
+/* ── LEFT PANEL ── */
+.controls-panel {
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+}
+.btn-pill-action {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.38rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  text-align: left;
+}
+.btn-pill-action:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.btn-pill-action.primary {
+  border-color: rgba(74,222,128,0.35);
+  background: rgba(74,222,128,0.08);
+  color: var(--green-lab);
+}
+.btn-pill-action.primary:hover { background: rgba(74,222,128,0.15); }
+/* ── COLLAPSIBLE SECTIONS ── */
+.step { border-bottom: 1px solid var(--border); }
+
+.step.locked .step-header { cursor: default; opacity: 0.4; }
+.step.locked .step-header:hover { background: none; }
+.step.locked .step-chevron { display: none; }
+.step.locked .step-body { display: none; }
+.step.locked .step-locked-hint { display: block; }
+
+.step.collapsed .step-body { display: none; }
+.step.collapsed .step-locked-hint { display: none; }
+.step.collapsed .step-header { cursor: pointer; }
+.step.collapsed .step-chevron { transform: rotate(-90deg); }
+
+.step.open .step-body { display: block; }
+.step.open .step-locked-hint { display: none; }
+.step.open .step-chevron { transform: rotate(0deg); }
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+  min-height: 44px;
+}
+.step-header:hover { background: rgba(255,255,255,0.02); }
+.step.locked .step-header:hover { background: none; }
+
+.step-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--muted2);
+  flex-shrink: 0;
+  width: 16px;
+}
+.step.open .step-num { color: var(--green-lab); }
+
+.step-title {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: 1;
+}
+.step.open .step-title { color: var(--text); }
+
+.step-summary {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--green-lab);
+  flex-shrink: 0;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.step.collapsed .step-summary { display: flex; }
+
+.step-edit {
+  display: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--muted2);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface3);
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.step.collapsed .step-edit { display: inline-block; }
+.step-edit:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+.step-chevron {
+  font-size: 0.55rem;
+  color: var(--muted2);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.step-body { padding: 0 1.2rem 1rem; }
+
+.step-locked-hint {
+  font-size: 0.65rem;
+  color: var(--muted2);
+  font-style: italic;
+  padding: 0 1.2rem 0.6rem;
+  display: none;
+}
+
+/* ── PILLS ── */
+.pill-group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.pill {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  border: 2px solid transparent;
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.pill:hover:not(.active) { border-color: rgba(255,255,255,0.12); color: var(--text); }
+.pill.active {
+  color: var(--c, var(--green-lab));
+  border-color: var(--c, var(--green-lab));
+  background: color-mix(in srgb, var(--c, var(--green-lab)) 12%, var(--surface2));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--c, var(--green-lab)) 25%, transparent);
+}
+.genre-pill { display: flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.7rem; }
+.genre-icon { font-size: 0.82rem; }
+.genre-example-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.15rem;
+  font-size: 0.72rem;
+  opacity: 0.5;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  color: inherit;
+}
+.genre-example-link:hover { opacity: 1; }
+
+/* ── HOOK ── */
+.hook-modes { display: flex; gap: 0.35rem; margin-bottom: 0.8rem; }
+.hook-mode-btn {
+  flex: 1;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: center;
+}
+.hook-mode-btn.active { background: rgba(217,70,239,0.1); border-color: var(--magenta); color: var(--magenta); }
+
+.hook-presets { display: flex; flex-direction: column; gap: 0.35rem; }
+.hook-preset {
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.hook-preset:hover { border-color: rgba(217,70,239,0.3); color: var(--text); }
+.hook-preset.selected { border-color: var(--magenta); background: rgba(217,70,239,0.08); color: var(--text); }
+.hook-preset .hook-name {
+  font-weight: 900;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  margin-bottom: 0.2rem;
+}
+.hook-custom-area { display: none; }
+.hook-custom-area.visible { display: block; }
+.hook-custom-area textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.6rem 0.8rem;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.hook-custom-area textarea:focus { outline: none; border-color: rgba(217,70,239,0.4); }
+.btn-confirm-hook {
+  margin-top: 0.6rem;
+  width: 100%;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(217,70,239,0.4);
+  background: rgba(217,70,239,0.08);
+  color: var(--magenta);
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.btn-confirm-hook:hover { background: rgba(217,70,239,0.16); border-color: var(--magenta); }
+
+/* ── STRUCTURE ── */
+.structure-options { display: flex; flex-direction: column; gap: 0.4rem; }
+.structure-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.structure-opt:hover { border-color: rgba(255,255,255,0.12); }
+.structure-opt.selected { border-color: rgba(74,222,128,0.35); background: rgba(74,222,128,0.05); }
+.structure-opt-title { font-weight: 900; font-size: 0.72rem; color: var(--text); margin-bottom: 0.1rem; }
+.structure-opt-desc { font-size: 0.65rem; color: var(--muted); line-height: 1.4; }
+.structure-radio-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--muted2);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.15s;
+}
+.structure-opt.selected .structure-radio-dot {
+  border-color: var(--green-lab);
+  background: var(--green-lab);
+  box-shadow: 0 0 8px rgba(74,222,128,0.4);
+}
+
+/* ── GENERATE BUTTON ── */
+.btn-build-wrap { padding: 1rem 1.2rem; display: none; }
+.btn-build-wrap.visible { display: block; }
+.btn-build {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  border: 2px solid var(--green-lab);
+  background: rgba(74,222,128,0.1);
+  color: var(--green-lab);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+.btn-build:hover { background: rgba(74,222,128,0.2); box-shadow: 0 0 20px rgba(74,222,128,0.15); }
+
+/* ── RIGHT PANEL ── */
+.output-panel { display: flex; flex-direction: column; overflow: hidden; }
+.output-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 3rem;
+  text-align: center;
+}
+.output-empty .empty-icon { font-size: 2.5rem; opacity: 0.3; }
+.output-empty h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--text); opacity: 0.4; }
+.output-empty p { font-size: 0.78rem; color: var(--muted); font-style: italic; line-height: 1.5; opacity: 0.6; }
+
+.output-content { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+.output-content.visible { display: flex; }
+
+.output-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.2rem;
+  flex-shrink: 0;
+}
+.output-tab {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 0.7rem 1rem;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+.output-tab.active { color: var(--green-lab); border-bottom-color: var(--green-lab); }
+.output-tab:hover:not(.active) { color: var(--text); }
+
+.tab-pane { display: none; flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--surface3) transparent; }
+.tab-pane.active { display: flex; flex-direction: column; }
+
+/* ── PREVIEW TAB ── */
+.preview-area { padding: 1.4rem 1.8rem; display: flex; flex-direction: column; }
+.preview-meta { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.preview-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.preview-tag.family { border-color: var(--family-color, var(--green-lab)); color: var(--family-color, var(--green-lab)); background: color-mix(in srgb, var(--family-color, var(--green-lab)) 10%, var(--surface2)); }
+.preview-tag.genre { border-color: rgba(217,70,239,0.3); color: var(--magenta); background: rgba(217,70,239,0.08); }
+.preview-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--text); margin-bottom: 1.5rem; line-height: 1.3; }
+.song-structure { display: flex; flex-direction: column; gap: 1rem; }
+.song-block { border-radius: 10px; overflow: hidden; }
+.song-block-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  display: inline-block;
+}
+.song-block.intro .song-block-label { background: rgba(96,165,250,0.15); color: #93c5fd; }
+.song-block.verse .song-block-label { background: rgba(74,222,128,0.12); color: var(--green-lab); }
+.song-block.chorus .song-block-label { background: rgba(217,70,239,0.15); color: var(--magenta); }
+.song-block.outro .song-block-label { background: rgba(251,191,36,0.12); color: #fde68a; }
+.song-block-content {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.9;
+  padding: 0.6rem 0.7rem 0.7rem;
+  color: var(--text);
+  white-space: pre-wrap;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+.song-block.verse .song-block-content { border-color: rgba(74,222,128,0.1); }
+.song-block.chorus .song-block-content { border-color: rgba(217,70,239,0.1); color: #f0c0ff; }
+.song-block.intro .song-block-content { border-color: rgba(96,165,250,0.1); color: #bfdbfe; }
+.song-block.outro .song-block-content { border-color: rgba(251,191,36,0.1); color: #fef3c7; }
+
+/* ── PROMPT TAB ── */
+.prompt-area { padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 0.8rem; }
+.prompt-section-title {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 0.3rem;
+}
+.prompt-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+  position: relative;
+}
+.prompt-box.lyrics { border-color: rgba(74,222,128,0.15); }
+.prompt-box.style { border-color: rgba(217,70,239,0.15); color: #f0c0ff; }
+.prompt-box.title-box { border-color: rgba(251,191,36,0.15); color: #fef3c7; }
+.btn-copy-section {
+  position: absolute;
+  top: 0.4rem; right: 0.4rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface3);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-copy-section:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.btn-copy-section.copied { color: var(--green-lab); border-color: var(--green-lab); }
+.btn-copy-all {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.82rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 10px;
+  border: 2px solid var(--green-lab);
+  background: rgba(74,222,128,0.1);
+  color: var(--green-lab);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.btn-copy-all:hover { background: rgba(74,222,128,0.2); box-shadow: 0 0 20px rgba(74,222,128,0.15); }
+.btn-copy-all.copied { background: rgba(74,222,128,0.25); }
+
+/* ── GUÍA TAB ── */
+.guide-area {
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.guide-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+
+.guide-step {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+
+.guide-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green-lab);
+  background: rgba(74,222,128,0.1);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.guide-step-content {}
+
+.guide-step-title {
+  font-weight: 900;
+  font-size: 0.78rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.guide-step-body {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.guide-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+}
+
+.guide-field-row {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.guide-field-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  text-align: center;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.05rem;
+}
+.guide-field-tag.lyrics { background: rgba(74,222,128,0.12); color: var(--green-lab); border: 1px solid rgba(74,222,128,0.2); }
+.guide-field-tag.style  { background: rgba(217,70,239,0.1);  color: var(--magenta);   border: 1px solid rgba(217,70,239,0.2); }
+.guide-field-tag.title  { background: rgba(251,191,36,0.1);  color: #fde68a;          border: 1px solid rgba(251,191,36,0.2); }
+
+.guide-field-desc {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.guide-field-desc strong { color: var(--text); font-weight: 700; }
+.guide-field-desc .warn {
+  display: inline-block;
+  margin-top: 0.2rem;
+  color: rgba(251,191,36,0.85);
+  font-size: 0.67rem;
+}
+
+.guide-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+.guide-tip {
+  background: rgba(74,222,128,0.06);
+  border: 1px solid rgba(74,222,128,0.15);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+}
+.guide-tip-label {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-lab);
+  margin-bottom: 0.35rem;
+}
+.guide-tip-text {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.guide-tip-text strong { color: var(--text); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.footer-text { font-size: 0.72rem; color: var(--muted2); font-weight: 600; }
+.footer-text strong { color: var(--muted); font-weight: 900; }
+
+@media (max-width: 860px) {
+  main { grid-template-columns: 1fr; }
+  .controls-panel { border-right: none; border-bottom: 1px solid var(--border); }
+  .output-panel { min-height: 60vh; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-tagline">
+      HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS
+    </div>
+    <a class="btn-inicio" href="./../index.html">← happypuking-lab</a>
+  </div>
+  <h1>🎵 sing & learn</h1>
+  <p>Genera canciones con los verbos irregulares ingleses · úsalas en Suno, Producer.ai o cualquier IA musical</p>
+</header>
+
+<main>
+  <div class="controls-panel">
+
+    <!-- PASO 1: Familia -->
+    <a class="btn-pill-action" href="verbos_irregulares.html" style="text-decoration:none">← Volver a estudiar</a>
+    <div class="step open" id="step-family">
+      <div class="step-header" onclick="toggleStep('family')">
+        <span class="step-num">1</span>
+        <span class="step-title">Familia de verbos</span>
+        <span class="step-summary" id="summary-family"></span>
+        <span class="step-edit">cambiar</span>
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-body">
+        <div class="pill-group" id="family-pills"></div>
+      </div>
+    </div>
+
+    <!-- PASO 2: Género -->
+    <div class="step locked" id="step-genre">
+      <div class="step-header" onclick="toggleStep('genre')">
+        <span class="step-num">2</span>
+        <span class="step-title">Género musical</span>
+        <span class="step-summary" id="summary-genre"></span>
+        <span class="step-edit">cambiar</span>
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-locked-hint">← elige primero una familia</div>
+      <div class="step-body">
+        <div class="pill-group" id="genre-pills"></div>
+      </div>
+    </div>
+
+    <!-- PASO 3: Hook -->
+    <div class="step locked" id="step-hook">
+      <div class="step-header" onclick="toggleStep('hook')">
+        <span class="step-num">3</span>
+        <span class="step-title">Hook / Estribillo</span>
+        <span class="step-summary" id="summary-hook"></span>
+        <span class="step-edit">cambiar</span>
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-locked-hint">← elige primero un género</div>
+      <div class="step-body">
+        <div class="hook-modes">
+          <button class="hook-mode-btn active" id="hm-preset" onclick="setHookMode('preset')">Predefinido</button>
+          <button class="hook-mode-btn" id="hm-custom" onclick="setHookMode('custom')">Escribir</button>
+        </div>
+        <div id="hook-preset-area" class="hook-presets">
+          <div class="hook-preset selected" data-hook="echo" onclick="selectPresetHook(this)">
+            <div class="hook-name">Echo</div>
+            Oh-oh, yeah-yeah<br>oh-oh, the same...
+          </div>
+          <div class="hook-preset" data-hook="loop" onclick="selectPresetHook(this)">
+            <div class="hook-name">Loop</div>
+            Na-na-na, na-na-na<br>na-na, na-na-na...
+          </div>
+          <div class="hook-preset" data-hook="drop" onclick="selectPresetHook(this)">
+            <div class="hook-name">Drop</div>
+            Hey! · base · past · done<br>hey! · one-two-three...
+          </div>
+          <div class="hook-preset" data-hook="glitch" onclick="selectPresetHook(this)">
+            <div class="hook-name">Glitch</div>
+            Uh-uh-uh... same same<br>uh-uh-uh... again...
+          </div>
+        </div>
+        <div id="hook-custom-area" class="hook-custom-area">
+          <textarea id="hook-custom-text" placeholder="Escribe tu hook aquí...&#10;Ejemplo:&#10;Oh-oh, yeah-yeah&#10;oh-oh, the same..."></textarea>
+          <button class="btn-confirm-hook" onclick="confirmCustomHook()">
+            <span>✓</span> Usar este hook
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 4: Estructura -->
+    <div class="step locked" id="step-structure">
+      <div class="step-header" onclick="toggleStep('structure')">
+        <span class="step-num">4</span>
+        <span class="step-title">Estructura</span>
+        <span class="step-summary" id="summary-structure"></span>
+        <span class="step-edit">cambiar</span>
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-locked-hint">← elige primero un hook</div>
+      <div class="step-body">
+        <div class="structure-options">
+          <label class="structure-opt selected" onclick="selectStructure(this, 'A')">
+            <div class="structure-radio-dot"></div>
+            <div>
+              <div class="structure-opt-title">Mínima — 3 versos + chorus</div>
+              <div class="structure-opt-desc">Intro · Verso × 3 verbos · Chorus · Verso × 3 verbos · Chorus · Outro</div>
+            </div>
+          </label>
+          <label class="structure-opt" onclick="selectStructure(this, 'B')">
+            <div class="structure-radio-dot"></div>
+            <div>
+              <div class="structure-opt-title">Estándar — todos los verbos</div>
+              <div class="structure-opt-desc">Todos los verbos de la familia, 3 por verso, chorus entre cada bloque</div>
+            </div>
+          </label>
+          <label class="structure-opt" onclick="selectStructure(this, 'C')">
+            <div class="structure-radio-dot"></div>
+            <div>
+              <div class="structure-opt-title">Sencilla — solo intro + loop</div>
+              <div class="structure-opt-desc">Para Suno Custom Mode: sin estructura, solo los verbos para loopear</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-build-wrap" id="btn-build-wrap">
+      <button class="btn-build" onclick="buildPrompt()">
+        <span>🎵</span> Generar prompt
+      </button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: output + guía -->
+  <div class="output-panel">
+
+    <div class="output-empty" id="output-empty">
+      <div class="empty-icon">🎵</div>
+      <h3>Configura y genera</h3>
+      <p>Sigue los pasos de la izquierda<br>para crear tu prompt.</p>
+    </div>
+
+    <div class="output-content" id="output-content">
+      <div class="output-tabs">
+        <button class="output-tab active" onclick="switchTab('preview')">👁 Preview</button>
+        <button class="output-tab" onclick="switchTab('prompt')">📋 Prompt</button>
+        <button class="output-tab" onclick="switchTab('guide')">📖 Cómo usarlo</button>
+      </div>
+
+      <!-- Preview -->
+      <div class="tab-pane active" id="tab-preview">
+        <div class="preview-area">
+          <div class="preview-meta" id="preview-meta"></div>
+          <div class="preview-title" id="preview-title"></div>
+          <div class="song-structure" id="song-structure"></div>
+        </div>
+      </div>
+
+      <!-- Prompt -->
+      <div class="tab-pane" id="tab-prompt">
+        <div class="prompt-area">
+          <div>
+            <div class="prompt-section-title">📝 Letra (pega en "Lyrics")</div>
+            <div class="prompt-box lyrics" id="out-lyrics">
+              <button class="btn-copy-section" onclick="copySection('out-lyrics', this)">copiar</button>
+            </div>
+          </div>
+          <div>
+            <div class="prompt-section-title">🎨 Style prompt (pega en "Style of Music")</div>
+            <div class="prompt-box style" id="out-style">
+              <button class="btn-copy-section" onclick="copySection('out-style', this)">copiar</button>
+            </div>
+          </div>
+          <div>
+            <div class="prompt-section-title">🎼 Título sugerido</div>
+            <div class="prompt-box title-box" id="out-title">
+              <button class="btn-copy-section" onclick="copySection('out-title', this)">copiar</button>
+            </div>
+          </div>
+          <button class="btn-copy-all" id="btn-copy-all" onclick="copyAll()">
+            <span>📋</span> Copiar todo
+          </button>
+        </div>
+      </div>
+
+      <!-- Guía -->
+      <div class="tab-pane" id="tab-guide">
+        <div class="guide-area">
+
+          <div class="guide-title">Cómo usar el prompt</div>
+
+          <div class="guide-step">
+            <div class="guide-num">1</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Elige tu asistente musical IA favorito</div>
+              <div class="guide-step-body">El que quieras: Suno, Udio, Producer.ai…</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="guide-num">2</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Activa el modo avanzado</div>
+              <div class="guide-step-body">Busca "Custom", "Advanced" o similar. Esto te mostrará los campos para la letra, el estilo y el título.</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="guide-num">3</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Pega cada cosa en su sitio</div>
+              <div class="guide-field">
+                <div class="guide-field-row">
+                  <span class="guide-field-tag lyrics">LYRICS</span>
+                  <div class="guide-field-desc">
+                    <strong>campo Lyrics / Letra</strong><br>
+                    Aquí va la letra de la canción (los verbos + estructura)
+                  </div>
+                </div>
+                <div class="guide-field-row">
+                  <span class="guide-field-tag style">STYLE</span>
+                  <div class="guide-field-desc">
+                    <strong>campo Style of Music</strong><br>
+                    Aquí defines cómo suena: género, energía, vibes
+                    <span class="warn">⚠️ No metas letra aquí — solo instrumentos y estilo. Puedes combinar: <em>pop + samba brasileña</em></span>
+                  </div>
+                </div>
+                <div class="guide-field-row">
+                  <span class="guide-field-tag title">TITLE</span>
+                  <div class="guide-field-desc">
+                    <strong>campo Title</strong><br>
+                    Nombre libre, sin más
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="guide-num">4</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Genera y prueba</div>
+              <div class="guide-step-body">Si no te gusta → cambia el estilo o regenera.</div>
+            </div>
+          </div>
+
+          <hr class="guide-divider">
+
+          <div class="guide-tip">
+            <div class="guide-tip-label">💡 Tip útil (el de verdad)</div>
+            <div class="guide-tip-text">
+              <strong>El STYLE manda.</strong> Si algo no suena bien, el 90% de las veces es el estilo o los instrumentos. Pero a veces cambiar la estructura o el orden de los versos también mejora el resultado.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-text">
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// URLS DE EJEMPLO — edita solo esta sección para añadir enlaces
+// Formato: 'id_genero': 'https://suno.com/song/...'
+// Deja el valor como '' si aún no tienes ejemplo para ese género
+// ══════════════════════════════════════════════════════════════
+const EXAMPLE_URLS = {
+  reggaeton:    '',
+  darkphonk:    '',
+  lofiglitch:   '',
+  happy16bit:   '',
+  classichouse: '',
+  uktechno:     '',
+  discofunk:    '',
+  hiphopbeat:   '',
+  phonkmambo:   '',
+  lullaby:      '',
+};
+
+const FAMILIES = [
+  { id:'aaa',     color:'#818CF8', label:'Sin cambio (A=A=A)',         pattern:'put · put · put',
+    verbs:[['put','put','put'],['cut','cut','cut'],['let','let','let'],['set','set','set'],['hit','hit','hit'],['cost','cost','cost'],['hurt','hurt','hurt'],['read','read','read'],['shut','shut','shut'],['spread','spread','spread'],['split','split','split'],['bet','bet','bet'],['burst','burst','burst'],['cast','cast','cast'],['rid','rid','rid']] },
+  { id:'iau',     color:'#34D399', label:'i → a → u',                  pattern:'sing / sang / sung',
+    verbs:[['begin','began','begun'],['drink','drank','drunk'],['sing','sang','sung'],['swim','swam','swum'],['ring','rang','rung'],['sink','sank','sunk'],['spring','sprang','sprung'],['shrink','shrank','shrunk'],['stink','stank','stunk']] },
+  { id:'iuu',     color:'#F87171', label:'i → u → u',                  pattern:'stick / stuck / stuck',
+    verbs:[['win','won','won'],['dig','dug','dug'],['hang','hung','hung'],['spin','spun','spun'],['stick','stuck','stuck'],['strike','struck','struck'],['sting','stung','stung'],['swing','swung','swung'],['cling','clung','clung'],['fling','flung','flung'],['wring','wrung','wrung']] },
+  { id:'eeshort', color:'#A78BFA', label:'ee → vocal corta',           pattern:'keep / kept / kept',
+    verbs:[['feel','felt','felt'],['keep','kept','kept'],['leave','left','left'],['mean','meant','meant'],['meet','met','met'],['sleep','slept','slept'],['lead','led','led'],['deal','dealt','dealt'],['feed','fed','fed'],['sweep','swept','swept'],['weep','wept','wept'],['creep','crept','crept'],['bleed','bled','bled'],['flee','fled','fled']] },
+  { id:'ought',   color:'#FB923C', label:'-ought / -aught',            pattern:'think / thought / thought',
+    verbs:[['think','thought','thought'],['buy','bought','bought'],['bring','brought','brought'],['teach','taught','taught'],['catch','caught','caught'],['fight','fought','fought'],['seek','sought','sought']] },
+  { id:'ew',      color:'#22D3EE', label:'-ow → -ew → -own',           pattern:'know / knew / known',
+    verbs:[['know','knew','known'],['grow','grew','grown'],['throw','threw','thrown'],['blow','blew','blown'],['fly','flew','flown'],['draw','drew','drawn']] },
+  { id:'iveove',  color:'#4ADE80', label:'-ive/-ide → -ove/-ode → -en',pattern:'drive / drove / driven',
+    verbs:[['write','wrote','written'],['drive','drove','driven'],['rise','rose','risen'],['ride','rode','ridden'],['stride','strode','stridden'],['strive','strove','striven']] },
+  { id:'endent',  color:'#FCD34D', label:'-end → -ent',                pattern:'send / sent / sent',
+    verbs:[['send','sent','sent'],['spend','spent','spent'],['lend','lent','lent'],['bend','bent','bent'],['rend','rent','rent']] },
+  { id:'indound', color:'#F472B6', label:'-ind → -ound',               pattern:'find / found / found',
+    verbs:[['find','found','found'],['bind','bound','bound'],['grind','ground','ground'],['wind','wound','wound']] },
+  { id:'special', color:'#94A3B8', label:'Supletivos',                  pattern:'be · go · do · see',
+    verbs:[['be','was/were','been'],['go','went','gone'],['have','had','had'],['do','did','done'],['say','said','said'],['see','saw','seen'],['get','got','got'],['make','made','made'],['come','came','come'],['give','gave','given'],['take','took','taken'],['eat','ate','eaten']] },
+];
+
+const GENRES = [
+  { id:'reggaeton',    color:'#FB923C', icon:'🔥', label:'Reggaetón',
+    style:'reggaeton, dembow rhythm, 95 bpm, bass-heavy, energetic, latin urban, clear vocals, trap hi-hats',
+    intro_tag:'[short dembow intro]', outro_tag:'[big end] [dembow breakdown]' },
+  { id:'darkphonk',    color:'#818CF8', icon:'💀', label:'Dark Phonk',
+    style:'male voice, dark atmosphere, Hard House, dark phonk style bass, 18 hz bass',
+    intro_tag:'[dark intro] [bass build]', outro_tag:'[bass drop outro]' },
+  { id:'lofiglitch',   color:'#38BDF8', icon:'📼', label:'Lo-fi Glitch',
+    style:'lo-fi vocals, 16-bit catchy melody, Punchy 3/4 beats, bounce drops, glitch',
+    intro_tag:'[lo-fi intro] [vinyl crackle]', outro_tag:'[glitch fade]' },
+  { id:'happy16bit',   color:'#4ADE80', icon:'🎮', label:'Happy 16-bit',
+    style:'clear male voice lyric, 16-bit video game soundtrack, happy',
+    intro_tag:'[8-bit intro jingle]', outro_tag:'[game over chime]' },
+  { id:'classichouse', color:'#F472B6', icon:'🏠', label:'Classic House',
+    style:'Classic house 4/4 beats, piano stabs, soulful vocals, high energy builds, hands-in-the-air moments, catchy synth melody',
+    intro_tag:'[house intro] [piano stab]', outro_tag:'[house outro] [fade]' },
+  { id:'uktechno',     color:'#FBBF24', icon:'🤖', label:'UK Techno Pop',
+    style:"uk 80's techno pop, clear voices, funny sound effects",
+    intro_tag:'[synth intro] [drum machine]', outro_tag:'[retro outro]' },
+  { id:'discofunk',    color:'#34D399', icon:'🕺', label:'Disco Funk',
+    style:'disco house, pop, caribbean beats, funk, 16-bit',
+    intro_tag:'[funky intro] [bass line]', outro_tag:'[disco fade out]' },
+  { id:'hiphopbeat',   color:'#F87171', icon:'🎤', label:'Hip-hop Beatbox',
+    style:'hip-hop male voice, Beatbox, Vocal-Percussion, whistling, Basslines, Layered-Beats, soft trap',
+    intro_tag:'[beatbox intro]', outro_tag:'[beat fade]' },
+  { id:'phonkmambo',   color:'#A78BFA', icon:'🌀', label:'Phonk Mambo',
+    style:'male voice, Beatbox, phonk, Vocal-Percussion, Basslines, Layered-Beats, Dynamic-Grooves, manbo like phonk',
+    intro_tag:'[phonk intro] [trumpet stab]', outro_tag:'[phonk drop outro]' },
+  { id:'lullaby',      color:'#FCD34D', icon:'✨', label:'Lullaby',
+    style:'female tender voice, lo-fi, quite, calm, chill, lullaby, xylophone melody',
+    intro_tag:'[gentle xylophone intro]', outro_tag:'[soft fade out]' },
+];
+
+const HOOK_PRESETS = {
+  echo:   "Oh-oh, yeah-yeah\noh-oh, the same...",
+  loop:   "Na-na-na, na-na-na\nna-na, na-na-na...",
+  drop:   "Hey! · base · past · done\nhey! · one-two-three...",
+  glitch: "Uh-uh-uh... same same\nuh-uh-uh... again...",
+};
+
+let selectedFamily    = null;
+let selectedGenre     = null;
+let selectedStructure = 'A';
+let hookMode          = 'preset';
+let selectedPresetHook = 'echo';
+
+const TAB_NAMES = ['preview', 'prompt', 'guide'];
+const TAB_IDS   = ['tab-preview', 'tab-prompt', 'tab-guide'];
+
+function init() {
+  buildFamilyPills();
+  buildGenrePills();
+}
+
+function buildFamilyPills() {
+  const container = document.getElementById('family-pills');
+  FAMILIES.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'pill';
+    btn.style.setProperty('--c', f.color);
+    btn.dataset.fid = f.id;
+    btn.textContent = f.label;
+    btn.onclick = () => selectFamily(btn, f.id);
+    container.appendChild(btn);
+  });
+}
+
+function buildGenrePills() {
+  const container = document.getElementById('genre-pills');
+  GENRES.forEach(g => {
+    const url = EXAMPLE_URLS[g.id] || '';
+    const btn = document.createElement('button');
+    btn.className = 'pill genre-pill';
+    btn.style.setProperty('--c', g.color);
+    btn.dataset.gid = g.id;
+    btn.onclick = () => selectGenre(btn, g.id);
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'genre-icon';
+    iconSpan.textContent = g.icon;
+    btn.appendChild(iconSpan);
+
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = g.label;
+    btn.appendChild(labelSpan);
+
+    if (url) {
+      const link = document.createElement('a');
+      link.className = 'genre-example-link';
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.title = 'Escuchar ejemplo';
+      link.textContent = '🎧';
+      link.onclick = e => e.stopPropagation();
+      btn.appendChild(link);
+    }
+
+    container.appendChild(btn);
+  });
+}
+
+// ── FLUJO ──
+function openStep(stepId) {
+  const el = document.getElementById('step-' + stepId);
+  if (!el || el.classList.contains('locked')) return;
+  el.classList.remove('collapsed');
+  el.classList.add('open');
+}
+function collapseStep(stepId) {
+  const el = document.getElementById('step-' + stepId);
+  if (!el) return;
+  el.classList.remove('open');
+  el.classList.add('collapsed');
+}
+function unlockStep(stepId) {
+  const el = document.getElementById('step-' + stepId);
+  if (!el) return;
+  el.classList.remove('locked');
+  el.classList.add('open');
+}
+function toggleStep(stepId) {
+  const el = document.getElementById('step-' + stepId);
+  if (!el || el.classList.contains('locked')) return;
+  if (el.classList.contains('open')) {
+    if (stepHasValue(stepId)) collapseStep(stepId);
+  } else {
+    openStep(stepId);
+  }
+}
+function stepHasValue(stepId) {
+  if (stepId === 'family') return !!selectedFamily;
+  if (stepId === 'genre')  return !!selectedGenre;
+  return true;
+}
+
+// ── SELECTORES ──
+function selectFamily(btn, id) {
+  document.querySelectorAll('#family-pills .pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedFamily = id;
+  const fam = FAMILIES.find(f => f.id === id);
+  document.getElementById('summary-family').textContent = fam ? fam.label : '';
+  collapseStep('family');
+  unlockStep('genre');
+  updateBuildBtn();
+}
+function selectGenre(btn, id) {
+  document.querySelectorAll('#genre-pills .pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedGenre = id;
+  const genre = GENRES.find(g => g.id === id);
+  document.getElementById('summary-genre').innerHTML = genre ? `${genre.icon} ${genre.label}` : '';
+  collapseStep('genre');
+  unlockStep('hook');
+  updateBuildBtn();
+}
+function setHookMode(mode) {
+  hookMode = mode;
+  ['preset','custom'].forEach(m => {
+    document.getElementById('hm-' + m).classList.toggle('active', m === mode);
+  });
+  document.getElementById('hook-preset-area').style.display = mode === 'preset' ? 'flex' : 'none';
+  document.getElementById('hook-preset-area').style.flexDirection = 'column';
+  document.getElementById('hook-custom-area').classList.toggle('visible', mode === 'custom');
+}
+function selectPresetHook(el) {
+  document.querySelectorAll('.hook-preset').forEach(h => h.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPresetHook = el.dataset.hook;
+  document.getElementById('summary-hook').textContent = el.querySelector('.hook-name').textContent;
+  collapseStep('hook');
+  unlockStep('structure');
+  updateBuildBtn();
+}
+function confirmCustomHook() {
+  const text = document.getElementById('hook-custom-text').value.trim();
+  if (!text) return;
+  const preview = text.split('\n')[0].substring(0, 22) + (text.split('\n')[0].length > 22 ? '…' : '');
+  document.getElementById('summary-hook').textContent = preview;
+  collapseStep('hook');
+  unlockStep('structure');
+  updateBuildBtn();
+}
+function selectStructure(el, val) {
+  document.querySelectorAll('.structure-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStructure = val;
+  const title = el.querySelector('.structure-opt-title').textContent.split('—')[0].trim();
+  document.getElementById('summary-structure').textContent = title;
+  collapseStep('structure');
+  updateBuildBtn();
+}
+function updateBuildBtn() {
+  const ready = selectedFamily && selectedGenre;
+  document.getElementById('btn-build-wrap').classList.toggle('visible', ready);
+}
+function getHookText() {
+  if (hookMode === 'preset') return HOOK_PRESETS[selectedPresetHook] || '';
+  if (hookMode === 'custom') return document.getElementById('hook-custom-text').value.trim() || HOOK_PRESETS['echo'];
+  return HOOK_PRESETS['echo'];
+}
+
+// ── BUILD ──
+function buildPrompt() {
+  const fam   = FAMILIES.find(f => f.id === selectedFamily);
+  const genre = GENRES.find(g => g.id === selectedGenre);
+  if (!fam || !genre) return;
+
+  const hook  = getHookText();
+  const verbs = fam.verbs;
+  const blocks = [];
+  for (let i = 0; i < verbs.length; i += 3) blocks.push(verbs.slice(i, i + 3));
+
+  let structure = [];
+  if (selectedStructure === 'A') {
+    structure.push({ type:'intro',  label:'[short instrumental intro]', content:'' });
+    structure.push({ type:'verse',  label:'[Verse 1]', content:(blocks[0]||[]).map(v=>v.join(', ')).join('\n') });
+    structure.push({ type:'chorus', label:'[Chorus]',  content:hook });
+    structure.push({ type:'verse',  label:'[Verse 2]', content:(blocks[1]||blocks[0]||[]).map(v=>v.join(', ')).join('\n') });
+    structure.push({ type:'chorus', label:'[Chorus]',  content:hook });
+    structure.push({ type:'outro',  label:'[Outro]',   content:genre.outro_tag });
+  } else if (selectedStructure === 'B') {
+    structure.push({ type:'intro', label:'[short instrumental intro]', content:'' });
+    blocks.forEach((block, i) => {
+      structure.push({ type:'verse',  label:`[Verse ${i+1}]`, content:block.map(v=>v.join(', ')).join('\n') });
+      structure.push({ type:'chorus', label:'[Chorus]',        content:hook });
+    });
+    structure.push({ type:'outro', label:'[Outro]', content:genre.outro_tag });
+  } else {
+    structure.push({ type:'intro', label:'[loop]', content:verbs.map(v=>v.join(', ')).join('\n') });
+  }
+
+  renderPreview(fam, genre, structure);
+  renderPrompt(fam, genre, structure);
+  document.getElementById('output-empty').style.display = 'none';
+  document.getElementById('output-content').classList.add('visible');
+  switchTab('preview');
+}
+
+function renderPreview(fam, genre, structure) {
+  document.getElementById('preview-meta').innerHTML = `
+    <span class="preview-tag family" style="--family-color:${fam.color}">${fam.label}</span>
+    <span class="preview-tag genre">${genre.icon} ${genre.label}</span>
+    <span class="preview-tag">${fam.verbs.length} verbos</span>
+  `;
+  document.getElementById('preview-title').textContent = `"${fam.pattern}" — ${genre.label} version`;
+  const container = document.getElementById('song-structure');
+  container.innerHTML = '';
+  structure.forEach(block => {
+    if (selectedStructure === 'C') {
+      const el = document.createElement('div');
+      el.className = 'song-block verse';
+      el.innerHTML = `<div class="song-block-label">loop / todos los verbos</div><div class="song-block-content">${block.content}</div>`;
+      container.appendChild(el);
+      return;
+    }
+    if (!block.content && block.type === 'intro') return;
+    const el = document.createElement('div');
+    el.className = `song-block ${block.type}`;
+    el.innerHTML = `<div class="song-block-label">${block.label}</div><div class="song-block-content">${block.content || block.label}</div>`;
+    container.appendChild(el);
+  });
+}
+
+function renderPrompt(fam, genre, structure) {
+  document.getElementById('out-title').innerHTML =
+    `${fam.pattern} (${genre.label} version)\n<button class="btn-copy-section" onclick="copySection('out-title', this)">copiar</button>`;
+  document.getElementById('out-style').innerHTML =
+    genre.style + `\n<button class="btn-copy-section" onclick="copySection('out-style', this)">copiar</button>`;
+  let lyrics = '';
+  structure.forEach(block => {
+    if (block.type === 'intro')                       lyrics += `${genre.intro_tag}\n\n`;
+    else if (block.type === 'chorus')                 lyrics += `${block.label}\n${block.content}\n\n`;
+    else if (block.type === 'verse' && block.content) lyrics += `${block.label}\n${block.content}\n\n`;
+    else if (block.type === 'outro')                  lyrics += `${block.label}\n`;
+  });
+  document.getElementById('out-lyrics').innerHTML =
+    escapeHtml(lyrics.trimEnd()) + `\n<button class="btn-copy-section" onclick="copySection('out-lyrics', this)">copiar</button>`;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── TABS (ahora 3) ──
+function switchTab(name) {
+  document.querySelectorAll('.output-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', TAB_NAMES[i] === name);
+  });
+  document.querySelectorAll('.tab-pane').forEach((pane, i) => {
+    pane.classList.toggle('active', TAB_IDS[i] === 'tab-' + name);
+  });
+}
+
+function copySection(elId, btn) {
+  const clone = document.getElementById(elId).cloneNode(true);
+  clone.querySelectorAll('button').forEach(b => b.remove());
+  navigator.clipboard.writeText(clone.textContent.trim()).then(() => {
+    btn.textContent = '✓'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyAll() {
+  const getClean = id => {
+    const clone = document.getElementById(id).cloneNode(true);
+    clone.querySelectorAll('button').forEach(b => b.remove());
+    return clone.textContent.trim();
+  };
+  const all = [
+    '── LYRICS ──', getClean('out-lyrics'), '',
+    '── STYLE OF MUSIC ──', getClean('out-style'), '',
+    '── TITLE ──', getClean('out-title'),
+  ].join('\n');
+  navigator.clipboard.writeText(all).then(() => {
+    const btn = document.getElementById('btn-copy-all');
+    btn.innerHTML = '<span>✓</span> ¡Copiado!'; btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '<span>📋</span> Copiar todo'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+init();
+</script>
+</body>
+</html>

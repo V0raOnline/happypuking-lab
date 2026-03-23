@@ -9,6 +9,8 @@
     --pink: #ff7eb3;
     --text: #e8f5e9;
     --muted: #4a6a4a;
+    --muted2: #4B5563;
+    --magenta: #D946EF;
     --surface: #0f160f;
     --surface2: #141e14;
     --border: rgba(57,255,106,0.1);
@@ -38,21 +40,29 @@
 
   /* ── HEADER ── */
   header {
+    padding: 0.55rem 1.4rem 0.6rem;
+    text-align: center;
     position: relative;
     z-index: 10;
-    padding: 2rem 2rem 0;
-    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .header-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.35rem;
   }
 
   .header-tagline {
-    font-size: 0.72rem;
+    font-size: 0.66rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 1rem;
   }
-  .header-tagline span { margin: 0 0.4rem; opacity: 0.4; }
+  .header-tagline span { margin: 0 0.35rem; opacity: 0.4; }
 
   header h1 {
     font-family: 'Unbounded', sans-serif;
@@ -637,16 +647,15 @@
 
   /* ── FOOTER ── */
   footer {
+    border-top: 1px solid var(--border);
+    padding: 1.1rem 2rem;
     text-align: center;
-    padding: 2rem;
-    color: var(--muted);
-    font-size: 0.72rem;
     position: relative;
     z-index: 1;
-    border-top: 1px solid var(--border);
   }
-
-  footer strong { color: var(--glow); }
+  
+  .footer-text { font-size: 0.72rem; color: var(--muted2); font-weight: 600; }
+  .footer-text strong { color: var(--glow); font-weight: 900; }
 
   @media (max-width: 600px) {
     .section-nav { gap: 0.3rem; }
@@ -680,18 +689,19 @@
   max-width:900px;
 }  
 .btn-inicio {
-    display: inline-block;
-    font-family: 'DM Serif Display', serif;
-    font-style: italic;
-    font-size: 0.88rem;
-    padding: 0.35rem 1rem;
-    border-radius: 6px;
-    border: 1px solid #D946EF;
-    color: var(--text);
-    background: none;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-    margin-bottom: 1.2rem;
-  }
+position: absolute;
+right: 0;
+font-family: 'DM Serif Display', serif;
+font-style: italic;
+font-size: 0.8rem;
+padding: 0.25rem 0.8rem;
+border-radius: 6px;
+border: 1px solid var(--magenta);
+color: var(--text);
+background: none;
+cursor: pointer;
+text-decoration: none;
+transition: all 0.2s;
+  white-space: nowrap;
+}
   .btn-inicio:hover { background: rgba(217,70,239,0.08); }

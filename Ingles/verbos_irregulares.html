@@ -1,0 +1,1446 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbos Irregulares — hAppYpUkIng Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --surface2: #22263A;
+  --surface3: #2A2F45;
+  --border: rgba(255,255,255,0.07);
+  --text: #F0F2FF;
+  --muted: #6B7280;
+  --muted2: #4B5563;
+  --magenta: #D946EF;
+  --green-lab: #4ADE80;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  padding: 0.55rem 1.4rem 0.6rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.header-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+.header-tagline {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.header-tagline span { margin: 0 0.35rem; opacity: 0.4; }
+.btn-inicio {
+  position: absolute;
+  right: 0;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--magenta);
+  color: var(--text);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-inicio:hover { background: rgba(217,70,239,0.08); }
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.1rem;
+  line-height: 1.2;
+}
+header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
+
+.toggle-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.28rem 0.75rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+  width: 100%;
+  text-align: left;
+}
+.toggle-btn.active { background: rgba(74,222,128,0.1); border-color: var(--green-lab); color: var(--green-lab); }
+.toggle-btn:hover:not(.active) { border-color: rgba(255,255,255,0.15); color: var(--text); }
+
+.workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr 340px;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* ── LEFT SIDEBAR ── */
+.left-sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  height: 100%;
+}
+.sidebar-controls {
+  padding: 0.75rem 0.9rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.sidebar-section-label {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 0.1rem;
+}
+
+/* ── BUSCADOR ── */
+.search-block {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+}
+.search-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.4rem 2rem 0.4rem 0.7rem;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.search-input::placeholder { color: var(--muted); }
+.search-input:focus { border-color: rgba(74,222,128,0.35); }
+.search-clear {
+  position: absolute;
+  right: 1.3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.1rem;
+  display: none;
+  line-height: 1;
+}
+.search-clear.visible { display: block; }
+.search-clear:hover { color: var(--text); }
+
+/* Panel de resultados */
+.search-results {
+  display: none;
+  flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+}
+.search-results.visible { display: flex; }
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.search-result-item:hover { background: var(--surface2); }
+
+.search-result-forms {
+  display: flex;
+  gap: 0.3rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.search-result-inf {
+  font-weight: 900;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.search-result-inf mark {
+  background: rgba(74,222,128,0.25);
+  color: var(--green-lab);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.search-result-sep {
+  color: var(--muted2);
+  font-size: 0.65rem;
+}
+.search-result-form {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.search-result-form mark {
+  background: rgba(74,222,128,0.2);
+  color: var(--green-lab);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.search-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.search-result-trans {
+  font-size: 0.62rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.search-result-family {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid;
+  opacity: 0.7;
+}
+.search-no-results {
+  padding: 1.2rem 0.9rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.sidebar-header-block {
+  padding: 0.75rem 0.9rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-header-block h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+.sidebar-header-block p { font-size: 0.68rem; color: var(--muted); font-style: italic; }
+
+.family-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.4rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+}
+.family-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+}
+.family-item:hover { background: var(--surface2); }
+.family-item.active { background: rgba(74,222,128,0.04); border-left-color: var(--green-lab); }
+.family-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.family-label { flex: 1; font-size: 0.74rem; font-weight: 700; line-height: 1.3; }
+.family-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  background: var(--surface3);
+  padding: 0.1rem 0.4rem;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+/* ── CENTER ── */
+.center-col {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+  height: 100%;
+}
+.map-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: radial-gradient(ellipse at center, rgba(74,222,128,0.04) 0%, transparent 65%);
+  min-height: 0;
+}
+#map-canvas { width: 100%; height: 100%; }
+.map-hint-center {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.node-tooltip {
+  position: absolute;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.72rem;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 50;
+  white-space: nowrap;
+  transition: opacity 0.12s;
+}
+
+.verb-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 1.4rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: relative;
+  z-index: 5;
+  flex-shrink: 0;
+}
+.verb-family-meta {
+  display: none;
+  align-items: center;
+  gap: 0.7rem;
+  flex: 1;
+  min-width: 0;
+}
+.verb-family-meta.visible { display: flex; }
+.verb-family-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.verb-family-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.verb-family-pattern {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.verb-area {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+  min-height: 0;
+}
+.verb-col-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0.45rem 1.4rem;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+.verb-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0.55rem 1.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+  transition: background 0.12s;
+  position: relative;
+}
+.verb-row:hover { background: var(--surface2); }
+.verb-row.highlighted { background: rgba(74,222,128,0.06); }
+.verb-row.high-freq::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--green-lab);
+  border-radius: 0 2px 2px 0;
+}
+.verb-row.mid-freq::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(74,222,128,0.3);
+  border-radius: 0 2px 2px 0;
+}
+.verb-cell { display: flex; flex-direction: column; gap: 0.08rem; }
+.verb-base { font-weight: 700; font-size: 0.83rem; }
+.verb-base.is-high { color: var(--green-lab); }
+.verb-trans { font-size: 0.63rem; color: var(--muted); }
+.verb-ipa { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: rgba(74,222,128,0.55); display: none; }
+.verb-phonetic { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: rgba(255,215,0,0.55); display: none; }
+body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
+
+/* ── RIGHT SIDEBAR ── */
+.info-sidebar {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  height: 100%;
+}
+.info-sidebar-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+.info-sidebar-empty h3 { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--text); opacity: 0.4; }
+.info-sidebar-empty p { font-size: 0.75rem; color: var(--muted); font-style: italic; opacity: 0.6; line-height: 1.5; }
+.info-sidebar-content {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+}
+.info-sidebar-content.visible { display: flex; }
+.info-sidebar-head { padding: 1rem 1.2rem 0.8rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.info-sidebar-head h3 { font-family: 'DM Serif Display', serif; font-size: 1.05rem; margin-bottom: 0.15rem; }
+.info-sidebar-head .pattern-mono { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+.accordion-list { padding: 0.6rem 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.accordion-item { border-radius: 10px; border: 1px solid transparent; overflow: hidden; }
+.accordion-trigger {
+  width: 100%; display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.55rem 0.75rem; background: none; border: none;
+  cursor: pointer; text-align: left; font-family: 'Nunito', sans-serif;
+  font-size: 0.7rem; font-weight: 900; letter-spacing: 0.06em;
+  text-transform: uppercase; transition: opacity 0.15s;
+}
+.accordion-trigger:hover { opacity: 0.85; }
+.accordion-trigger .acc-icon { margin-left: auto; font-size: 0.6rem; transition: transform 0.2s; opacity: 0.5; }
+.accordion-trigger.open .acc-icon { transform: rotate(180deg); }
+.accordion-body { display: none; padding: 0 0.75rem 0.65rem; font-size: 0.73rem; line-height: 1.55; }
+.accordion-body.open { display: block; }
+.acc-pattern  { background: rgba(74,222,128,0.07); border-color: rgba(74,222,128,0.15); }
+.acc-pattern .accordion-trigger { color: #86efac; }
+.acc-pattern .accordion-body { color: #bbf7d0; }
+.acc-history  { background: rgba(96,165,250,0.07); border-color: rgba(96,165,250,0.15); }
+.acc-history .accordion-trigger { color: #93c5fd; }
+.acc-history .accordion-body { color: #bfdbfe; }
+.acc-warning  { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.15); }
+.acc-warning .accordion-trigger { color: #fca5a5; }
+.acc-warning .accordion-body { color: #fecaca; }
+.acc-compounds { background: rgba(251,191,36,0.07); border-color: rgba(251,191,36,0.15); }
+.acc-compounds .accordion-trigger { color: #fde68a; }
+.acc-compounds .accordion-body { color: #fef3c7; }
+.acc-example  { background: rgba(217,70,239,0.07); border-color: rgba(217,70,239,0.15); }
+.acc-example .accordion-trigger { color: #e879f9; }
+.acc-example .accordion-body { color: #f5d0fe; }
+.acc-false    { background: rgba(251,146,60,0.07); border-color: rgba(251,146,60,0.15); }
+.acc-false .accordion-trigger { color: #fdba74; }
+.acc-false .accordion-body { color: #fed7aa; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.1rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.footer-text { font-size: 0.72rem; color: var(--muted2); font-weight: 600; }
+.footer-text strong { color: var(--muted); font-weight: 900; }
+
+.node-tooltip {
+  position: absolute;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.7rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 50;
+  white-space: nowrap;
+}
+.node-tooltip.visible { opacity: 1; }
+
+@media (max-width: 900px) {
+  .workspace { grid-template-columns: 1fr; }
+  .left-sidebar { border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; }
+  .info-sidebar { border-top: 1px solid var(--border); max-height: 40vh; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-tagline">
+      HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS
+    </div>
+    <a class="btn-inicio" href="./../index.html">← happypuking-lab</a>
+  </div>
+  <h1 id="h1-title">Verbos Irregulares</h1>
+  <p id="h1-sub">Los verbos irregulares no son aleatorios — tienen familias, tienen patrones</p>
+</header>
+
+<div class="workspace">
+
+  <div class="left-sidebar">
+
+    <!-- Controles -->
+    <div class="sidebar-controls">
+      <div class="sidebar-section-label" id="ctrl-label">Opciones</div>
+      <button class="toggle-btn" id="btn-ipa" onclick="toggleIPA()">IPA off</button>
+      <button class="toggle-btn active" id="btn-lang" onclick="toggleLang()">ES</button>
+    </div>
+
+    <!-- Buscador -->
+    <div class="search-block">
+      <input
+        class="search-input"
+        id="search-input"
+        type="text"
+        placeholder="buscar verbo…"
+        oninput="searchVerbs(this.value)"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Limpiar">✕</button>
+    </div>
+
+    <!-- Resultados de búsqueda (reemplaza la lista de familias cuando hay query) -->
+    <div class="search-results" id="search-results"></div>
+
+    <!-- Lista de familias (oculta mientras hay búsqueda activa) -->
+    <div class="sidebar-header-block" id="sidebar-header-block">
+      <h2 id="sidebar-title">Constelaciones</h2>
+      <p id="sidebar-sub">Selecciona una familia</p>
+    </div>
+    <div class="family-list" id="family-list"></div>
+
+  </div>
+
+  <div class="center-col">
+
+    <div class="verb-toolbar">
+      <button onclick="closeFamily()" style="
+        font-family:'Nunito',sans-serif;font-weight:700;font-size:0.7rem;
+        padding:0.22rem 0.65rem;border-radius:6px;
+        border:1px solid var(--border);background:var(--surface2);
+        color:var(--muted);cursor:pointer;transition:all 0.2s;
+        white-space:nowrap;flex-shrink:0;
+      " onmouseover="this.style.color='var(--text)'"
+         onmouseout="this.style.color='var(--muted)'">← <span id="back-label">Mapa</span></button>
+
+      <div class="verb-family-meta" id="verb-family-meta">
+        <div class="verb-family-dot" id="vf-dot"></div>
+        <div class="verb-family-title" id="vf-title"></div>
+        <div class="verb-family-pattern" id="vf-pattern"></div>
+      </div>
+
+      <a id="btn-practicar" href="verbos_quiz.html" style="
+        margin-left:auto;font-family:'Nunito',sans-serif;font-weight:900;
+        font-size:0.68rem;padding:0.25rem 0.7rem;border-radius:6px;
+        border:1px solid rgba(217,70,239,0.4);background:rgba(217,70,239,0.08);
+        color:var(--magenta);text-decoration:none;transition:all 0.2s;
+        white-space:nowrap;flex-shrink:0;
+      " onmouseover="this.style.background='rgba(217,70,239,0.16)'"
+         onmouseout="this.style.background='rgba(217,70,239,0.08)'">Practicar →</a>
+      <a id="btn-sing" href="Sing&Learn.html" style="
+        font-family:'Nunito',sans-serif;font-weight:900;
+        font-size:0.68rem;padding:0.25rem 0.7rem;border-radius:6px;
+        border:1px solid rgba(74,222,128,0.4);background:rgba(74,222,128,0.08);
+        color:var(--green-lab);text-decoration:none;transition:all 0.2s;
+        white-space:nowrap;flex-shrink:0;
+      " onmouseover="this.style.background='rgba(74,222,128,0.16)'"
+         onmouseout="this.style.background='rgba(74,222,128,0.08)'">🎵 Sing & Learn</a>
+    </div>
+
+    <div class="map-view" id="map-view">
+      <svg id="map-canvas"></svg>
+      <div class="node-tooltip" id="tooltip"></div>
+      <div class="map-hint-center" id="map-hint-center">Haz clic en un nodo para explorar esa familia</div>
+    </div>
+
+    <div class="verb-area" id="verb-area" style="display:none">
+      <div class="verb-col-headers" id="verb-col-headers" style="display:none">
+        <span id="col-inf">Infinitivo</span>
+        <span id="col-ps">Past Simple</span>
+        <span id="col-pp">Past Participle</span>
+      </div>
+      <div id="verb-rows"></div>
+    </div>
+
+  </div>
+
+  <div class="info-sidebar">
+    <div class="info-sidebar-empty" id="info-empty">
+      <h3 id="info-empty-title">¿Por qué familias?</h3>
+      <p id="info-empty-body">Más del 78% de los verbos irregulares comparten un patrón fonológico con otros.<br>Selecciona una constelación para descubrir el patrón, su historia y los errores típicos.</p>
+    </div>
+    <div class="info-sidebar-content" id="info-content">
+      <div class="info-sidebar-head">
+        <h3 id="info-head-name"></h3>
+        <div class="pattern-mono" id="info-head-pattern"></div>
+      </div>
+      <div class="accordion-list" id="accordion-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-text">
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>
+</footer>
+
+<script>
+const LANG = { current: 'es' };
+let showIPA = false;
+let activeFamily = null;
+let mapNodes = [];
+let searchQuery = '';
+
+// ── MAP / FAMILIA TOGGLE ──
+function showMap() {
+  document.getElementById('map-view').style.display = 'flex';
+  buildMap();
+}
+function hideMap() {
+  document.getElementById('map-view').style.display = 'none';
+}
+function closeFamily() {
+  activeFamily = null;
+  document.querySelectorAll('.family-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.map-node').forEach(g => {
+    const c = g.querySelector('.node-circle');
+    if (c) { c.setAttribute('fill-opacity','0.15'); c.setAttribute('stroke-opacity','0.5'); c.setAttribute('stroke-width','1.5'); }
+  });
+  document.getElementById('verb-family-meta').classList.remove('visible');
+  document.getElementById('verb-col-headers').style.display = 'none';
+  document.getElementById('verb-rows').innerHTML = '';
+  document.getElementById('verb-area').style.display = 'none';
+  document.getElementById('info-empty').style.display = 'flex';
+  document.getElementById('info-content').classList.remove('visible');
+  showMap();
+}
+
+// ── BUSCADOR ──
+function searchVerbs(q) {
+  searchQuery = q.trim().toLowerCase();
+  const clearBtn = document.getElementById('search-clear');
+  const resultsPanel = document.getElementById('search-results');
+  const familiesHeader = document.getElementById('sidebar-header-block');
+  const familiesList = document.getElementById('family-list');
+
+  clearBtn.classList.toggle('visible', searchQuery.length > 0);
+
+  if (!searchQuery) {
+    resultsPanel.classList.remove('visible');
+    familiesHeader.style.display = '';
+    familiesList.style.display = '';
+    resultsPanel.innerHTML = '';
+    return;
+  }
+
+  // Oculta lista de familias, muestra resultados
+  familiesHeader.style.display = 'none';
+  familiesList.style.display = 'none';
+  resultsPanel.classList.add('visible');
+
+  // Busca en todas las familias
+  const hits = [];
+  FAMILIES.forEach(fam => {
+    fam.verbs.forEach(v => {
+      const fields = [v.inf, v.ps, v.pp, v.trans.es, v.trans.en];
+      if (fields.some(f => f.toLowerCase().includes(searchQuery))) {
+        hits.push({ verb: v, family: fam });
+      }
+    });
+  });
+
+  if (hits.length === 0) {
+    resultsPanel.innerHTML = `<div class="search-no-results">Sin resultados para «${escapeHtml(searchQuery)}»</div>`;
+    return;
+  }
+
+  resultsPanel.innerHTML = hits.map(({ verb: v, family: f }) => {
+    const hl = (str) => str.replace(
+      new RegExp(`(${escapeRegex(searchQuery)})`, 'gi'),
+      '<mark>$1</mark>'
+    );
+    const trans = LANG.current === 'es' ? v.trans.es : v.trans.en;
+    return `
+      <div class="search-result-item" onclick="goToVerb('${f.id}', '${v.inf}')">
+        <div class="search-result-forms">
+          <span class="search-result-inf">${hl(v.inf)}</span>
+          <span class="search-result-sep">·</span>
+          <span class="search-result-form">${hl(v.ps)}</span>
+          <span class="search-result-sep">·</span>
+          <span class="search-result-form">${hl(v.pp)}</span>
+        </div>
+        <div class="search-result-meta">
+          <span class="search-result-trans">${hl(trans)}</span>
+          <span class="search-result-family" style="color:${f.color};border-color:${f.color}40">${f.label[LANG.current]}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  searchVerbs('');
+  document.getElementById('search-input').focus();
+}
+
+function goToVerb(familyId, verbInf) {
+  // Abre la familia y resalta el verbo
+  openFamily(familyId, verbInf);
+  // Cierra búsqueda
+  clearSearch();
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ── UI STRINGS ──
+const UI = {
+  es: {
+    h1: 'Verbos Irregulares',
+    h1sub: 'Los verbos irregulares no son aleatorios — tienen familias, tienen patrones',
+    sidebarTitle: 'Constelaciones',
+    sidebarSub: 'Selecciona una familia',
+    ctrlLabel: 'Opciones',
+    infoEmptyTitle: '¿Por qué familias?',
+    infoEmptyBody: 'Más del 78% de los verbos irregulares comparten un patrón fonológico con otros.<br><br>Selecciona una constelación para descubrir el patrón, su historia y los errores típicos.',
+    legTitle: 'Frecuencia',
+    legHigh: 'Alta', legMid: 'Media', legLow: 'Baja',
+    colInf: 'Infinitivo', colPs: 'Past Simple', colPp: 'Past Participle',
+    ipaOn: 'IPA on', ipaOff: 'IPA off',
+    boxes: { pattern:'🔁 Patrón', history:'🏛️ Historia', warning:'⚠️ Error típico', compounds:'🔗 Compuestos', example:'💬 Ejemplo', false:'🚫 False friend' }
+  },
+  en: {
+    h1: 'Irregular Verbs',
+    h1sub: 'Irregular verbs are not random — they have families, they have patterns',
+    sidebarTitle: 'Constellations',
+    sidebarSub: 'Select a family',
+    ctrlLabel: 'Options',
+    infoEmptyTitle: 'Why families?',
+    infoEmptyBody: 'Over 78% of irregular verbs share a phonological pattern with others.<br><br>Select a constellation to discover the pattern, its history and common mistakes.',
+    legTitle: 'Frequency',
+    legHigh: 'High', legMid: 'Medium', legLow: 'Low',
+    colInf: 'Infinitive', colPs: 'Past Simple', colPp: 'Past Participle',
+    ipaOn: 'IPA on', ipaOff: 'IPA off',
+    boxes: { pattern:'🔁 Pattern', history:'🏛️ History', warning:'⚠️ Common mistake', compounds:'🔗 Compounds', example:'💬 Example', false:'🚫 False friend' }
+  }
+};
+
+// ── DATA ──
+const FAMILIES = [
+  {
+    id: 'aaa', color: '#818CF8', level: 1,
+    label: { es: 'Sin cambio (A=B=C)', en: 'No change (A=B=C)' },
+    pattern: 'put · put · put',
+    info: {
+      es: {
+        pattern: 'Las tres formas son idénticas. Terminan casi siempre en consonante dental: -t o -d. Es la familia con el cambio más pequeño: ninguno.',
+        history: 'Estos verbos ya terminaban en dental (-t/-d), por lo que añadir el sufijo -ed habría creado un grupo consonántico imposible. La lengua tomó el camino de mínimo esfuerzo: no cambiar nada.',
+        warning: '"I costed / I cutted / I hurted" → INCORRECTOS. Nunca añadas -ed. Ojo especial con READ: infinitivo /riːd/ → pasado /rɛd/. Misma grafía, distinta pronunciación.',
+        compounds: 'set → reset · offset · upset · outset · put → output · input · throughput · cost → no compounds · cut → undercut · shortcut',
+        example: '"She cut her finger, has cut it before, and will cut it again." — misma forma en todos los tiempos.',
+        false: 'HIT como sustantivo significa "éxito" (un hit musical), pero el verbo HIT significa "golpear". LET significa "dejar/permitir", no "alquilar" — aunque en inglés británico "to let" sí es alquilar.'
+      },
+      en: {
+        pattern: 'All three forms identical. They almost always end in a dental consonant: -t or -d. Smallest possible change: none.',
+        history: 'These verbs already ended in a dental consonant, so adding -ed would create an unpronounceable cluster. Language took the path of least effort: change nothing.',
+        warning: '"I costed / I cutted / I hurted" → WRONG. Never add -ed. Special attention to READ: infinitive /riːd/ → past /rɛd/. Same spelling, different pronunciation.',
+        compounds: 'set → reset · offset · upset · outset · put → output · input · throughput · cut → undercut · shortcut',
+        example: '"She cut her finger, has cut it before, and will cut it again." — same form in all tenses.',
+        false: 'HIT as a noun means "a success" (a hit song), but the verb HIT means "to strike". LET means "allow", though in British English "to let" also means to rent out.'
+      }
+    },
+    verbs: [
+      { inf:'put', ps:'put', pp:'put', freq:'high', trans:{es:'poner',en:'put'}, ipa:['pʊt','pʊt','pʊt'], ph:['put','put','put'] },
+      { inf:'cut', ps:'cut', pp:'cut', freq:'high', trans:{es:'cortar',en:'cut'}, ipa:['kʌt','kʌt','kʌt'], ph:['kat','kat','kat'] },
+      { inf:'let', ps:'let', pp:'let', freq:'high', trans:{es:'dejar/permitir',en:'let'}, ipa:['lɛt','lɛt','lɛt'], ph:['let','let','let'] },
+      { inf:'set', ps:'set', pp:'set', freq:'high', trans:{es:'establecer',en:'set'}, ipa:['sɛt','sɛt','sɛt'], ph:['set','set','set'] },
+      { inf:'hit', ps:'hit', pp:'hit', freq:'high', trans:{es:'golpear',en:'hit'}, ipa:['hɪt','hɪt','hɪt'], ph:['jit','jit','jit'] },
+      { inf:'cost', ps:'cost', pp:'cost', freq:'high', trans:{es:'costar',en:'cost'}, ipa:['kɒst','kɒst','kɒst'], ph:['cost','cost','cost'] },
+      { inf:'hurt', ps:'hurt', pp:'hurt', freq:'high', trans:{es:'doler/herir',en:'hurt'}, ipa:['hɜːt','hɜːt','hɜːt'], ph:['jert','jert','jert'] },
+      { inf:'read', ps:'read', pp:'read', freq:'high', trans:{es:'leer',en:'read'}, ipa:['riːd','rɛd','rɛd'], ph:['rid','red','red'] },
+      { inf:'shut', ps:'shut', pp:'shut', freq:'mid', trans:{es:'cerrar',en:'shut'}, ipa:['ʃʌt','ʃʌt','ʃʌt'], ph:['shat','shat','shat'] },
+      { inf:'spread', ps:'spread', pp:'spread', freq:'mid', trans:{es:'extender',en:'spread'}, ipa:['sprɛd','sprɛd','sprɛd'], ph:['spred','spred','spred'] },
+      { inf:'split', ps:'split', pp:'split', freq:'mid', trans:{es:'dividir',en:'split'}, ipa:['splɪt','splɪt','splɪt'], ph:['split','split','split'] },
+      { inf:'bet', ps:'bet', pp:'bet', freq:'mid', trans:{es:'apostar',en:'bet'}, ipa:['bɛt','bɛt','bɛt'], ph:['bet','bet','bet'] },
+      { inf:'burst', ps:'burst', pp:'burst', freq:'low', trans:{es:'estallar',en:'burst'}, ipa:['bɜːst','bɜːst','bɜːst'], ph:['berst','berst','berst'] },
+      { inf:'cast', ps:'cast', pp:'cast', freq:'low', trans:{es:'lanzar/emitir',en:'cast'}, ipa:['kɑːst','kɑːst','kɑːst'], ph:['kast','kast','kast'] },
+      { inf:'rid', ps:'rid', pp:'rid', freq:'low', trans:{es:'librar(se)',en:'rid'}, ipa:['rɪd','rɪd','rɪd'], ph:['rid','rid','rid'] },
+    ]
+  },
+  {
+    id: 'endent', color: '#FCD34D', level: 2,
+    label: { es: '-end → -ent', en: '-end → -ent' },
+    pattern: 'send / sent / sent',
+    info: {
+      es: {
+        pattern: 'Solo cambia la -d final por -t. Es el cambio mínimo posible en el sistema. Todos son A-B-B y la transformación es siempre idéntica.',
+        history: 'Verbos débiles que adoptaron el sufijo -t (en lugar de -ed) porque la /d/ final y la /t/ del sufijo eran articulatoriamente casi idénticas. Por economía fonética, se fusionaron.',
+        warning: '"I sended / I spended / I bended" → los tres incorrectos. BEND → BENT es el que más se olvida porque suena a que "debería" ser *bended. No es así.',
+        compounds: 'send → resend · outsend · spend → overspend · underspend · lend → no compounds · bend → no compounds · rend → no compounds',
+        example: '"I sent the email, spent an hour writing it, and lent my notes to a friend." — el patrón es consistente.',
+        false: 'LEND (prestar algo que das tú) ≠ BORROW (pedir prestado algo que coges tú). "Lend me your pen" (tú me lo das) vs "Can I borrow your pen?" (yo lo cojo). Error muy frecuente en hispanohablantes.'
+      },
+      en: {
+        pattern: 'Only the final -d changes to -t. Minimum possible change in the system. All A-B-B with identical transformation.',
+        history: 'Weak verbs that adopted the -t suffix (instead of -ed) because final /d/ and suffix /t/ were articulatorily almost identical. Merged by phonetic economy.',
+        warning: '"I sended / I spended / I bended" → all three wrong. BEND → BENT is the one most often forgotten because it "sounds like" it should be *bended.',
+        compounds: 'send → resend · outsend · spend → overspend · underspend · lend → no compounds',
+        example: '"I sent the email, spent an hour writing it, and lent my notes to a friend." — consistent pattern.',
+        false: 'LEND (you give it) ≠ BORROW (you take it). "Lend me your pen" (you hand it to me) vs "Can I borrow your pen?" (I take it from you). Very frequent error for Spanish speakers.'
+      }
+    },
+    verbs: [
+      { inf:'send', ps:'sent', pp:'sent', freq:'high', trans:{es:'enviar',en:'send'}, ipa:['sɛnd','sɛnt','sɛnt'], ph:['send','sent','sent'] },
+      { inf:'spend', ps:'spent', pp:'spent', freq:'high', trans:{es:'gastar/pasar (tiempo)',en:'spend'}, ipa:['spɛnd','spɛnt','spɛnt'], ph:['spend','spent','spent'] },
+      { inf:'lend', ps:'lent', pp:'lent', freq:'mid', trans:{es:'prestar',en:'lend'}, ipa:['lɛnd','lɛnt','lɛnt'], ph:['lend','lent','lent'] },
+      { inf:'bend', ps:'bent', pp:'bent', freq:'mid', trans:{es:'doblar/agacharse',en:'bend'}, ipa:['bɛnd','bɛnt','bɛnt'], ph:['bend','bent','bent'] },
+      { inf:'rend', ps:'rent', pp:'rent', freq:'low', trans:{es:'desgarrar',en:'rend'}, ipa:['rɛnd','rɛnt','rɛnt'], ph:['rend','rent','rent'] },
+    ]
+  },
+  {
+    id: 'indound', color: '#F472B6', level: 3,
+    label: { es: '-ind → -ound', en: '-ind → -ound' },
+    pattern: 'find / found / found',
+    info: {
+      es: {
+        pattern: 'El diptongo /aɪ/ del infinitivo se convierte en /aʊ/ en pasado y participio. Cambio sutil pero absolutamente consistente entre los cuatro miembros. A-B-B.',
+        history: 'Verbos fuertes de Clase III del inglés antiguo con vocal /ī/ que evolucionó de forma diferente al resto. La diptongación medieval /ī/ → /aɪ/ → /aʊ/ en posición trabada produjo el patrón moderno.',
+        warning: '"I finded / I winded" → INCORRECTOS. Trampa especial: FOUND como pasado de FIND ≠ FOUND como verbo "fundar". "They found gold" (hallaron) vs "They FOUNDED a company" (fundaron, regular).',
+        compounds: 'bind → rebind · unbind · find → no direct compounds · wind → rewind · unwind · wind up · grind → no compounds',
+        example: '"She found her keys, wound up the clock, and has always found a solution." — patrón consistente.',
+        false: 'FIND/FOUND (hallar) ≠ FOUND/FOUNDED (fundar). Son homógrafos solo en la forma pero completamente distintos. "Alexander founded Alexandria" usa FOUNDED (pasado regular del verbo TO FOUND).'
+      },
+      en: {
+        pattern: 'Diphthong /aɪ/ in infinitive becomes /aʊ/ in past and participle. Subtle but absolutely consistent change across all four members. A-B-B.',
+        history: 'Class III strong verbs from Old English with vowel /ī/ that evolved differently. Medieval diphthongization /ī/ → /aɪ/ → /aʊ/ in checked syllables produced the modern pattern.',
+        warning: '"I finded / I winded" → WRONG. Special trap: FOUND as past of FIND ≠ FOUND the verb "to establish". "They found gold" vs "They FOUNDED a company" (regular: founded).',
+        compounds: 'bind → rebind · unbind · wind → rewind · unwind · wind up · grind → no compounds',
+        example: '"She found her keys, wound up the clock, and has always found a solution." — consistent pattern.',
+        false: 'FIND/FOUND (discover) ≠ FOUND/FOUNDED (establish). Only homographs in one form. "Alexander founded Alexandria" uses FOUNDED (regular past of TO FOUND).'
+      }
+    },
+    verbs: [
+      { inf:'find', ps:'found', pp:'found', freq:'high', trans:{es:'encontrar',en:'find'}, ipa:['faɪnd','faʊnd','faʊnd'], ph:['faind','faund','faund'] },
+      { inf:'bind', ps:'bound', pp:'bound', freq:'mid', trans:{es:'atar/unir',en:'bind'}, ipa:['baɪnd','baʊnd','baʊnd'], ph:['baind','baund','baund'] },
+      { inf:'grind', ps:'ground', pp:'ground', freq:'low', trans:{es:'moler',en:'grind'}, ipa:['ɡraɪnd','ɡraʊnd','ɡraʊnd'], ph:['graind','graund','graund'] },
+      { inf:'wind', ps:'wound', pp:'wound', freq:'low', trans:{es:'enrollar/dar cuerda',en:'wind'}, ipa:['waɪnd','waʊnd','waʊnd'], ph:['uaind','uaund','uaund'] },
+    ]
+  },
+  {
+    id: 'ought', color: '#FB923C', level: 4,
+    label: { es: '-ought / -aught', en: '-ought / -aught' },
+    pattern: 'think / thought / thought',
+    info: {
+      es: {
+        pattern: 'El verbo completo se transforma: la terminación pasa a -ought o -aught (ambos suenan idéntico: /ɔːt/). Solo hay que recordar la terminación. Todos son A-B-B.',
+        history: 'Resultado de contracciones fonéticas medievales. "Think" + sufijo -t débil → "thoht" → "thought". La secuencia -gh- era pronunciable en inglés antiguo (como la "j" suave española) pero se silenciosa progresivamente.',
+        warning: '"I buyed / I catched / I teached / I thinked" → LOS CUATRO entre los errores más comunes. Aprender la terminación -ought/-aught evita todos estos errores a la vez.',
+        compounds: 'think → overthink · rethink · buy → rebuy · buyout · bring → no compounds · teach → no compounds · catch → no compounds',
+        example: '"I thought about it, taught the lesson, caught the bus and bought the book." — cuatro verbos, misma terminación.',
+        false: 'CATCH ≠ COGER en todos los contextos españoles. SEEK (buscó) ≠ buscar físicamente algo (eso es LOOK FOR). FIGHT puede ser sustantivo y verbo: "a fight" y "to fight".'
+      },
+      en: {
+        pattern: 'The whole verb transforms: ending becomes -ought or -aught (both sound identical: /ɔːt/). Just remember the ending. All A-B-B.',
+        history: 'Result of medieval phonetic contractions. "Think" + weak suffix -t → "thoht" → "thought". The -gh- sequence was pronounceable in Old English (like a soft fricative) but progressively silenced.',
+        warning: '"I buyed / I catched / I teached / I thinked" → FOUR of the most common errors. Learning the -ought/-aught ending prevents all these at once.',
+        compounds: 'think → overthink · rethink · buy → rebuy · buyout · bring → no compounds · teach → no compounds',
+        example: '"I thought about it, taught the lesson, caught the bus and bought the book." — four verbs, same ending.',
+        false: 'SEEK ≠ "buscar" physically (that\'s LOOK FOR). SEEK = seek formally/intentionally. FIGHT can be noun and verb: "a fight" and "to fight". CATCH has many meanings: catch a ball, catch a bus, catch a cold.'
+      }
+    },
+    verbs: [
+      { inf:'think', ps:'thought', pp:'thought', freq:'high', trans:{es:'pensar',en:'think'}, ipa:['θɪŋk','θɔːt','θɔːt'], ph:['zink','zort','zort'] },
+      { inf:'buy', ps:'bought', pp:'bought', freq:'high', trans:{es:'comprar',en:'buy'}, ipa:['baɪ','bɔːt','bɔːt'], ph:['bai','bort','bort'] },
+      { inf:'bring', ps:'brought', pp:'brought', freq:'high', trans:{es:'traer',en:'bring'}, ipa:['brɪŋ','brɔːt','brɔːt'], ph:['bring','brort','brort'] },
+      { inf:'teach', ps:'taught', pp:'taught', freq:'high', trans:{es:'enseñar',en:'teach'}, ipa:['tiːtʃ','tɔːt','tɔːt'], ph:['tich','tort','tort'] },
+      { inf:'catch', ps:'caught', pp:'caught', freq:'high', trans:{es:'atrapar/coger',en:'catch'}, ipa:['kætʃ','kɔːt','kɔːt'], ph:['kach','kort','kort'] },
+      { inf:'fight', ps:'fought', pp:'fought', freq:'mid', trans:{es:'pelear/luchar',en:'fight'}, ipa:['faɪt','fɔːt','fɔːt'], ph:['fait','fort','fort'] },
+      { inf:'seek', ps:'sought', pp:'sought', freq:'low', trans:{es:'buscar (formal)',en:'seek'}, ipa:['siːk','sɔːt','sɔːt'], ph:['sik','sort','sort'] },
+    ]
+  },
+  {
+    id: 'iuu', color: '#F87171', level: 5,
+    label: { es: 'i → u → u', en: 'i → u → u' },
+    pattern: 'stick / stuck / stuck',
+    info: {
+      es: {
+        pattern: 'La /ɪ/ del infinitivo se convierte en /ʌ/ en pasado Y participio. Solo hay que recordar UNA forma nueva. Es la familia A-B-B más numerosa con verbos de alta frecuencia.',
+        history: 'Verbos fuertes germánicos, subclase IIIb. Hermanos de la familia i-a-u pero el pasado y el participio coincidieron históricamente. WIN/WON viene del inglés antiguo "winnan" (trabajar, luchar).',
+        warning: 'HANG tiene dos pasados: HUNG (colgar objetos/cuadros) y HANGED (ejecución judicial, arcaico). Para uso cotidiano → siempre HUNG. "I hanged the picture" suena fatal.',
+        compounds: 'stick → lipstick · drumstick · non-stick · win → no compounds · dig → no compounds · spin → no compounds · strike → strikes (huelgas)',
+        example: '"She won the race and has won every year since 2019." — una sola forma de pasado para los dos usos.',
+        false: 'WIN = ganar una competición o premio. No confundir con EARN (ganar dinero, ganarse algo por mérito). "Win a medal" pero "earn a salary".'
+      },
+      en: {
+        pattern: '/ɪ/ in infinitive becomes /ʌ/ in BOTH past AND participle. Only ONE new form to remember. Largest A-B-B family with high-frequency verbs.',
+        history: 'Germanic strong verbs, subclass IIIb. Sisters of the i-a-u family but past and participle historically converged. WIN/WON comes from Old English "winnan" (to labor, to fight).',
+        warning: 'HANG has two past forms: HUNG (hanging objects/pictures) and HANGED (judicial execution, archaic). For everyday use → always HUNG. "I hanged the picture" sounds terrible.',
+        compounds: 'stick → lipstick · drumstick · non-stick · win → no compounds · strike → strikes (labor)',
+        example: '"She won the race and has won every year since 2019." — one past form for both uses.',
+        false: 'WIN = to win a competition or prize. Don\'t confuse with EARN (earn money, earn something through merit). "Win a medal" but "earn a salary".'
+      }
+    },
+    verbs: [
+      { inf:'win', ps:'won', pp:'won', freq:'high', trans:{es:'ganar (competición)',en:'win'}, ipa:['wɪn','wʌn','wʌn'], ph:['uin','uan','uan'] },
+      { inf:'dig', ps:'dug', pp:'dug', freq:'high', trans:{es:'cavar',en:'dig'}, ipa:['dɪɡ','dʌɡ','dʌɡ'], ph:['dig','dag','dag'] },
+      { inf:'hang', ps:'hung', pp:'hung', freq:'mid', trans:{es:'colgar',en:'hang'}, ipa:['hæŋ','hʌŋ','hʌŋ'], ph:['jang','jang','jang'] },
+      { inf:'spin', ps:'spun', pp:'spun', freq:'mid', trans:{es:'girar/hilar',en:'spin'}, ipa:['spɪn','spʌn','spʌn'], ph:['spin','span','span'] },
+      { inf:'stick', ps:'stuck', pp:'stuck', freq:'mid', trans:{es:'pegar/atascarse',en:'stick'}, ipa:['stɪk','stʌk','stʌk'], ph:['stik','stak','stak'] },
+      { inf:'strike', ps:'struck', pp:'struck', freq:'mid', trans:{es:'golpear/declarar huelga',en:'strike'}, ipa:['straɪk','strʌk','strʌk'], ph:['straik','strak','strak'] },
+      { inf:'sting', ps:'stung', pp:'stung', freq:'low', trans:{es:'picar (insecto)',en:'sting'}, ipa:['stɪŋ','stʌŋ','stʌŋ'], ph:['sting','stang','stang'] },
+      { inf:'swing', ps:'swung', pp:'swung', freq:'low', trans:{es:'balancear',en:'swing'}, ipa:['swɪŋ','swʌŋ','swʌŋ'], ph:['suing','suang','suang'] },
+      { inf:'cling', ps:'clung', pp:'clung', freq:'low', trans:{es:'aferrarse',en:'cling'}, ipa:['klɪŋ','klʌŋ','klʌŋ'], ph:['kling','klang','klang'] },
+      { inf:'fling', ps:'flung', pp:'flung', freq:'low', trans:{es:'lanzar con fuerza',en:'fling'}, ipa:['flɪŋ','flʌŋ','flʌŋ'], ph:['fling','flang','flang'] },
+      { inf:'wring', ps:'wrung', pp:'wrung', freq:'low', trans:{es:'retorcer/escurrir',en:'wring'}, ipa:['rɪŋ','rʌŋ','rʌŋ'], ph:['ring','rang','rang'] },
+    ]
+  },
+  {
+    id: 'eeshort', color: '#A78BFA', level: 6,
+    label: { es: 'ee → vocal corta', en: 'ee → short vowel' },
+    pattern: 'keep / kept / kept',
+    info: {
+      es: {
+        pattern: 'La vocal larga /iː/ del infinitivo se acorta a /ɛ/ en pasado y participio. Frecuente cambio consonántico final: -p→pt, -l→lt, -n→nt. Familia A-B-B más numerosa del sistema.',
+        history: '"Acortamiento vocálico preconsonántico" ocurrido en inglés medio (ss. XII-XV). Al añadir la consonante -t del sufijo débil, la vocal larga precedente se acortó automáticamente por economía articulatoria.',
+        warning: '"I have feeled / meaned / leaved" → MUY FRECUENTES en B1-B2. Nunca regularices estos verbos. LEAVE → LEFT (no *leaved). MEAN → MEANT (no *meaned).',
+        compounds: 'keep → upkeep · beekeeper · goalkeeper · lead → mislead · read → reread · misread · proofread · feel → no compounds · leave → bereave (arcaico)',
+        example: '"She meant what she said, left early, and has kept her word every time." — tres verbos de la misma familia.',
+        false: 'MEAN no solo significa "significar" — también "querer decir" e "intentar". "I mean it" = lo digo en serio. LEAVE ≠ LIVE (vivir). LEAD /liːd/ (guiar) ≠ LEAD /lɛd/ (plomo, el metal).'
+      },
+      en: {
+        pattern: 'Long vowel /iː/ in infinitive shortens to /ɛ/ in past and participle. Frequent final consonant change: -p→pt, -l→lt, -n→nt. Largest A-B-B family in the system.',
+        history: '"Pre-consonantal vowel shortening" that occurred in Middle English (12th-15th centuries). Adding the weak suffix consonant -t automatically shortened the preceding long vowel for articulatory economy.',
+        warning: '"I have feeled / meaned / leaved" → VERY FREQUENT in B1-B2 students. Never regularize these. LEAVE → LEFT (not *leaved). MEAN → MEANT (not *meaned).',
+        compounds: 'keep → upkeep · beekeeper · goalkeeper · lead → mislead · read → reread · misread · proofread',
+        example: '"She meant what she said, left early, and has kept her word every time." — three verbs, same family.',
+        false: 'MEAN doesn\'t only mean "significar" — also "to intend". "I mean it" = I\'m serious. LEAD /liːd/ (to guide) ≠ LEAD /lɛd/ (the metal, plomo). Same spelling, different pronunciation AND meaning.'
+      }
+    },
+    verbs: [
+      { inf:'feel', ps:'felt', pp:'felt', freq:'high', trans:{es:'sentir',en:'feel'}, ipa:['fiːl','fɛlt','fɛlt'], ph:['fil','felt','felt'] },
+      { inf:'keep', ps:'kept', pp:'kept', freq:'high', trans:{es:'guardar/mantener',en:'keep'}, ipa:['kiːp','kɛpt','kɛpt'], ph:['kip','kept','kept'] },
+      { inf:'leave', ps:'left', pp:'left', freq:'high', trans:{es:'salir/dejar',en:'leave'}, ipa:['liːv','lɛft','lɛft'], ph:['liv','left','left'] },
+      { inf:'mean', ps:'meant', pp:'meant', freq:'high', trans:{es:'significar/querer decir',en:'mean'}, ipa:['miːn','mɛnt','mɛnt'], ph:['min','ment','ment'] },
+      { inf:'meet', ps:'met', pp:'met', freq:'high', trans:{es:'conocer/reunirse',en:'meet'}, ipa:['miːt','mɛt','mɛt'], ph:['mit','met','met'] },
+      { inf:'sleep', ps:'slept', pp:'slept', freq:'high', trans:{es:'dormir',en:'sleep'}, ipa:['sliːp','slɛpt','slɛpt'], ph:['slip','slept','slept'] },
+      { inf:'lead', ps:'led', pp:'led', freq:'high', trans:{es:'liderar/guiar',en:'lead'}, ipa:['liːd','lɛd','lɛd'], ph:['lid','led','led'] },
+      { inf:'deal', ps:'dealt', pp:'dealt', freq:'mid', trans:{es:'tratar/repartir',en:'deal'}, ipa:['diːl','dɛlt','dɛlt'], ph:['dil','delt','delt'] },
+      { inf:'feed', ps:'fed', pp:'fed', freq:'mid', trans:{es:'alimentar',en:'feed'}, ipa:['fiːd','fɛd','fɛd'], ph:['fid','fed','fed'] },
+      { inf:'sweep', ps:'swept', pp:'swept', freq:'low', trans:{es:'barrer',en:'sweep'}, ipa:['swiːp','swɛpt','swɛpt'], ph:['suip','suept','suept'] },
+      { inf:'weep', ps:'wept', pp:'wept', freq:'low', trans:{es:'llorar (literario)',en:'weep'}, ipa:['wiːp','wɛpt','wɛpt'], ph:['uip','uept','uept'] },
+      { inf:'creep', ps:'crept', pp:'crept', freq:'low', trans:{es:'arrastrarse',en:'creep'}, ipa:['kriːp','krɛpt','krɛpt'], ph:['krip','krept','krept'] },
+      { inf:'bleed', ps:'bled', pp:'bled', freq:'low', trans:{es:'sangrar',en:'bleed'}, ipa:['bliːd','blɛd','blɛd'], ph:['blid','bled','bled'] },
+      { inf:'flee', ps:'fled', pp:'fled', freq:'low', trans:{es:'huir',en:'flee'}, ipa:['fliː','flɛd','flɛd'], ph:['fli','fled','fled'] },
+    ]
+  },
+  {
+    id: 'ew', color: '#22D3EE', level: 7,
+    label: { es: '-ow → -ew → -own', en: '-ow → -ew → -own' },
+    pattern: 'know / knew / known',
+    info: {
+      es: {
+        pattern: 'Infinitivo con vocal /əʊ/ o terminación -ow → pasado con -ew (/juː/) → participio añade -n al infinitivo. Tres formas distintas pero el participio siempre es predecible.',
+        history: 'Convergencia de verbos fuertes de Clases II y VII del inglés antiguo tras el Great Vowel Shift de los siglos XV-XVI. KNOW proviene de "cnāwan" (OE), GROW de "grōwan", THROW de "þrāwan".',
+        warning: '"I knowed / I growed / I throwed / I flied" → INCORRECTOS. Ojo especial con FLY: el pasado es FLEW (no *flied). Muchos alumnos olvidar que FLY pertenece a esta familia.',
+        compounds: 'know → foreknow · grow → outgrow · overgrow · draw → withdraw · overdraw · throw → overthrow · blow → no compounds',
+        example: '"He knew the answer, grew up here, and has always known this town." — patrón compartido en los tres.',
+        false: 'KNOW ≠ MEET. "I know her" (la conozco, tenemos relación) ≠ "I met her" (la conocí, fue la primera vez). DRAW puede ser dibujar, sacar (una conclusión), o empatar en deporte.'
+      },
+      en: {
+        pattern: 'Infinitive with /əʊ/ vowel or -ow ending → past with -ew (/juː/) → participle adds -n to the infinitive. Three distinct forms but participle is always predictable.',
+        history: 'Convergence of Class II and VII strong verbs from Old English after the 15th-16th century Great Vowel Shift. KNOW from "cnāwan" (OE), GROW from "grōwan", THROW from "þrāwan".',
+        warning: '"I knowed / I growed / I throwed / I flied" → WRONG. Special attention to FLY: past is FLEW (not *flied). Many students forget FLY belongs to this family.',
+        compounds: 'know → foreknow · grow → outgrow · overgrow · draw → withdraw · overdraw · throw → overthrow',
+        example: '"He knew the answer, grew up here, and has always known this town." — shared pattern in all three.',
+        false: 'KNOW vs MEET. "I know her" (relationship exists) ≠ "I met her" (first time meeting). DRAW = draw (art), draw (conclude), draw (tie/draw in sport) — three different meanings.'
+      }
+    },
+    verbs: [
+      { inf:'know', ps:'knew', pp:'known', freq:'high', trans:{es:'saber/conocer',en:'know'}, ipa:['nəʊ','njuː','nəʊn'], ph:['nou','niu','noun'] },
+      { inf:'grow', ps:'grew', pp:'grown', freq:'high', trans:{es:'crecer',en:'grow'}, ipa:['ɡrəʊ','ɡruː','ɡrəʊn'], ph:['grou','gru','groun'] },
+      { inf:'throw', ps:'threw', pp:'thrown', freq:'high', trans:{es:'lanzar/tirar',en:'throw'}, ipa:['θrəʊ','θruː','θrəʊn'], ph:['zrou','zru','zroun'] },
+      { inf:'blow', ps:'blew', pp:'blown', freq:'mid', trans:{es:'soplar',en:'blow'}, ipa:['bləʊ','bluː','bləʊn'], ph:['blou','blu','bloun'] },
+      { inf:'fly', ps:'flew', pp:'flown', freq:'mid', trans:{es:'volar',en:'fly'}, ipa:['flaɪ','fluː','fləʊn'], ph:['flai','flu','floun'] },
+      { inf:'draw', ps:'drew', pp:'drawn', freq:'mid', trans:{es:'dibujar/sacar',en:'draw'}, ipa:['drɔː','druː','drɔːn'], ph:['dro','dru','dron'] },
+    ]
+  },
+  {
+    id: 'iau', color: '#34D399', level: 8,
+    label: { es: 'i → a → u', en: 'i → a → u' },
+    pattern: 'sing / sang / sung',
+    info: {
+      es: {
+        pattern: 'Vocal /ɪ/ en infinitivo → /æ/ en pasado → /ʌ/ en participio. Todos terminan en nasal + consonante (ng, nk, m, n). Tres formas distintas: memoriza el patrón, no cada verbo.',
+        history: 'Son los verbos fuertes de Clase III del inglés antiguo (Old English). Este patrón vocálico tiene más de 1.500 años y aparece también en alemán (singen/sang/gesungen) e islandés moderno.',
+        warning: '"I have swam / I have sang / I have drank" → LOS TRES INCORRECTOS. El participio siempre usa la vocal /ʌ/: swUM, sUng, drUNk. Es el error más frecuente con esta familia.',
+        compounds: 'ring → no compounds directos · sing → singalong · begin → no compounds · drink → no compounds frecuentes · swim → no compounds',
+        example: '"She sang beautifully but has never sung in public." — sang = pasado, sung = participio. Nunca al revés.',
+        false: 'DRUNK como adjetivo = borracho ("he is drunk"). DRANK es el pasado del verbo. No mezcles: "he has drank" → incorrecto; "he has drunk" (participio) o "he drank" (pasado simple).'
+      },
+      en: {
+        pattern: 'Vowel /ɪ/ in infinitive → /æ/ in past → /ʌ/ in participle. All end in nasal + consonant (ng, nk, m, n). Three distinct forms: learn the pattern, not each verb.',
+        history: 'These are Class III strong verbs from Old English. This vowel pattern is over 1,500 years old and also appears in German (singen/sang/gesungen) and modern Icelandic.',
+        warning: '"I have swam / I have sang / I have drank" → ALL THREE WRONG. Participle always uses /ʌ/: swUM, sUng, drUNk. This is the most frequent error with this family.',
+        compounds: 'ring → no direct compounds · sing → singalong · begin → no compounds · drink → no frequent compounds',
+        example: '"She sang beautifully but has never sung in public." — sang = past, sung = participle. Never the other way.',
+        false: 'DRUNK as an adjective = intoxicated ("he is drunk"). DRANK is the past tense. Don\'t mix: "he has drank" → wrong; "he has drunk" (participle) or "he drank" (simple past).'
+      }
+    },
+    verbs: [
+      { inf:'begin', ps:'began', pp:'begun', freq:'high', trans:{es:'empezar',en:'begin'}, ipa:['bɪˈɡɪn','bɪˈɡæn','bɪˈɡʌn'], ph:['biguín','bigán','bigán'] },
+      { inf:'drink', ps:'drank', pp:'drunk', freq:'high', trans:{es:'beber',en:'drink'}, ipa:['drɪŋk','dræŋk','drʌŋk'], ph:['drink','drank','drank'] },
+      { inf:'sing', ps:'sang', pp:'sung', freq:'high', trans:{es:'cantar',en:'sing'}, ipa:['sɪŋ','sæŋ','sʌŋ'], ph:['sing','sang','sang'] },
+      { inf:'swim', ps:'swam', pp:'swum', freq:'high', trans:{es:'nadar',en:'swim'}, ipa:['swɪm','swæm','swʌm'], ph:['suim','suam','suam'] },
+      { inf:'ring', ps:'rang', pp:'rung', freq:'mid', trans:{es:'sonar/llamar',en:'ring'}, ipa:['rɪŋ','ræŋ','rʌŋ'], ph:['ring','rang','rang'] },
+      { inf:'sink', ps:'sank', pp:'sunk', freq:'mid', trans:{es:'hundirse',en:'sink'}, ipa:['sɪŋk','sæŋk','sʌŋk'], ph:['sink','sank','sank'] },
+      { inf:'spring', ps:'sprang', pp:'sprung', freq:'low', trans:{es:'saltar/brotar',en:'spring'}, ipa:['sprɪŋ','spræŋ','sprʌŋ'], ph:['spring','sprang','sprang'] },
+      { inf:'shrink', ps:'shrank', pp:'shrunk', freq:'low', trans:{es:'encoger',en:'shrink'}, ipa:['ʃrɪŋk','ʃræŋk','ʃrʌŋk'], ph:['shrink','shrank','shrank'] },
+      { inf:'stink', ps:'stank', pp:'stunk', freq:'low', trans:{es:'apestar',en:'stink'}, ipa:['stɪŋk','stæŋk','stʌŋk'], ph:['stink','stank','stank'] },
+    ]
+  },
+  {
+    id: 'iveove', color: '#4ADE80', level: 9,
+    label: { es: '-ive/-ide → -ove/-ode → -en', en: '-ive/-ide → -ove/-ode → -en' },
+    pattern: 'drive / drove / driven',
+    info: {
+      es: {
+        pattern: 'Diptongo /aɪ/ en infinitivo → /əʊ/ en pasado → vuelve al infinitivo + sufijo -en/-tten en participio. Son A-B-C pero el participio siempre termina en -en.',
+        history: 'Verbos fuertes de Clase I del inglés antiguo. Son los más conservadores del inglés moderno: su patrón vocálico sobrevivió casi intacto desde el proto-germánico hace más de 2.000 años.',
+        warning: '"I have wrote / I have rode / I have rose / I have drove" → MUY FRECUENTES. El participio SIEMPRE añade -en/-tten: writTEN, ridDEN, driVEN, riSEN. No es la misma forma que el pasado.',
+        compounds: 'write → rewrite · underwrite · overwrite · drive → test-drive · overdrive · rise → sunrise · arise · uprise · ride → joyride · override',
+        example: '"She wrote the report, drove to the office, and has risen to director." — pasado y participio siempre distintos.',
+        false: 'RIDE no es "leer" (READ). RIDE = montar (bici, caballo, vehículo). RISE (subir intransitivo) ≠ RAISE (subir algo transitivo, regular: raised/raised). "Prices rose" vs "They raised prices".'
+      },
+      en: {
+        pattern: 'Diphthong /aɪ/ in infinitive → /əʊ/ in past → back to infinitive + -en/-tten suffix in participle. A-B-C verbs but participle always ends in -en.',
+        history: 'Class I strong verbs from Old English. Most conservative in modern English: their vowel pattern survived nearly intact from proto-Germanic over 2,000 years ago.',
+        warning: '"I have wrote / I have rode / I have rose / I have drove" → VERY FREQUENT. Participle ALWAYS adds -en/-tten: writTEN, ridDEN, driVEN, riSEN. Not the same as past.',
+        compounds: 'write → rewrite · underwrite · overwrite · drive → test-drive · overdrive · rise → sunrise · arise · ride → joyride · override',
+        example: '"She wrote the report, drove to the office, and has risen to director." — past and participle always different.',
+        false: 'RISE (go up, intransitive) ≠ RAISE (lift something, transitive, regular: raised/raised). "Prices rose" vs "They raised prices". Critical distinction often missed.'
+      }
+    },
+    verbs: [
+      { inf:'write', ps:'wrote', pp:'written', freq:'high', trans:{es:'escribir',en:'write'}, ipa:['raɪt','rəʊt','ˈrɪtən'], ph:['rait','rout','ríten'] },
+      { inf:'drive', ps:'drove', pp:'driven', freq:'high', trans:{es:'conducir',en:'drive'}, ipa:['draɪv','drəʊv','ˈdrɪvən'], ph:['draiv','drouv','dríven'] },
+      { inf:'rise', ps:'rose', pp:'risen', freq:'high', trans:{es:'subir/levantarse',en:'rise'}, ipa:['raɪz','rəʊz','ˈrɪzən'], ph:['rais','rouz','rísen'] },
+      { inf:'ride', ps:'rode', pp:'ridden', freq:'mid', trans:{es:'montar/circular',en:'ride'}, ipa:['raɪd','rəʊd','ˈrɪdən'], ph:['raid','roud','ríden'] },
+      { inf:'stride', ps:'strode', pp:'stridden', freq:'low', trans:{es:'caminar a zancadas',en:'stride'}, ipa:['straɪd','strəʊd','ˈstrɪdən'], ph:['straid','stroud','striden'] },
+      { inf:'strive', ps:'strove', pp:'striven', freq:'low', trans:{es:'esforzarse',en:'strive'}, ipa:['straɪv','strəʊv','ˈstrɪvən'], ph:['straiv','strouv','striven'] },
+    ]
+  },
+  {
+    id: 'special', color: '#94A3B8', level: 10,
+    label: { es: 'Supletivos', en: 'Suppletives' },
+    pattern: 'be · go · do · see',
+    info: {
+      es: {
+        pattern: 'Estos verbos NO tienen patrón interno. Sus formas vienen de verbos históricamente distintos (supletismo). Son los únicos que realmente hay que memorizar de forma individual. Hay muy pocos.',
+        history: 'BE combina tres verbos del inglés antiguo: "bēon" (be), "wesan" (was/were) y "eom/is/sind" (am/is/are). GO/WENT: WENT era el pasado de "wend" (deambular), un verbo casi extinto que cedió su forma a GO por frecuencia.',
+        warning: '"I have went / I have saw / I have ate / I have drank / I have drove" → LOS CINCO más documentados en examen. Participios correctos: GONE · SEEN · EATEN · DRUNK · DRIVEN.',
+        compounds: 'go → undergo · forgo · outgo · do → undo · redo · outdo · overdo · see → foresee · oversee · come → become · overcome · get → forget',
+        example: '"I have been there, gone twice, done everything, seen it all, and got nothing." — los grandes cinco.',
+        false: 'DO vs MAKE: los dos = "hacer" en español pero no intercambiables. DO = acciones/tareas ("do homework", "do sport", "do the dishes"). MAKE = crear/producir ("make a cake", "make a decision", "make a mistake").'
+      },
+      en: {
+        pattern: 'These verbs have NO internal pattern. Their forms come from historically different verbs (suppletion). These are the only ones truly needing individual memorization. Very few exist.',
+        history: 'BE combines three Old English verbs: "bēon" (be), "wesan" (was/were) and "eom/is/sind" (am/is/are). GO/WENT: WENT was past of "wend" (to wander), a near-extinct verb that donated its form to GO due to frequency.',
+        warning: '"I have went / I have saw / I have ate / I have drank / I have drove" → THE FIVE most exam-documented errors. Correct participles: GONE · SEEN · EATEN · DRUNK · DRIVEN.',
+        compounds: 'go → undergo · forgo · outgo · do → undo · redo · outdo · overdo · see → foresee · oversee · come → become · overcome · get → forget',
+        example: '"I have been there, gone twice, done everything, seen it all, and got nothing." — the big five.',
+        false: 'DO vs MAKE: both translate to "hacer" in Spanish but not interchangeable. DO = actions/tasks ("do homework", "do sport", "do the dishes"). MAKE = create/produce ("make a cake", "make a decision", "make a mistake").'
+      }
+    },
+    verbs: [
+      { inf:'be', ps:'was/were', pp:'been', freq:'high', trans:{es:'ser/estar',en:'be'}, ipa:['biː','wɒz/wɜː','biːn'], ph:['bi','wos/uer','bin'] },
+      { inf:'go', ps:'went', pp:'gone', freq:'high', trans:{es:'ir',en:'go'}, ipa:['ɡəʊ','wɛnt','ɡɒn'], ph:['gou','uent','gon'] },
+      { inf:'have', ps:'had', pp:'had', freq:'high', trans:{es:'tener/haber',en:'have'}, ipa:['hæv','hæd','hæd'], ph:['jav','jad','jad'] },
+      { inf:'do', ps:'did', pp:'done', freq:'high', trans:{es:'hacer (tareas)',en:'do'}, ipa:['duː','dɪd','dʌn'], ph:['du','did','dan'] },
+      { inf:'say', ps:'said', pp:'said', freq:'high', trans:{es:'decir',en:'say'}, ipa:['seɪ','sɛd','sɛd'], ph:['sei','sed','sed'] },
+      { inf:'see', ps:'saw', pp:'seen', freq:'high', trans:{es:'ver',en:'see'}, ipa:['siː','sɔː','siːn'], ph:['si','so','sin'] },
+      { inf:'get', ps:'got', pp:'got/gotten', freq:'high', trans:{es:'obtener/llegar',en:'get'}, ipa:['ɡɛt','ɡɒt','ɡɒt'], ph:['get','got','got'] },
+      { inf:'make', ps:'made', pp:'made', freq:'high', trans:{es:'hacer (crear)',en:'make'}, ipa:['meɪk','meɪd','meɪd'], ph:['meik','meid','meid'] },
+      { inf:'come', ps:'came', pp:'come', freq:'high', trans:{es:'venir',en:'come'}, ipa:['kʌm','keɪm','kʌm'], ph:['kam','keim','kam'] },
+      { inf:'give', ps:'gave', pp:'given', freq:'high', trans:{es:'dar',en:'give'}, ipa:['ɡɪv','ɡeɪv','ˈɡɪvən'], ph:['guiv','geiv','guiven'] },
+      { inf:'take', ps:'took', pp:'taken', freq:'high', trans:{es:'coger/llevar',en:'take'}, ipa:['teɪk','tʊk','ˈteɪkən'], ph:['teik','tuk','teiken'] },
+      { inf:'eat', ps:'ate', pp:'eaten', freq:'high', trans:{es:'comer',en:'eat'}, ipa:['iːt','ɛt','ˈiːtən'], ph:['it','et','iten'] },
+    ]
+  }
+];
+
+// ── SIDEBAR ──
+function buildSidebar() {
+  const list = document.getElementById('family-list');
+  list.innerHTML = '';
+  const l = LANG.current;
+  const u = UI[l];
+
+  FAMILIES.forEach(f => {
+    const item = document.createElement('div');
+    item.className = 'family-item' + (activeFamily === f.id ? ' active' : '');
+    item.id = 'fam-item-' + f.id;
+    item.innerHTML = `
+      <div class="family-dot" style="background:${f.color}"></div>
+      <div class="family-label">${f.label[l]}</div>
+      <div style="display:flex;gap:0.3rem;align-items:center;flex-shrink:0">
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--muted2);background:var(--surface3);padding:0.1rem 0.35rem;border-radius:3px">L${f.level}</div>
+        <div class="family-count">${f.verbs.length}</div>
+      </div>
+    `;
+    item.onclick = () => openFamily(f.id);
+    list.appendChild(item);
+  });
+
+  const legend = document.createElement('div');
+  legend.style.cssText = `margin:0.8rem 0.9rem 0.9rem;padding:0.6rem 0.75rem;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;flex-direction:column;gap:0.3rem;`;
+  legend.innerHTML = `
+    <div style="font-size:0.58rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:0.1rem">${u.legTitle}</div>
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.65rem;color:var(--muted)"><div style="width:3px;height:12px;border-radius:2px;background:var(--green-lab);flex-shrink:0"></div>${u.legHigh}</div>
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.65rem;color:var(--muted)"><div style="width:3px;height:12px;border-radius:2px;background:rgba(74,222,128,0.3);flex-shrink:0"></div>${u.legMid}</div>
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.65rem;color:var(--muted)"><div style="width:3px;height:12px;border-radius:2px;background:var(--muted2);flex-shrink:0"></div>${u.legLow}</div>
+  `;
+  list.appendChild(legend);
+}
+
+// ── MAP ──
+function buildMap() {
+  const svg = document.getElementById('map-canvas');
+  const W = svg.clientWidth || 700;
+  const H = svg.clientHeight || 400;
+  const cx = W / 2, cy = H / 2;
+  const n = FAMILIES.length;
+  const margin = 70;
+  const R = Math.min((W - margin * 2) / 2, (H - margin * 2) / 2);
+  const ordered = [...FAMILIES].sort((a, b) => a.level - b.level);
+
+  mapNodes = ordered.map((f, i) => {
+    const angle = (2 * Math.PI / n) * i - Math.PI / 2;
+    const nodeR = 16 + f.verbs.length * 1.4;
+    return { id: f.id, x: cx + Math.cos(angle) * R, y: cy + Math.sin(angle) * R, r: nodeR, angle, color: f.color, family: f };
+  });
+
+  svg.innerHTML = '';
+
+  for (let i = 0; i < mapNodes.length; i++) {
+    const a = mapNodes[i], b = mapNodes[(i + 1) % mapNodes.length];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / dist, uy = dy / dist;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', a.x + ux * a.r); line.setAttribute('y1', a.y + uy * a.r);
+    line.setAttribute('x2', b.x - ux * b.r); line.setAttribute('y2', b.y - uy * b.r);
+    line.setAttribute('stroke', `color-mix(in srgb, ${a.color} 40%, ${b.color})`);
+    line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-opacity', '0.25');
+    line.setAttribute('stroke-dasharray', '4 4');
+    svg.appendChild(line);
+  }
+
+  mapNodes.forEach(n => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.style.cursor = 'pointer';
+    g.setAttribute('data-id', n.id);
+    g.setAttribute('class', 'map-node');
+
+    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    glow.setAttribute('cx', n.x); glow.setAttribute('cy', n.y); glow.setAttribute('r', n.r + 12);
+    glow.setAttribute('fill', n.color); glow.setAttribute('fill-opacity', '0.07');
+    g.appendChild(glow);
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', n.x); circle.setAttribute('cy', n.y); circle.setAttribute('r', n.r);
+    circle.setAttribute('fill', n.color); circle.setAttribute('fill-opacity', '0.18');
+    circle.setAttribute('stroke', n.color); circle.setAttribute('stroke-width', '1.8');
+    circle.setAttribute('stroke-opacity', '0.6'); circle.style.transition = 'all 0.2s';
+    circle.setAttribute('class', 'node-circle');
+    g.appendChild(circle);
+
+    const lvlTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lvlTxt.setAttribute('x', n.x); lvlTxt.setAttribute('y', n.y - 6);
+    lvlTxt.setAttribute('text-anchor', 'middle'); lvlTxt.setAttribute('fill', n.color);
+    lvlTxt.setAttribute('font-family', 'DM Mono, monospace'); lvlTxt.setAttribute('font-size', '8');
+    lvlTxt.setAttribute('font-weight', '500'); lvlTxt.setAttribute('fill-opacity', '0.7');
+    lvlTxt.textContent = `L${n.family.level}`;
+    g.appendChild(lvlTxt);
+
+    const cnt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    cnt.setAttribute('x', n.x); cnt.setAttribute('y', n.y + 7);
+    cnt.setAttribute('text-anchor', 'middle'); cnt.setAttribute('dominant-baseline', 'central');
+    cnt.setAttribute('fill', n.color); cnt.setAttribute('font-family', 'DM Mono, monospace');
+    cnt.setAttribute('font-size', '13'); cnt.setAttribute('font-weight', '700');
+    cnt.textContent = n.family.verbs.length;
+    g.appendChild(cnt);
+
+    const labelDist = n.r + 18;
+    const lx = n.x + Math.cos(n.angle) * labelDist;
+    const ly = n.y + Math.sin(n.angle) * labelDist;
+    const anchor = Math.cos(n.angle) > 0.2 ? 'start' : Math.cos(n.angle) < -0.2 ? 'end' : 'middle';
+    const shortLabel = n.family.label[LANG.current].split('(')[0].trim();
+    const displayLabel = shortLabel.length > 18 ? shortLabel.substring(0, 16) + '…' : shortLabel;
+
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lbl.setAttribute('x', lx); lbl.setAttribute('y', ly);
+    lbl.setAttribute('text-anchor', anchor); lbl.setAttribute('dominant-baseline', 'central');
+    lbl.setAttribute('fill', 'rgba(240,242,255,0.82)');
+    lbl.setAttribute('font-family', 'Nunito, sans-serif'); lbl.setAttribute('font-size', '11.5');
+    lbl.setAttribute('font-weight', '700'); lbl.setAttribute('class', 'node-label');
+    lbl.textContent = displayLabel;
+    g.appendChild(lbl);
+
+    g.onclick = () => openFamily(n.id);
+    g.onmouseenter = (e) => showTooltip(e, n);
+    g.onmouseleave = hideTooltip;
+    svg.appendChild(g);
+  });
+}
+
+function showTooltip(e, n) {
+  const tip = document.getElementById('tooltip');
+  const rect = document.getElementById('map-canvas').getBoundingClientRect();
+  tip.innerHTML = `<strong style="color:${n.color}">${n.family.label[LANG.current]}</strong><br><span style="color:var(--muted);font-size:0.62rem">${n.family.pattern}</span>`;
+  tip.style.left = (e.clientX - rect.left + 12) + 'px';
+  tip.style.top = (e.clientY - rect.top - 44) + 'px';
+  tip.style.opacity = '1';
+}
+function hideTooltip() { document.getElementById('tooltip').style.opacity = '0'; }
+
+// ── OPEN FAMILY ──
+// verbToHighlight: infinitivo opcional — resalta esa fila al abrir
+function openFamily(id, verbToHighlight) {
+  activeFamily = id;
+  const f = FAMILIES.find(x => x.id === id);
+  const l = LANG.current;
+  const u = UI[l];
+
+  document.querySelectorAll('.family-item').forEach(el => {
+    el.classList.toggle('active', el.id === 'fam-item-' + id);
+  });
+  document.querySelectorAll('.map-node').forEach(g => {
+    const isActive = g.getAttribute('data-id') === id;
+    const c = g.querySelector('.node-circle');
+    if (c) {
+      c.setAttribute('fill-opacity', isActive ? '0.5' : '0.1');
+      c.setAttribute('stroke-opacity', isActive ? '1' : '0.35');
+      c.setAttribute('stroke-width', isActive ? '2.5' : '1.5');
+    }
+  });
+
+  hideMap();
+  const meta = document.getElementById('verb-family-meta');
+  meta.classList.add('visible');
+  document.getElementById('vf-dot').style.background = f.color;
+  document.getElementById('vf-title').textContent = f.label[l];
+  document.getElementById('vf-title').style.color = f.color;
+  document.getElementById('vf-pattern').textContent = `L${f.level} · ${f.pattern}`;
+  document.getElementById('verb-col-headers').style.display = 'grid';
+
+  const rows = document.getElementById('verb-rows');
+  rows.innerHTML = '';
+  let highlightedRow = null;
+  f.verbs.forEach(v => {
+    const fc = v.freq === 'high' ? 'high-freq' : v.freq === 'mid' ? 'mid-freq' : '';
+    const hc = v.freq === 'high' ? 'is-high' : '';
+    const isTarget = verbToHighlight && v.inf === verbToHighlight;
+    const row = document.createElement('div');
+    row.className = `verb-row ${fc}${isTarget ? ' highlighted' : ''}`;
+    row.innerHTML = `
+      <div class="verb-cell">
+        <span class="verb-base ${hc}">${v.inf}</span>
+        <span class="verb-trans">${v.trans[l]}</span>
+        <span class="verb-ipa">${v.ipa[0]}</span>
+        <span class="verb-phonetic">${v.ph[0]}</span>
+      </div>
+      <div class="verb-cell">
+        <span class="verb-base">${v.ps}</span>
+        <span class="verb-ipa">${v.ipa[1]}</span>
+        <span class="verb-phonetic">${v.ph[1]}</span>
+      </div>
+      <div class="verb-cell">
+        <span class="verb-base">${v.pp}</span>
+        <span class="verb-ipa">${v.ipa[2]}</span>
+        <span class="verb-phonetic">${v.ph[2]}</span>
+      </div>
+    `;
+    rows.appendChild(row);
+    if (isTarget) highlightedRow = row;
+  });
+
+  // Scroll al verbo resaltado
+  if (highlightedRow) {
+    setTimeout(() => highlightedRow.scrollIntoView({ block: 'center', behavior: 'smooth' }), 80);
+  } else {
+    document.getElementById('verb-area').style.display = 'block';
+  document.getElementById('verb-area').scrollTop = 0;
+  }
+
+  document.getElementById('info-empty').style.display = 'none';
+  document.getElementById('info-content').classList.add('visible');
+  document.getElementById('info-head-name').innerHTML = `<span style="color:${f.color}">${f.label[l]}</span>`;
+  document.getElementById('info-head-pattern').textContent = f.pattern;
+
+  const info = f.info[l];
+  const boxes = [
+    { cls:'acc-pattern',   label:u.boxes.pattern,   text:info.pattern },
+    { cls:'acc-history',   label:u.boxes.history,   text:info.history },
+    { cls:'acc-warning',   label:u.boxes.warning,   text:info.warning },
+    { cls:'acc-compounds', label:u.boxes.compounds, text:info.compounds },
+    { cls:'acc-example',   label:u.boxes.example,   text:info.example },
+    { cls:'acc-false',     label:u.boxes.false,     text:info.false },
+  ];
+
+  const acc = document.getElementById('accordion-list');
+  acc.innerHTML = '';
+  boxes.forEach((b, i) => {
+    const item = document.createElement('div');
+    item.className = `accordion-item ${b.cls}`;
+    const open = i === 0;
+    item.innerHTML = `
+      <button class="accordion-trigger ${open?'open':''}" onclick="toggleAcc(this)">
+        ${b.label}<span class="acc-icon">▼</span>
+      </button>
+      <div class="accordion-body ${open?'open':''}">${b.text}</div>
+    `;
+    acc.appendChild(item);
+  });
+}
+
+function toggleAcc(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+// ── TOGGLES ──
+function toggleIPA() {
+  showIPA = !showIPA;
+  document.body.classList.toggle('show-ipa', showIPA);
+  const btn = document.getElementById('btn-ipa');
+  btn.classList.toggle('active', showIPA);
+  btn.textContent = showIPA ? UI[LANG.current].ipaOn : UI[LANG.current].ipaOff;
+}
+
+function toggleLang() {
+  LANG.current = LANG.current === 'es' ? 'en' : 'es';
+  document.getElementById('btn-lang').textContent = LANG.current.toUpperCase();
+  updateStaticText();
+  buildSidebar();
+  buildMap();
+  if (activeFamily) openFamily(activeFamily);
+  // Re-ejecuta la búsqueda actual en el nuevo idioma
+  if (searchQuery) searchVerbs(searchQuery);
+}
+
+function updateStaticText() {
+  const l = LANG.current;
+  const u = UI[l];
+  document.getElementById('h1-title').textContent = u.h1;
+  document.getElementById('h1-sub').textContent = u.h1sub;
+  document.getElementById('info-empty-title').textContent = u.infoEmptyTitle;
+  document.getElementById('info-empty-body').innerHTML = u.infoEmptyBody;
+  document.getElementById('col-inf').textContent = u.colInf;
+  document.getElementById('col-ps').textContent = u.colPs;
+  document.getElementById('col-pp').textContent = u.colPp;
+  document.getElementById('btn-ipa').textContent = showIPA ? u.ipaOn : u.ipaOff;
+  document.getElementById('sidebar-title').textContent = u.sidebarTitle;
+  document.getElementById('sidebar-sub').textContent = u.sidebarSub;
+  document.getElementById('ctrl-label').textContent = u.ctrlLabel;
+  document.getElementById('map-hint-center').textContent =
+    l === 'es' ? 'Haz clic en un nodo para explorar esa familia' : 'Click a node to explore that family';
+  document.getElementById('back-label').textContent = l === 'es' ? 'Mapa' : 'Map';
+  document.getElementById('search-input').placeholder = l === 'es' ? 'buscar verbo…' : 'search verb…';
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+window.addEventListener('resize', () => { if (!activeFamily) buildMap(); });
+
+buildSidebar();
+buildMap();
+updateStaticText();
+</script>
+</body>
+</html>

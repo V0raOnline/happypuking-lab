@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbos Irregulares — Quiz · hAppYpUkIng Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<style>
+:root {
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --surface2: #22263A;
+  --surface3: #2A2F45;
+  --border: rgba(255,255,255,0.07);
+  --text: #F0F2FF;
+  --muted: #6B7280;
+  --muted2: #4B5563;
+  --magenta: #D946EF;
+  --green-lab: #4ADE80;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 0.55rem 1.4rem 0.6rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.header-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+.header-tagline {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.header-tagline span { margin: 0 0.35rem; opacity: 0.4; }
+.btn-inicio {
+  position: absolute;
+  right: 0;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--magenta);
+  color: var(--text);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-inicio:hover { background: rgba(217,70,239,0.08); }
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.1rem;
+}
+header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
+
+/* ── WORKSPACE ── */
+.workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── LEFT SIDEBAR ── */
+.left-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.sidebar-controls {
+  padding: 0.75rem 0.9rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.sidebar-section-label {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 0.1rem;
+}
+
+.btn-pill-action {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.38rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  text-align: left;
+}
+.btn-pill-action:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.btn-pill-action.primary {
+  border-color: rgba(74,222,128,0.35);
+  background: rgba(74,222,128,0.08);
+  color: var(--green-lab);
+}
+.btn-pill-action.primary:hover { background: rgba(74,222,128,0.15); }
+
+.sidebar-header-block {
+  padding: 0.75rem 0.9rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-header-block h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+.sidebar-header-block p { font-size: 0.68rem; color: var(--muted); font-style: italic; }
+
+/* Family filter list */
+.family-filter-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.4rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+}
+
+.family-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+.family-filter-item:hover { background: var(--surface2); }
+.family-filter-item.selected { background: rgba(74,222,128,0.04); border-left-color: var(--green-lab); }
+
+.family-check {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  border: 1.5px solid var(--muted2);
+  flex-shrink: 0;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+}
+.family-filter-item.selected .family-check {
+  background: var(--green-lab);
+  border-color: var(--green-lab);
+  color: var(--bg);
+  font-weight: 900;
+}
+
+.family-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.family-filter-label { flex: 1; font-size: 0.72rem; font-weight: 700; line-height: 1.3; }
+.family-filter-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--muted2);
+  background: var(--surface3);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+/* Level filter pills */
+.level-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.6rem 0.9rem 0.5rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.level-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.18rem 0.55rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.level-pill.active {
+  background: rgba(74,222,128,0.1);
+  border-color: var(--green-lab);
+  color: var(--green-lab);
+}
+
+/* ── CENTER: QUIZ ── */
+.quiz-area {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* ── SETUP SCREEN ── */
+.setup-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 2rem;
+  text-align: center;
+}
+.setup-screen h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  color: var(--text);
+}
+.setup-screen p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; max-width: 420px; }
+.setup-stats {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.setup-stat {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 1.1rem;
+  text-align: center;
+}
+.setup-stat .stat-n {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--green-lab);
+  display: block;
+}
+.setup-stat .stat-label { font-size: 0.65rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.btn-start {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.95rem;
+  padding: 0.75rem 2.5rem;
+  border-radius: 12px;
+  border: 2px solid var(--green-lab);
+  background: rgba(74,222,128,0.12);
+  color: var(--green-lab);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.btn-start:hover { background: rgba(74,222,128,0.22); box-shadow: 0 0 24px rgba(74,222,128,0.18); }
+.btn-start:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── QUIZ SCREEN ── */
+.quiz-screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.quiz-screen.active { display: flex; }
+
+/* Progress bar */
+.quiz-progress {
+  padding: 0.6rem 1.4rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.progress-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--green-lab);
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+.progress-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.progress-score {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--green-lab);
+  white-space: nowrap;
+}
+
+/* Question card */
+.question-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.question-card {
+  margin: 1.4rem auto;
+  width: min(640px, 90%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.question-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.q-family-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 100px;
+  border: 1px solid;
+}
+.q-level-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 100px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.q-tense-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 100px;
+  background: rgba(217,70,239,0.1);
+  border: 1px solid rgba(217,70,239,0.25);
+  color: var(--magenta);
+}
+
+/* Sentence display */
+.sentence-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem 1.6rem;
+}
+.sentence-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 0.7rem;
+}
+.sentence-text .blank {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 2.5px solid var(--magenta);
+  color: var(--magenta);
+  font-style: italic;
+  text-align: center;
+  padding: 0 0.3rem;
+  vertical-align: bottom;
+  transition: all 0.2s;
+}
+.sentence-text .blank.filled { color: var(--text); border-bottom-color: var(--muted2); font-style: normal; }
+.sentence-translation {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Input area */
+.input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.input-label {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+.verb-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s;
+  text-transform: lowercase;
+}
+.verb-input:focus { border-color: rgba(217,70,239,0.5); background: var(--surface3); }
+.verb-input.correct { border-color: var(--green-lab); background: rgba(74,222,128,0.06); color: var(--green-lab); }
+.verb-input.wrong { border-color: #F87171; background: rgba(248,113,113,0.06); color: #F87171; }
+.verb-input:disabled { opacity: 0.7; cursor: default; }
+
+/* Action buttons */
+.quiz-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.btn-check {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.82rem;
+  padding: 0.6rem 1.6rem;
+  border-radius: 10px;
+  border: none;
+  background: var(--magenta);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.btn-check:hover { background: #c026d3; transform: translateY(-1px); }
+.btn-check:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-skip {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-skip:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+/* Feedback */
+.feedback-area {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.feedback-area.visible { display: flex; }
+
+.feedback-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.feedback-row.ok {
+  background: rgba(74,222,128,0.08);
+  border: 1px solid rgba(74,222,128,0.25);
+  color: var(--green-lab);
+}
+.feedback-row.wrong {
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.25);
+  color: #F87171;
+}
+.feedback-correct {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.hint-box {
+  padding: 0.5rem 0.8rem;
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 8px;
+  font-size: 0.73rem;
+  color: rgba(251,191,36,0.85);
+  line-height: 1.5;
+}
+
+.btn-next {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.82rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 10px;
+  border: 1px solid var(--green-lab);
+  background: rgba(74,222,128,0.1);
+  color: var(--green-lab);
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+.btn-next:hover { background: rgba(74,222,128,0.2); }
+
+/* ── RESULTS SCREEN ── */
+.results-screen { display: none; flex: 1; flex-direction: column; overflow-y: auto; }
+.results-screen.active { display: flex; }
+
+.results-inner {
+  margin: 1.5rem auto;
+  width: min(680px, 92%);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.results-header {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.results-score-big {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.results-score-big.perfect { color: var(--green-lab); }
+.results-score-big.good { color: #60A5FA; }
+.results-score-big.ok { color: #FBBF24; }
+.results-score-big.poor { color: #F87171; }
+
+.results-msg {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+.results-sub { font-size: 0.78rem; color: var(--muted); }
+
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+.results-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  text-align: center;
+}
+.results-stat-n {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.results-stat-label { font-size: 0.62rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Results by family */
+.results-families {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.results-families-title {
+  padding: 0.8rem 1.2rem;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  border-bottom: 1px solid var(--border);
+}
+.results-family-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 1.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.results-family-row:last-child { border-bottom: none; }
+.rff-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.rff-label { flex: 1; font-size: 0.75rem; font-weight: 700; }
+.rff-bar-wrap { width: 120px; height: 5px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
+.rff-bar { height: 100%; border-radius: 100px; transition: width 0.5s ease; }
+.rff-score {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Wrong answers review */
+.results-wrong {
+  background: var(--surface);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.results-wrong-title {
+  padding: 0.8rem 1.2rem;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #F87171;
+  border-bottom: 1px solid rgba(248,113,113,0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.wrong-item {
+  padding: 0.7rem 1.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.wrong-item:last-child { border-bottom: none; }
+.wrong-sentence { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+.wrong-answer-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.75rem; }
+.wrong-given { font-family: 'DM Mono', monospace; color: #F87171; text-decoration: line-through; }
+.wrong-arrow { color: var(--muted2); }
+.wrong-correct { font-family: 'DM Mono', monospace; color: var(--green-lab); font-weight: 700; }
+.wrong-verb { font-size: 0.65rem; color: var(--muted2); }
+
+/* Results actions */
+.results-actions {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: center;
+  padding-bottom: 1rem;
+}
+.btn-retry {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 0.65rem 1.8rem;
+  border-radius: 10px;
+  border: 2px solid var(--green-lab);
+  background: rgba(74,222,128,0.1);
+  color: var(--green-lab);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-retry:hover { background: rgba(74,222,128,0.2); }
+.btn-new-selection {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-new-selection:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+/* ── YAML MODAL ── */
+.yaml-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.yaml-modal.visible { display: flex; }
+.yaml-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.yaml-modal-inner h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+.yaml-modal-inner p { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.8rem; line-height: 1.5; }
+.yaml-modal-inner .prompt-tip {
+  background: rgba(74,222,128,0.06);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.72rem;
+  color: rgba(74,222,128,0.8);
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+.yaml-textarea {
+  width: 100%;
+  height: 200px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 0.7rem;
+}
+.yaml-textarea:focus { border-color: rgba(74,222,128,0.4); }
+.yaml-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  display: none;
+}
+.yaml-status.ok { background: rgba(74,222,128,0.08); color: var(--green-lab); display: block; }
+.yaml-status.error { background: rgba(248,113,113,0.08); color: #F87171; display: block; }
+.yaml-modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.btn-modal {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn-modal.primary { background: var(--green-lab); color: var(--bg); }
+.btn-modal.secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.btn-modal:hover { filter: brightness(1.1); }
+
+/* ── ABOUT MODAL ── */
+.about-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 200;
+  align-items: flex-start;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+  padding: 2rem 1rem;
+}
+.about-modal.visible { display: flex; }
+.about-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.8rem;
+  width: 90%;
+  max-width: 620px;
+  position: relative;
+}
+.about-close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.about-close:hover { color: var(--text); }
+.about-modal-inner h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  margin-bottom: 0.2rem;
+}
+.about-tagline {
+  font-size: 0.68rem;
+  color: var(--magenta);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.4rem;
+}
+.about-section { margin-bottom: 1.4rem; }
+.about-section h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border);
+}
+.about-section p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+.about-section ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.about-section ul li {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  padding-left: 1rem;
+  position: relative;
+}
+.about-section ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--magenta);
+  font-size: 0.7rem;
+}
+.about-code {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.9;
+  overflow-x: auto;
+  white-space: pre;
+  margin-top: 0.5rem;
+}
+.about-code .yaml-key { color: #22D3EE; }
+.about-code .yaml-val { color: var(--green-lab); }
+.about-code .yaml-comment { color: var(--muted); font-style: italic; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 0.7rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.footer-text { font-size: 0.68rem; color: var(--muted2); font-weight: 600; }
+.footer-text strong { color: var(--muted); font-weight: 900; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-tagline">
+      HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS
+    </div>
+    <a class="btn-inicio" href="./../index.html">← happypuking-lab</a>
+  </div>
+  <h1>Verbos Irregulares — Quiz</h1>
+  <p>Pon a prueba lo que sabes · Feedback al final de la tanda</p>
+</header>
+
+<div class="workspace">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="left-sidebar">
+    <div class="sidebar-controls">
+      <a class="btn-pill-action" href="verbos_irregulares.html" style="text-decoration:none">← Volver a estudiar</a>
+      <div class="sidebar-section-label">Opciones</div>
+      <button class="btn-pill-action" onclick="openYamlModal()">⚙ Cargar mis frases</button>
+      <button class="btn-pill-action" onclick="openAbout()">? Instrucciones y formato</button>
+      <button class="btn-pill-action primary" id="btn-select-all" onclick="toggleSelectAll()">✓ Todas las familias</button>
+    </div>
+
+    <div class="sidebar-header-block">
+      <h2>Familias</h2>
+      <p id="sidebar-count">Selecciona las que quieras practicar</p>
+    </div>
+
+    <div class="family-filter-list" id="family-filter-list"></div>
+
+    <div class="level-pills" id="level-pills">
+      <div class="sidebar-section-label" style="width:100%;margin-bottom:0.2rem">Nivel MCER</div>
+      <span class="level-pill active" data-level="A1" onclick="toggleLevel(this)">A1</span>
+      <span class="level-pill active" data-level="A2" onclick="toggleLevel(this)">A2</span>
+      <span class="level-pill active" data-level="B1" onclick="toggleLevel(this)">B1</span>
+      <span class="level-pill active" data-level="B2" onclick="toggleLevel(this)">B2</span>
+    </div>
+  </div>
+
+  <!-- QUIZ AREA -->
+  <div class="quiz-area">
+
+    <!-- SETUP SCREEN -->
+    <div class="setup-screen" id="setup-screen">
+      <h2>Configura tu tanda</h2>
+      <p>Elige las familias y el nivel MCER en el panel lateral, luego pulsa Empezar.</p>
+      <div class="setup-stats">
+        <div class="setup-stat">
+          <span class="stat-n" id="stat-questions">0</span>
+          <span class="stat-label">preguntas</span>
+        </div>
+        <div class="setup-stat">
+          <span class="stat-n" id="stat-families">0</span>
+          <span class="stat-label">familias</span>
+        </div>
+        <div class="setup-stat">
+          <span class="stat-n" id="stat-levels">0</span>
+          <span class="stat-label">niveles</span>
+        </div>
+      </div>
+      <button class="btn-start" id="btn-start" onclick="startQuiz()">Empezar →</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="quiz-screen" id="quiz-screen">
+      <div class="quiz-progress">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <span class="progress-label" id="progress-label">0 / 0</span>
+        <span class="progress-score" id="progress-score">0 ✓</span>
+      </div>
+
+      <div class="question-scroll">
+        <div class="question-card">
+          <div class="question-meta" id="q-meta"></div>
+
+          <div class="sentence-box">
+            <div class="sentence-text" id="q-sentence"></div>
+            <div class="sentence-translation" id="q-translation"></div>
+          </div>
+
+          <div class="input-area" id="input-area"></div>
+
+          <div class="quiz-actions" id="quiz-actions">
+            <button class="btn-check" id="btn-check" onclick="checkAnswer()">Comprobar</button>
+            <button class="btn-skip" onclick="skipQuestion()">Saltarme esta →</button>
+          </div>
+
+          <div class="feedback-area" id="feedback-area"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="results-screen" id="results-screen">
+      <div class="results-inner">
+        <div class="results-header">
+          <div class="results-score-big" id="results-score-big"></div>
+          <div class="results-msg" id="results-msg"></div>
+          <div class="results-sub" id="results-sub"></div>
+        </div>
+
+        <div class="results-stats">
+          <div class="results-stat-card">
+            <span class="results-stat-n" id="rs-correct" style="color:var(--green-lab)">0</span>
+            <span class="results-stat-label">Correctas</span>
+          </div>
+          <div class="results-stat-card">
+            <span class="results-stat-n" id="rs-wrong" style="color:#F87171">0</span>
+            <span class="results-stat-label">Incorrectas</span>
+          </div>
+          <div class="results-stat-card">
+            <span class="results-stat-n" id="rs-skipped" style="color:var(--muted)">0</span>
+            <span class="results-stat-label">Saltadas</span>
+          </div>
+        </div>
+
+        <div class="results-families" id="results-families"></div>
+        <div class="results-wrong" id="results-wrong" style="display:none"></div>
+
+        <div class="results-actions">
+          <button class="btn-retry" onclick="retryQuiz()">Repetir tanda</button>
+          <button class="btn-new-selection" onclick="newSelection()">Nueva selección</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="about-modal" id="about-modal">
+  <div class="about-modal-inner">
+    <button class="about-close" onclick="closeAbout()">✕ cerrar</button>
+    <h2>Verbos Irregulares — Quiz</h2>
+    <div class="about-tagline">hAppYpUkIng Lab · Instrucciones y formato YAML</div>
+
+    <div class="about-section">
+      <h3>Cómo funciona</h3>
+      <ul>
+        <li>Selecciona las <strong>familias</strong> que quieres practicar en el panel lateral. Puedes filtrar también por <strong>nivel MCER</strong> (A1–B2).</li>
+        <li>Pulsa <strong>Empezar</strong> y rellena el hueco con la forma correcta del verbo.</li>
+        <li>Para verbos marcados como <em>Past Simple + Participle</em> aparecen dos campos — rellena los dos.</li>
+        <li>Pulsa <strong>Enter</strong> para confirmar o saltar al siguiente campo.</li>
+        <li>Al terminar la tanda verás los resultados por familia y el listado de errores para repasar.</li>
+        <li>Con <strong>Repetir tanda</strong> se repiten las mismas preguntas en orden aleatorio.</li>
+      </ul>
+    </div>
+
+    <div class="about-section">
+      <h3>Añadir tus propias frases (YAML)</h3>
+      <p>Puedes cargar un banco de frases propio con el botón <strong>Cargar mis frases</strong>. El fichero base <code style="font-family:'DM Mono',monospace;color:var(--green-lab)">verbos_evaluacion.yaml</code> del repositorio incluye las 68 frases por defecto y sirve como plantilla.</p>
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.73rem;color:rgba(74,222,128,0.85);line-height:1.5;margin-bottom:0.8rem">
+        💡 <strong>Genera más frases con IA:</strong> copia el prompt de la cabecera del YAML y pégalo en cualquier chatbot indicando la familia y nivel que quieres ampliar. Devuelve YAML listo para pegar.
+      </div>
+      <p>Estructura de cada entrada:</p>
+      <div class="about-code"><span class="yaml-key">verbs</span>:
+  - <span class="yaml-key">family</span>:      <span class="yaml-val">iau</span>          <span class="yaml-comment"># id de la familia (aaa/endent/indound/ought/iuu/eeshort/ew/iau/iveove/special)</span>
+    <span class="yaml-key">verb</span>:        <span class="yaml-val">drink</span>        <span class="yaml-comment"># infinitivo sin "to"</span>
+    <span class="yaml-key">level</span>:       <span class="yaml-val">A1</span>           <span class="yaml-comment"># nivel MCER: A1 / A2 / B1 / B2</span>
+    <span class="yaml-key">tense</span>:       <span class="yaml-val">past_simple</span>  <span class="yaml-comment"># past_simple / past_participle / both</span>
+    <span class="yaml-key">sentence</span>:   <span class="yaml-val">"He ___ three glasses of water after the race."</span>
+    <span class="yaml-key">answer</span>:     <span class="yaml-val">drank</span>        <span class="yaml-comment"># si tense=both → "forma1 / forma2"</span>
+    <span class="yaml-key">translation</span>: <span class="yaml-val">"Él bebió tres vasos de agua después de la carrera."</span>
+    <span class="yaml-key">hint</span>:        <span class="yaml-val">"Pasado = DRANK. Participio = DRUNK."</span>  <span class="yaml-comment"># opcional</span></div>
+    </div>
+
+    <div class="about-section">
+      <h3>Familias disponibles</h3>
+      <div id="about-families-list" style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.3rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- YAML MODAL -->
+<div class="yaml-modal" id="yaml-modal">
+  <div class="yaml-modal-inner">
+    <h3>Cargar mis frases</h3>
+    <p>Pega el contenido de tu YAML con el mismo formato del fichero base. La estructura debe tener una clave <code style="font-family:'DM Mono',monospace;color:var(--green-lab)">verbs:</code> con entradas que incluyan <code style="font-family:'DM Mono',monospace;color:var(--green-lab)">verb, family, level, tense, sentence, answer, translation</code>.</p>
+    <div class="prompt-tip">
+      💡 <strong>Genera más frases con IA:</strong> abre el fichero <code style="font-family:'DM Mono',monospace">verbos_evaluacion.yaml</code> del repositorio, copia el prompt de la cabecera y pégalo en cualquier chatbot con el contexto de la familia que quieras ampliar.
+    </div>
+    <div class="yaml-status" id="yaml-status"></div>
+    <textarea class="yaml-textarea" id="yaml-textarea" placeholder="Pega aquí el contenido de tu YAML..."></textarea>
+    <div class="yaml-modal-actions">
+      <button class="btn-modal secondary" onclick="closeYamlModal()">Cancelar</button>
+      <button class="btn-modal primary" onclick="loadYaml()">Cargar</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-text">
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// FAMILIES METADATA (for display)
+// ══════════════════════════════════════════════════════════════
+const FAMILY_META = {
+  aaa:     { label: 'Sin cambio (A=B=C)', color: '#818CF8', level: 1 },
+  endent:  { label: '-end → -ent',        color: '#FCD34D', level: 2 },
+  indound: { label: '-ind → -ound',       color: '#F472B6', level: 3 },
+  ought:   { label: '-ought / -aught',    color: '#FB923C', level: 4 },
+  iuu:     { label: 'i → u → u',          color: '#F87171', level: 5 },
+  eeshort: { label: 'ee → vocal corta',   color: '#A78BFA', level: 6 },
+  ew:      { label: '-ow → -ew → -own',   color: '#22D3EE', level: 7 },
+  iau:     { label: 'i → a → u',          color: '#34D399', level: 8 },
+  iveove:  { label: '-ive/-ide → -en',    color: '#4ADE80', level: 9 },
+  special: { label: 'Supletivos',         color: '#94A3B8', level: 10 },
+};
+
+const TENSE_LABELS = {
+  past_simple:      'Past Simple',
+  past_participle:  'Past Participle',
+  both:             'Past Simple + Participle',
+};
+
+const SCORE_MSGS = [
+  { min: 100, msg: '¡Perfecto!',         sub: 'Dominas estas familias. A por el siguiente nivel.' },
+  { min: 80,  msg: 'Muy bien',           sub: 'Casi perfecto. Revisa los errores y repite.' },
+  { min: 60,  msg: 'Bien encaminado/a',  sub: 'Buen trabajo. Los verbos erróneos merecen un repaso.' },
+  { min: 40,  msg: 'Sigue practicando',  sub: 'Hay margen de mejora. Revisa los patrones.' },
+  { min: 0,   msg: '¡A repasar!',        sub: 'No te rindas. El patrón es la clave.' },
+];
+
+// ══════════════════════════════════════════════════════════════
+// DEFAULT DATA (embedded, matches verbos_evaluacion.yaml)
+// ══════════════════════════════════════════════════════════════
+const YAML_DEFAULT = `verbs:
+  - {family: aaa, verb: cut, level: A1, tense: past_simple, sentence: "She ___ her finger while cooking dinner yesterday.", answer: cut, translation: "Ella se cortó el dedo mientras cocinaba la cena ayer.", hint: "Nunca 'cutted'. Esta familia no cambia nunca."}
+  - {family: aaa, verb: put, level: A1, tense: past_simple, sentence: "He ___ his keys on the table when he arrived.", answer: put, translation: "Él puso sus llaves en la mesa cuando llegó.", hint: "Nunca 'putted'. Igual en las tres formas."}
+  - {family: aaa, verb: cost, level: A1, tense: past_simple, sentence: "The ticket ___ twenty euros last summer.", answer: cost, translation: "La entrada costó veinte euros el verano pasado.", hint: "Nunca 'costed'."}
+  - {family: aaa, verb: hit, level: A1, tense: past_simple, sentence: "The ball ___ the window and broke it.", answer: hit, translation: "La pelota golpeó la ventana y la rompió."}
+  - {family: aaa, verb: read, level: A2, tense: both, sentence: "I ___ that book last year and I've ___ it twice since then.", answer: "read / read", translation: "Leí ese libro el año pasado y lo he leído dos veces desde entonces.", hint: "Misma grafía, distinta pronunciación: infinitivo /riːd/, pasado /rɛd/."}
+  - {family: aaa, verb: hurt, level: A1, tense: past_simple, sentence: "She fell off her bike and ___ her knee badly.", answer: hurt, translation: "Ella se cayó de su bici y se hizo daño en la rodilla."}
+  - {family: aaa, verb: let, level: A2, tense: past_simple, sentence: "His parents ___ him stay up late on Friday night.", answer: let, translation: "Sus padres le dejaron quedarse despierto hasta tarde el viernes."}
+  - {family: aaa, verb: set, level: A2, tense: past_simple, sentence: "The teacher ___ a very difficult exam last week.", answer: set, translation: "El profesor puso un examen muy difícil la semana pasada."}
+  - {family: endent, verb: send, level: A1, tense: past_simple, sentence: "She ___ me a message yesterday but I didn't see it.", answer: sent, translation: "Ella me mandó un mensaje ayer pero no lo vi.", hint: "Nunca 'sended'. La -d cambia a -t."}
+  - {family: endent, verb: spend, level: A2, tense: past_simple, sentence: "We ___ three hours in the museum last Saturday.", answer: spent, translation: "Pasamos tres horas en el museo el sábado pasado."}
+  - {family: endent, verb: lend, level: A2, tense: past_simple, sentence: "He ___ me his bike for the whole weekend.", answer: lent, translation: "Él me prestó su bici durante todo el fin de semana.", hint: "LEND = prestar (tú das). No confundir con BORROW (tú coges)."}
+  - {family: endent, verb: bend, level: A2, tense: past_simple, sentence: "The storm ___ several trees in the park last night.", answer: bent, translation: "La tormenta dobló varios árboles en el parque anoche.", hint: "El que más se olvida de esta familia. Nunca 'bended'."}
+  - {family: indound, verb: find, level: A1, tense: past_simple, sentence: "She ___ her keys under the sofa this morning.", answer: found, translation: "Ella encontró sus llaves debajo del sofá esta mañana.", hint: "FIND/FOUND = hallar. No confundir con FOUND/FOUNDED = fundar (regular)."}
+  - {family: indound, verb: wind, level: A2, tense: past_simple, sentence: "She ___ up the old clock before going to bed.", answer: wound, translation: "Ella le dio cuerda al viejo reloj antes de irse a la cama."}
+  - {family: indound, verb: bind, level: B1, tense: past_simple, sentence: "The agreement ___ both companies to the same conditions.", answer: bound, translation: "El acuerdo vinculó a ambas empresas a las mismas condiciones."}
+  - {family: ought, verb: think, level: A1, tense: past_simple, sentence: "I ___ about you all day yesterday.", answer: thought, translation: "Pensé en ti todo el día ayer.", hint: "Nunca 'thinked'. La terminación -ought suena /ɔːt/."}
+  - {family: ought, verb: buy, level: A1, tense: past_simple, sentence: "He ___ a new phone last month.", answer: bought, translation: "Él compró un teléfono nuevo el mes pasado.", hint: "Nunca 'buyed'. Terminación -ought/-aught."}
+  - {family: ought, verb: teach, level: A2, tense: past_simple, sentence: "She ___ English at that school for ten years.", answer: taught, translation: "Ella enseñó inglés en ese colegio durante diez años.", hint: "Nunca 'teached'."}
+  - {family: ought, verb: catch, level: A1, tense: past_simple, sentence: "The goalkeeper ___ the ball at the last second.", answer: caught, translation: "El portero atrapó el balón en el último segundo.", hint: "Nunca 'catched'. Mismo patrón que teach/taught."}
+  - {family: ought, verb: bring, level: A1, tense: past_simple, sentence: "She ___ homemade cake to the party last Friday.", answer: brought, translation: "Ella trajo tarta casera a la fiesta el viernes pasado."}
+  - {family: ought, verb: fight, level: A2, tense: past_simple, sentence: "The team ___ hard but lost in the final minute.", answer: fought, translation: "El equipo luchó duro pero perdió en el último minuto."}
+  - {family: iuu, verb: win, level: A1, tense: past_simple, sentence: "Our team ___ the championship last year.", answer: won, translation: "Nuestro equipo ganó el campeonato el año pasado.", hint: "WIN = ganar competición. EARN = ganar dinero."}
+  - {family: iuu, verb: dig, level: A2, tense: past_simple, sentence: "The dog ___ a hole in the garden this morning.", answer: dug, translation: "El perro cavó un agujero en el jardín esta mañana."}
+  - {family: iuu, verb: stick, level: A2, tense: both, sentence: "The label ___ to the bottle and has ___ there for years.", answer: "stuck / stuck", translation: "La etiqueta se pegó a la botella y ha estado pegada allí durante años."}
+  - {family: iuu, verb: win, level: A2, tense: past_participle, sentence: "She has never ___ a prize in her life.", answer: won, translation: "Ella nunca ha ganado un premio en su vida."}
+  - {family: iuu, verb: strike, level: B1, tense: past_simple, sentence: "Lightning ___ the old tower during the storm.", answer: struck, translation: "Un rayo golpeó la vieja torre durante la tormenta."}
+  - {family: iuu, verb: spin, level: A2, tense: past_simple, sentence: "The dancer ___ around three times and stopped.", answer: spun, translation: "La bailarina giró tres veces y se paró."}
+  - {family: eeshort, verb: feel, level: A1, tense: past_simple, sentence: "I ___ really tired after the exam yesterday.", answer: felt, translation: "Me sentí muy cansado después del examen ayer.", hint: "Nunca 'feeled'. La vocal /iː/ se acorta a /ɛ/."}
+  - {family: eeshort, verb: keep, level: A2, tense: past_simple, sentence: "She ___ all her old letters in a box under the bed.", answer: kept, translation: "Ella guardó todas sus viejas cartas en una caja debajo de la cama."}
+  - {family: eeshort, verb: leave, level: A1, tense: past_simple, sentence: "He ___ his phone on the bus this morning.", answer: left, translation: "Él se dejó el teléfono en el autobús esta mañana.", hint: "Nunca 'leaved'. LEAVE ≠ LIVE (vivir)."}
+  - {family: eeshort, verb: mean, level: A2, tense: past_simple, sentence: "I ___ to call you, but I forgot. Sorry!", answer: meant, translation: "Tenía intención de llamarte, pero se me olvidó.", hint: "Nunca 'meaned'. MEAN = significar / querer decir / tener intención."}
+  - {family: eeshort, verb: meet, level: A1, tense: past_simple, sentence: "We ___ at the airport three years ago.", answer: met, translation: "Nos conocimos en el aeropuerto hace tres años.", hint: "MEET = conocer (primera vez). KNOW = conocer (ya hay relación)."}
+  - {family: eeshort, verb: sleep, level: A1, tense: past_simple, sentence: "She ___ for twelve hours after the trip.", answer: slept, translation: "Ella durmió doce horas después del viaje."}
+  - {family: eeshort, verb: lead, level: A2, tense: past_simple, sentence: "She ___ the team to victory last season.", answer: led, translation: "Ella llevó al equipo a la victoria la temporada pasada.", hint: "LEAD /liːd/ (guiar) → LED. No confundir con LEAD /lɛd/ (el metal plomo)."}
+  - {family: eeshort, verb: feed, level: A1, tense: past_simple, sentence: "They ___ the ducks at the park every Sunday last winter.", answer: fed, translation: "Daban de comer a los patos en el parque todos los domingos."}
+  - {family: ew, verb: know, level: A1, tense: past_simple, sentence: "She ___ the answer straight away.", answer: knew, translation: "Ella supo la respuesta de inmediato.", hint: "Nunca 'knowed'. KNOW → KNEW → KNOWN."}
+  - {family: ew, verb: grow, level: A1, tense: past_simple, sentence: "He ___ up in a small village near Barcelona.", answer: grew, translation: "Él creció en un pequeño pueblo cerca de Barcelona."}
+  - {family: ew, verb: throw, level: A1, tense: past_simple, sentence: "She ___ the ball to her friend across the street.", answer: threw, translation: "Ella lanzó la pelota a su amiga al otro lado de la calle."}
+  - {family: ew, verb: fly, level: A1, tense: past_simple, sentence: "We ___ to London last Easter for the first time.", answer: flew, translation: "Volamos a Londres la Semana Santa pasada por primera vez.", hint: "Nunca 'flied'. FLY pertenece a esta familia: flew / flown."}
+  - {family: ew, verb: grow, level: A2, tense: past_participle, sentence: "Prices have ___ a lot since last year.", answer: grown, translation: "Los precios han subido mucho desde el año pasado."}
+  - {family: ew, verb: draw, level: A2, tense: past_simple, sentence: "The artist ___ a beautiful portrait of the city.", answer: drew, translation: "El artista dibujó un precioso retrato de la ciudad."}
+  - {family: iau, verb: sing, level: A1, tense: past_simple, sentence: "She ___ a beautiful song at the concert last night.", answer: sang, translation: "Ella cantó una canción preciosa en el concierto anoche.", hint: "Pasado = SANG. Participio = SUNG. Nunca al revés."}
+  - {family: iau, verb: drink, level: A1, tense: past_simple, sentence: "He ___ three glasses of water after the race.", answer: drank, translation: "Él bebió tres vasos de agua después de la carrera.", hint: "Pasado = DRANK. Participio = DRUNK. DRUNK como adjetivo = borracho."}
+  - {family: iau, verb: swim, level: A1, tense: past_simple, sentence: "We ___ in the sea every morning last summer.", answer: swam, translation: "Nadamos en el mar todas las mañanas el verano pasado."}
+  - {family: iau, verb: begin, level: A2, tense: past_simple, sentence: "The film ___ late and everyone was annoyed.", answer: began, translation: "La película empezó tarde y todo el mundo estaba molesto."}
+  - {family: iau, verb: sing, level: A2, tense: past_participle, sentence: "She has ___ in that choir for five years.", answer: sung, translation: "Ella ha cantado en ese coro durante cinco años.", hint: "Con HAVE/HAS siempre participio: SUNG, nunca SANG."}
+  - {family: iau, verb: drink, level: A2, tense: past_participle, sentence: "Have you ever ___ mate? It's a traditional drink from Argentina.", answer: drunk, translation: "¿Has probado alguna vez el mate?", hint: "DRUNK = participio de DRINK. No confundir con DRUNK el adjetivo (borracho)."}
+  - {family: iau, verb: ring, level: A2, tense: past_simple, sentence: "The phone ___ three times but nobody answered.", answer: rang, translation: "El teléfono sonó tres veces pero nadie contestó."}
+  - {family: iveove, verb: write, level: A1, tense: past_simple, sentence: "She ___ a long letter to her grandmother last Sunday.", answer: wrote, translation: "Ella escribió una larga carta a su abuela el domingo pasado.", hint: "Pasado = WROTE. Participio = WRITTEN. Nunca 'I have wrote'."}
+  - {family: iveove, verb: drive, level: A2, tense: past_simple, sentence: "He ___ for six hours without stopping to reach the coast.", answer: drove, translation: "Condujo durante seis horas sin parar para llegar a la costa."}
+  - {family: iveove, verb: rise, level: B1, tense: past_simple, sentence: "The temperature ___ by ten degrees in just two days.", answer: rose, translation: "La temperatura subió diez grados en solo dos días.", hint: "RISE (subir, intransitivo) ≠ RAISE (subir algo, regular: raised)."}
+  - {family: iveove, verb: write, level: A2, tense: past_participle, sentence: "She has ___ three novels since she retired.", answer: written, translation: "Ella ha escrito tres novelas desde que se jubiló.", hint: "Con HAVE/HAS siempre participio: WRITTEN, nunca WROTE."}
+  - {family: iveove, verb: drive, level: A2, tense: past_participle, sentence: "Have you ever ___ on the left side of the road?", answer: driven, translation: "¿Has conducido alguna vez por el lado izquierdo de la carretera?"}
+  - {family: iveove, verb: ride, level: A2, tense: past_simple, sentence: "She ___ her bike to school every day last year.", answer: rode, translation: "Ella fue en bici al colegio todos los días el año pasado."}
+  - {family: special, verb: go, level: A1, tense: past_simple, sentence: "She ___ to Paris last summer for the first time.", answer: went, translation: "Ella fue a París el verano pasado por primera vez.", hint: "WENT era el pasado de otro verbo (WEND). No hay relación fonológica."}
+  - {family: special, verb: be, level: A1, tense: past_simple, sentence: "They ___ really happy when they heard the news.", answer: were, translation: "Ellos estaban muy contentos cuando escucharon la noticia.", hint: "BE: was (singular) / were (plural)."}
+  - {family: special, verb: see, level: A1, tense: past_simple, sentence: "I ___ that film three times last month.", answer: saw, translation: "Vi esa película tres veces el mes pasado.", hint: "Nunca 'I have saw'. Participio = SEEN."}
+  - {family: special, verb: do, level: A1, tense: past_simple, sentence: "She ___ all her homework before dinner yesterday.", answer: did, translation: "Ella hizo todos sus deberes antes de cenar ayer.", hint: "DO = hacer tareas. MAKE = crear/producir. No son intercambiables."}
+  - {family: special, verb: get, level: A1, tense: past_simple, sentence: "He ___ a great mark in his maths exam last week.", answer: got, translation: "Él sacó una nota muy buena en su examen de mates."}
+  - {family: special, verb: make, level: A1, tense: past_simple, sentence: "She ___ a delicious cake for her mum's birthday.", answer: made, translation: "Ella hizo una tarta deliciosa para el cumpleaños de su madre.", hint: "MAKE = crear. DO = hacer ('do homework', no 'make homework')."}
+  - {family: special, verb: see, level: A2, tense: past_participle, sentence: "Have you ___ that new series on Netflix yet?", answer: seen, translation: "¿Has visto ya esa nueva serie de Netflix?", hint: "Nunca 'have saw'. Con HAVE/HAS siempre participio: SEEN."}
+  - {family: special, verb: go, level: A2, tense: past_participle, sentence: "She has ___ to that restaurant before and loved it.", answer: gone, translation: "Ella ha ido a ese restaurante antes y le encantó.", hint: "Nunca 'have went'. Con HAVE/HAS siempre participio: GONE."}
+  - {family: special, verb: give, level: A1, tense: past_simple, sentence: "My teacher ___ us a lot of homework last Friday.", answer: gave, translation: "Mi profesora nos dio mucho trabajo el viernes pasado."}
+  - {family: special, verb: take, level: A1, tense: past_simple, sentence: "She ___ her umbrella because it looked like rain.", answer: took, translation: "Ella cogió su paraguas porque parecía que iba a llover."}
+  - {family: special, verb: eat, level: A1, tense: past_simple, sentence: "We ___ paella at a restaurant by the sea last Sunday.", answer: ate, translation: "Comimos paella en un restaurante junto al mar el domingo pasado."}
+  - {family: special, verb: have, level: A1, tense: past_simple, sentence: "She ___ a really good time at the party last night.", answer: had, translation: "Ella lo pasó muy bien en la fiesta anoche."}
+  - {family: special, verb: say, level: A1, tense: past_simple, sentence: "The teacher ___ the exam was cancelled. We were so happy!", answer: said, translation: "La profesora dijo que el examen estaba cancelado."}
+  - {family: special, verb: come, level: A1, tense: past_simple, sentence: "All my friends ___ to my party last Saturday.", answer: came, translation: "Todos mis amigos vinieron a mi fiesta el sábado pasado."}
+`;
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let ALL_VERBS = [];
+let selectedFamilies = new Set(Object.keys(FAMILY_META));
+let selectedLevels = new Set(['A1','A2','B1','B2']);
+let quizVerbs = [];
+let currentIdx = 0;
+let results = [];
+let allSelectedAtStart = true;
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+function init() {
+  const parsed = jsyaml.load(YAML_DEFAULT);
+  ALL_VERBS = parsed.verbs;
+  buildSidebar();
+  updateStats();
+}
+
+// ══════════════════════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════════════════════
+function buildSidebar() {
+  const list = document.getElementById('family-filter-list');
+  const families = Object.keys(FAMILY_META);
+  list.innerHTML = '';
+  families.forEach(fid => {
+    const meta = FAMILY_META[fid];
+    const count = ALL_VERBS.filter(v => v.family === fid).length;
+    const isSelected = selectedFamilies.has(fid);
+    const item = document.createElement('div');
+    item.className = `family-filter-item ${isSelected ? 'selected' : ''}`;
+    item.id = 'ffi-' + fid;
+    item.innerHTML = `
+      <div class="family-check">${isSelected ? '✓' : ''}</div>
+      <div class="family-dot" style="background:${meta.color}"></div>
+      <div class="family-filter-label">L${meta.level} · ${meta.label}</div>
+      <div class="family-filter-count">${count}</div>
+    `;
+    item.onclick = () => toggleFamily(fid);
+    list.appendChild(item);
+  });
+}
+
+function toggleFamily(fid) {
+  if (selectedFamilies.has(fid)) {
+    selectedFamilies.delete(fid);
+  } else {
+    selectedFamilies.add(fid);
+  }
+  const item = document.getElementById('ffi-' + fid);
+  const isNow = selectedFamilies.has(fid);
+  item.classList.toggle('selected', isNow);
+  item.querySelector('.family-check').textContent = isNow ? '✓' : '';
+  updateStats();
+  updateSelectAllBtn();
+}
+
+function toggleSelectAll() {
+  if (selectedFamilies.size === Object.keys(FAMILY_META).length) {
+    selectedFamilies.clear();
+  } else {
+    Object.keys(FAMILY_META).forEach(f => selectedFamilies.add(f));
+  }
+  buildSidebar();
+  updateStats();
+  updateSelectAllBtn();
+}
+
+function updateSelectAllBtn() {
+  const btn = document.getElementById('btn-select-all');
+  const allSelected = selectedFamilies.size === Object.keys(FAMILY_META).length;
+  btn.textContent = allSelected ? '✓ Todas las familias' : '+ Seleccionar todas';
+}
+
+function toggleLevel(pill) {
+  const lvl = pill.dataset.level;
+  if (selectedLevels.has(lvl)) {
+    if (selectedLevels.size === 1) return; // keep at least one
+    selectedLevels.delete(lvl);
+    pill.classList.remove('active');
+  } else {
+    selectedLevels.add(lvl);
+    pill.classList.add('active');
+  }
+  updateStats();
+}
+
+function getFilteredVerbs() {
+  return ALL_VERBS.filter(v =>
+    selectedFamilies.has(v.family) && selectedLevels.has(v.level)
+  );
+}
+
+function updateStats() {
+  const filtered = getFilteredVerbs();
+  document.getElementById('stat-questions').textContent = filtered.length;
+  document.getElementById('stat-families').textContent = selectedFamilies.size;
+  document.getElementById('stat-levels').textContent = selectedLevels.size;
+  document.getElementById('btn-start').disabled = filtered.length === 0;
+  const count = filtered.length;
+  document.getElementById('sidebar-count').textContent =
+    count === 0 ? 'Sin frases para esta selección' : `${count} pregunta${count !== 1 ? 's' : ''} disponibles`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// QUIZ LOGIC
+// ══════════════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  quizVerbs = shuffle(getFilteredVerbs());
+  currentIdx = 0;
+  results = quizVerbs.map(() => null); // null=unanswered, true=correct, false=wrong, 'skip'=skipped
+
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('quiz-screen').classList.add('active');
+  document.getElementById('results-screen').classList.remove('active');
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentIdx >= quizVerbs.length) {
+    showResults();
+    return;
+  }
+
+  const v = quizVerbs[currentIdx];
+  const meta = FAMILY_META[v.family];
+  const isBoth = v.tense === 'both';
+  const pct = (currentIdx / quizVerbs.length) * 100;
+
+  // Progress
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${currentIdx + 1} / ${quizVerbs.length}`;
+  const correct = results.filter(r => r === true).length;
+  document.getElementById('progress-score').textContent = `${correct} ✓`;
+
+  // Meta tags
+  document.getElementById('q-meta').innerHTML = `
+    <span class="q-family-tag" style="color:${meta.color};border-color:${meta.color};background:color-mix(in srgb,${meta.color} 10%,var(--surface2))">
+      L${meta.level} · ${meta.label}
+    </span>
+    <span class="q-level-tag">${v.level}</span>
+    <span class="q-tense-tag">${TENSE_LABELS[v.tense]}</span>
+  `;
+
+  // Sentence with blank(s)
+  const parts = v.sentence.split('___');
+  let sentenceHTML = '';
+  if (isBoth) {
+    sentenceHTML = parts[0] +
+      `<span class="blank" id="blank-0">___</span>` +
+      (parts[1] || '') +
+      `<span class="blank" id="blank-1">___</span>` +
+      (parts[2] || '');
+  } else {
+    sentenceHTML = parts[0] + `<span class="blank" id="blank-0">___</span>` + (parts[1] || '');
+  }
+  document.getElementById('q-sentence').innerHTML = sentenceHTML;
+  document.getElementById('q-translation').textContent = '↳ ' + v.translation;
+
+  // Inputs
+  const inputArea = document.getElementById('input-area');
+  if (isBoth) {
+    const [ps, pp] = v.answer.split(' / ');
+    inputArea.innerHTML = `
+      <div class="input-row">
+        <span class="input-label">Past Simple</span>
+        <input class="verb-input" id="inp-0" type="text" placeholder="past simple..." autocomplete="off" autocorrect="off" spellcheck="false"
+          oninput="updateBlank(0)" onkeydown="handleKey(event)">
+      </div>
+      <div class="input-row">
+        <span class="input-label">Past Participle</span>
+        <input class="verb-input" id="inp-1" type="text" placeholder="past participle..." autocomplete="off" autocorrect="off" spellcheck="false"
+          oninput="updateBlank(1)" onkeydown="handleKey(event)">
+      </div>
+    `;
+  } else {
+    const lbl = v.tense === 'past_simple' ? 'Past Simple' : 'Past Participle';
+    inputArea.innerHTML = `
+      <div class="input-row">
+        <span class="input-label">${lbl}</span>
+        <input class="verb-input" id="inp-0" type="text" placeholder="${lbl.toLowerCase()}..." autocomplete="off" autocorrect="off" spellcheck="false"
+          oninput="updateBlank(0)" onkeydown="handleKey(event)">
+      </div>
+    `;
+  }
+
+  // Reset feedback + actions
+  document.getElementById('feedback-area').innerHTML = '';
+  document.getElementById('feedback-area').classList.remove('visible');
+  document.getElementById('quiz-actions').style.display = 'flex';
+  document.getElementById('btn-check').disabled = true;
+
+  setTimeout(() => document.getElementById('inp-0')?.focus(), 50);
+}
+
+function updateBlank(idx) {
+  const inp = document.getElementById('inp-' + idx);
+  const blank = document.getElementById('blank-' + idx);
+  if (blank) {
+    blank.textContent = inp.value || '___';
+    blank.classList.toggle('filled', inp.value.length > 0);
+  }
+  // Enable check if all inputs have something
+  const v = quizVerbs[currentIdx];
+  const isBoth = v.tense === 'both';
+  const inp0 = document.getElementById('inp-0')?.value.trim();
+  const inp1 = document.getElementById('inp-1')?.value.trim();
+  document.getElementById('btn-check').disabled = isBoth ? (!inp0 || !inp1) : !inp0;
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter') {
+    const btn = document.getElementById('btn-check');
+    if (!btn.disabled) checkAnswer();
+    else {
+      // If both mode, jump to second input
+      if (e.target.id === 'inp-0' && document.getElementById('inp-1')) {
+        document.getElementById('inp-1').focus();
+      }
+    }
+  }
+}
+
+function checkAnswer() {
+  const v = quizVerbs[currentIdx];
+  const isBoth = v.tense === 'both';
+  const inp0 = document.getElementById('inp-0').value.trim().toLowerCase();
+  const inp1 = isBoth ? document.getElementById('inp-1').value.trim().toLowerCase() : null;
+
+  let correct0, correct1, fullCorrect;
+  if (isBoth) {
+    const [ans0, ans1] = v.answer.toLowerCase().split(' / ');
+    correct0 = inp0 === ans0;
+    correct1 = inp1 === ans1;
+    fullCorrect = correct0 && correct1;
+  } else {
+    correct0 = inp0 === v.answer.toLowerCase();
+    fullCorrect = correct0;
+  }
+
+  results[currentIdx] = fullCorrect;
+
+  // Style inputs
+  document.getElementById('inp-0').classList.add(correct0 ? 'correct' : 'wrong');
+  document.getElementById('inp-0').disabled = true;
+  if (isBoth) {
+    document.getElementById('inp-1').classList.add(correct1 ? 'correct' : 'wrong');
+    document.getElementById('inp-1').disabled = true;
+  }
+
+  // Build feedback
+  const fa = document.getElementById('feedback-area');
+  fa.innerHTML = '';
+
+  if (fullCorrect) {
+    fa.innerHTML = `<div class="feedback-row ok">✓ Correcto</div>`;
+  } else {
+    if (isBoth) {
+      const [ans0, ans1] = v.answer.toLowerCase().split(' / ');
+      fa.innerHTML = `<div class="feedback-row wrong">
+        ✗ Incorrecto · La respuesta correcta: 
+        <span class="feedback-correct">${ans0} / ${ans1}</span>
+      </div>`;
+    } else {
+      fa.innerHTML = `<div class="feedback-row wrong">
+        ✗ Incorrecto · La respuesta correcta: 
+        <span class="feedback-correct">${v.answer}</span>
+      </div>`;
+    }
+    if (v.hint) {
+      fa.innerHTML += `<div class="hint-box">💡 ${v.hint}</div>`;
+    }
+  }
+
+  fa.innerHTML += `<button class="btn-next" onclick="nextQuestion()">${currentIdx < quizVerbs.length - 1 ? 'Siguiente →' : 'Ver resultados →'}</button>`;
+  fa.classList.add('visible');
+  document.getElementById('quiz-actions').style.display = 'none';
+}
+
+function skipQuestion() {
+  results[currentIdx] = 'skip';
+  currentIdx++;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  currentIdx++;
+  renderQuestion();
+}
+
+// ══════════════════════════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════════════════════════
+function showResults() {
+  document.getElementById('quiz-screen').classList.remove('active');
+  document.getElementById('results-screen').classList.add('active');
+
+  const total = quizVerbs.length;
+  const correct = results.filter(r => r === true).length;
+  const wrong = results.filter(r => r === false).length;
+  const skipped = results.filter(r => r === 'skip').length;
+  const answered = correct + wrong;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+
+  // Big score
+  const scoreEl = document.getElementById('results-score-big');
+  scoreEl.textContent = `${pct}%`;
+  const cls = pct === 100 ? 'perfect' : pct >= 80 ? 'good' : pct >= 60 ? 'ok' : 'poor';
+  scoreEl.className = 'results-score-big ' + cls;
+
+  const msgData = SCORE_MSGS.find(m => pct >= m.min);
+  document.getElementById('results-msg').textContent = msgData.msg;
+  document.getElementById('results-sub').textContent = msgData.sub;
+
+  document.getElementById('rs-correct').textContent = correct;
+  document.getElementById('rs-wrong').textContent = wrong;
+  document.getElementById('rs-skipped').textContent = skipped;
+
+  // By family
+  const familyResults = {};
+  quizVerbs.forEach((v, i) => {
+    if (!familyResults[v.family]) familyResults[v.family] = { correct: 0, total: 0 };
+    if (results[i] === true) familyResults[v.family].correct++;
+    if (results[i] !== 'skip') familyResults[v.family].total++;
+  });
+
+  const rfEl = document.getElementById('results-families');
+  rfEl.innerHTML = `<div class="results-families-title">Resultados por familia</div>` +
+    Object.entries(familyResults).map(([fid, r]) => {
+      const meta = FAMILY_META[fid];
+      const fpct = r.total > 0 ? Math.round((r.correct / r.total) * 100) : 0;
+      const barColor = fpct === 100 ? 'var(--green-lab)' : fpct >= 60 ? '#60A5FA' : '#F87171';
+      return `<div class="results-family-row">
+        <div class="rff-dot" style="background:${meta.color}"></div>
+        <div class="rff-label">L${meta.level} · ${meta.label}</div>
+        <div class="rff-bar-wrap"><div class="rff-bar" style="width:${fpct}%;background:${barColor}"></div></div>
+        <div class="rff-score">${r.correct}/${r.total}</div>
+      </div>`;
+    }).join('');
+
+  // Wrong answers
+  const wrongItems = quizVerbs.map((v, i) => ({ v, r: results[i], i })).filter(x => x.r === false);
+  const wrEl = document.getElementById('results-wrong');
+  if (wrongItems.length > 0) {
+    wrEl.style.display = 'block';
+    wrEl.innerHTML = `<div class="results-wrong-title">⚠ Para repasar (${wrongItems.length})</div>` +
+      wrongItems.map(({ v }) => `
+        <div class="wrong-item">
+          <div class="wrong-sentence">${v.sentence.replace(/___/g, '_____')}</div>
+          <div class="wrong-answer-row">
+            <span class="wrong-verb">${v.verb}</span>
+            <span class="wrong-arrow">→</span>
+            <span class="wrong-correct">${v.answer}</span>
+            ${v.hint ? `<span style="font-size:0.62rem;color:var(--muted)">· ${v.hint}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+  } else {
+    wrEl.style.display = 'none';
+  }
+}
+
+function retryQuiz() {
+  currentIdx = 0;
+  results = quizVerbs.map(() => null);
+  quizVerbs = shuffle(quizVerbs);
+  document.getElementById('results-screen').classList.remove('active');
+  document.getElementById('quiz-screen').classList.add('active');
+  renderQuestion();
+}
+
+function newSelection() {
+  document.getElementById('results-screen').classList.remove('active');
+  document.getElementById('quiz-screen').classList.remove('active');
+  document.getElementById('setup-screen').style.display = 'flex';
+  updateStats();
+}
+
+// ══════════════════════════════════════════════════════════════
+// YAML MODAL
+// ══════════════════════════════════════════════════════════════
+function openYamlModal() {
+  document.getElementById('yaml-modal').classList.add('visible');
+  document.getElementById('yaml-status').className = 'yaml-status';
+  document.getElementById('yaml-textarea').value = '';
+}
+function closeYamlModal() {
+  document.getElementById('yaml-modal').classList.remove('visible');
+}
+function loadYaml() {
+  const txt = document.getElementById('yaml-textarea').value.trim();
+  const status = document.getElementById('yaml-status');
+  if (!txt) {
+    status.className = 'yaml-status error';
+    status.textContent = '✗ El campo está vacío.';
+    return;
+  }
+  try {
+    const parsed = jsyaml.load(txt);
+    if (!parsed.verbs || !Array.isArray(parsed.verbs) || parsed.verbs.length === 0) {
+      throw new Error('El YAML debe tener una clave "verbs:" con al menos una entrada.');
+    }
+    ALL_VERBS = parsed.verbs;
+    buildSidebar();
+    updateStats();
+    status.className = 'yaml-status ok';
+    status.textContent = `✓ ${ALL_VERBS.length} frases cargadas.`;
+    setTimeout(() => closeYamlModal(), 1200);
+  } catch(e) {
+    status.className = 'yaml-status error';
+    status.textContent = `✗ Error: ${e.message}`;
+  }
+}
+
+document.getElementById('yaml-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeYamlModal();
+});
+
+// ══════════════════════════════════════════════════════════════
+// ABOUT MODAL
+// ══════════════════════════════════════════════════════════════
+function openAbout() {
+  // Fill families list
+  const list = document.getElementById('about-families-list');
+  list.innerHTML = Object.entries(FAMILY_META).map(([id, m]) => {
+    const count = ALL_VERBS.filter(v => v.family === id).length;
+    return `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem">
+      <div style="width:8px;height:8px;border-radius:50%;background:${m.color};flex-shrink:0"></div>
+      <span style="font-family:'DM Mono',monospace;color:var(--muted2);font-size:0.62rem;min-width:18px">L${m.level}</span>
+      <span style="flex:1;font-weight:700;color:rgba(255,255,255,0.75)">${m.label}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted2)">${count} frases</span>
+    </div>`;
+  }).join('');
+  document.getElementById('about-modal').classList.add('visible');
+}
+function closeAbout() {
+  document.getElementById('about-modal').classList.remove('visible');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('about-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAbout();
+  });
+});
+
+init();
+</script>
+</body>
+</html>
