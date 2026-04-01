@@ -270,6 +270,12 @@
     --accent-border: rgba(249,115,22,0.35);
     --accent-shadow: rgba(249,115,22,0.12);
   }
+  .card[data-color="nd"] {
+    --accent: #d4006a;
+    --accent-glow: rgba(212,0,106,0.12);
+    --accent-border: rgba(212,0,106,0.35);
+    --accent-shadow: rgba(212,0,106,0.14);
+  }
 
   .card-top {
     display: flex;
