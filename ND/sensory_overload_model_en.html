@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modelo Interactivo de Carga Sensorial · hAppYpUkIng</title>
+<title>Interactive Sensory Load Model · hAppYpUkIng</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -858,9 +858,9 @@ footer {
 <body>
 
 <header>
-  <div class="logo-tag"><a href="./../index.html">← inicio</a> &nbsp;·&nbsp; hAppYpUkIng · Lab &nbsp;·&nbsp; modelo interactivo · no es un test</div>
-  <h1>Modelo de <span>Carga Sensorial</span></h1>
-  <p class="subtitle">Una herramienta explicativa sobre cómo funciona el prefiltrado sensorial y por qué se satura. No es un test, no es un diagnóstico — es para entender y explicar.</p>
+  <div class="logo-tag"><a href="./../index.html">← home</a> &nbsp;·&nbsp; hAppYpUkIng · Lab &nbsp;·&nbsp; interactive model · not a test</div>
+  <h1>Sensory <span>Load Model</span></h1>
+  <p class="subtitle">An explanatory tool about how sensory pre-filtering works and why it gets overwhelmed. Not a test, not a diagnosis — it's for understanding and explaining.</p>
   <div class="divider-line"></div>
 </header>
 
@@ -868,37 +868,37 @@ footer {
 
   <!-- intro card -->
   <div class="intro-card">
-    <div class="panel-title">Cómo funciona este modelo</div>
+    <div class="panel-title">How this model works</div>
     <p class="intro-lead">
-      El sistema nervioso recibe miles de estímulos simultáneos — sonidos, luces, texturas, temperaturas, movimiento. Para funcionar necesita un <strong>prefiltro</strong>: un mecanismo que jerarquiza y atenúa esa información antes de procesarla.<br><br>
-      En muchos perfiles neurodivergentes (TEA, TDAH y otros con DPS), la atenuación automática del input opera con menor intensidad basal. <strong>No es un procesamiento deficiente: es un desajuste entre el input disponible y la capacidad de filtrarlo.</strong> El aire acondicionado, una conversación y la etiqueta de la ropa compiten al mismo nivel de intensidad. El problema no es la persona — es la cantidad de input sin atenuar.
+      The nervous system receives thousands of simultaneous stimuli — sounds, lights, textures, temperatures, movement. To function, it needs a <strong>pre-filter</strong>: a mechanism that prioritises and attenuates that information before processing it.<br><br>
+      In many neurodivergent profiles (ASD, ADHD and others with SPD), automatic input attenuation operates at a lower baseline intensity. <strong>It is not deficient processing: it is a mismatch between available input and the capacity to filter it.</strong> The air conditioning, a conversation and a clothing label compete at the same level of intensity. The problem is not the person — it is the amount of unattenuated input.
     </p>
     <div class="intro-grid">
       <div class="intro-block">
-        <div class="intro-block-title nt">Perfil NT</div>
-        <p>El prefiltro neurológico atenúa y jerarquiza automáticamente. Los estímulos irrelevantes se suprimen antes de llegar a la consciencia. La carga se mantiene baja en entornos que un perfil DPS viviría como caóticos.</p>
-        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:#39ff6a;line-height:1.5;">mayor atenuación automática → mismo entorno &lt; input total → menor carga</p>
+        <div class="intro-block-title nt">NT Profile</div>
+        <p>The neurological pre-filter automatically attenuates and prioritises. Irrelevant stimuli are suppressed before reaching consciousness. Load stays low in environments that an SPD profile would experience as chaotic.</p>
+        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:#39ff6a;line-height:1.5;">higher automatic attenuation → same environment &lt; total input → lower load</p>
       </div>
       <div class="intro-block">
-        <div class="intro-block-title dps">Perfil DPS / TEA</div>
-        <p>La atenuación automática del input opera con menor intensidad basal. Más estímulos llegan sin jerarquizar y la carga sube más rápido ante los mismos entornos. Los amortiguadores naturales modulan el umbral disponible; las adaptaciones conductuales reducen el input entrante — pero no modifican la atenuación automática, protegen el sistema.</p>
-        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--magenta);line-height:1.5;">menor atenuación automática → mismo entorno &gt; input total → mayor carga</p>
+        <div class="intro-block-title dps">SPD / ASD Profile</div>
+        <p>Automatic input attenuation operates at a lower baseline intensity. More stimuli arrive unprioritised and load rises faster in the same environments. Natural buffers modulate the available threshold; behavioural adaptations reduce incoming input — but do not modify automatic attenuation, they protect the system.</p>
+        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--magenta);line-height:1.5;">lower automatic attenuation → same environment &gt; total input → higher load</p>
       </div>
     </div>
   </div>
 
   <!-- mode toggle -->
   <div class="mode-toggle">
-    <button class="mode-btn active" onclick="setMode('dps')" id="btn-dps">Perfil DPS / TEA</button>
-    <button class="mode-btn" onclick="setMode('nt')" id="btn-nt">Perfil NT</button>
+    <button class="mode-btn active" onclick="setMode('dps')" id="btn-dps">SPD / ASD Profile</button>
+    <button class="mode-btn" onclick="setMode('nt')" id="btn-nt">NT Profile</button>
     <button class="mode-btn" onclick="resetAll()" id="btn-reset" style="flex:0 0 auto;padding:10px 1.2rem;">Reset</button>
   </div>
 
-  <!-- carga principal -->
+  <!-- load principal -->
   <div class="load-card" id="load-card">
     <div class="load-header">
-      <span class="load-title">Carga del sistema</span>
-      <span class="load-pct" id="load-pct">Estable</span>
+      <span class="load-title">System load</span>
+      <span class="load-pct" id="load-pct">Stable</span>
     </div>
     <div class="load-track">
       <div class="load-fill" id="load-fill" style="width:0%"></div>
@@ -908,46 +908,46 @@ footer {
 
   <!-- comparativa -->
   <div class="compare-card">
-    <div class="panel-title">Comparativa de procesamiento</div>
-    <div class="compare-formula">input &gt; capacidad de procesamiento <span>→</span> sobrecarga</div>
+    <div class="panel-title">Processing comparison</div>
+    <div class="compare-formula">input &gt; processing capacity <span>→</span> overload</div>
     <div class="compare-profiles">
 
       <div class="compare-profile">
         <div class="compare-profile-label">NT</div>
         <div class="compare-row-wrap">
           <div class="compare-bar-row">
-            <span class="compare-bar-label">carga</span>
+            <span class="compare-bar-label">load</span>
             <div class="compare-bar-track">
               <div class="compare-bar-fill" id="bar-nt-load" style="width:0%"></div>
             </div>
           </div>
           <div class="compare-bar-row">
-            <span class="compare-bar-label">capacidad</span>
+            <span class="compare-bar-label">capacity</span>
             <div class="compare-bar-track">
               <div class="compare-bar-fill" id="bar-nt-cap" style="width:100%;background:rgba(57,255,106,0.2)"></div>
             </div>
           </div>
         </div>
-        <div class="compare-state" id="state-nt">Estable</div>
+        <div class="compare-state" id="state-nt">Stable</div>
       </div>
 
       <div class="compare-profile">
-        <div class="compare-profile-label">DPS / TEA</div>
+        <div class="compare-profile-label">SPD / ASD</div>
         <div class="compare-row-wrap">
           <div class="compare-bar-row">
-            <span class="compare-bar-label">carga</span>
+            <span class="compare-bar-label">load</span>
             <div class="compare-bar-track">
               <div class="compare-bar-fill" id="bar-dps-load" style="width:0%"></div>
             </div>
           </div>
           <div class="compare-bar-row">
-            <span class="compare-bar-label">capacidad</span>
+            <span class="compare-bar-label">capacity</span>
             <div class="compare-bar-track">
               <div class="compare-bar-fill" id="bar-dps-cap" style="width:100%;background:rgba(57,255,106,0.2)"></div>
             </div>
           </div>
         </div>
-        <div class="compare-state" id="state-dps">Estable</div>
+        <div class="compare-state" id="state-dps">Stable</div>
       </div>
 
     </div>
@@ -955,14 +955,14 @@ footer {
 
   <!-- colapso -->
   <div class="collapse-box" id="collapse-box">
-    <div class="collapse-title">El sistema ha llegado a su límite</div>
-    <div class="collapse-sub">No es un fallo personal — el input supera la capacidad de procesamiento disponible. Reducir estímulos o activar amortiguadores puede ayudar a recuperar margen.</div>
+    <div class="collapse-title">The system has reached its limit</div>
+    <div class="collapse-sub">This is not a personal failure — input is exceeding available processing capacity. Reducing stimuli or activating buffers may help recover margin.</div>
   </div>
 
-  <!-- reserva energética / burnout -->
+  <!-- energy reserve / burnout -->
   <div class="burnout-panel">
     <div class="burnout-reserve-row">
-      <span class="burnout-reserve-label">Reserva energética</span>
+      <span class="burnout-reserve-label">Energy reserve</span>
       <span class="burnout-reserve-val" id="burnout-val">Alta</span>
     </div>
     <div class="burnout-track">
@@ -970,36 +970,36 @@ footer {
     </div>
     <div class="burnout-status" id="burnout-status"></div>
     <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.9rem;line-height:1.6;">
-      Pulsa <strong style="color:rgba(245,158,11,0.8)">Tiempo sin descarga</strong> para mostrar el efecto de la carga acumulada. El drenaje depende del nivel de carga activo del sistema. Los elementos de autocuidado incrementan la reserva y modifican la respuesta a los estímulos.
+      Press <strong style="color:rgba(245,158,11,0.8)">Time without discharge</strong> to show the effect of accumulated load. Drain depends on the system's active load level. Self-care elements increase the reserve and modify the response to stimuli.
     </div>
 
     <div class="burnout-controls">
       <div>
-        <div class="burnout-col-label drain">Sin descarga</div>
-        <button class="burnout-btn drain-btn" onclick="drainReserve(12)" title="Días o semanas con alta carga sostenida sin recuperación suficiente. El drenaje se amplifica según la carga activa del sistema.">
-          Tiempo sin descarga <span class="burnout-btn-tag drain-tag">−reserva</span>
+        <div class="burnout-col-label drain">Sin desload</div>
+        <button class="burnout-btn drain-btn" onclick="drainReserve(12)" title="Days or weeks with sustained high load without sufficient recovery. Drain is amplified according to the system's active load.">
+          Tiempo sin desload <span class="burnout-btn-tag drain-tag">−reserve</span>
         </button>
       </div>
       <div>
-        <div class="burnout-col-label recharge">Autocuidado</div>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(18)" title="Tiempo sin estímulos externos, sin demanda social, sin tener que procesar ni responder.">
-          Aislamiento <span class="burnout-btn-tag recharge-tag">+reserva</span>
+        <div class="burnout-col-label recharge">Self-care</div>
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(18)" title="Time without external stimuli, without social demand, without having to process or respond.">
+          Isolation <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(15)" title="Actividad de interés especial — no requiere esfuerzo de procesamiento, el sistema entra en modo de baja demanda.">
-          Intereses especiales <span class="burnout-btn-tag recharge-tag">+reserva</span>
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(15)" title="Special interest activity — requires no processing effort, the system enters low-demand mode.">
+          Special interests <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(10)" title="Música conocida, ritmo familiar — regula sin exigir.">
-          Música <span class="burnout-btn-tag recharge-tag">+reserva</span>
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(10)" title="Familiar music, familiar rhythm — regulates without demanding.">
+          Music <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(8)" title="Movimiento rítmico o suave — estimulación propioceptiva que reduce la activación general.">
-          Movimiento <span class="burnout-btn-tag recharge-tag">+reserva</span>
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(8)" title="Rhythmic or gentle movement — proprioceptive stimulation that reduces general activation.">
+          Movement <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
       </div>
     </div>
 
     <div class="burnout-box" id="burnout-box">
-      <div class="burnout-box-title">La reserva se ha agotado</div>
-      <div class="burnout-box-sub">El sistema necesita recuperación profunda. No es agotamiento puntual — es el resultado acumulado de una demanda sostenida que superó la capacidad de recarga. El burnout no explota. Se apaga.</div>
+      <div class="burnout-box-title">The reserve has been depleted</div>
+      <div class="burnout-box-sub">The system needs deep recovery. [The system needs deep recovery. This is not momentary exhaustion — it is the accumulated result of sustained demand that exceeded recharge capacity. Burnout does not explode. It shuts down.</div>
     </div>
   </div>
 
@@ -1007,19 +1007,19 @@ footer {
   <div class="prefilter-grid">
     <div class="pf-card">
       <div class="pf-label-row">
-        <span class="pf-label">Prefiltro neurológico</span>
+        <span class="pf-label">Neurological pre-filter</span>
         <span class="pf-val" id="pfn-val">bajo</span>
       </div>
       <div class="pf-track"><div class="pf-fill" id="pfn-fill" style="width:20%"></div></div>
-      <div class="pf-note">Nivel de atenuación automática disponible. Varía gradualmente con descanso y regulación fisiológica — no se fuerza ni es inmediato. Valores orientativos.</div>
+      <div class="pf-note">Available automatic attenuation level. Varies gradually with rest and physiological regulation — cannot be forced and is not immediate. Indicative values.</div>
     </div>
     <div class="pf-card">
       <div class="pf-label-row">
-        <span class="pf-label">Reducción conductual</span>
+        <span class="pf-label">Behavioural reduction</span>
         <span class="pf-val" id="pfc-val">ninguna</span>
       </div>
       <div class="pf-track"><div class="pf-fill" id="pfc-fill" style="width:0%"></div></div>
-      <div class="pf-note">Input bloqueado <em>antes</em> de llegar al sistema. Protege la capacidad disponible sin modificar la atenuación automática. Valores orientativos.</div>
+      <div class="pf-note">Input blocked <em>before</em> reaching the system. Protects available capacity without modifying automatic attenuation. Indicative values.</div>
     </div>
   </div>
 
@@ -1027,91 +1027,91 @@ footer {
   <div class="main-grid">
 
     <div class="panel">
-      <div class="panel-title">Estímulos sensoriales</div>
+      <div class="panel-title">Sensory stimuli</div>
       <div class="slider-row">
         <span class="slider-icon">🔊</span>
-        <span class="slider-label">Sonido</span>
+        <span class="slider-label">Sound</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-sound">
         <span class="slider-val" id="v-sound">0</span>
       </div>
       <div class="slider-row">
         <span class="slider-icon">💡</span>
-        <span class="slider-label">Luz</span>
+        <span class="slider-label">Light</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-light">
         <span class="slider-val" id="v-light">0</span>
       </div>
       <div class="slider-row">
         <span class="slider-icon">✋</span>
-        <span class="slider-label">Tacto / textura</span>
+        <span class="slider-label">Touch / texture</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-touch">
         <span class="slider-val" id="v-touch">0</span>
       </div>
       <div class="slider-row">
         <span class="slider-icon">🌡️</span>
-        <span class="slider-label">Temperatura</span>
+        <span class="slider-label">Temperature</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-temp">
         <span class="slider-val" id="v-temp">0</span>
       </div>
       <div class="slider-row">
         <span class="slider-icon">👥</span>
-        <span class="slider-label">Gente / movim.</span>
+        <span class="slider-label">People / movement</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-crowd">
         <span class="slider-val" id="v-crowd">0</span>
       </div>
       <div class="slider-row">
         <span class="slider-icon">👃</span>
-        <span class="slider-label">Olor</span>
+        <span class="slider-label">Smell</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-smell">
         <span class="slider-val" id="v-smell">0</span>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Amortiguadores naturales</div>
-      <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">En muchos perfiles, estos factores influyen en el umbral de procesamiento. No son intercambiables ni de efecto inmediato.</div>
+      <div class="panel-title">Natural buffers</div>
+      <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">In many profiles, these factors influence the processing threshold. They are not interchangeable and their effect is not immediate.</div>
       <div class="buf-grid" id="buf-natural">
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="16"
-          title="Regula la excitabilidad neuronal. Niveles bajos reducen el umbral de activación y aumentan la sensibilidad al input.">
+          title="Regulates neuronal excitability. Low levels reduce the activation threshold and increase input sensitivity.">
           <span class="buf-dot"></span>Magnesio
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="14"
-          title="Moduladora del SNC. Fluctúa con el ciclo menstrual y la menopausia.">
-          <span class="buf-dot"></span>Estrógenos
+          title="Modulates the CNS. Fluctuates with the menstrual cycle and menopause.">
+          <span class="buf-dot"></span>Hormonal profile
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="11"
-          title="Regula síntesis de serotonina y dopamina. Niveles bajos son frecuentes en perfiles ND y afectan la regulación del sistema nervioso.">
+          title="Regulates serotonin and dopamine synthesis. Low levels are common in ND profiles and affect nervous system regulation.">
           <span class="buf-dot"></span>Vitamina D
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="20"
-          title="El más potente. Sin descanso el prefiltro cae en cascada.">
-          <span class="buf-dot"></span>Descanso
+          title="The most powerful. Without rest, automatic attenuation drops sharply.">
+          <span class="buf-dot"></span>Rest
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="9"
-          title="Impacto directo sobre conducción nerviosa. Ignorado habitualmente.">
-          <span class="buf-dot"></span>Hidratación
+          title="Direct impact on nerve conduction. Often overlooked.">
+          <span class="buf-dot"></span>Hydration
         </button>
       </div>
 
-      <div class="buf-section-label">Amortiguadores conductuales</div>
+      <div class="buf-section-label">Behavioural buffers</div>
       <div class="buf-grid" id="buf-conduct">
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="22"
-          title="Reduce el input auditivo antes de que llegue al sistema. Actúa sobre el entorno, no sobre la atenuación automática.">
-          <span class="buf-dot"></span>Auriculares
+          title="Reduces auditory input before it reaches the system. Acts on the environment, not on automatic attenuation.">
+          <span class="buf-dot"></span>Headphones
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="15"
-          title="Reduce input visual. Gafas de sol, persianas, pantallas mate.">
-          <span class="buf-dot"></span>Luz controlada
+          title="Reduces visual input. Sunglasses, blinds, matte screens.">
+          <span class="buf-dot"></span>Light controlada
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="13"
-          title="Salida disponible reduce la anticipación de atrapamiento y la hipervigilancia.">
-          <span class="buf-dot"></span>Espacio seguro
+          title="Available exit reduces anticipation of entrapment and hypervigilance.">
+          <span class="buf-dot"></span>Safe space
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="11"
-          title="Tiempo extra para procesar antes de responder reduce el coste de cada interacción.">
-          <span class="buf-dot"></span>Tiempo de proceso
+          title="Extra time to process before responding reduces the cost of each interaction.">
+          <span class="buf-dot"></span>Processing time
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="19"
-          title="Mecanismo de autorregulación sensorial. Moverse, balancearse, hacer sonidos repetitivos — no es un capricho, es el sistema nervioso modulando su propia carga. Suprimirlo tiene coste.">
+          title="Sensory self-regulation mechanism. Moving, rocking, making repetitive sounds — not a preference, it is the nervous system modulating its own load. Suppressing it has a cost.">
           <span class="buf-dot"></span>Stimming
         </button>
       </div>
@@ -1120,43 +1120,43 @@ footer {
 
   <!-- factores de coste adicional -->
   <div class="cost-panel">
-    <div class="panel-title" style="color:#F59E0B">Factores de coste adicional</div>
-    <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">Aumentan la carga sin añadir estímulo externo. Operan desde dentro del sistema.</div>
+    <div class="panel-title" style="color:#F59E0B">Additional cost factors</div>
+    <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">Aumentan la load sin añadir estímulo externo. Operan desde dentro del sistema.</div>
     <div class="buf-grid">
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="22"
-        title="Suprimir comportamientos naturales (stimming, gestos, expresiones) para parecer NT consume recursos del mismo sistema que ya gestiona el input sensorial. Es rendimiento activo, no pasivo.">
+        title="Suppressing natural behaviours (stimming, gestures, expressions) to appear NT consumes resources from the same system already managing sensory input. It is active performance, not passive.">
         <span class="buf-dot"></span>Masking
-        <span class="cost-tag">+carga</span>
+        <span class="cost-tag">+load</span>
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="18"
-        title="Gestionar múltiples demandas simultáneas, interrupciones o decisiones encadenadas consume capacidad cognitiva del mismo sistema. El coste es continuo mientras dura la situación.">
-        <span class="buf-dot"></span>Sobrecarga ejecutiva
-        <span class="cost-tag">+carga</span>
+        title="Managing multiple simultaneous demands, interruptions or chained decisions consumes cognitive capacity from the same system. The cost is continuous while the situation lasts.">
+        <span class="buf-dot"></span>Sobreload ejecutiva
+        <span class="cost-tag">+load</span>
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="16"
-        title="Entornos sin estructura predecible exigen monitorización constante de lo que puede ocurrir. La anticipación activa es cara: ocupa recursos que no están disponibles para filtrar estímulos.">
-        <span class="buf-dot"></span>Falta de previsibilidad
-        <span class="cost-tag">+carga</span>
+        title="Environments without predictable structure require constant monitoring of what may happen. Active anticipation is costly: it occupies resources unavailable for filtering stimuli.">
+        <span class="buf-dot"></span>Lack of predictability
+        <span class="cost-tag">+load</span>
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="14"
-        title="Cada interrupción rompe el estado de procesamiento activo. En perfiles ND la reorientación cognitiva tiene un coste desproporcionado — no es falta de concentración, es el precio de volver a arrancar el sistema.">
-        <span class="buf-dot"></span>Distracciones / interrupciones
-        <span class="cost-tag">+carga</span>
+        title="Each interruption breaks the active processing state. In ND profiles, cognitive reorientation has a disproportionate cost — it is not lack of focus, it is the price of restarting the system.">
+        <span class="buf-dot"></span>Distractions / interruptions
+        <span class="cost-tag">+load</span>
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="16"
-        title="Mantener apariencia de funcionamiento o rendimiento por encima de la capacidad real en contextos sociales. Coste continuo mientras dura la situación.">
-        <span class="buf-dot"></span>Demanda social sostenida
-        <span class="cost-tag">+carga</span>
+        title="Maintaining appearance of functioning or performance above actual capacity in social contexts. Continuous cost while the situation lasts.">
+        <span class="buf-dot"></span>Sustained social demand
+        <span class="cost-tag">+load</span>
       </button>
     </div>
   </div>
 
   <!-- disclaimer -->
   <div class="disclaimer">
-    <strong style="color:var(--text)">Sobre este modelo</strong><br><br>
-    Este modelo interactivo simplifica deliberadamente para facilitar la comprensión. No representa todos los perfiles neurodivergentes, no es una herramienta de evaluación y no sustituye ningún tipo de valoración clínica.<br><br>
-    Si todo está alto, no implica un fallo personal — implica demasiado input para la capacidad de procesamiento disponible en ese momento. El objetivo del modelo es entender ese desajuste, no medirse con él.<br><br>
-    Está pensado también como herramienta de comunicación: para explicar a otras personas cómo funciona este sistema sin tener que justificarse.
+    <strong style="color:var(--text)">About this model</strong><br><br>
+    This interactive model deliberately simplifies to aid understanding. It does not represent all neurodivergent profiles, is not an assessment tool, and does not replace any clinical evaluation.<br><br>
+    If everything is high, it does not imply personal failure — it implies too much input for the processing capacity available at that moment. The goal of the model is to understand that mismatch, not to measure oneself against it.<br><br>
+    It is also designed as a communication tool: to explain to others how this system works without having to justify oneself.
   </div>
 
 </main>
@@ -1187,18 +1187,18 @@ function getBurnoutColor(r) {
 }
 
 function getBurnoutLabel(r) {
-  if (r > 75) return 'Alta';
-  if (r > 50) return 'Moderada';
-  if (r > 25) return 'Baja';
-  if (r > 0)  return 'Crítica';
-  return 'Agotada';
+  if (r > 75) return 'High';
+  if (r > 50) return 'Moderate';
+  if (r > 25) return 'Low';
+  if (r > 0)  return 'Critical';
+  return 'Depleted';
 }
 
 function getBurnoutStatus(r) {
-  if (r > 75) return 'La reserva se drena cuando la carga sostenida supera la capacidad de recuperación.';
-  if (r > 50) return 'La reserva está descendiendo. El autocuidado puede frenar el drenaje.';
-  if (r > 25) return 'Reserva baja. Si la carga no baja o el autocuidado no es suficiente, el burnout es matemáticamente inevitable.';
-  if (r > 0)  return 'Reserva crítica. El sistema está funcionando sin margen de recuperación.';
+  if (r > 75) return 'The reserve drains when sustained load exceeds recovery capacity.';
+  if (r > 50) return 'The reserve is declining. Self-care can slow the drain.';
+  if (r > 25) return 'Reserve is low. If load does not decrease or self-care is insufficient, burnout is mathematically inevitable.';
+  if (r > 0)  return 'Critical reserve. The system is operating without recovery margin.';
   return '';
 }
 
@@ -1309,33 +1309,33 @@ function getColor(pct) {
 
 function getStatus(pct) {
   if (pct < 40) return '';
-  if (pct < 65) return 'Reducir input puede ayudar a estabilizar';
-  if (pct < 85) return 'La carga es alta — reducir input puede aliviar el sistema';
-  if (pct < 100) return 'El input se acerca al límite de procesamiento';
+  if (pct < 65) return 'Reducing input may help stabilise';
+  if (pct < 85) return 'La load es alta — reducir input puede aliviar el sistema';
+  if (pct < 100) return 'Input is approaching the processing limit';
   return '';
 }
 
 function getQualitative(pct) {
-  if (pct < 40) return 'Estable';
-  if (pct < 65) return 'Tensionado';
-  if (pct < 85) return 'Sobrecargado';
-  if (pct < 100) return 'Al límite';
-  return 'Saturado';
+  if (pct < 40) return 'Stable';
+  if (pct < 65) return 'Tense';
+  if (pct < 85) return 'Sobreloaddo';
+  if (pct < 100) return 'At limit';
+  return 'Saturated';
 }
 
 function getPfnLabel(pct) {
-  if (pct < 25) return 'muy bajo';
-  if (pct < 45) return 'bajo';
-  if (pct < 65) return 'moderado';
-  if (pct < 80) return 'eficiente';
-  return 'muy eficiente';
+  if (pct < 25) return 'very low';
+  if (pct < 45) return 'low';
+  if (pct < 65) return 'moderate';
+  if (pct < 80) return 'efficient';
+  return 'very efficient';
 }
 
 function getPfcLabel(pct) {
-  if (pct < 10) return 'sin reducción';
-  if (pct < 30) return 'leve';
-  if (pct < 55) return 'moderada';
-  return 'alta';
+  if (pct < 10) return 'none';
+  if (pct < 30) return 'mild';
+  if (pct < 55) return 'moderate';
+  return 'high';
 }
 
 function calcLoad(rawInput, neuralFilter, conductReduction) {
@@ -1353,12 +1353,12 @@ function update() {
   var condBuf = getConductBufTotal();
   var costBuf = getCostTotal();
 
-  // Prefiltro neurológico — varía con amortiguadores naturales
+  // Neurological pre-filter — varía con amortiguadores naturales
   var baseFilter = mode === 'nt' ? NT_BASE_FILTER : DPS_BASE_FILTER;
   var neuralFilter = Math.min(baseFilter + natBuf * 0.5, mode === 'nt' ? 96 : 62);
   neuralFilter = Math.round(neuralFilter);
 
-  // Reducción conductual — solo sube con conductuales
+  // Behavioural reduction — solo sube con conductuales
   var conductReduction = Math.round(condBuf * 0.85);
 
   // Carga resultante
@@ -1382,21 +1382,21 @@ function update() {
   document.getElementById('load-status').style.color = col;
   document.getElementById('load-card').style.setProperty('--accent-top', col);
 
-  // Prefiltro neurológico
+  // Neurological pre-filter
   var pfnCol = neuralFilter > 50 ? '#39ff6a' : neuralFilter > 30 ? '#F59E0B' : '#EF4444';
   document.getElementById('pfn-fill').style.width = neuralFilter + '%';
   document.getElementById('pfn-fill').style.background = pfnCol;
   document.getElementById('pfn-val').textContent = getPfnLabel(neuralFilter);
   document.getElementById('pfn-val').style.color = pfnCol;
 
-  // Reducción conductual
+  // Behavioural reduction
   var pfcCol = conductReduction > 40 ? '#3B82F6' : conductReduction > 20 ? '#7eb8ff' : '#6b6480';
   document.getElementById('pfc-fill').style.width = conductReduction + '%';
   document.getElementById('pfc-fill').style.background = pfcCol;
   document.getElementById('pfc-val').textContent = getPfcLabel(conductReduction);
   document.getElementById('pfc-val').style.color = pfcCol;
 
-  // Comparativa — barras duales carga + capacidad
+  // Comparativa — barras duales load + capacity
   var ntH = Math.min(ntLoad, 100);
   var dpsH = Math.min(dpsLoad, 100);
   var ntCap = Math.max(0, 100 - ntH);
