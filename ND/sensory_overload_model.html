@@ -545,6 +545,72 @@ main {
 }
 
 /* ── COLAPSO ── */
+.collapsible-section {
+  margin-bottom: 1rem;
+}
+
+.collapsible-section summary {
+  list-style: none;
+}
+
+.collapsible-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.collapsible-summary:hover {
+  border-color: var(--magenta-border);
+}
+
+.collapsible-summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.collapsible-summary-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.collapsible-summary-sub {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.45;
+}
+
+.collapsible-summary-icon {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--magenta);
+  transition: transform .2s ease;
+}
+
+.collapsible-section[open] .collapsible-summary-icon {
+  transform: rotate(45deg);
+}
+
+.collapsible-content {
+  margin-top: 0.75rem;
+}
+
 .collapse-box {
   display: none;
   padding: 1.2rem 1.5rem;
@@ -754,6 +820,14 @@ footer {
   transition: color .4s;
 }
 
+.burnout-trend {
+  margin-top: 0.35rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
 .burnout-controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -867,25 +941,33 @@ footer {
 <main>
 
   <!-- intro card -->
-  <div class="intro-card">
-    <div class="panel-title">Cómo funciona este modelo</div>
-    <p class="intro-lead">
-      El sistema nervioso recibe miles de estímulos simultáneos — sonidos, luces, texturas, temperaturas, movimiento. Para funcionar necesita un <strong>prefiltro</strong>: un mecanismo que jerarquiza y atenúa esa información antes de procesarla.<br><br>
-      En muchos perfiles neurodivergentes (TEA, TDAH y otros con DPS), la atenuación automática del input opera con menor intensidad basal. <strong>No es un procesamiento deficiente: es un desajuste entre el input disponible y la capacidad de filtrarlo.</strong> El aire acondicionado, una conversación y la etiqueta de la ropa compiten al mismo nivel de intensidad. El problema no es la persona — es la cantidad de input sin atenuar.
-    </p>
-    <div class="intro-grid">
-      <div class="intro-block">
-        <div class="intro-block-title nt">Perfil NT</div>
-        <p>El prefiltro neurológico atenúa y jerarquiza automáticamente. Los estímulos irrelevantes se suprimen antes de llegar a la consciencia. La carga se mantiene baja en entornos que un perfil DPS viviría como caóticos.</p>
-        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:#39ff6a;line-height:1.5;">mayor atenuación automática → mismo entorno &lt; input total → menor carga</p>
-      </div>
-      <div class="intro-block">
-        <div class="intro-block-title dps">Perfil DPS / TEA</div>
-        <p>La atenuación automática del input opera con menor intensidad basal. Más estímulos llegan sin jerarquizar y la carga sube más rápido ante los mismos entornos. Los amortiguadores naturales modulan el umbral disponible; las adaptaciones conductuales reducen el input entrante — pero no modifican la atenuación automática, protegen el sistema.</p>
-        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--magenta);line-height:1.5;">menor atenuación automática → mismo entorno &gt; input total → mayor carga</p>
+  <details class="collapsible-section">
+    <summary class="collapsible-summary">
+      <span class="collapsible-summary-text">
+        <span class="collapsible-summary-title">C&oacute;mo funciona este modelo</span>
+        <span class="collapsible-summary-sub">Marco conceptual y diferencias entre perfiles. Lo dejamos plegado para dar prioridad a la simulaci&oacute;n.</span>
+      </span>
+      <span class="collapsible-summary-icon">+</span>
+    </summary>
+    <div class="intro-card collapsible-content">
+      <p class="intro-lead">
+        El sistema nervioso recibe miles de est&iacute;mulos simult&aacute;neos: sonidos, luces, texturas, temperaturas y movimiento. Para funcionar necesita un <strong>prefiltro</strong>: un mecanismo que jerarquiza y aten&uacute;a esa informaci&oacute;n antes de procesarla.<br><br>
+        En muchos perfiles neurodivergentes (TEA, TDAH y otros con DPS), la atenuaci&oacute;n autom&aacute;tica del input opera con menor intensidad basal. <strong>No es un procesamiento deficiente: es un desajuste entre el input disponible y la capacidad de filtrarlo.</strong> El aire acondicionado, una conversaci&oacute;n y la etiqueta de la ropa compiten al mismo nivel de intensidad. El problema no es la persona: es la cantidad de input sin atenuar.
+      </p>
+      <div class="intro-grid">
+        <div class="intro-block">
+          <div class="intro-block-title nt">Perfil NT</div>
+          <p>El prefiltro neurol&oacute;gico aten&uacute;a y jerarquiza autom&aacute;ticamente. Los est&iacute;mulos irrelevantes se suprimen antes de llegar a la consciencia. La carga se mantiene baja en entornos que un perfil DPS vivir&iacute;a como ca&oacute;ticos.</p>
+          <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:#39ff6a;line-height:1.5;">mayor atenuaci&oacute;n autom&aacute;tica &rarr; mismo entorno &lt; input total &rarr; menor carga</p>
+        </div>
+        <div class="intro-block">
+          <div class="intro-block-title dps">Perfil DPS / TEA</div>
+          <p>La atenuaci&oacute;n autom&aacute;tica del input opera con menor intensidad basal. M&aacute;s est&iacute;mulos llegan sin jerarquizar y la carga sube m&aacute;s r&aacute;pido ante los mismos entornos. Los amortiguadores naturales modulan el umbral disponible; las adaptaciones conductuales reducen el input entrante, pero no modifican la atenuaci&oacute;n autom&aacute;tica: protegen el sistema.</p>
+          <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--magenta);line-height:1.5;">menor atenuaci&oacute;n autom&aacute;tica &rarr; mismo entorno &gt; input total &rarr; mayor carga</p>
+        </div>
       </div>
     </div>
-  </div>
+  </details>
 
   <!-- mode toggle -->
   <div class="mode-toggle">
@@ -907,10 +989,17 @@ footer {
   </div>
 
   <!-- comparativa -->
-  <div class="compare-card">
-    <div class="panel-title">Comparativa de procesamiento</div>
-    <div class="compare-formula">input &gt; capacidad de procesamiento <span>→</span> sobrecarga</div>
-    <div class="compare-profiles">
+  <details class="collapsible-section">
+    <summary class="collapsible-summary">
+      <span class="collapsible-summary-text">
+        <span class="collapsible-summary-title">Comparativa de procesamiento</span>
+        <span class="collapsible-summary-sub">Vista comparativa entre perfiles. &Uacute;til para explicar, pero no hace falta tenerla siempre abierta.</span>
+      </span>
+      <span class="collapsible-summary-icon">+</span>
+    </summary>
+    <div class="compare-card collapsible-content">
+      <div class="compare-formula">input &gt; capacidad de procesamiento <span>&rarr;</span> sobrecarga</div>
+      <div class="compare-profiles">
 
       <div class="compare-profile">
         <div class="compare-profile-label">NT</div>
@@ -950,8 +1039,9 @@ footer {
         <div class="compare-state" id="state-dps">Estable</div>
       </div>
 
+      </div>
     </div>
-  </div>
+  </details>
 
   <!-- colapso -->
   <div class="collapse-box" id="collapse-box">
@@ -969,6 +1059,7 @@ footer {
       <div class="burnout-fill" id="burnout-fill" style="width:100%;background:#F59E0B"></div>
     </div>
     <div class="burnout-status" id="burnout-status"></div>
+    <div class="burnout-trend" id="burnout-trend"></div>
     <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.9rem;line-height:1.6;">
       Pulsa <strong style="color:rgba(245,158,11,0.8)">Tiempo sin descarga</strong> para mostrar el efecto de la carga acumulada. El drenaje depende del nivel de carga activo del sistema. Los elementos de autocuidado incrementan la reserva y modifican la respuesta a los estímulos.
     </div>
@@ -1152,12 +1243,21 @@ footer {
   </div>
 
   <!-- disclaimer -->
-  <div class="disclaimer">
-    <strong style="color:var(--text)">Sobre este modelo</strong><br><br>
-    Este modelo interactivo simplifica deliberadamente para facilitar la comprensión. No representa todos los perfiles neurodivergentes, no es una herramienta de evaluación y no sustituye ningún tipo de valoración clínica.<br><br>
-    Si todo está alto, no implica un fallo personal — implica demasiado input para la capacidad de procesamiento disponible en ese momento. El objetivo del modelo es entender ese desajuste, no medirse con él.<br><br>
-    Está pensado también como herramienta de comunicación: para explicar a otras personas cómo funciona este sistema sin tener que justificarse.
-  </div>
+  <details class="collapsible-section">
+    <summary class="collapsible-summary">
+      <span class="collapsible-summary-text">
+        <span class="collapsible-summary-title">Sobre este modelo</span>
+        <span class="collapsible-summary-sub">L&iacute;mites y contexto de uso. Se mantiene plegado para no competir con la interacci&oacute;n principal.</span>
+      </span>
+      <span class="collapsible-summary-icon">+</span>
+    </summary>
+    <div class="disclaimer collapsible-content" style="margin-bottom:0;">
+      <strong style="color:var(--text)">Sobre este modelo</strong><br><br>
+      Este modelo interactivo simplifica deliberadamente para facilitar la comprensi&oacute;n. No representa todos los perfiles neurodivergentes, no es una herramienta de evaluaci&oacute;n y no sustituye ning&uacute;n tipo de valoraci&oacute;n cl&iacute;nica.<br><br>
+      Si todo est&aacute; alto, no implica un fallo personal: implica demasiado input para la capacidad de procesamiento disponible en ese momento. El objetivo del modelo es entender ese desajuste, no medirse con &eacute;l.<br><br>
+      Est&aacute; pensado tambi&eacute;n como herramienta de comunicaci&oacute;n: para explicar a otras personas c&oacute;mo funciona este sistema sin tener que justificarse.
+    </div>
+  </details>
 
 </main>
 
@@ -1444,6 +1544,180 @@ function triggerFlash() {
 
 update();
 updateBurnoutDisplay();
+</script>
+<script>
+var currentActiveLoad = 0;
+
+function getBurnoutLabel(r) {
+  if (r > 75) return 'Alta';
+  if (r > 50) return 'Moderada';
+  if (r > 25) return 'Baja';
+  if (r > 0) return 'Critica';
+  return 'Agotada';
+}
+
+function getBurnoutStatus(r) {
+  if (r > 75) return 'La reserva se drena cuando la carga sostenida supera la capacidad de recuperacion.';
+  if (r > 50) return 'La reserva esta descendiendo. El autocuidado puede frenar el drenaje.';
+  if (r > 25) return 'Reserva baja. Si la carga no baja o el autocuidado no es suficiente, el burnout es matematicamente inevitable.';
+  if (r > 0) return 'Reserva critica. El sistema esta funcionando sin margen de recuperacion.';
+  return '';
+}
+
+function getDrainDelta(loadPct) {
+  if (loadPct < 35) return 2;
+  if (loadPct < 55) return 0;
+  if (loadPct < 75) return -4;
+  if (loadPct < 90) return -8;
+  return -12;
+}
+
+function getDrainTrendText(loadPct) {
+  var delta = getDrainDelta(loadPct);
+  if (delta > 0) return 'Con esta carga, la reserva tenderia a recuperarse.';
+  if (delta === 0) return 'Con esta carga, la reserva tenderia a mantenerse estable.';
+  if (delta > -8) return 'Con esta carga, la reserva tenderia a drenarse lentamente.';
+  if (delta > -12) return 'Con esta carga, la reserva tenderia a drenarse rapido.';
+  return 'Con esta carga, la reserva tenderia a drenarse muy rapido.';
+}
+
+function updateBurnoutDisplay() {
+  var r = Math.max(0, Math.min(100, reserve));
+  var col = getBurnoutColor(r);
+  document.getElementById('burnout-fill').style.width = r + '%';
+  document.getElementById('burnout-fill').style.background = col;
+  document.getElementById('burnout-fill').style.opacity = r === 0 ? '0.3' : '1';
+  document.getElementById('burnout-val').textContent = getBurnoutLabel(r);
+  document.getElementById('burnout-val').style.color = col;
+  document.getElementById('burnout-status').textContent = getBurnoutStatus(r);
+  document.getElementById('burnout-status').style.color = r < 30 ? col : 'var(--muted)';
+  document.getElementById('burnout-trend').textContent = getDrainTrendText(currentActiveLoad);
+  document.getElementById('burnout-box').classList.toggle('show', r <= 0);
+}
+
+function drainReserve(amount) {
+  var loadFactor = 1 + (currentActiveLoad / 100) * 1.5;
+  reserve = Math.max(0, reserve - Math.round(amount * loadFactor));
+  updateBurnoutDisplay();
+}
+
+function rechargeReserve(amount) {
+  var loadPenalty = currentActiveLoad / 100;
+  var effective = Math.round(amount * (1 - loadPenalty * 0.75));
+  reserve = Math.min(100, reserve + Math.max(1, effective));
+  updateBurnoutDisplay();
+}
+
+function resetAll() {
+  ['sound','light','touch','temp','crowd','smell'].forEach(function(id) {
+    document.getElementById('s-' + id).value = 0;
+  });
+  document.querySelectorAll('.buf-btn.natural').forEach(function(b) { b.classList.add('active'); });
+  document.querySelectorAll('.buf-btn.conduct').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.buf-btn.cost').forEach(function(b) { b.classList.remove('active'); });
+  reserve = 100;
+  setMode('dps');
+}
+
+function getStatus(pct) {
+  if (pct < 40) return '';
+  if (pct < 65) return 'Reducir input puede ayudar a estabilizar';
+  if (pct < 85) return 'La carga es alta; reducir input puede aliviar el sistema';
+  if (pct < 100) return 'El input se acerca al limite de procesamiento';
+  return '';
+}
+
+function getQualitative(pct) {
+  if (pct < 40) return 'Estable';
+  if (pct < 65) return 'Tensionado';
+  if (pct < 85) return 'Sobrecargado';
+  if (pct < 100) return 'Al limite';
+  return 'Saturado';
+}
+
+function getPfcLabel(pct) {
+  if (pct < 10) return 'sin reduccion';
+  if (pct < 30) return 'leve';
+  if (pct < 55) return 'moderada';
+  return 'alta';
+}
+
+function update() {
+  var raw = getRawInput();
+  var natBuf = getNaturalBufTotal();
+  var condBuf = getConductBufTotal();
+  var costBuf = getCostTotal();
+
+  var baseFilter = mode === 'nt' ? NT_BASE_FILTER : DPS_BASE_FILTER;
+  var neuralFilter = Math.min(baseFilter + natBuf * 0.5, mode === 'nt' ? 96 : 62);
+  neuralFilter = Math.round(neuralFilter);
+
+  var conductReduction = Math.round(condBuf * 0.85);
+
+  var dpsNatFilter = Math.min(DPS_BASE_FILTER + natBuf * 0.5, 62);
+  var ntNatFilter = Math.min(NT_BASE_FILTER + natBuf * 0.5, 96);
+
+  var dpsLoad = calcLoad(raw, dpsNatFilter, conductReduction) + Math.round(costBuf * 0.9);
+  var ntLoad = calcLoad(raw, ntNatFilter, conductReduction) + Math.round(costBuf * 0.45);
+  dpsLoad = Math.min(dpsLoad, 100);
+  ntLoad = Math.min(ntLoad, 100);
+  currentActiveLoad = mode === 'dps' ? dpsLoad : ntLoad;
+
+  var col = getColor(currentActiveLoad);
+
+  document.getElementById('load-fill').style.width = currentActiveLoad + '%';
+  document.getElementById('load-fill').style.background = col;
+  document.getElementById('load-pct').textContent = getQualitative(currentActiveLoad);
+  document.getElementById('load-pct').style.color = col;
+  document.getElementById('load-status').textContent = getStatus(currentActiveLoad);
+  document.getElementById('load-status').style.color = col;
+  document.getElementById('load-card').style.setProperty('--accent-top', col);
+
+  var pfnCol = neuralFilter > 50 ? '#39ff6a' : neuralFilter > 30 ? '#F59E0B' : '#EF4444';
+  document.getElementById('pfn-fill').style.width = neuralFilter + '%';
+  document.getElementById('pfn-fill').style.background = pfnCol;
+  document.getElementById('pfn-val').textContent = getPfnLabel(neuralFilter);
+  document.getElementById('pfn-val').style.color = pfnCol;
+
+  var pfcCol = conductReduction > 40 ? '#3B82F6' : conductReduction > 20 ? '#7eb8ff' : '#6b6480';
+  document.getElementById('pfc-fill').style.width = conductReduction + '%';
+  document.getElementById('pfc-fill').style.background = pfcCol;
+  document.getElementById('pfc-val').textContent = getPfcLabel(conductReduction);
+  document.getElementById('pfc-val').style.color = pfcCol;
+
+  var ntH = Math.min(ntLoad, 100);
+  var dpsH = Math.min(dpsLoad, 100);
+  var ntCap = Math.max(0, 100 - ntH);
+  var dpsCap = Math.max(0, 100 - dpsH);
+
+  document.getElementById('bar-nt-load').style.width = ntH + '%';
+  document.getElementById('bar-nt-load').style.background = getColor(ntH);
+  document.getElementById('bar-nt-cap').style.width = ntCap + '%';
+  document.getElementById('bar-nt-cap').style.background = ntCap > 50 ? 'rgba(57,255,106,0.25)' : ntCap > 20 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.15)';
+  document.getElementById('state-nt').textContent = getQualitative(ntH);
+  document.getElementById('state-nt').style.color = getColor(ntH);
+
+  document.getElementById('bar-dps-load').style.width = dpsH + '%';
+  document.getElementById('bar-dps-load').style.background = getColor(dpsH);
+  document.getElementById('bar-dps-cap').style.width = dpsCap + '%';
+  document.getElementById('bar-dps-cap').style.background = dpsCap > 50 ? 'rgba(57,255,106,0.25)' : dpsCap > 20 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.15)';
+  document.getElementById('state-dps').textContent = getQualitative(dpsH);
+  document.getElementById('state-dps').style.color = getColor(dpsH);
+
+  var isCollapsed = currentActiveLoad >= 100;
+  document.getElementById('collapse-box').classList.toggle('show', isCollapsed);
+
+  if (isCollapsed && !collapsed) {
+    collapsed = true;
+    triggerFlash();
+  } else if (!isCollapsed) {
+    collapsed = false;
+  }
+
+  updateBurnoutDisplay();
+}
+
+update();
 </script>
 </body>
 </html>
