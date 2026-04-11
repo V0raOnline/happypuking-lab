@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -26,6 +26,36 @@
   --blue: #3B82F6;
   --purple: #8B5CF6;
   --teal: #2dd4bf;
+  --divider: linear-gradient(to right, transparent, rgba(212,0,106,0.35), transparent);
+  --panel-shadow: 0 18px 48px rgba(0,0,0,0.22);
+  --surface-highlight: rgba(255,255,255,0.02);
+  --ambient-glow: radial-gradient(ellipse, rgba(212,0,106,0.12) 0%, transparent 70%);
+}
+
+body[data-theme="light"] {
+  --bg: #e7e0d6;
+  --surface: #f4ede3;
+  --surface2: #e8ddd0;
+  --magenta: #9e1b5f;
+  --magenta-glow: rgba(158,27,95,0.16);
+  --magenta-soft: rgba(158,27,95,0.08);
+  --magenta-border: rgba(158,27,95,0.2);
+  --text: #211825;
+  --muted: #6d6270;
+  --border: rgba(58,33,52,0.14);
+  --green: #127847;
+  --green-soft: rgba(18,120,71,0.12);
+  --amber: #b76b14;
+  --amber-soft: rgba(183,107,20,0.14);
+  --red: #c1474d;
+  --red-soft: rgba(193,71,77,0.12);
+  --blue: #275fb7;
+  --purple: #7656b8;
+  --teal: #1f8d83;
+  --divider: linear-gradient(to right, transparent, rgba(158,27,95,0.24), transparent);
+  --panel-shadow: 0 14px 36px rgba(76,47,63,0.08);
+  --surface-highlight: rgba(255,255,255,0.35);
+  --ambient-glow: radial-gradient(ellipse, rgba(158,27,95,0.08) 0%, transparent 72%);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,6 +67,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color .25s ease, color .25s ease;
 }
 
 /* grain */
@@ -56,12 +87,12 @@ body::after {
   top: -200px; left: 50%;
   transform: translateX(-50%);
   width: 700px; height: 400px;
-  background: radial-gradient(ellipse, rgba(212,0,106,0.12) 0%, transparent 70%);
+  background: var(--ambient-glow);
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── HEADER ── */
+/* HEADER */
 header {
   position: relative; z-index: 1;
   padding: 2.5rem 2rem 0;
@@ -108,18 +139,70 @@ h1 span {
 
 .divider-line {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(212,0,106,0.35), transparent);
+  background: var(--divider);
   margin-bottom: 2rem;
 }
 
-/* ── LAYOUT ── */
+.header-meta {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: -0.4rem;
+  margin-bottom: 1.1rem;
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--magenta-border);
+  background: color-mix(in srgb, var(--surface) 92%, var(--surface-highlight));
+  color: var(--text);
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: var(--panel-shadow);
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.theme-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--magenta);
+}
+
+.theme-btn-indicator {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--magenta);
+  box-shadow: 0 0 0 4px var(--magenta-soft);
+}
+
+/* LAYOUT */
 main {
   position: relative; z-index: 1;
   max-width: 900px; margin: 0 auto;
   padding: 0 2rem 4rem;
 }
 
-/* ── MODE TOGGLE ── */
+.load-card,
+.pf-card,
+.panel,
+.compare-card,
+.collapsible-summary,
+.disclaimer,
+.intro-card,
+.burnout-panel,
+.cost-panel {
+  box-shadow: var(--panel-shadow);
+}
+
+/* MODE TOGGLE */
 .mode-toggle {
   display: flex; gap: 8px; margin-bottom: 1.5rem;
 }
@@ -145,7 +228,7 @@ main {
   text-shadow: 0 0 12px rgba(212,0,106,0.4);
 }
 
-/* ── CARGA PRINCIPAL ── */
+/* MAIN LOAD */
 .load-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -207,7 +290,7 @@ main {
   transition: color .4s;
 }
 
-/* ── PREFILTRO CARDS ── */
+/* PREFILTER CARDS */
 .prefilter-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -265,7 +348,7 @@ main {
   line-height: 1.4;
 }
 
-/* ── MAIN GRID ── */
+/* MAIN GRID */
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -290,21 +373,26 @@ main {
   margin-bottom: 1rem;
 }
 
-/* ── SLIDERS ── */
+/* SLIDERS */
 .slider-row {
-  display: flex; align-items: center; gap: 8px;
+  display: grid;
+  grid-template-columns: 18px 128px 1fr 16px;
+  align-items: center;
+  column-gap: 8px;
   margin-bottom: 0.6rem;
 }
 
 .slider-icon {
-  font-size: 14px; width: 18px; flex-shrink: 0; text-align: center;
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
 }
 
 .slider-label {
   font-size: 0.75rem;
   color: var(--muted);
-  min-width: 80px;
   font-weight: 300;
+  white-space: nowrap;
 }
 
 .slider-row input[type=range] {
@@ -340,7 +428,7 @@ main {
   text-align: right;
 }
 
-/* ── BUFFER BUTTONS ── */
+/* BUFFER BUTTONS */
 .buf-section-label {
   font-family: 'Unbounded', sans-serif;
   font-size: 0.56rem;
@@ -455,7 +543,7 @@ main {
 /* tooltip */
 
 
-/* ── COMPARE ── */
+/* COMPARE */
 .compare-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -544,7 +632,73 @@ main {
   transition: color .4s;
 }
 
-/* ── COLAPSO ── */
+/* COLLAPSE */
+.collapsible-section {
+  margin-bottom: 1rem;
+}
+
+.collapsible-section summary {
+  list-style: none;
+}
+
+.collapsible-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.collapsible-summary:hover {
+  border-color: var(--magenta-border);
+}
+
+.collapsible-summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.collapsible-summary-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.collapsible-summary-sub {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.45;
+}
+
+.collapsible-summary-icon {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--magenta);
+  transition: transform .2s ease;
+}
+
+.collapsible-section[open] .collapsible-summary-icon {
+  transform: rotate(45deg);
+}
+
+.collapsible-content {
+  margin-top: 0.75rem;
+}
+
 .collapse-box {
   display: none;
   padding: 1.2rem 1.5rem;
@@ -579,7 +733,7 @@ main {
   font-weight: 300;
 }
 
-/* ── FLASH OVERLAY ── */
+/* FLASH OVERLAY */
 .flash-overlay {
   position: fixed; inset: 0;
   background: rgba(239,68,68,0.18);
@@ -591,7 +745,7 @@ main {
 }
 .flash-overlay.show { opacity: 1; }
 
-/* ── DISCLAIMER ── */
+/* DISCLAIMER */
 .disclaimer {
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
@@ -605,7 +759,7 @@ main {
   border-left: 2px solid var(--magenta-border);
 }
 
-/* ── FOOTER ── */
+/* FOOTER */
 footer {
   position: relative; z-index: 1;
   max-width: 900px; margin: 0 auto;
@@ -628,7 +782,7 @@ footer {
   color: var(--muted);
 }
 
-/* ── INTRO CARD ── */
+/* INTRO CARD */
 .intro-card {
   background: var(--surface);
   border: 1px solid var(--magenta-border);
@@ -690,7 +844,7 @@ footer {
   font-weight: 600;
 }
 
-/* ── RESERVA ENERGÉTICA ── */
+/* RESERVE */
 .burnout-panel {
   background: var(--surface);
   border: 1px solid rgba(245,158,11,0.2);
@@ -749,9 +903,47 @@ footer {
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
   color: var(--muted);
-  margin-bottom: 1rem;
+  margin-bottom: 0.45rem;
   min-height: 1rem;
   transition: color .4s;
+}
+
+.burnout-trend {
+  margin-top: 0.35rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.burnout-subreserve {
+  margin-bottom: 0.85rem;
+}
+
+.burnout-subreserve-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+}
+
+.burnout-subreserve-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.burnout-subreserve-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.burnout-track.base-track {
+  height: 7px;
+  margin-bottom: 0;
 }
 
 .burnout-controls {
@@ -851,6 +1043,9 @@ footer {
   .main-grid { grid-template-columns: 1fr; }
   .prefilter-grid { grid-template-columns: 1fr; }
   .intro-grid { grid-template-columns: 1fr; }
+  .header-meta { justify-content: stretch; }
+  .theme-btn { flex: 1; width: auto; justify-content: center; }
+  .slider-row { grid-template-columns: 18px 112px 1fr 16px; }
   h1 { font-size: 1.15rem; }
 }
 </style>
@@ -858,35 +1053,52 @@ footer {
 <body>
 
 <header>
-  <div class="logo-tag"><a href="./../index.html">← home</a> &nbsp;·&nbsp; hAppYpUkIng · Lab &nbsp;·&nbsp; interactive model · not a test</div>
+  <div class="logo-tag"><a href="./../index.html">&larr; home</a> &nbsp;·&nbsp; hAppYpUkIng · Lab &nbsp;·&nbsp; interactive model · not a test</div>
   <h1>Sensory <span>Load Model</span></h1>
-  <p class="subtitle">An explanatory tool about how sensory pre-filtering works and why it gets overwhelmed. Not a test, not a diagnosis — it's for understanding and explaining.</p>
+  <p class="subtitle">An explanatory tool about how sensory pre-filtering works and why it gets overwhelmed. Not a test, not a diagnosis - it's for understanding and explaining.</p>
   <div class="divider-line"></div>
+  <div class="header-meta">
+    <button class="theme-btn" id="theme-toggle" type="button" aria-pressed="false" onclick="toggleTheme()">
+      <span class="theme-btn-indicator" aria-hidden="true"></span>
+      <span id="theme-toggle-label">Light mode</span>
+    </button>
+    <button class="theme-btn" id="language-toggle" type="button" title="Switch to Spanish" onclick="window.location.href='sensory_overload_model.html'">
+      <span class="theme-btn-indicator" aria-hidden="true"></span>
+      <span>ES</span>
+    </button>
+  </div>
 </header>
 
 <main>
 
   <!-- intro card -->
-  <div class="intro-card">
-    <div class="panel-title">How this model works</div>
-    <p class="intro-lead">
-      The nervous system receives thousands of simultaneous stimuli — sounds, lights, textures, temperatures, movement. To function, it needs a <strong>pre-filter</strong>: a mechanism that prioritises and attenuates that information before processing it.<br><br>
-      In many neurodivergent profiles (ASD, ADHD and others with SPD), automatic input attenuation operates at a lower baseline intensity. <strong>It is not deficient processing: it is a mismatch between available input and the capacity to filter it.</strong> The air conditioning, a conversation and a clothing label compete at the same level of intensity. The problem is not the person — it is the amount of unattenuated input.
-    </p>
-    <div class="intro-grid">
-      <div class="intro-block">
-        <div class="intro-block-title nt">NT Profile</div>
-        <p>The neurological pre-filter automatically attenuates and prioritises. Irrelevant stimuli are suppressed before reaching consciousness. Load stays low in environments that an SPD profile would experience as chaotic.</p>
-        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:#39ff6a;line-height:1.5;">higher automatic attenuation → same environment &lt; total input → lower load</p>
-      </div>
-      <div class="intro-block">
-        <div class="intro-block-title dps">SPD / ASD Profile</div>
-        <p>Automatic input attenuation operates at a lower baseline intensity. More stimuli arrive unprioritised and load rises faster in the same environments. Natural buffers modulate the available threshold; behavioural adaptations reduce incoming input — but do not modify automatic attenuation, they protect the system.</p>
-        <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--magenta);line-height:1.5;">lower automatic attenuation → same environment &gt; total input → higher load</p>
+  <details class="collapsible-section">
+    <summary class="collapsible-summary">
+      <span class="collapsible-summary-text">
+        <span class="collapsible-summary-title">How This Model Works</span>
+        <span class="collapsible-summary-sub">Conceptual framing and profile differences. Kept folded so the simulation stays front and centre.</span>
+      </span>
+      <span class="collapsible-summary-icon">+</span>
+    </summary>
+    <div class="intro-card collapsible-content">
+      <p class="intro-lead">
+        The nervous system receives thousands of simultaneous stimuli: sounds, lights, textures, temperatures, and movement. To function, it needs a <strong>pre-filter</strong>, a mechanism that prioritises and dampens that information before it is processed.<br><br>
+        In many neurodivergent profiles (ASD, ADHD, and others with SPD), automatic input attenuation runs at a lower baseline intensity. <strong>This is not defective processing; it is a mismatch between the amount of incoming input and the system's capacity to filter it.</strong> Air conditioning, a conversation, and a clothing tag can all compete at the same intensity level. The problem is not the person; it is the amount of unfiltered input.
+      </p>
+      <div class="intro-grid">
+        <div class="intro-block">
+          <div class="intro-block-title nt">NT Profile</div>
+          <p>The neurological pre-filter automatically dampens and prioritises. Irrelevant stimuli are suppressed before they reach conscious awareness. Load stays lower in environments that a person with SPD would experience as chaotic.</p>
+          <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:#39ff6a;line-height:1.5;">stronger automatic attenuation &rarr; same environment &lt; total input &rarr; lower load</p>
+        </div>
+        <div class="intro-block">
+          <div class="intro-block-title dps">SPD / ASD Profile</div>
+          <p>Automatic input attenuation runs with lower baseline strength. More stimuli arrive without enough prioritisation, so load rises faster in the same environment. Natural buffers modulate the available threshold; behavioural adaptations reduce incoming input, but they do not change automatic attenuation. They protect the system.</p>
+          <p style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--magenta);line-height:1.5;">weaker automatic attenuation &rarr; same environment &gt; total input &rarr; higher load</p>
+        </div>
       </div>
     </div>
-  </div>
-
+  </details>
   <!-- mode toggle -->
   <div class="mode-toggle">
     <button class="mode-btn active" onclick="setMode('dps')" id="btn-dps">SPD / ASD Profile</button>
@@ -906,11 +1118,18 @@ footer {
     <div class="load-status" id="load-status" style="margin-top:6px"></div>
   </div>
 
-  <!-- comparativa -->
-  <div class="compare-card">
-    <div class="panel-title">Processing comparison</div>
-    <div class="compare-formula">input &gt; processing capacity <span>→</span> overload</div>
-    <div class="compare-profiles">
+  <!-- comparison -->
+  <details class="collapsible-section">
+    <summary class="collapsible-summary">
+      <span class="collapsible-summary-text">
+        <span class="collapsible-summary-title">Processing Comparison</span>
+        <span class="collapsible-summary-sub">A side-by-side view across profiles. Helpful for explanation, but not necessary to keep open all the time.</span>
+      </span>
+      <span class="collapsible-summary-icon">+</span>
+    </summary>
+    <div class="compare-card collapsible-content">
+      <div class="compare-formula">input &gt; processing capacity <span>&rarr;</span> overload</div>
+      <div class="compare-profiles">
 
       <div class="compare-profile">
         <div class="compare-profile-label">NT</div>
@@ -950,48 +1169,59 @@ footer {
         <div class="compare-state" id="state-dps">Stable</div>
       </div>
 
+      </div>
     </div>
-  </div>
+  </details>
 
-  <!-- colapso -->
+  <!-- overload -->
   <div class="collapse-box" id="collapse-box">
     <div class="collapse-title">The system has reached its limit</div>
-    <div class="collapse-sub">This is not a personal failure — input is exceeding available processing capacity. Reducing stimuli or activating buffers may help recover margin.</div>
+    <div class="collapse-sub">This is not a personal failure. Input is exceeding the processing capacity available right now. Reducing stimuli or activating buffers can help restore margin.</div>
   </div>
 
-  <!-- energy reserve / burnout -->
+  <!-- reserve / burnout -->
   <div class="burnout-panel">
     <div class="burnout-reserve-row">
-      <span class="burnout-reserve-label">Energy reserve</span>
-      <span class="burnout-reserve-val" id="burnout-val">Alta</span>
+      <span class="burnout-reserve-label">Available reserve</span>
+      <span class="burnout-reserve-val" id="burnout-val">High</span>
     </div>
     <div class="burnout-track">
       <div class="burnout-fill" id="burnout-fill" style="width:100%;background:#F59E0B"></div>
     </div>
+    <div class="burnout-subreserve">
+      <div class="burnout-subreserve-row">
+        <span class="burnout-subreserve-label">Base reserve</span>
+        <span class="burnout-subreserve-val" id="burnout-base-val">100%</span>
+      </div>
+      <div class="burnout-track base-track">
+        <div class="burnout-fill" id="burnout-base-fill" style="width:100%;background:rgba(245,158,11,0.55)"></div>
+      </div>
+    </div>
     <div class="burnout-status" id="burnout-status"></div>
+    <div class="burnout-trend" id="burnout-trend"></div>
     <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.9rem;line-height:1.6;">
-      Press <strong style="color:rgba(245,158,11,0.8)">Time without discharge</strong> to show the effect of accumulated load. Drain depends on the system's active load level. Self-care elements increase the reserve and modify the response to stimuli.
+      Press <strong style="color:rgba(245,158,11,0.8)">Time without relief</strong> to show the effect of accumulated load. Drain depends on the system's active load. Self-care actions increase reserve and can change the system's response to stimuli.
     </div>
 
     <div class="burnout-controls">
       <div>
-        <div class="burnout-col-label drain">Sin desload</div>
-        <button class="burnout-btn drain-btn" onclick="drainReserve(12)" title="Days or weeks with sustained high load without sufficient recovery. Drain is amplified according to the system's active load.">
-          Tiempo sin desload <span class="burnout-btn-tag drain-tag">−reserve</span>
+        <div class="burnout-col-label drain">Without relief</div>
+        <button class="burnout-btn drain-btn" onclick="drainReserve(12)" title="Days or weeks of sustained high load without enough recovery. Drain is amplified by the system's active load.">
+          Time without relief <span class="burnout-btn-tag drain-tag">-reserve</span>
         </button>
       </div>
       <div>
         <div class="burnout-col-label recharge">Self-care</div>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(18)" title="Time without external stimuli, without social demand, without having to process or respond.">
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(18)" title="Time without external stimuli, social demand, or the need to process and respond.">
           Isolation <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(15)" title="Special interest activity — requires no processing effort, the system enters low-demand mode.">
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(15)" title="Special-interest activity. Kept simple for now; currently it restores reserve without changing the rest of the model.">
           Special interests <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(10)" title="Familiar music, familiar rhythm — regulates without demanding.">
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(10)" title="Familiar music and familiar rhythm can regulate without adding much demand.">
           Music <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
-        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(8)" title="Rhythmic or gentle movement — proprioceptive stimulation that reduces general activation.">
+        <button class="burnout-btn recharge-btn" onclick="rechargeReserve(8)" title="Rhythmic or gentle movement can regulate the system through proprioceptive input.">
           Movement <span class="burnout-btn-tag recharge-tag">+reserve</span>
         </button>
       </div>
@@ -999,67 +1229,66 @@ footer {
 
     <div class="burnout-box" id="burnout-box">
       <div class="burnout-box-title">The reserve has been depleted</div>
-      <div class="burnout-box-sub">The system needs deep recovery. [The system needs deep recovery. This is not momentary exhaustion — it is the accumulated result of sustained demand that exceeded recharge capacity. Burnout does not explode. It shuts down.</div>
+      <div class="burnout-box-sub">The system needs deep recovery. This is not momentary tiredness; it is the accumulated result of sustained demand exceeding recharge capacity. Burnout does not explode. It shuts down.</div>
     </div>
   </div>
-
-  <!-- prefiltros separados -->
+  <!-- prefilters -->
   <div class="prefilter-grid">
     <div class="pf-card">
       <div class="pf-label-row">
         <span class="pf-label">Neurological pre-filter</span>
-        <span class="pf-val" id="pfn-val">bajo</span>
+        <span class="pf-val" id="pfn-val">low</span>
       </div>
       <div class="pf-track"><div class="pf-fill" id="pfn-fill" style="width:20%"></div></div>
-      <div class="pf-note">Available automatic attenuation level. Varies gradually with rest and physiological regulation — cannot be forced and is not immediate. Indicative values.</div>
+      <div class="pf-note">Available automatic attenuation level. It changes gradually with rest and physiological regulation. It cannot be forced, and it is not immediate. Indicative values only.</div>
     </div>
     <div class="pf-card">
       <div class="pf-label-row">
         <span class="pf-label">Behavioural reduction</span>
-        <span class="pf-val" id="pfc-val">ninguna</span>
+        <span class="pf-val" id="pfc-val">none</span>
       </div>
       <div class="pf-track"><div class="pf-fill" id="pfc-fill" style="width:0%"></div></div>
-      <div class="pf-note">Input blocked <em>before</em> reaching the system. Protects available capacity without modifying automatic attenuation. Indicative values.</div>
+      <div class="pf-note">Input blocked <em>before</em> it reaches the system. It protects available capacity without changing automatic attenuation. Indicative values only.</div>
     </div>
   </div>
 
-  <!-- sliders + amortiguadores -->
+  <!-- sliders + buffers -->
   <div class="main-grid">
 
     <div class="panel">
       <div class="panel-title">Sensory stimuli</div>
       <div class="slider-row">
-        <span class="slider-icon">🔊</span>
+        <span class="slider-icon">&#128266;</span>
         <span class="slider-label">Sound</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-sound">
         <span class="slider-val" id="v-sound">0</span>
       </div>
       <div class="slider-row">
-        <span class="slider-icon">💡</span>
+        <span class="slider-icon">&#128161;</span>
         <span class="slider-label">Light</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-light">
         <span class="slider-val" id="v-light">0</span>
       </div>
       <div class="slider-row">
-        <span class="slider-icon">✋</span>
+        <span class="slider-icon">&#9995;</span>
         <span class="slider-label">Touch / texture</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-touch">
         <span class="slider-val" id="v-touch">0</span>
       </div>
       <div class="slider-row">
-        <span class="slider-icon">🌡️</span>
+        <span class="slider-icon">&#127777;&#65039;</span>
         <span class="slider-label">Temperature</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-temp">
         <span class="slider-val" id="v-temp">0</span>
       </div>
       <div class="slider-row">
-        <span class="slider-icon">👥</span>
+        <span class="slider-icon">&#128101;</span>
         <span class="slider-label">People / movement</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-crowd">
         <span class="slider-val" id="v-crowd">0</span>
       </div>
       <div class="slider-row">
-        <span class="slider-icon">👃</span>
+        <span class="slider-icon">&#128067;</span>
         <span class="slider-label">Smell</span>
         <input type="range" min="0" max="10" value="0" step="1" oninput="update()" id="s-smell">
         <span class="slider-val" id="v-smell">0</span>
@@ -1068,26 +1297,26 @@ footer {
 
     <div class="panel">
       <div class="panel-title">Natural buffers</div>
-      <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">In many profiles, these factors influence the processing threshold. They are not interchangeable and their effect is not immediate.</div>
+      <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">In many profiles, these factors influence the processing threshold. They are not interchangeable, and their effect is not immediate.</div>
       <div class="buf-grid" id="buf-natural">
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="16"
-          title="Regulates neuronal excitability. Low levels reduce the activation threshold and increase input sensitivity.">
-          <span class="buf-dot"></span>Magnesio
+          title="Regulates neuronal excitability. Poor nutrition can lower the activation threshold and increase sensitivity to input.">
+          <span class="buf-dot"></span>Nutrition
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="14"
-          title="Modulates the CNS. Fluctuates with the menstrual cycle and menopause.">
+          title="Modulates the central nervous system. It varies across people and across life stages.">
           <span class="buf-dot"></span>Hormonal profile
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="11"
-          title="Regulates serotonin and dopamine synthesis. Low levels are common in ND profiles and affect nervous system regulation.">
-          <span class="buf-dot"></span>Vitamina D
+          title="Supports circadian rhythm and key neurotransmitter regulation.">
+          <span class="buf-dot"></span>Natural light
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="20"
-          title="The most powerful. Without rest, automatic attenuation drops sharply.">
+          title="The strongest factor. Without rest, the pre-filter drops in a cascade.">
           <span class="buf-dot"></span>Rest
         </button>
         <button class="buf-btn natural active" onclick="toggleBuf(this)" data-val="9"
-          title="Direct impact on nerve conduction. Often overlooked.">
+          title="Has a direct impact on nerve conduction and is often overlooked.">
           <span class="buf-dot"></span>Hydration
         </button>
       </div>
@@ -1095,15 +1324,15 @@ footer {
       <div class="buf-section-label">Behavioural buffers</div>
       <div class="buf-grid" id="buf-conduct">
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="22"
-          title="Reduces auditory input before it reaches the system. Acts on the environment, not on automatic attenuation.">
+          title="Reduces auditory input before it reaches the system. It acts on the environment, not on automatic attenuation.">
           <span class="buf-dot"></span>Headphones
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="15"
           title="Reduces visual input. Sunglasses, blinds, matte screens.">
-          <span class="buf-dot"></span>Light controlada
+          <span class="buf-dot"></span>Controlled light
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="13"
-          title="Available exit reduces anticipation of entrapment and hypervigilance.">
+          title="Having an available exit reduces anticipation of entrapment and hypervigilance.">
           <span class="buf-dot"></span>Safe space
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="11"
@@ -1111,7 +1340,7 @@ footer {
           <span class="buf-dot"></span>Processing time
         </button>
         <button class="buf-btn conduct" onclick="toggleBuf(this)" data-val="19"
-          title="Sensory self-regulation mechanism. Moving, rocking, making repetitive sounds — not a preference, it is the nervous system modulating its own load. Suppressing it has a cost.">
+          title="A sensory self-regulation mechanism. Moving, rocking, or making repetitive sounds is not a preference; it is the nervous system modulating its own load. Suppressing it has a cost.">
           <span class="buf-dot"></span>Stimming
         </button>
       </div>
@@ -1121,7 +1350,7 @@ footer {
   <!-- factores de coste adicional -->
   <div class="cost-panel">
     <div class="panel-title" style="color:#F59E0B">Additional cost factors</div>
-    <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">Aumentan la load sin añadir estímulo externo. Operan desde dentro del sistema.</div>
+    <div style="font-size:0.68rem;color:var(--muted);font-weight:300;margin-bottom:0.75rem;line-height:1.5;">They increase load without adding external stimulus. They operate from inside the system.</div>
     <div class="buf-grid">
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="22"
         title="Suppressing natural behaviours (stimming, gestures, expressions) to appear NT consumes resources from the same system already managing sensory input. It is active performance, not passive.">
@@ -1130,7 +1359,7 @@ footer {
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="18"
         title="Managing multiple simultaneous demands, interruptions or chained decisions consumes cognitive capacity from the same system. The cost is continuous while the situation lasts.">
-        <span class="buf-dot"></span>Sobreload ejecutiva
+        <span class="buf-dot"></span>Executive overload
         <span class="cost-tag">+load</span>
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="16"
@@ -1139,7 +1368,7 @@ footer {
         <span class="cost-tag">+load</span>
       </button>
       <button class="buf-btn cost" onclick="toggleCost(this)" data-cost="14"
-        title="Each interruption breaks the active processing state. In ND profiles, cognitive reorientation has a disproportionate cost — it is not lack of focus, it is the price of restarting the system.">
+        title="Each interruption breaks the active processing state. In ND profiles, cognitive reorientation has a disproportionate cost - it is not lack of focus, it is the price of restarting the system.">
         <span class="buf-dot"></span>Distractions / interruptions
         <span class="cost-tag">+load</span>
       </button>
@@ -1152,12 +1381,21 @@ footer {
   </div>
 
   <!-- disclaimer -->
-  <div class="disclaimer">
-    <strong style="color:var(--text)">About this model</strong><br><br>
-    This interactive model deliberately simplifies to aid understanding. It does not represent all neurodivergent profiles, is not an assessment tool, and does not replace any clinical evaluation.<br><br>
-    If everything is high, it does not imply personal failure — it implies too much input for the processing capacity available at that moment. The goal of the model is to understand that mismatch, not to measure oneself against it.<br><br>
-    It is also designed as a communication tool: to explain to others how this system works without having to justify oneself.
-  </div>
+  <details class="collapsible-section">
+    <summary class="collapsible-summary">
+      <span class="collapsible-summary-text">
+        <span class="collapsible-summary-title">About This Model</span>
+        <span class="collapsible-summary-sub">Limits and context of use. Kept folded so it does not compete with the main interaction.</span>
+      </span>
+      <span class="collapsible-summary-icon">+</span>
+    </summary>
+    <div class="disclaimer collapsible-content" style="margin-bottom:0;">
+      <strong style="color:var(--text)">About this model</strong><br><br>
+      This interactive model is deliberately simplified to make the logic easier to understand. It does not represent every neurodivergent profile, it is not an assessment tool, and it does not replace clinical evaluation of any kind.<br><br>
+      If everything is high, that does not imply personal failure. It implies too much input for the processing capacity available in that moment. The goal of the model is to understand that mismatch, not to measure yourself against it.<br><br>
+      It is also designed as a communication tool, a way to explain to other people how this system works without having to justify yourself.
+    </div>
+  </details>
 
 </main>
 
@@ -1309,17 +1547,17 @@ function getColor(pct) {
 
 function getStatus(pct) {
   if (pct < 40) return '';
-  if (pct < 65) return 'Reducing input may help stabilise';
-  if (pct < 85) return 'La load es alta — reducir input puede aliviar el sistema';
-  if (pct < 100) return 'Input is approaching the processing limit';
+  if (pct < 65) return 'Reducing input may help stabilise the system.';
+  if (pct < 85) return 'Load is high; reducing input may ease the system.';
+  if (pct < 100) return 'Input is approaching the processing limit.';
   return '';
 }
 
 function getQualitative(pct) {
   if (pct < 40) return 'Stable';
-  if (pct < 65) return 'Tense';
-  if (pct < 85) return 'Sobreloaddo';
-  if (pct < 100) return 'At limit';
+  if (pct < 65) return 'Strained';
+  if (pct < 85) return 'Overloaded';
+  if (pct < 100) return 'At the limit';
   return 'Saturated';
 }
 
@@ -1353,12 +1591,12 @@ function update() {
   var condBuf = getConductBufTotal();
   var costBuf = getCostTotal();
 
-  // Neurological pre-filter — varía con amortiguadores naturales
+  // Neurological pre-filter - varies with natural buffers
   var baseFilter = mode === 'nt' ? NT_BASE_FILTER : DPS_BASE_FILTER;
   var neuralFilter = Math.min(baseFilter + natBuf * 0.5, mode === 'nt' ? 96 : 62);
   neuralFilter = Math.round(neuralFilter);
 
-  // Behavioural reduction — solo sube con conductuales
+  // Behavioural reduction - only increases with behavioural buffers
   var conductReduction = Math.round(condBuf * 0.85);
 
   // Carga resultante
@@ -1396,7 +1634,7 @@ function update() {
   document.getElementById('pfc-val').textContent = getPfcLabel(conductReduction);
   document.getElementById('pfc-val').style.color = pfcCol;
 
-  // Comparativa — barras duales load + capacity
+  // Comparison - dual load + capacity bars
   var ntH = Math.min(ntLoad, 100);
   var dpsH = Math.min(dpsLoad, 100);
   var ntCap = Math.max(0, 100 - ntH);
@@ -1445,5 +1683,299 @@ function triggerFlash() {
 update();
 updateBurnoutDisplay();
 </script>
+<script>
+var currentActiveLoad = 0;
+var effectiveReserve = 100;
+var themeKey = 'sensory-overload-theme-en';
+
+function clampPct(value) {
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function setTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  try { localStorage.setItem(themeKey, theme); } catch (e) {}
+  var label = document.getElementById('theme-toggle-label');
+  var button = document.getElementById('theme-toggle');
+  if (label) label.textContent = theme === 'light' ? 'Dark mode' : 'Light mode';
+  if (button) {
+    button.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+    button.setAttribute('title', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+  if (typeof update === 'function') update();
+}
+
+function toggleTheme() {
+  var nextTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  setTheme(nextTheme);
+}
+
+function initTheme() {
+  var storedTheme = null;
+  try { storedTheme = localStorage.getItem(themeKey); } catch (e) {}
+  var preferredLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  setTheme(storedTheme || (preferredLight ? 'light' : 'dark'));
+}
+
+function getEffectiveReserve(baseReserve, loadPct) {
+  return clampPct(baseReserve - loadPct * 0.58);
+}
+
+function getBurnoutLabel(r) {
+  if (r > 75) return 'High';
+  if (r > 50) return 'Moderate';
+  if (r > 25) return 'Low';
+  if (r > 0) return 'Critical';
+  return 'Depleted';
+}
+
+function getDrainDelta(loadPct) {
+  if (loadPct < 35) return 2;
+  if (loadPct < 55) return 0;
+  if (loadPct < 75) return -4;
+  if (loadPct < 90) return -8;
+  return -12;
+}
+
+function getDrainTrendText(loadPct) {
+  var delta = getDrainDelta(loadPct);
+  if (delta > 0) return 'At this load, reserve would tend to recover.';
+  if (delta === 0) return 'At this load, reserve would tend to stay stable.';
+  if (delta > -8) return 'At this load, reserve would tend to drain slowly.';
+  if (delta > -12) return 'At this load, reserve would tend to drain quickly.';
+  return 'At this load, reserve would tend to drain very quickly.';
+}
+
+function updateBurnoutDisplay() {
+  var base = clampPct(reserve);
+  var available = getEffectiveReserve(base, currentActiveLoad);
+  effectiveReserve = available;
+  var col = getBurnoutColor(available);
+  document.querySelector('.burnout-reserve-label').textContent = 'Available reserve';
+  var burnoutCopy = document.querySelector('.burnout-trend').nextElementSibling;
+  if (burnoutCopy) {
+    burnoutCopy.innerHTML = 'Available reserve shifts with the current load; base reserve captures the accumulated wear. Press <strong style="color:rgba(245,158,11,0.8)">Time without relief</strong> to erode the base, and use self-care to rebuild it and regain immediate margin.';
+  }
+  document.getElementById('burnout-fill').style.width = available + '%';
+  document.getElementById('burnout-fill').style.background = col;
+  document.getElementById('burnout-fill').style.opacity = available === 0 ? '0.3' : '1';
+  document.getElementById('burnout-val').textContent = getBurnoutLabel(available);
+  document.getElementById('burnout-val').style.color = col;
+  document.getElementById('burnout-base-fill').style.width = base + '%';
+  document.getElementById('burnout-base-fill').style.opacity = base === 0 ? '0.3' : '1';
+  document.getElementById('burnout-base-val').textContent = base + '%';
+  document.getElementById('burnout-status').textContent = 'Available now: ' + available + '%. Base reserve: ' + base + '%.';
+  document.getElementById('burnout-status').style.color = available < 30 ? col : 'var(--muted)';
+  document.getElementById('burnout-trend').textContent = getDrainTrendText(currentActiveLoad);
+  document.getElementById('burnout-box').classList.toggle('show', available <= 0 || base <= 0);
+}
+
+function drainReserve(amount) {
+  var loadFactor = 1 + (currentActiveLoad / 100) * 1.5;
+  reserve = Math.max(0, reserve - Math.round(amount * loadFactor));
+  updateBurnoutDisplay();
+}
+
+function rechargeReserve(amount) {
+  var loadPenalty = currentActiveLoad / 100;
+  var effective = Math.round(amount * (1 - loadPenalty * 0.75));
+  reserve = Math.min(100, reserve + Math.max(1, effective));
+  updateBurnoutDisplay();
+}
+
+function applyIsolation() {
+  ['sound', 'light', 'touch', 'temp', 'crowd', 'smell'].forEach(function(id) {
+    document.getElementById('s-' + id).value = 0;
+  });
+  ensureConductBuffer('Safe space');
+  ensureConductBuffer('Controlled light');
+  disableCost('Sustained social demand');
+  disableCost('Masking');
+  disableCost('Lack of predictability');
+  disableCost('Distractions / interruptions');
+  update();
+  rechargeReserve(18);
+}
+
+function findConductButton(labelText) {
+  var match = null;
+  document.querySelectorAll('.buf-btn.conduct').forEach(function(btn) {
+    if (!match && btn.textContent.indexOf(labelText) !== -1) {
+      match = btn;
+    }
+  });
+  return match;
+}
+
+function ensureConductBuffer(labelText) {
+  var btn = findConductButton(labelText);
+  if (btn && !btn.classList.contains('active')) {
+    btn.classList.add('active');
+  }
+}
+
+function findCostButton(labelText) {
+  var match = null;
+  document.querySelectorAll('.buf-btn.cost').forEach(function(btn) {
+    if (!match && btn.textContent.indexOf(labelText) !== -1) {
+      match = btn;
+    }
+  });
+  return match;
+}
+
+function disableCost(labelText) {
+  var btn = findCostButton(labelText);
+  if (btn && btn.classList.contains('active')) {
+    btn.classList.remove('active');
+  }
+}
+
+function applyMusic() {
+  var soundEl = document.getElementById('s-sound');
+  var currentSound = parseInt(soundEl.value, 10);
+  soundEl.value = Math.max(0, currentSound - 4);
+  ensureConductBuffer('Headphones');
+  update();
+  rechargeReserve(10);
+}
+
+function applyMovement() {
+  ensureConductBuffer('Stimming');
+  update();
+  rechargeReserve(8);
+}
+
+function resetAll() {
+  ['sound','light','touch','temp','crowd','smell'].forEach(function(id) {
+    document.getElementById('s-' + id).value = 0;
+  });
+  document.querySelectorAll('.buf-btn.natural').forEach(function(b) { b.classList.add('active'); });
+  document.querySelectorAll('.buf-btn.conduct').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.buf-btn.cost').forEach(function(b) { b.classList.remove('active'); });
+  reserve = 100;
+  setMode('dps');
+}
+
+function getStatus(pct) {
+  if (pct < 40) return '';
+  if (pct < 65) return 'Reducing input may help stabilise the system.';
+  if (pct < 85) return 'Load is high; reducing input may ease the system.';
+  if (pct < 100) return 'Input is approaching the processing limit.';
+  return '';
+}
+
+function getQualitative(pct) {
+  if (pct < 40) return 'Stable';
+  if (pct < 65) return 'Strained';
+  if (pct < 85) return 'Overloaded';
+  if (pct < 100) return 'At the limit';
+  return 'Saturated';
+}
+
+function getPfcLabel(pct) {
+  if (pct < 10) return 'none';
+  if (pct < 30) return 'mild';
+  if (pct < 55) return 'moderate';
+  return 'high';
+}
+
+function update() {
+  var raw = getRawInput();
+  var natBuf = getNaturalBufTotal();
+  var condBuf = getConductBufTotal();
+  var costBuf = getCostTotal();
+
+  var baseFilter = mode === 'nt' ? NT_BASE_FILTER : DPS_BASE_FILTER;
+  var neuralFilter = Math.min(baseFilter + natBuf * 0.5, mode === 'nt' ? 96 : 62);
+  neuralFilter = Math.round(neuralFilter);
+
+  var conductReduction = Math.round(condBuf * 0.85);
+
+  var dpsNatFilter = Math.min(DPS_BASE_FILTER + natBuf * 0.5, 62);
+  var ntNatFilter = Math.min(NT_BASE_FILTER + natBuf * 0.5, 96);
+
+  var dpsLoad = calcLoad(raw, dpsNatFilter, conductReduction) + Math.round(costBuf * 0.9);
+  var ntLoad = calcLoad(raw, ntNatFilter, conductReduction) + Math.round(costBuf * 0.45);
+  dpsLoad = Math.min(dpsLoad, 100);
+  ntLoad = Math.min(ntLoad, 100);
+  currentActiveLoad = mode === 'dps' ? dpsLoad : ntLoad;
+  effectiveReserve = getEffectiveReserve(reserve, currentActiveLoad);
+
+  var col = getColor(currentActiveLoad);
+
+  document.getElementById('load-fill').style.width = currentActiveLoad + '%';
+  document.getElementById('load-fill').style.background = col;
+  document.getElementById('load-pct').textContent = getQualitative(currentActiveLoad);
+  document.getElementById('load-pct').style.color = col;
+  document.getElementById('load-status').textContent = getStatus(currentActiveLoad);
+  document.getElementById('load-status').style.color = col;
+  document.getElementById('load-card').style.setProperty('--accent-top', col);
+
+  var pfnCol = neuralFilter > 50 ? '#39ff6a' : neuralFilter > 30 ? '#F59E0B' : '#EF4444';
+  document.getElementById('pfn-fill').style.width = neuralFilter + '%';
+  document.getElementById('pfn-fill').style.background = pfnCol;
+  document.getElementById('pfn-val').textContent = getPfnLabel(neuralFilter);
+  document.getElementById('pfn-val').style.color = pfnCol;
+
+  var pfcCol = conductReduction > 40 ? '#3B82F6' : conductReduction > 20 ? '#7eb8ff' : '#6b6480';
+  document.getElementById('pfc-fill').style.width = conductReduction + '%';
+  document.getElementById('pfc-fill').style.background = pfcCol;
+  document.getElementById('pfc-val').textContent = getPfcLabel(conductReduction);
+  document.getElementById('pfc-val').style.color = pfcCol;
+
+  var ntH = Math.min(ntLoad, 100);
+  var dpsH = Math.min(dpsLoad, 100);
+  var ntCap = Math.max(0, 100 - ntH);
+  var dpsCap = Math.max(0, 100 - dpsH);
+
+  document.getElementById('bar-nt-load').style.width = ntH + '%';
+  document.getElementById('bar-nt-load').style.background = getColor(ntH);
+  document.getElementById('bar-nt-cap').style.width = ntCap + '%';
+  document.getElementById('bar-nt-cap').style.background = ntCap > 50 ? 'rgba(57,255,106,0.25)' : ntCap > 20 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.15)';
+  document.getElementById('state-nt').textContent = getQualitative(ntH);
+  document.getElementById('state-nt').style.color = getColor(ntH);
+
+  document.getElementById('bar-dps-load').style.width = dpsH + '%';
+  document.getElementById('bar-dps-load').style.background = getColor(dpsH);
+  document.getElementById('bar-dps-cap').style.width = dpsCap + '%';
+  document.getElementById('bar-dps-cap').style.background = dpsCap > 50 ? 'rgba(57,255,106,0.25)' : dpsCap > 20 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.15)';
+  document.getElementById('state-dps').textContent = getQualitative(dpsH);
+  document.getElementById('state-dps').style.color = getColor(dpsH);
+
+  var isCollapsed = currentActiveLoad >= 100;
+  document.getElementById('collapse-box').classList.toggle('show', isCollapsed);
+
+  if (isCollapsed && !collapsed) {
+    collapsed = true;
+    triggerFlash();
+  } else if (!isCollapsed) {
+    collapsed = false;
+  }
+
+  updateBurnoutDisplay();
+}
+
+initTheme();
+update();
+var isolationBtn = document.querySelectorAll('.burnout-btn.recharge-btn')[0];
+if (isolationBtn) {
+  isolationBtn.setAttribute('onclick', 'applyIsolation()');
+}
+var musicBtn = document.querySelectorAll('.burnout-btn.recharge-btn')[2];
+if (musicBtn) {
+  musicBtn.setAttribute('onclick', 'applyMusic()');
+}
+var movementBtn = document.querySelectorAll('.burnout-btn.recharge-btn')[3];
+if (movementBtn) {
+  movementBtn.setAttribute('onclick', 'applyMovement()');
+}
+</script>
 </body>
 </html>
+
+
+
+
+
+
