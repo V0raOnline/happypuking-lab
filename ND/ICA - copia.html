@@ -1,0 +1,251 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  #ica-root {
+    background: #f7f6f3;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+    width: 100%;
+    max-width: 360px;
+    animation: fadeSlide 180ms ease forwards;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(7px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-dots { display: flex; gap: 6px; align-items: center; }
+  .step-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #d4d1ca;
+    transition: background 150ms ease, transform 150ms ease;
+  }
+  .step-dot.active { background: #2c2b28; transform: scale(1.2); }
+
+  .question {
+    font-size: 21px;
+    font-weight: 500;
+    color: #2c2b28;
+    text-align: center;
+    line-height: 1.35;
+    letter-spacing: -0.3px;
+  }
+
+  .pills { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 22px;
+    border-radius: 100px;
+    border: 1.5px solid #e0ddd6;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    color: #2c2b28;
+    transition: transform 130ms ease, background 130ms ease, border-color 130ms ease;
+    text-align: left;
+    width: 100%;
+  }
+  .pill:hover  { transform: scale(0.985); border-color: #c5c2bb; }
+  .pill:active { transform: scale(0.975); }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: #c8c6be; }
+  .pill-green .dot { background: #639922; }
+  .pill-amber .dot { background: #ba7517; }
+  .pill-red   .dot { background: #a32d2d; }
+
+  .pill-green.selected   { background: #eaf3de; border-color: #639922; }
+  .pill-amber.selected   { background: #faeeda; border-color: #ba7517; }
+  .pill-red.selected     { background: #fcebeb; border-color: #a32d2d; }
+  .pill-neutral.selected { background: #f0ede7; border-color: #9c9a93; }
+
+  .result-header {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #b0ada6;
+    text-align: center;
+    width: 100%;
+  }
+
+  .first-header {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b8c87;
+    text-align: center;
+    width: 100%;
+  }
+
+
+  .result-card {
+    background: #ffffff;
+    border: 1px solid #e0ddd6;
+    border-radius: 16px;
+    padding: 24px 28px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .result-row { display: flex; justify-content: space-between; align-items: center; }
+  .result-label { color: #888780; font-size: 12px; font-weight: 400; }
+  .result-value {
+    font-size: 14px; font-weight: 500; color: #2c2b28;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .divider { width: 100%; height: 1px; background: #ebe8e1; }
+
+  .reset-btn {
+    background: none; border: none;
+    color: #9c9a93; font-size: 13px;
+    cursor: pointer; padding: 6px 0;
+    transition: color 130ms ease;
+    font-family: inherit;
+  }
+  .reset-btn:hover { color: #2c2b28; }
+</style>
+
+<div id="ica-root">
+  <p class="first-header">ICA (Interfaz de Comunicación Adolescente)</p>
+  <div class="step-dots" id="dots" style="margin-bottom: 0.25rem;">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+  </div>
+
+  <div class="screen active" id="screen0">
+    <p class="question">¿Cómo estás hoy?</p>
+    <div class="pills">
+      <button class="pill pill-green" data-val="green" data-label="tiro" onclick="pick(0,this)"><span class="dot"></span> tiro</button>
+      <button class="pill pill-amber" data-val="amber" data-label="voy justo" onclick="pick(0,this)"><span class="dot"></span> voy justo</button>
+      <button class="pill pill-red"   data-val="red"   data-label="hoy no puedo" onclick="pick(0,this)"><span class="dot"></span> hoy no puedo</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen1">
+    <p class="question">¿Qué es lo que más pesa?</p>
+    <div class="pills">
+      <button class="pill pill-neutral" data-label="la cabeza no arranca" onclick="pick(1,this)"><span class="dot"></span> la cabeza no arranca</button>
+      <button class="pill pill-neutral" data-label="demasiado ruido" onclick="pick(1,this)"><span class="dot"></span> demasiado ruido</button>
+      <button class="pill pill-neutral" data-label="demasiada gente" onclick="pick(1,this)"><span class="dot"></span> demasiada gente</button>
+      <button class="pill pill-neutral" data-label="cuerpo agotado" onclick="pick(1,this)"><span class="dot"></span> cuerpo agotado</button>
+      <button class="pill pill-neutral" data-label="todo a la vez en todas partes" onclick="pick(1,this)"><span class="dot"></span> todo a la vez en todas partes</button>
+      <button class="pill pill-neutral" data-label="ni idea" onclick="pick(1,this)"><span class="dot"></span> ni idea</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen2">
+    <p class="question">¿Cómo ha sido el día?</p>
+    <div class="pills">
+      <button class="pill pill-green" data-label="yuhuuu"  onclick="pick(2,this)"><span class="dot"></span> yuhuuu</button>
+      <button class="pill pill-green" data-label="bien"   onclick="pick(2,this)"><span class="dot" style="background:#8ab832;"></span> bien</button>
+      <button class="pill pill-amber" data-label="meh"    onclick="pick(2,this)"><span class="dot"></span> meh</button>
+      <button class="pill pill-amber" data-label="flojo"  onclick="pick(2,this)"><span class="dot" style="background:#c46a10;"></span> flojo</button>
+      <button class="pill pill-red"   data-label="fatal"  onclick="pick(2,this)"><span class="dot"></span> fatal</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen3">
+    <p class="question">¿Qué necesitas ahora?</p>
+    <div class="pills">
+      <button class="pill pill-neutral" data-label="dar un paseo" onclick="pick(3,this)"><span class="dot"></span> dar un paseo</button>
+      <button class="pill pill-neutral" data-label="música / auriculares" onclick="pick(3,this)"><span class="dot"></span> música / auriculares</button>
+      <button class="pill pill-neutral" data-label="hibernar un rato" onclick="pick(3,this)"><span class="dot"></span> hibernar un rato</button>
+      <button class="pill pill-neutral" data-label="hablar con alguien" onclick="pick(3,this)"><span class="dot"></span> hablar con alguien</button>
+      <button class="pill pill-neutral" data-label="estar solo/a" onclick="pick(3,this)"><span class="dot"></span> estar solo/a</button>
+      <button class="pill pill-neutral" data-label="hacer algo con las manos" onclick="pick(3,this)"><span class="dot"></span> hacer algo con las manos</button>
+      <button class="pill pill-neutral" data-label="jugar" onclick="pick(3,this)"><span class="dot"></span> jugar</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen4">
+    <p class="result-header">esto es lo que hay</p>
+    <div class="result-card">
+      <div class="result-row">
+        <span class="result-label">cabeza</span>
+        <span class="result-value"><span class="status-dot" id="r-dot"></span><span id="r-estado"></span></span>
+      </div>
+      <div class="divider"></div>
+      <div class="result-row">
+        <span class="result-label">pesa</span>
+        <span class="result-value" id="r-pesa"></span>
+      </div>
+      <div class="divider"></div>
+      <div class="result-row">
+        <span class="result-label">día</span>
+        <span class="result-value" id="r-dia"></span>
+      </div>
+      <div class="divider"></div>
+      <div class="result-row">
+        <span class="result-label">necesito</span>
+        <span class="result-value" id="r-necesito"></span>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="reset()">→ repetir</button>
+  </div>
+
+</div>
+
+<script>
+  var answers = {};
+  var dotColors = { green: '#639922', amber: '#ba7517', red: '#a32d2d' };
+
+  function pick(step, btn) {
+    document.querySelectorAll('#screen' + step + ' .pill').forEach(function(p) { p.classList.remove('selected'); });
+    btn.classList.add('selected');
+    answers[step] = btn.dataset.label;
+    if (step === 0) answers.color = dotColors[btn.dataset.val] || '#888';
+    setTimeout(function() {
+      if (step < 3) { goTo(step + 1); } else { showResult(); }
+    }, 160);
+  }
+
+  function goTo(idx) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('screen' + idx).classList.add('active');
+    for (var i = 0; i < 4; i++) {
+      document.getElementById('d' + i).classList.toggle('active', i === idx);
+    }
+  }
+
+  function showResult() {
+    document.getElementById('r-dot').style.background  = answers.color || '#888';
+    document.getElementById('r-estado').textContent    = answers[0];
+    document.getElementById('r-pesa').textContent      = answers[1];
+    document.getElementById('r-dia').textContent       = answers[2];
+    document.getElementById('r-necesito').textContent  = answers[3];
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('screen4').classList.add('active');
+    document.querySelectorAll('.step-dot').forEach(function(d) { d.classList.remove('active'); });
+  }
+
+  function reset() {
+    answers = {};
+    document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('selected'); });
+    goTo(0);
+  }
+</script>

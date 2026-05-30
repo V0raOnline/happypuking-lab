@@ -1,0 +1,890 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>happypuking-lab — Mapa Poder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:      #f5f0e8;
+  --paper-dark: #e8e0cc;
+  --paper-mid:  #ede5d0;
+  --ink:        #1a1208;
+  --ink-soft:   #4a3f2f;
+  --ink-faint:  #9a8f7a;
+  --bg:         #2a2318;
+  --c-poriferos:    #E8B84B;
+  --c-cnidarios:    #7BAFD4;
+  --c-gusanos:      #8B6B3D;
+  --c-moluscos:     #C17E5A;
+  --c-artropodos:   #E05C3A;
+  --c-equinodermos: #9B4F9E;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 15% 15%, rgba(70,55,30,0.45) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(45,90,61,0.12) 0%, transparent 45%);
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 0.55rem 1.4rem 0.6rem;
+  border-bottom: 1px solid rgba(245,240,232,0.08);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.header-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+
+.header-tagline {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.28);
+}
+
+.header-tagline span { margin: 0 0.4rem; opacity: 0.4; }
+
+.btn-inicio {
+  display: inline-block;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #D946EF;
+  color: rgba(245,240,232,0.9);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: absolute;
+  right: 0;
+}
+
+.btn-inicio:hover { background: rgba(217,70,239,0.08); }
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.02em;
+  color: rgba(245,240,232,0.95);
+  margin-bottom: 0.4rem;
+  line-height: 1.1;
+}
+
+.header-subtitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.28);
+  margin-bottom: 0.8rem;
+}
+
+.header-nav {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.6rem;
+}
+
+.header-nav-btn {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.4rem;
+  border-radius: 100px;
+  border: 2px solid rgba(245,240,232,0.15);
+  background: transparent;
+  color: rgba(245,240,232,0.4);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.header-nav-btn:hover {
+  border-color: rgba(245,240,232,0.4);
+  color: rgba(245,240,232,0.8);
+}
+
+.header-nav-btn.active {
+  border-color: #D946EF;
+  color: #D946EF;
+  background: rgba(217,70,239,0.08);
+  box-shadow: 0 0 16px rgba(217,70,239,0.2);
+}
+
+
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  color: var(--paper);
+  line-height: 1.1;
+}
+header h1 em { font-style: italic; color: #b8a878; }
+header p {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: rgba(245,240,232,0.28);
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+/* ── LAYOUT ── */
+.main-layout {
+  display: grid;
+  grid-template-columns: 170px 1fr 170px;
+  gap: 1rem;
+  max-width: 1180px;
+  margin: 1rem auto 0;
+  padding: 0 1rem 2rem;
+  align-items: start;
+}
+
+/* ── PANELES LATERALES ── */
+.side-panel {
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 13px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 1rem;
+}
+.side-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border-bottom: 1px solid var(--paper-dark);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+.pattern-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 4px 3px;
+  transition: background 0.15s;
+}
+.pattern-item:hover { background: var(--paper-dark); }
+.pattern-item.active { background: var(--paper-dark); }
+.pat-icon { font-size: 0.95rem; flex-shrink: 0; margin-top: 1px; }
+.pat-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 3px;
+}
+.pat-grupos { display: flex; gap: 3px; flex-wrap: wrap; }
+.pat-badge {
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; font-weight: 700; color: white;
+}
+.skill-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 9px; }
+.skill-emoji { font-size: 1rem; flex-shrink: 0; }
+.skill-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 2px;
+}
+.skill-desc { font-size: 0.88rem; line-height: 1.35; color: var(--ink-faint); }
+.skill-badges { display: flex; gap: 3px; margin-top: 3px; }
+
+/* ── ZONA CENTRAL ── */
+.map-center { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Marco contenedor del mapa */
+.map-frame {
+  background: rgba(245,240,232,0.04);
+  border: 1px solid rgba(245,240,232,0.1);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow:
+    inset 0 1px 0 rgba(245,240,232,0.06),
+    0 4px 24px rgba(0,0,0,0.3);
+  position: relative;
+}
+.map-frame::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 6px;
+  border: 1px dashed rgba(245,240,232,0.06);
+  pointer-events: none;
+}
+
+.map-svg-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 560px;
+  margin: 0 auto;
+}
+svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
+
+/* Nodos SVG */
+.group-node { cursor: pointer; transition: filter 0.22s; }
+.group-node:hover  { filter: brightness(1.1) drop-shadow(0 0 10px rgba(255,255,255,0.15)); }
+.group-node.dimmed { opacity: 0.2; transition: opacity 0.3s; }
+.group-node.lit    { filter: brightness(1.15) drop-shadow(0 0 14px currentColor); }
+
+.node-circle { transition: stroke-width 0.2s; }
+.group-node:hover .node-circle,
+.group-node.lit   .node-circle { stroke-width: 3.5; }
+
+/* Líneas de conexión */
+.conn-line {
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.conn-line.visible { opacity: 0.7; }
+
+/* Anillo animado central */
+.center-ring {
+  fill: none;
+  stroke-dasharray: 3 6;
+  animation: spin 50s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── FRANJA ID5 ── */
+.id5-strip {
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 11px 13px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.id5-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-bottom: 9px;
+}
+.id5-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 5px; }
+.id5-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; padding: 5px 3px; border-radius: 3px; text-align: center;
+  transition: background 0.15s;
+}
+.id5-item:hover { background: var(--paper-dark); }
+.id5-emoji { font-size: 1.3rem; }
+.id5-pista { font-size: 0.68rem; line-height: 1.25; color: var(--ink-soft); font-style: italic; }
+.id5-nombre {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 2px 5px; border-radius: 8px; color: white; margin-top: 2px;
+}
+
+/* ── PANEL DE DETALLE ── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.28);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s; z-index: 99;
+}
+.overlay.visible { opacity: 1; pointer-events: all; }
+
+.detail-panel {
+  position: fixed; right: 0; top: 0; bottom: 0; width: 330px;
+  background: var(--paper);
+  box-shadow: -4px 0 32px rgba(0,0,0,0.45);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0.2,0.2,1);
+  z-index: 100; display: flex; flex-direction: column; overflow: hidden;
+}
+.detail-panel.open { transform: translateX(0); }
+.dp-band { height: 5px; flex-shrink: 0; }
+.dp-header {
+  padding: 14px 16px 11px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 1px solid var(--paper-dark); flex-shrink: 0;
+}
+.dp-emoji { font-size: 1.8rem; line-height: 1; }
+.dp-nombre { font-family: 'DM Serif Display', serif; font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
+.dp-close {
+  background: none; border: none;
+  font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  color: var(--ink-faint); cursor: pointer; padding: 4px;
+}
+.dp-close:hover { color: var(--ink); }
+.dp-body { flex: 1; overflow-y: auto; padding: 13px 16px; display: flex; flex-direction: column; gap: 12px; }
+.dp-section-label {
+  font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 5px;
+}
+.dp-rasgos { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.dp-rasgos li { display: flex; gap: 7px; font-size: 0.88rem; line-height: 1.35; color: var(--ink-soft); }
+.dp-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+.dp-superpoder {
+  background: var(--paper-dark); border-radius: 3px;
+  padding: 8px 10px; border-left: 3px solid;
+}
+.dp-sp-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
+.dp-sp-text { font-size: 0.88rem; line-height: 1.4; color: var(--ink-soft); }
+.dp-dato-raro { font-size: 0.88rem; font-style: italic; line-height: 1.5; color: var(--ink-soft); background: var(--paper-mid); padding: 8px 10px; border-radius: 3px; }
+.dp-ejemplos { display: flex; flex-wrap: wrap; gap: 4px; }
+.dp-ejemplo-tag { font-size: 0.88rem; padding: 2px 7px; border-radius: 8px; border: 1px solid; }
+.dp-footer { padding: 11px 16px; border-top: 1px solid var(--paper-dark); flex-shrink: 0; }
+.dp-cta {
+  display: block; width: 100%; padding: 9px;
+  border: none; border-radius: 3px;
+  font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; color: white; transition: filter 0.2s;
+  text-decoration: none; text-align: center;
+}
+.dp-cta:hover { filter: brightness(1.12); }
+.vs-pill {
+  font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: white; padding: 1px 5px; border-radius: 2px;
+  display: inline-block; margin-bottom: 3px;
+}
+
+footer {
+  border-top: 1px solid rgba(245,240,232,0.07);
+  padding: 1.4rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+}
+
+.footer-text {
+  font-size: 0.88rem;
+  color: rgba(245,240,232,0.3);
+  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+}
+
+.footer-text strong {
+  color: rgba(245,240,232,0.5);
+  font-weight: 900;
+}
+
+@media (max-width: 860px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .side-panel { display: none; }
+  .detail-panel { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <div class="header-top">
+    <div class="header-tagline">
+      HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS
+    </div>
+    <a class="btn-inicio" href="./../index.html">← happypuking-lab</a>
+  </div>
+  <div class="header-title">Invertebrados</div>
+  <div class="header-subtitle">Superpoderes de los animales sin columna vertebral</div>
+  <div class="header-nav">
+    <a class="header-nav-btn active" href="mapa.html">🗺 Mapa</a>
+    <a class="header-nav-btn" href="tarjetas.html">🃏 Tarjetas</a>
+  </div>
+</header>
+
+<div class="main-layout">
+
+  <!-- IZQ: PATRONES -->
+  <aside class="side-panel">
+    <div class="side-title">Patrones secretos</div>
+
+    <div class="pattern-item" data-pattern="simetria_radial" onclick="highlightPattern('simetria_radial',['cnidarios','equinodermos'])">
+      <span class="pat-icon">⭐</span>
+      <div>
+        <div class="pat-name">Simetría radial</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-cnidarios)">2</span>
+          <span class="pat-badge" style="background:var(--c-equinodermos)">6</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-item" data-pattern="cuerpo_blando" onclick="highlightPattern('cuerpo_blando',['gusanos','moluscos'])">
+      <span class="pat-icon">🐛</span>
+      <div>
+        <div class="pat-name">Cuerpo blando</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-gusanos)">3</span>
+          <span class="pat-badge" style="background:var(--c-moluscos)">4</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-item" data-pattern="vida_acuatica" onclick="highlightPattern('vida_acuatica',['poriferos','cnidarios','equinodermos'])">
+      <span class="pat-icon">💧</span>
+      <div>
+        <div class="pat-name">Vida acuática</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-poriferos)">1</span>
+          <span class="pat-badge" style="background:var(--c-cnidarios)">2</span>
+          <span class="pat-badge" style="background:var(--c-equinodermos)">6</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-item" data-pattern="regeneracion" onclick="highlightPattern('regeneracion',['equinodermos','gusanos'])">
+      <span class="pat-icon">🔄</span>
+      <div>
+        <div class="pat-name">Regeneración</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-equinodermos)">6</span>
+          <span class="pat-badge" style="background:var(--c-gusanos)">3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-item" data-pattern="exoesqueleto" onclick="highlightPattern('exoesqueleto',['artropodos'])">
+      <span class="pat-icon">🛡️</span>
+      <div>
+        <div class="pat-name">Exoesqueleto</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-artropodos)">5</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-item" data-pattern="filtradores" onclick="highlightPattern('filtradores',['poriferos'])">
+      <span class="pat-icon">🌊</span>
+      <div>
+        <div class="pat-name">Filtradores</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-poriferos)">1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-item" data-pattern="mudan" onclick="highlightPattern('mudan',['artropodos'])">
+      <span class="pat-icon">🦋</span>
+      <div>
+        <div class="pat-name">Mudan</div>
+        <div class="pat-grupos">
+          <span class="pat-badge" style="background:var(--c-artropodos)">5</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENTRO -->
+  <div class="map-center">
+
+    <div class="map-frame">
+      <div class="map-svg-wrap">
+        <svg id="mapsvg" viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="nodeGrad-poriferos" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#fffdf5"/>
+              <stop offset="100%" stop-color="#f0e8d0"/>
+            </radialGradient>
+            <radialGradient id="nodeGrad-cnidarios" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#f0f8ff"/>
+              <stop offset="100%" stop-color="#dceef8"/>
+            </radialGradient>
+            <radialGradient id="nodeGrad-gusanos" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#f8f3ec"/>
+              <stop offset="100%" stop-color="#e8dccc"/>
+            </radialGradient>
+            <radialGradient id="nodeGrad-moluscos" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#fdf5f0"/>
+              <stop offset="100%" stop-color="#f0ddd0"/>
+            </radialGradient>
+            <radialGradient id="nodeGrad-artropodos" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#fff5f2"/>
+              <stop offset="100%" stop-color="#f5dcd5"/>
+            </radialGradient>
+            <radialGradient id="nodeGrad-equinodermos" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#faf0ff"/>
+              <stop offset="100%" stop-color="#ead5f0"/>
+            </radialGradient>
+          </defs>
+
+          <!-- Líneas radiales del centro a cada nodo (decorativas) -->
+          <line x1="310" y1="258" x2="310" y2="162" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="353" y1="285" x2="431" y2="240" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="267" y1="285" x2="189" y2="240" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="353" y1="335" x2="431" y2="380" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="267" y1="335" x2="189" y2="380" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="310" y1="362" x2="310" y2="458" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+
+          <!-- Líneas de conexión de patrones (ocultas por defecto) -->
+          <!-- simetría radial: cnidarios(483,210) ↔ equinodermos(310,510) -->
+          <line id="conn-sim-1" class="conn-line" x1="483" y1="210" x2="310" y2="510" stroke="#9B4F9E" stroke-width="2" stroke-dasharray="6 4"/>
+          <!-- cuerpo blando: gusanos(137,210) ↔ moluscos(483,410) -->
+          <line id="conn-blando-1" class="conn-line" x1="137" y1="210" x2="483" y2="410" stroke="#8B6B3D" stroke-width="2" stroke-dasharray="6 4"/>
+          <!-- vida acuática: porif(310,110) → cnid(483,210) → equino(310,510) -->
+          <polyline id="conn-acua-1" class="conn-line" points="310,110 483,210 310,510" fill="none" stroke="#7BAFD4" stroke-width="2" stroke-dasharray="5 4"/>
+          <!-- regeneración: equino(310,510) ↔ gusanos(137,210) -->
+          <line id="conn-regen-1" class="conn-line" x1="310" y1="510" x2="137" y2="210" stroke="#9B4F9E" stroke-width="2" stroke-dasharray="8 4"/>
+
+          <!-- Anillos decorativos centrales -->
+          <circle class="center-ring" cx="310" cy="310" r="90" stroke="rgba(245,240,232,0.07)" stroke-width="1"/>
+          <circle cx="310" cy="310" r="70" fill="rgba(245,240,232,0.03)" stroke="rgba(245,240,232,0.09)" stroke-width="1"/>
+          <circle cx="310" cy="310" r="48" fill="rgba(245,240,232,0.04)" stroke="rgba(245,240,232,0.07)" stroke-width="0.5"/>
+
+          <!-- Texto central -->
+          <text x="310" y="298" text-anchor="middle" font-family="DM Serif Display,serif" font-size="14" font-weight="700" fill="rgba(245,240,232,0.75)">6 grupos</text>
+          <text x="310" y="314" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" letter-spacing="3" fill="rgba(245,240,232,0.4)">INCREÍBLES</text>
+          <text x="310" y="330" text-anchor="middle" font-family="DM Serif Display,serif" font-size="8" fill="rgba(245,240,232,0.28)" font-style="italic">miles de formas</text>
+
+          <!-- ══════════════════════════════════
+               NODOS — r=52, posiciones calculadas
+               1 Poríferos    (310, 110)
+               2 Cnidarios    (483, 210)
+               3 Gusanos      (137, 210)
+               4 Moluscos     (483, 410)
+               5 Artrópodos   (137, 410)
+               6 Equinodermos (310, 510)
+          ════════════════════════════════════ -->
+
+          <!-- 1. Poríferos -->
+          <g class="group-node" id="node-poriferos" onclick="openGroup('poriferos')">
+            <circle class="node-circle" cx="310" cy="110" r="52" fill="url(#nodeGrad-poriferos)" stroke="#E8B84B" stroke-width="2.5"/>
+            <text x="310" y="88" text-anchor="middle" font-size="28" dominant-baseline="middle">🧽</text>
+            <text x="310" y="108" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E8B84B" letter-spacing="1">01</text>
+            <text x="310" y="123" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Poríferos</text>
+          </g>
+
+          <!-- 2. Cnidarios -->
+          <g class="group-node" id="node-cnidarios" onclick="openGroup('cnidarios')">
+            <circle class="node-circle" cx="483" cy="210" r="52" fill="url(#nodeGrad-cnidarios)" stroke="#7BAFD4" stroke-width="2.5"/>
+            <text x="483" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪼</text>
+            <text x="483" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#7BAFD4" letter-spacing="1">02</text>
+            <text x="483" y="223" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Cnidarios</text>
+          </g>
+
+          <!-- 3. Gusanos -->
+          <g class="group-node" id="node-gusanos" onclick="openGroup('gusanos')">
+            <circle class="node-circle" cx="137" cy="210" r="52" fill="url(#nodeGrad-gusanos)" stroke="#8B6B3D" stroke-width="2.5"/>
+            <text x="137" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪱</text>
+            <text x="137" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#8B6B3D" letter-spacing="1">03</text>
+            <text x="137" y="223" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Gusanos</text>
+          </g>
+
+          <!-- 4. Moluscos -->
+          <g class="group-node" id="node-moluscos" onclick="openGroup('moluscos')">
+            <circle class="node-circle" cx="483" cy="410" r="52" fill="url(#nodeGrad-moluscos)" stroke="#C17E5A" stroke-width="2.5"/>
+            <text x="483" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🐚</text>
+            <text x="483" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#C17E5A" letter-spacing="1">04</text>
+            <text x="483" y="423" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Moluscos</text>
+          </g>
+
+          <!-- 5. Artrópodos -->
+          <g class="group-node" id="node-artropodos" onclick="openGroup('artropodos')">
+            <circle class="node-circle" cx="137" cy="410" r="52" fill="url(#nodeGrad-artropodos)" stroke="#E05C3A" stroke-width="2.5"/>
+            <text x="137" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🦋</text>
+            <text x="137" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E05C3A" letter-spacing="1">05</text>
+            <text x="137" y="423" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Artrópodos</text>
+          </g>
+
+          <!-- 6. Equinodermos — texto largo: dos líneas -->
+          <g class="group-node" id="node-equinodermos" onclick="openGroup('equinodermos')">
+            <circle class="node-circle" cx="310" cy="510" r="52" fill="url(#nodeGrad-equinodermos)" stroke="#9B4F9E" stroke-width="2.5"/>
+            <text x="310" y="488" text-anchor="middle" font-size="28" dominant-baseline="middle">⭐</text>
+            <text x="310" y="508" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#9B4F9E" letter-spacing="1">06</text>
+            <text x="310" y="522" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#1a1208">Equino-</text>
+            <text x="310" y="535" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#1a1208">dermos</text>
+          </g>
+
+        </svg>
+      </div>
+    </div><!-- /map-frame -->
+
+    <!-- FRANJA ID5 -->
+    <div class="id5-strip">
+      <div class="id5-title">→ ¿Cómo identificarlos en 5 segundos?</div>
+      <div class="id5-grid">
+        <div class="id5-item" onclick="openGroup('poriferos')">
+          <span class="id5-emoji">🧽</span>
+          <span class="id5-pista">¿Esponja llena de agujeros?</span>
+          <span class="id5-nombre" style="background:var(--c-poriferos)">Porífero</span>
+        </div>
+        <div class="id5-item" onclick="openGroup('cnidarios')">
+          <span class="id5-emoji">🪼</span>
+          <span class="id5-pista">¿Tentáculos que pican?</span>
+          <span class="id5-nombre" style="background:var(--c-cnidarios)">Cnidario</span>
+        </div>
+        <div class="id5-item" onclick="openGroup('gusanos')">
+          <span class="id5-emoji">🪱</span>
+          <span class="id5-pista">¿Alargado y sin patas?</span>
+          <span class="id5-nombre" style="background:var(--c-gusanos)">Gusano</span>
+        </div>
+        <div class="id5-item" onclick="openGroup('moluscos')">
+          <span class="id5-emoji">🐚</span>
+          <span class="id5-pista">¿Cuerpo blando, con concha?</span>
+          <span class="id5-nombre" style="background:var(--c-moluscos)">Molusco</span>
+        </div>
+        <div class="id5-item" onclick="openGroup('artropodos')">
+          <span class="id5-emoji">🦋</span>
+          <span class="id5-pista">¿Patas articuladas?</span>
+          <span class="id5-nombre" style="background:var(--c-artropodos)">Artrópodo</span>
+        </div>
+        <div class="id5-item" onclick="openGroup('equinodermos')">
+          <span class="id5-emoji">⭐</span>
+          <span class="id5-pista">¿Parece estrella o erizo?</span>
+          <span class="id5-nombre" style="background:var(--c-equinodermos)">Equino.</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /map-center -->
+
+  <!-- DCHA: HABILIDADES -->
+  <aside class="side-panel">
+    <div class="side-title">Habilidades extrañas</div>
+    <div class="skill-item">
+      <span class="skill-emoji">⚡</span>
+      <div>
+        <div class="skill-name">Cnidocitos</div>
+        <div class="skill-desc">Células urticantes que disparan al roce</div>
+        <div class="skill-badges"><span class="pat-badge" style="background:var(--c-cnidarios)">2</span></div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <span class="skill-emoji">🔁</span>
+      <div>
+        <div class="skill-name">Regeneración</div>
+        <div class="skill-desc">Reconstruyen brazos perdidos</div>
+        <div class="skill-badges">
+          <span class="pat-badge" style="background:var(--c-equinodermos)">6</span>
+          <span class="pat-badge" style="background:var(--c-gusanos)">3</span>
+        </div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <span class="skill-emoji">🦋</span>
+      <div>
+        <div class="skill-name">Metamorfosis</div>
+        <div class="skill-desc">Cambios radicales de forma</div>
+        <div class="skill-badges"><span class="pat-badge" style="background:var(--c-artropodos)">5</span></div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <span class="skill-emoji">🐚</span>
+      <div>
+        <div class="skill-name">Muda</div>
+        <div class="skill-desc">Se desprenden del exoesqueleto</div>
+        <div class="skill-badges"><span class="pat-badge" style="background:var(--c-artropodos)">5</span></div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <span class="skill-emoji">🦶</span>
+      <div>
+        <div class="skill-name">Pies ambulacrales</div>
+        <div class="skill-desc">Sistema hidráulico del mar</div>
+        <div class="skill-badges"><span class="pat-badge" style="background:var(--c-equinodermos)">6</span></div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <span class="skill-emoji">🌊</span>
+      <div>
+        <div class="skill-name">Filtración</div>
+        <div class="skill-desc">Limpian el agua del océano</div>
+        <div class="skill-badges"><span class="pat-badge" style="background:var(--c-poriferos)">1</span></div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <span class="skill-emoji">🧠</span>
+      <div>
+        <div class="skill-name">Inteligencia</div>
+        <div class="skill-desc">Pulpo: abre frascos, laberintos</div>
+        <div class="skill-badges"><span class="pat-badge" style="background:var(--c-moluscos)">4</span></div>
+      </div>
+    </div>
+  </aside>
+
+</div><!-- /main-layout -->
+
+<!-- OVERLAY + PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="dp-band" id="dpBand"></div>
+  <div class="dp-header">
+    <div>
+      <div class="dp-emoji" id="dpEmoji"></div>
+      <div class="dp-nombre" id="dpNombre"></div>
+    </div>
+    <button class="dp-close" onclick="closePanel()">cerrar ✕</button>
+  </div>
+  <div class="dp-body" id="dpBody"></div>
+  <div class="dp-footer">
+    <a class="dp-cta" id="dpCta" href="tarjetas.html">Ver tarjetas de este grupo →</a>
+  </div>
+</div>
+
+<script>
+const GRUPOS = {
+  poriferos:    { nombre:"Poríferos",    emoji:"🧽", color:"#E8B84B",
+    rasgos:["Filtran agua por los poros","Viven fijos, no se desplazan","Sin tejidos ni órganos verdaderos","Sin simetría"],
+    superpoder:"Filtración: procesan enormes cantidades de agua para comer",
+    dato_raro:"No tienen cerebro, pero llevan filtrando océanos desde hace 600 millones de años.",
+    ejemplos:["esponja de mar","esponja barril","verónica"],
+    funciones:{ nutricion:"Filtran agua por los poros. Coanocitos atrapan partículas. Respiran por difusión.", relacion:"Sin sistema nervioso ni órganos de los sentidos.", reproduccion:"Asexual por gemación. Sexual con fecundación interna." }
+  },
+  cnidarios:    { nombre:"Cnidarios",    emoji:"🪼", color:"#7BAFD4",
+    rasgos:["Tentáculos con cnidocitos urticantes","Simetría radial","Formas pólipo y medusa","Todos acuáticos"],
+    superpoder:"Cnidocitos: células que disparan un aguijón urticante al mínimo roce",
+    dato_raro:"El coral no es una roca: son colonias de pólipos que construyen arrecifes durante miles de años.",
+    ejemplos:["medusa común","anémona","coral rojo"],
+    funciones:{ nutricion:"Carnívoros. Cazan con tentáculos urticantes. Cavidad digestiva con una sola abertura.", relacion:"Red nerviosa no centralizada. Órganos sencillos.", reproduccion:"Asexual (gemación) o sexual. Reproducción alternante." }
+  },
+  gusanos:      { nombre:"Gusanos",      emoji:"🪱", color:"#8B6B3D",
+    rasgos:["Cuerpo blando, largo, sin extremidades articuladas","Simetría bilateral","Respiran por la piel","Algunos regeneran partes"],
+    superpoder:"Adaptación extrema: viven en suelo, mar, agua dulce y dentro de otros animales",
+    dato_raro:"La lombriz de tierra tiene cinco pares de vasos que funcionan como corazones.",
+    ejemplos:["lombriz de tierra","sanguijuela","tenia","anisakis"],
+    funciones:{ nutricion:"Tubo digestivo completo. Los hay detritívoros, carnívoros y parásitos.", relacion:"Cerebro simple y cordón nervioso.", reproduccion:"Muchos hermafroditas. Algunos con reproducción por fragmentación." }
+  },
+  moluscos:     { nombre:"Moluscos",     emoji:"🐚", color:"#C17E5A",
+    rasgos:["Cuerpo blando","Pie muscular para moverse","Muchos tienen concha","Simetría bilateral"],
+    superpoder:"Diversidad extrema: desde la lapa fija hasta el pulpo que abre frascos",
+    dato_raro:"Los pulpos tienen tres corazones, sangre azul y son los invertebrados más inteligentes.",
+    ejemplos:["caracol","pulpo","calamar","mejillón"],
+    funciones:{ nutricion:"Carnívoros, herbívoros o filtradores. Branquias o pulmones. Circulación abierta.", relacion:"Órganos para olfato, tacto, gusto. Cefalópodos con ojos avanzados.", reproduccion:"Siempre sexual. Ovíparos. Muchos sexos separados." }
+  },
+  artropodos:   { nombre:"Artrópodos",   emoji:"🦋", color:"#E05C3A",
+    rasgos:["Exoesqueleto de quitina","Patas articuladas","Cuerpo segmentado","Hacen muda para crecer"],
+    superpoder:"Metamorfosis completa: se transforman radicalmente durante su desarrollo",
+    dato_raro:"Hay más especies de insectos que de todos los demás animales juntos.",
+    ejemplos:["mariposa","araña","hormiga","cangrejo"],
+    funciones:{ nutricion:"Muy variada. Tráqueas (insectos) o branquias (acuáticos).", relacion:"Sistema nervioso complejo. Ojos simples o compuestos.", reproduccion:"Sexual, ovíparos. Metamorfosis incompleta o completa." }
+  },
+  equinodermos: { nombre:"Equinodermos", emoji:"⭐", color:"#9B4F9E",
+    rasgos:["Pies ambulacrales hidráulicos","Simetría radial en adultos","Esqueleto interno de placas","Regeneran brazos perdidos"],
+    superpoder:"Regeneración: pueden perder un brazo entero y reconstruirlo",
+    dato_raro:"Algunas estrellas de mar sacan el estómago fuera del cuerpo para digerir sus presas.",
+    ejemplos:["estrella de mar","erizo de mar","pepino de mar"],
+    funciones:{ nutricion:"Sistema ambulacral actúa como circulatorio, respiratorio y excretor.", relacion:"Sistema nervioso radial, sin cerebro.", reproduccion:"Sexual, fecundación externa. Las estrellas también se reproducen por fragmentación." }
+  }
+};
+
+const CONN_MAP = {
+  simetria_radial: ['conn-sim-1'],
+  cuerpo_blando:   ['conn-blando-1'],
+  vida_acuatica:   ['conn-acua-1'],
+  regeneracion:    ['conn-regen-1'],
+  exoesqueleto:    [],
+  filtradores:     [],
+  mudan:           []
+};
+
+let activeNode = null, activePattern = null;
+
+function openGroup(id) {
+  const g = GRUPOS[id];
+  if (!g) return;
+  document.getElementById('dpBand').style.background = g.color;
+  document.getElementById('dpEmoji').textContent = g.emoji;
+  document.getElementById('dpNombre').textContent = g.nombre;
+  document.getElementById('dpNombre').style.color = g.color;
+  document.getElementById('dpBody').innerHTML = `
+    <div><div class="dp-section-label">Rasgos clave</div>
+    <ul class="dp-rasgos">${g.rasgos.map(r=>`<li><span class="dp-dot" style="background:${g.color}"></span><span>${r}</span></li>`).join('')}</ul></div>
+    <div class="dp-superpoder" style="border-color:${g.color}">
+      <div class="dp-sp-label">⚡ Superpoder</div>
+      <div class="dp-sp-text">${g.superpoder}</div>
+    </div>
+    <div><div class="dp-section-label">Funciones vitales</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div><span class="vs-pill" style="background:#c0533a">Nutrición</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.nutricion}</div></div>
+      <div><span class="vs-pill" style="background:#3a7ac0">Relación</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.relacion}</div></div>
+      <div><span class="vs-pill" style="background:#3a9c5a">Reproducción</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.reproduccion}</div></div>
+    </div></div>
+    <div class="dp-dato-raro">💡 ${g.dato_raro}</div>
+    <div><div class="dp-section-label">Ejemplos</div>
+    <div class="dp-ejemplos">${g.ejemplos.map(e=>`<span class="dp-ejemplo-tag" style="border-color:${g.color};color:var(--ink-soft)">${e}</span>`).join('')}</div></div>`;
+  document.getElementById('dpCta').style.background = g.color;
+  document.getElementById('dpCta').href = `tarjetas.html?grupo=${id}`;
+  if (activeNode) document.getElementById('node-'+activeNode)?.classList.remove('lit');
+  activeNode = id;
+  document.getElementById('node-'+id)?.classList.add('lit');
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function closePanel() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+  if (activeNode) { document.getElementById('node-'+activeNode)?.classList.remove('lit'); activeNode = null; }
+}
+
+function highlightPattern(pid, grupos) {
+  if (activePattern === pid) { clearPattern(); return; }
+  clearPattern();
+  activePattern = pid;
+  document.querySelectorAll('.pattern-item').forEach(el => el.classList.toggle('active', el.dataset.pattern === pid));
+  Object.keys(GRUPOS).forEach(id => {
+    const n = document.getElementById('node-'+id);
+    if (!n) return;
+    if (grupos.includes(id)) { n.classList.add('lit'); n.classList.remove('dimmed'); }
+    else { n.classList.add('dimmed'); n.classList.remove('lit'); }
+  });
+  (CONN_MAP[pid]||[]).forEach(lid => document.getElementById(lid)?.classList.add('visible'));
+}
+
+function clearPattern() {
+  activePattern = null;
+  document.querySelectorAll('.pattern-item').forEach(el => el.classList.remove('active'));
+  Object.keys(GRUPOS).forEach(id => {
+    const n = document.getElementById('node-'+id);
+    if (n) { n.classList.remove('lit','dimmed'); n.style.opacity=''; }
+  });
+  document.querySelectorAll('.conn-line').forEach(el => el.classList.remove('visible'));
+}
+</script>
+<footer>
+  <div class="footer-text">
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>
+</footer>
+
+</body>
+</html>

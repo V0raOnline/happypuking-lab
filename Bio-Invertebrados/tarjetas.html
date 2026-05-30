@@ -1,0 +1,1165 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>happypuking-lab — Invertebrados</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f5f0e8;
+    --paper-dark: #e8e0cc;
+    --ink: #1a1208;
+    --ink-soft: #4a3f2f;
+    --ink-faint: #9a8f7a;
+    --accent-global: #2d5a3d;
+
+    /* colores por grupo */
+    --c-poriferos: #E8B84B;
+    --c-cnidarios: #7BAFD4;
+    --c-gusanos: #8B6B3D;
+    --c-moluscos: #C17E5A;
+    --c-artropodos: #E05C3A;
+    --c-equinodermos: #9B4F9E;
+
+    --card-w: 380px;
+    --card-h: 520px;
+    --radius: 6px;
+    --shadow: 0 4px 24px rgba(26,18,8,0.18), 0 1px 4px rgba(26,18,8,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #2a2318;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(70,55,30,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(45,90,61,0.15) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    padding: 0 0 4rem;
+  }
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+  /* ── CABECERA ── */
+  header {
+    padding: 0.55rem 1.4rem 0.6rem;
+    border-bottom: 1px solid rgba(245,240,232,0.08);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.35rem;
+  }
+
+  .header-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.28);
+  }
+
+  .header-tagline span { margin: 0 0.4rem; opacity: 0.4; }
+
+  .btn-inicio {
+    display: inline-block;
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 0.88rem;
+    padding: 0.35rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #D946EF;
+    color: rgba(245,240,232,0.9);
+    background: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    position: absolute;
+    right: 0;
+  }
+
+  .btn-inicio:hover { background: rgba(217,70,239,0.08); }
+
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.02em;
+    color: rgba(245,240,232,0.95);
+    margin-bottom: 0.4rem;
+    line-height: 1.1;
+  }
+
+  .header-subtitle {
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.28);
+    margin-bottom: 0.8rem;
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.6rem;
+  }
+
+  .header-nav-btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.4rem;
+    border-radius: 100px;
+    border: 2px solid rgba(245,240,232,0.15);
+    background: transparent;
+    color: rgba(245,240,232,0.4);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .header-nav-btn:hover {
+    border-color: rgba(245,240,232,0.4);
+    color: rgba(245,240,232,0.8);
+  }
+
+  .header-nav-btn.active {
+    border-color: #D946EF;
+    color: #D946EF;
+    background: rgba(217,70,239,0.08);
+    box-shadow: 0 0 16px rgba(217,70,239,0.2);
+  }
+
+  footer {
+    border-top: 1px solid rgba(245,240,232,0.07);
+    padding: 1.4rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin-top: 2rem;
+  }
+
+  .footer-text {
+    font-size: 0.88rem;
+    color: rgba(245,240,232,0.3);
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .footer-text strong {
+    color: rgba(245,240,232,0.5);
+    font-weight: 900;
+  }
+
+  /* ── FILTROS ── */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    border: 1px solid rgba(245,240,232,0.2);
+    background: transparent;
+    color: rgba(245,240,232,0.5);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover {
+    border-color: rgba(245,240,232,0.5);
+    color: rgba(245,240,232,0.85);
+  }
+  .filter-btn.active {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
+  }
+  .filter-btn[data-group="poriferos"].active  { background: var(--c-poriferos); border-color: var(--c-poriferos); }
+  .filter-btn[data-group="cnidarios"].active  { background: var(--c-cnidarios); border-color: var(--c-cnidarios); }
+  .filter-btn[data-group="gusanos"].active    { background: var(--c-gusanos); border-color: var(--c-gusanos); color: var(--paper); }
+  .filter-btn[data-group="moluscos"].active   { background: var(--c-moluscos); border-color: var(--c-moluscos); }
+  .filter-btn[data-group="artropodos"].active { background: var(--c-artropodos); border-color: var(--c-artropodos); }
+  .filter-btn[data-group="equinodermos"].active { background: var(--c-equinodermos); border-color: var(--c-equinodermos); color: var(--paper); }
+
+  /* ── SELECTOR DE MODO ── */
+  .mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-bottom: 2.5rem;
+  }
+  .mode-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border: 1px solid rgba(245,240,232,0.15);
+    background: rgba(245,240,232,0.05);
+    color: rgba(245,240,232,0.4);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .mode-btn:hover { color: rgba(245,240,232,0.7); border-color: rgba(245,240,232,0.3); }
+  .mode-btn.active {
+    background: rgba(245,240,232,0.12);
+    color: var(--paper);
+    border-color: rgba(245,240,232,0.4);
+  }
+
+  /* ── GRID DE TARJETAS ── */
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* ── TARJETA BASE ── */
+  .card-wrap {
+    perspective: 1200px;
+    width: var(--card-w);
+    height: var(--card-h);
+    cursor: pointer;
+    flex-shrink: 0;
+    animation: cardIn 0.4s both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+  }
+  .card-wrap.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-back {
+    transform: rotateY(180deg);
+  }
+
+  /* ── BANDA DE COLOR SUPERIOR ── */
+  .card-band {
+    height: 7px;
+    flex-shrink: 0;
+  }
+
+  /* ── NÚMERO Y GRUPO (esquina) ── */
+  .card-meta {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+  .card-type-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+    opacity: 0.5;
+  }
+
+  /* ── CARA FRONTAL — FIRMA ── */
+  .firma-face {
+    padding: 20px 22px 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .firma-emoji {
+    font-size: 3.2rem;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .firma-nombre {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .firma-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+  }
+
+  .firma-rasgos {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 16px;
+    flex: 1;
+  }
+  .firma-rasgos li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--ink-soft);
+  }
+  .rasgo-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .firma-id5 {
+    background: var(--paper-dark);
+    border-radius: 4px;
+    padding: 9px 12px;
+    margin-bottom: 12px;
+  }
+  .id5-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .id5-text {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .firma-superpoder {
+    border-left: 3px solid;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+  .superpoder-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+  .superpoder-text {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+
+  .card-flip-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: right;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  /* ── CARA TRASERA — FUNCIONES VITALES ── */
+  .vital-face {
+    padding: 20px 22px 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .vital-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .vital-emoji { font-size: 1.4rem; }
+  .vital-nombre {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .vital-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .vital-section {}
+  .vs-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    padding: 2px 6px;
+    display: inline-block;
+    border-radius: 2px;
+    color: var(--paper);
+  }
+  .vs-label.nutricion  { background: #c0533a; }
+  .vs-label.relacion   { background: #3a7ac0; }
+  .vs-label.reproduccion { background: #3a9c5a; }
+  .vs-text {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  .dato-raro-back {
+    background: var(--paper-dark);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 10px;
+  }
+  .dato-raro-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+  .dato-raro-text {
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* ── MODO DETECTIVE ── */
+  .detective-face {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+  .det-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+  .det-pista {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--ink);
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .det-pregunta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-align: center;
+    padding: 12px 0 8px;
+    border-top: 1px dashed var(--ink-faint);
+    margin-top: 12px;
+  }
+
+  /* cara trasera detective — respuesta */
+  .det-respuesta-face {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+  .det-resp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .det-resp-answer {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 8px 0 4px;
+  }
+  .det-resp-emoji { font-size: 3rem; margin: 8px 0; }
+  .det-resp-pista-recap {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    line-height: 1.5;
+    flex: 1;
+    border-top: 1px dashed var(--ink-faint);
+    padding-top: 12px;
+    margin-top: 8px;
+  }
+
+  /* ── MODO INTRUSO ── */
+  .intruso-face {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .intruso-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .intruso-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+  .intruso-desc {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--ink);
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .intruso-prompt {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-align: center;
+    padding: 12px 0 6px;
+    border-top: 1px dashed var(--ink-faint);
+    margin-top: 12px;
+  }
+
+  /* cara trasera intruso */
+  .intruso-rev-face {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 12px;
+  }
+  .intruso-veredicto {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .intruso-veredicto.es-error { color: #c0392b; }
+  .intruso-veredicto.no-error { color: #27ae60; }
+  .intruso-error-text {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    flex: 1;
+  }
+  .intruso-grupo-correcto {
+    background: var(--paper-dark);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.88rem;
+  }
+  .igc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+
+  /* ── MODO CARTA PODER ── */
+  .poder-face {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+  }
+  .poder-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .poder-emoji { font-size: 2rem; }
+  .poder-nombre {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .poder-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .poder-stat {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .ps-icon {
+    font-size: 1rem;
+    width: 20px;
+    flex-shrink: 0;
+  }
+  .ps-content {}
+  .ps-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 2px;
+  }
+  .ps-text {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+  .poder-rareza {
+    background: var(--paper-dark);
+    border-radius: 4px;
+    padding: 8px 12px;
+    border-left: 3px solid;
+  }
+  .pr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+  .pr-text {
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  /* ── ESTADO VACÍO ── */
+  .empty-state {
+    text-align: center;
+    color: rgba(245,240,232,0.25);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.1em;
+    padding: 4rem 0;
+    width: 100%;
+  }
+
+  /* ── LÍNEA DIVISORIA DECORATIVA ── */
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: var(--ink-faint);
+    margin: 8px 0;
+    opacity: 0.4;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-tagline">
+      HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS
+    </div>
+    <a class="btn-inicio" href="./../index.html">← happypuking-lab</a>
+  </div>
+  <div class="header-title">Invertebrados</div>
+  <div class="header-subtitle">Unidad 7 · Biología ESO</div>
+  <div class="header-nav">
+    <a class="header-nav-btn" href="mapa.html">🗺 Mapa</a>
+    <a class="header-nav-btn active" href="tarjetas.html">🃏 Tarjetas</a>
+  </div>
+</header>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-group="all">Todos</button>
+  <button class="filter-btn" data-group="poriferos">🧽 Poríferos</button>
+  <button class="filter-btn" data-group="cnidarios">🪼 Cnidarios</button>
+  <button class="filter-btn" data-group="gusanos">🪱 Gusanos</button>
+  <button class="filter-btn" data-group="moluscos">🐚 Moluscos</button>
+  <button class="filter-btn" data-group="artropodos">🦋 Artrópodos</button>
+  <button class="filter-btn" data-group="equinodermos">⭐ Equinodermos</button>
+</div>
+
+<div class="mode-selector" id="modes">
+  <button class="mode-btn active" data-mode="firma">Firma</button>
+  <button class="mode-btn" data-mode="detective">Detective</button>
+  <button class="mode-btn" data-mode="intruso">Intruso</button>
+  <button class="mode-btn" data-mode="poder">Carta Poder</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const DATA = {
+  grupos: [
+    {
+      id: "poriferos", numero: 1, nombre: "Poríferos", emoji: "🧽", color: "#E8B84B",
+      firma: {
+        rasgos_clave: ["Filtran agua por los poros","Viven fijos, no se desplazan","Sin tejidos ni órganos verdaderos","Sin simetría"],
+        identificacion_rapida: "¿Parece una esponja llena de agujeros?",
+        superpoder: "Filtración: procesan enormes cantidades de agua para comer",
+        dato_raro: "No tienen cerebro, pero llevan filtrando océanos desde hace 600 millones de años"
+      },
+      funciones_vitales: {
+        nutricion: "Filtran el agua por los poros. Las células internas (coanocitos) atrapan las partículas de alimento. Respiran por difusión.",
+        relacion: "Sin sistema nervioso ni órganos de los sentidos. Los animales más sencillos del reino animal.",
+        reproduccion: "Asexual por gemación. Sexual con fecundación interna: se forma una larva que origina una nueva esponja."
+      },
+      tarjetas_detective: [
+        { id:"pd_01", pista:"Vivo fijo en el fondo del mar. Tengo miles de agujeros por donde entra el agua. No tengo cerebro ni órganos.", respuesta:"Porífero" },
+        { id:"pd_02", pista:"Me alimento sin moverme. El agua entra por mis poros y mis células internas atrapan las partículas de comida.", respuesta:"Porífero" }
+      ],
+      carta_poder: { ataque:"Coanocitos: atrapan bacterias y partículas del agua", defensa:"Espinas de sílice o carbonato cálcico", movimiento:"Ninguno — viven fijos", rareza:"Llevan 600 millones de años sin cambiar. La evolución los vio y dijo: perfecto, no tocar." },
+      intrusos: [
+        { id:"pi_01", descripcion:"Tengo poros por todo el cuerpo y me desplazo lentamente por el fondo marino.", error:"Los poríferos no se desplazan. Viven fijos al sustrato.", grupo_correcto: null },
+        { id:"pi_02", descripcion:"Soy un animal marino, vivo fijo y tengo tentáculos urticantes.", error:"Los tentáculos urticantes son de los cnidarios, no de los poríferos.", grupo_correcto:"cnidarios" }
+      ]
+    },
+    {
+      id: "cnidarios", numero: 2, nombre: "Cnidarios", emoji: "🪼", color: "#7BAFD4",
+      firma: {
+        rasgos_clave: ["Tentáculos con cnidocitos (células urticantes)","Simetría radial","Dos formas: pólipo (fijo) y medusa (libre)","Todos acuáticos"],
+        identificacion_rapida: "¿Tiene tentáculos que pican?",
+        superpoder: "Cnidocitos: células que disparan un aguijón urticante al mínimo roce",
+        dato_raro: "El coral no es una roca: son colonias de pólipos que construyen arrecifes durante miles de años"
+      },
+      funciones_vitales: {
+        nutricion: "Carnívoros. Cazan con los tentáculos urticantes. Las presas pasan a la cavidad digestiva. Respiran por difusión.",
+        relacion: "Sistema nervioso no centralizado: red de neuronas por todo el cuerpo. Órganos de los sentidos muy sencillos.",
+        reproduccion: "Asexual (gemación) o sexual (fecundación externa). Muchos alternan ambas formas: reproducción alternante."
+      },
+      tarjetas_detective: [
+        { id:"cd_01", pista:"Tengo tentáculos que pican y puedo vivir fijo o flotando libremente según mi fase de vida.", respuesta:"Cnidario" },
+        { id:"cd_02", pista:"Soy una colonia de animales que construye estructuras duras bajo el mar. Sirvo de refugio para miles de especies.", respuesta:"Cnidario (coral)" }
+      ],
+      carta_poder: { ataque:"Cnidocitos: aguijón urticante para paralizar presas", defensa:"Esqueleto calcáreo en los corales", movimiento:"Medusa: flotación pasiva. Pólipo: inmóvil.", rareza:"Pueden ser pólipo Y medusa en distintas fases de su vida. Dos animales en uno." },
+      intrusos: [
+        { id:"ci_01", descripcion:"Tengo tentáculos y simetría radial y puedo regenerar mis brazos si los pierdo.", error:"La regeneración de brazos completos es de los equinodermos. Los cnidarios no regeneran partes del cuerpo de esa forma.", grupo_correcto:"equinodermos" },
+        { id:"ci_02", descripcion:"Tengo tentáculos urticantes y vivo en agua dulce.", error: null, nota:"¡No es trampa! La hidra es un cnidario de agua dulce. Este es válido.", grupo_correcto:"cnidarios" }
+      ]
+    },
+    {
+      id: "gusanos", numero: 3, nombre: "Gusanos", emoji: "🪱", color: "#8B6B3D",
+      firma: {
+        rasgos_clave: ["Cuerpo blando, largo, sin extremidades articuladas","Simetría bilateral","Muchos respiran por la piel","Algunos regeneran partes del cuerpo"],
+        identificacion_rapida: "¿Es alargado, blando y sin patas?",
+        superpoder: "Adaptación extrema: hay gusanos en el suelo, en el mar, en agua dulce y dentro de otros animales",
+        dato_raro: "La lombriz de tierra tiene cinco pares de vasos que funcionan como corazones"
+      },
+      funciones_vitales: {
+        nutricion: "Tubo digestivo completo. Los hay detritívoros, carnívoros y parásitos. Respiración cutánea (terrestres) o por branquias (marinos).",
+        relacion: "Sistema nervioso con pequeño cerebro y cordón nervioso. Órganos de los sentidos para tacto, gusto y visión.",
+        reproduccion: "Muchos son hermafroditas (lombriz) pero se aparean para reproducirse. Algunos tienen reproducción asexual por fragmentación."
+      },
+      tarjetas_detective: [
+        { id:"gd_01", pista:"Vivo bajo tierra. Tengo el cuerpo dividido en anillos. Cuando llueve salgo a la superficie. No tengo patas.", respuesta:"Gusano — anélido (lombriz de tierra)" },
+        { id:"gd_02", pista:"Vivo dentro de los intestinos de otros animales. Tengo el cuerpo plano dividido en segmentos que se van desprendiendo.", respuesta:"Gusano — platelminto (tenia)" }
+      ],
+      carta_poder: { ataque:"Parásitos internos: algunos invaden órganos de otros animales", defensa:"Cuerpo flexible que se adapta a cualquier espacio", movimiento:"Contracción muscular de segmentos", rareza:"Algunos se reproducen por fragmentación: si los cortas, pueden generar nuevos individuos" },
+      intrusos: [
+        { id:"gi_01", descripcion:"Tengo el cuerpo blando y alargado, sin patas, y vivo dentro de una concha espiral.", error:"La concha espiral es de los gasterópodos (moluscos). Los gusanos no tienen concha.", grupo_correcto:"moluscos" },
+        { id:"gi_02", descripcion:"Soy alargado, blando y sin patas articuladas. Tengo exoesqueleto.", error:"El exoesqueleto es de los artrópodos. Los gusanos no tienen esqueleto externo duro.", grupo_correcto:"artropodos" }
+      ]
+    },
+    {
+      id: "moluscos", numero: 4, nombre: "Moluscos", emoji: "🐚", color: "#C17E5A",
+      firma: {
+        rasgos_clave: ["Cuerpo blando","Pie muscular para moverse","Muchos tienen concha (una o dos valvas)","Simetría bilateral"],
+        identificacion_rapida: "¿Cuerpo blando con concha (a veces)?",
+        superpoder: "Diversidad extrema: desde la lapa pegada a una roca hasta el pulpo que abre frascos",
+        dato_raro: "Los pulpos tienen tres corazones, sangre azul y son los invertebrados más inteligentes conocidos"
+      },
+      funciones_vitales: {
+        nutricion: "Variada: carnívoros, herbívoros o filtradores. Los acuáticos respiran por branquias, los terrestres por pulmones. Sistema circulatorio abierto.",
+        relacion: "Órganos sensoriales para olfato, tacto y gusto. Los cefalópodos (pulpos, calamares) tienen ojos muy desarrollados.",
+        reproduccion: "Siempre sexual. Todos ovíparos. Muchos tienen sexos separados; algunos son hermafroditas como el caracol terrestre."
+      },
+      tarjetas_detective: [
+        { id:"md_01", pista:"Tengo ocho tentáculos con ventosas. Soy muy inteligente. No tengo concha. Puedo cambiar de color.", respuesta:"Molusco — cefalópodo (pulpo)" },
+        { id:"md_02", pista:"Vivo pegado a las rocas. Tengo dos conchas que cierro cuando hay peligro. Me alimento filtrando el agua.", respuesta:"Molusco — bivalvo (mejillón o almeja)" },
+        { id:"md_03", pista:"Me desplazo dejando un rastro húmedo. Llevo mi casa a cuestas en espiral.", respuesta:"Molusco — gasterópodo (caracol)" }
+      ],
+      carta_poder: { ataque:"Cefalópodos: tentáculos con ventosas, pico córneo, tinta de escape", defensa:"Concha calcárea (gasterópodos y bivalvos). Cierre hermético de valvas.", movimiento:"Pie muscular (gasterópodos). Propulsión a chorro de agua (cefalópodos).", rareza:"El pulpo puede resolver laberintos, abrir tarros y cambiar de textura. Tiene neuronas en los tentáculos." },
+      intrusos: [
+        { id:"mi_01", descripcion:"Tengo cuerpo blando, tentáculos y simetría radial. Vivo en el mar.", error:"La simetría radial con tentáculos urticantes describe a los cnidarios. Los moluscos tienen simetría bilateral.", grupo_correcto:"cnidarios" },
+        { id:"mi_02", descripcion:"Tengo concha dura y patas articuladas para moverme.", error:"Las patas articuladas son de los artrópodos. Los moluscos tienen pie muscular, no patas articuladas.", grupo_correcto:"artropodos" }
+      ]
+    },
+    {
+      id: "artropodos", numero: 5, nombre: "Artrópodos", emoji: "🦋", color: "#E05C3A",
+      firma: {
+        rasgos_clave: ["Exoesqueleto de quitina (armadura externa)","Patas articuladas","Cuerpo segmentado (cabeza, tórax, abdomen)","Hacen muda para crecer"],
+        identificacion_rapida: "¿Patas articuladas y cuerpo con segmentos?",
+        superpoder: "Metamorfosis completa: el animal se transforma radicalmente durante su desarrollo",
+        dato_raro: "Hay más especies de insectos que de todos los demás animales juntos. El grupo más diverso del planeta."
+      },
+      funciones_vitales: {
+        nutricion: "Muy variada. Boca con mandíbula. Terrestres respiran por tráqueas o pulmones. Acuáticos por branquias. Sistema circulatorio abierto.",
+        relacion: "Sistema nervioso complejo con cerebro. Órganos sensoriales bien desarrollados. Pueden tener ojos simples o compuestos.",
+        reproduccion: "Sexual y ovíparos. Las larvas hacen muda cambiando el exoesqueleto hasta convertirse en adultos. Metamorfosis incompleta o completa."
+      },
+      tarjetas_detective: [
+        { id:"ad_01", pista:"Tengo seis patas, tres partes en el cuerpo y dos antenas. La mayoría de mis parientes tienen alas.", respuesta:"Artrópodo — insecto" },
+        { id:"ad_02", pista:"Tengo ocho patas, dos partes en el cuerpo y no tengo antenas. Produzco seda.", respuesta:"Artrópodo — arácnido (araña)" },
+        { id:"ad_03", pista:"De pequeño era una oruga que comía hojas. Ahora tengo alas de colores.", respuesta:"Artrópodo — insecto (mariposa). Metamorfosis completa." }
+      ],
+      carta_poder: { ataque:"Quelíceros (arácnidos), mandíbulas (insectos), pinzas (crustáceos)", defensa:"Exoesqueleto de quitina: armadura natural. Veneno en escorpiones y algunas arañas.", movimiento:"Vuelo (insectos), nado (crustáceos), trepa (arácnidos)", rareza:"Metamorfosis completa: el animal se disuelve parcialmente dentro de la crisálida y se reconstruye como adulto. Biología que parece ciencia ficción." },
+      intrusos: [
+        { id:"ai_01", descripcion:"Tengo exoesqueleto duro y cuerpo segmentado, y puedo regenerar mis patas si las pierdo.", error:"La regeneración de extremidades es de los equinodermos, no de los artrópodos.", grupo_correcto:"equinodermos" },
+        { id:"ai_02", descripcion:"Tengo seis patas articuladas y cuerpo blando sin armadura.", error:"Los artrópodos tienen exoesqueleto duro por definición. Sin él, no puede ser un artrópodo.", grupo_correcto: null }
+      ]
+    },
+    {
+      id: "equinodermos", numero: 6, nombre: "Equinodermos", emoji: "⭐", color: "#9B4F9E",
+      firma: {
+        rasgos_clave: ["Pies ambulacrales (sistema hidráulico para moverse)","Simetría radial en adultos","Esqueleto interno de placas rígidas","Regeneración: reconstruyen brazos perdidos"],
+        identificacion_rapida: "¿Parece estrella o erizo de mar?",
+        superpoder: "Regeneración: pueden perder un brazo entero y reconstruirlo",
+        dato_raro: "Algunas estrellas de mar sacan el estómago fuera del cuerpo para digerir a sus presas desde el exterior"
+      },
+      funciones_vitales: {
+        nutricion: "Variada: carnívoros, herbívoros, descomponedores o filtradores. El sistema ambulacral actúa como sistema circulatorio, respiratorio y excretor a la vez.",
+        relacion: "Sistema nervioso con simetría radial, sin cerebro. Órganos de los sentidos poco desarrollados. Se desplazan mediante pies ambulacrales.",
+        reproduccion: "Sexual con fecundación externa. Ovíparos, algunos hermafroditas. Las estrellas de mar también se reproducen asexualmente por fragmentación."
+      },
+      tarjetas_detective: [
+        { id:"ed_01", pista:"Tengo cinco brazos y si pierdo uno, me crece otro. Vivo en el mar y no tengo cerebro.", respuesta:"Equinodermo — estrella de mar" },
+        { id:"ed_02", pista:"Tengo forma redondeada llena de púas. Me muevo muy despacio por el fondo del mar con pequeños tubitos.", respuesta:"Equinodermo — erizo de mar" }
+      ],
+      carta_poder: { ataque:"Estómago exteriorizable: la estrella de mar saca el estómago para digerir moluscos desde fuera", defensa:"Púas (erizos). Esqueleto interno de placas duras. Algunos expulsan sus vísceras como defensa.", movimiento:"Pies ambulacrales: ventosas hidráulicas lentas pero muy precisas", rareza:"Regeneración total: algunas especies se reconstruyen a partir de un único brazo con un trozo del disco central" },
+      intrusos: [
+        { id:"ei_01", descripcion:"Tengo simetría radial, tentáculos que pican y vivo en el mar.", error:"La simetría radial con tentáculos urticantes es de los cnidarios. Los equinodermos tienen simetría radial pero con pies ambulacrales, no cnidocitos.", grupo_correcto:"cnidarios" },
+        { id:"ei_02", descripcion:"Tengo esqueleto interno de placas y puedo regenerar partes del cuerpo. Vivo en tierra.", error:"Todos los equinodermos son acuáticos. No existe ningún equinodermo terrestre.", grupo_correcto: null }
+      ]
+    }
+  ]
+};
+
+let currentGroup = 'all';
+let currentMode = 'firma';
+
+function getColor(id) {
+  const map = {
+    poriferos: '#E8B84B', cnidarios: '#7BAFD4', gusanos: '#8B6B3D',
+    moluscos: '#C17E5A', artropodos: '#E05C3A', equinodermos: '#9B4F9E'
+  };
+  return map[id] || '#888';
+}
+
+function makeFirmaCard(g) {
+  const color = g.color;
+  return `
+    <div class="card-face firma-face">
+      <div class="card-band" style="background:${color}"></div>
+      <div class="card-meta">
+        <span class="card-num">#0${g.numero}</span>
+        <span class="card-type-badge" style="color:${color}">Firma</span>
+      </div>
+      <div class="firma-emoji">${g.emoji}</div>
+      <div class="firma-nombre" style="color:${color}">${g.nombre}</div>
+      <div class="firma-id">Invertebrado · Grupo ${g.numero}</div>
+      <ul class="firma-rasgos">
+        ${g.firma.rasgos_clave.map(r => `
+          <li>
+            <span class="rasgo-dot" style="background:${color}"></span>
+            <span>${r}</span>
+          </li>`).join('')}
+      </ul>
+      <div class="firma-id5">
+        <div class="id5-label">¿Cómo lo identifico?</div>
+        <div class="id5-text">${g.firma.identificacion_rapida}</div>
+      </div>
+      <div class="firma-superpoder" style="border-color:${color}">
+        <div class="superpoder-label">Superpoder</div>
+        <div class="superpoder-text">${g.firma.superpoder}</div>
+      </div>
+      <div class="card-flip-hint">← voltear para funciones vitales</div>
+    </div>
+    <div class="card-face card-back vital-face">
+      <div class="card-band" style="background:${color}"></div>
+      <div class="vital-header">
+        <span class="vital-emoji">${g.emoji}</span>
+        <span class="vital-nombre" style="color:${color}">${g.nombre}</span>
+      </div>
+      <div class="vital-sections">
+        <div class="vital-section">
+          <div class="vs-label nutricion">Nutrición</div>
+          <div class="vs-text">${g.funciones_vitales.nutricion}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="vital-section">
+          <div class="vs-label relacion">Relación</div>
+          <div class="vs-text">${g.funciones_vitales.relacion}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="vital-section">
+          <div class="vs-label reproduccion">Reproducción</div>
+          <div class="vs-text">${g.funciones_vitales.reproduccion}</div>
+        </div>
+      </div>
+      <div class="dato-raro-back">
+        <div class="dato-raro-label">💡 Dato raro</div>
+        <div class="dato-raro-text">${g.firma.dato_raro}</div>
+      </div>
+    </div>`;
+}
+
+function makeDetectiveCards(g) {
+  const color = g.color;
+  return g.tarjetas_detective.map(t => `
+    <div class="card-face detective-face">
+      <div class="card-band" style="background:${color}"></div>
+      <div class="det-header">🔍 Modo Detective · ${g.nombre}</div>
+      <div class="det-pista">"${t.pista}"</div>
+      <div class="det-pregunta">¿A qué grupo pertenezco? → voltea para ver</div>
+    </div>
+    <div class="card-face card-back det-respuesta-face">
+      <div class="card-band" style="background:${color}"></div>
+      <div class="det-resp-label">Soy un…</div>
+      <div class="det-resp-answer" style="color:${color}">${t.respuesta}</div>
+      <div class="det-resp-emoji">${g.emoji}</div>
+      <div class="det-resp-pista-recap">"${t.pista}"</div>
+    </div>`);
+}
+
+function makeIntrusoCards(g) {
+  const color = g.color;
+  return g.intrusos.map(t => {
+    const esError = !!t.error;
+    const veredictoText = esError ? '⚠ Aquí hay un error' : '✓ Esta es correcta';
+    const veredictoClass = esError ? 'es-error' : 'no-error';
+    const correcto = t.grupo_correcto
+      ? `<div class="intruso-grupo-correcto"><div class="igc-label">Pertenece a</div>${DATA.grupos.find(x=>x.id===t.grupo_correcto)?.nombre || t.grupo_correcto}</div>`
+      : '';
+    return `
+      <div class="card-face intruso-face">
+        <div class="card-band" style="background:${color}"></div>
+        <div class="intruso-header">
+          <span class="intruso-badge" style="background:${color}">Intruso · ${g.nombre}</span>
+        </div>
+        <div class="intruso-desc">"${t.descripcion}"</div>
+        <div class="intruso-prompt">¿Es correcto para este grupo? → voltea</div>
+      </div>
+      <div class="card-face card-back intruso-rev-face">
+        <div class="card-band" style="background:${color}"></div>
+        <div class="intruso-veredicto ${veredictoClass}">${veredictoText}</div>
+        <div class="intruso-error-text">${t.error || (t.nota || '')}</div>
+        ${correcto}
+      </div>`;
+  });
+}
+
+function makePoderCard(g) {
+  const color = g.color;
+  const p = g.carta_poder;
+  return `
+    <div class="card-face poder-face">
+      <div class="card-band" style="background:${color}"></div>
+      <div class="poder-title-row">
+        <span class="poder-emoji">${g.emoji}</span>
+        <span class="poder-nombre" style="color:${color}">${g.nombre}</span>
+      </div>
+      <div class="poder-stats">
+        <div class="poder-stat">
+          <span class="ps-icon">⚔️</span>
+          <div class="ps-content">
+            <div class="ps-label">Ataque</div>
+            <div class="ps-text">${p.ataque}</div>
+          </div>
+        </div>
+        <div class="poder-stat">
+          <span class="ps-icon">🛡️</span>
+          <div class="ps-content">
+            <div class="ps-label">Defensa</div>
+            <div class="ps-text">${p.defensa}</div>
+          </div>
+        </div>
+        <div class="poder-stat">
+          <span class="ps-icon">🏃</span>
+          <div class="ps-content">
+            <div class="ps-label">Movimiento</div>
+            <div class="ps-text">${p.movimiento}</div>
+          </div>
+        </div>
+      </div>
+      <div class="poder-rareza" style="border-color:${color}">
+        <div class="pr-label">✨ Rareza evolutiva</div>
+        <div class="pr-text">${p.rareza}</div>
+      </div>
+    </div>
+    <div class="card-face card-back poder-face" style="background:#1a1208; color:#f5f0e8;">
+      <div class="card-band" style="background:${color}"></div>
+      <div class="poder-title-row">
+        <span class="poder-emoji">${g.emoji}</span>
+        <span class="poder-nombre" style="color:${color}">${g.nombre}</span>
+      </div>
+      <div style="font-family:'DM Serif Display',serif; font-style:italic; font-size:0.95rem; line-height:1.7; flex:1; display:flex; align-items:center; color:rgba(245,240,232,0.8); padding: 8px 0;">
+        ${p.rareza}
+      </div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,240,232,0.25); text-align:center;">
+        happypuking — lab
+      </div>
+    </div>`;
+}
+
+function buildCards() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  const grupos = currentGroup === 'all'
+    ? DATA.grupos
+    : DATA.grupos.filter(g => g.id === currentGroup);
+
+  if (!grupos.length) {
+    grid.innerHTML = '<div class="empty-state">sin tarjetas para esta selección</div>';
+    return;
+  }
+
+  const cards = [];
+
+  grupos.forEach(g => {
+    if (currentMode === 'firma') {
+      cards.push({ g, html: makeFirmaCard(g), flippable: true });
+    } else if (currentMode === 'detective') {
+      makeDetectiveCards(g).forEach(html => cards.push({ g, html, flippable: true }));
+    } else if (currentMode === 'intruso') {
+      makeIntrusoCards(g).forEach(html => cards.push({ g, html, flippable: true }));
+    } else if (currentMode === 'poder') {
+      cards.push({ g, html: makePoderCard(g), flippable: true });
+    }
+  });
+
+  cards.forEach(({ g, html, flippable }, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'card-wrap';
+    wrap.style.animationDelay = `${i * 0.06}s`;
+    const inner = document.createElement('div');
+    inner.className = 'card-inner';
+    inner.innerHTML = html;
+    wrap.appendChild(inner);
+    if (flippable) {
+      wrap.addEventListener('click', () => wrap.classList.toggle('flipped'));
+    }
+    grid.appendChild(wrap);
+  });
+}
+
+// filtros
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGroup = btn.dataset.group;
+  buildCards();
+});
+
+// modos
+document.getElementById('modes').addEventListener('click', e => {
+  const btn = e.target.closest('.mode-btn');
+  if (!btn) return;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMode = btn.dataset.mode;
+  buildCards();
+});
+
+// Read grupo param from URL if coming from mapa
+const urlParams = new URLSearchParams(window.location.search);
+const grupoParam = urlParams.get('grupo');
+if (grupoParam && DATA.grupos.find(g => g.id === grupoParam)) {
+  currentGroup = grupoParam;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.group === grupoParam);
+  });
+}
+
+buildCards();
+</script>
+<footer>
+  <div class="footer-text">
+    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  </div>
+</footer>
+
+</body>
+</html>

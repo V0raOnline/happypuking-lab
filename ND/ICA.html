@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICA</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f7f6f3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  #ica-root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    width: 100%;
+    gap: 1.25rem;
+  }
+
+  .first-header {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b8c87;
+    text-align: center;
+    width: 100%;
+  }
+
+  .step-dots { display: flex; gap: 6px; align-items: center; }
+  .step-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #d4d1ca;
+    transition: background 150ms ease, transform 150ms ease;
+  }
+  .step-dot.active { background: #2c2b28; transform: scale(1.2); }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+    width: 100%;
+    max-width: 360px;
+    animation: fadeSlide 180ms ease forwards;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(7px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .question {
+    font-size: 21px;
+    font-weight: 500;
+    color: #2c2b28;
+    text-align: center;
+    line-height: 1.35;
+    letter-spacing: -0.3px;
+  }
+
+  .pills { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 22px;
+    border-radius: 100px;
+    border: 1.5px solid #e0ddd6;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    color: #2c2b28;
+    transition: transform 130ms ease, background 130ms ease, border-color 130ms ease;
+    text-align: left;
+    width: 100%;
+  }
+  .pill:hover  { transform: scale(0.985); border-color: #c5c2bb; }
+  .pill:active { transform: scale(0.975); }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: #c8c6be; }
+  .pill-green .dot { background: #639922; }
+  .pill-amber .dot { background: #ba7517; }
+  .pill-red   .dot { background: #a32d2d; }
+
+  .pill-green.selected   { background: #eaf3de; border-color: #639922; }
+  .pill-amber.selected   { background: #faeeda; border-color: #ba7517; }
+  .pill-red.selected     { background: #fcebeb; border-color: #a32d2d; }
+  .pill-neutral.selected { background: #f0ede7; border-color: #9c9a93; }
+
+  .result-header {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #b0ada6;
+    text-align: center;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .result-card {
+    background: #ffffff;
+    border: 1px solid #e0ddd6;
+    border-radius: 16px;
+    padding: 24px 28px;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .result-row { display: flex; justify-content: space-between; align-items: center; }
+  .result-label { color: #888780; font-size: 12px; font-weight: 400; }
+  .result-value {
+    font-size: 14px; font-weight: 500; color: #2c2b28;
+    display: flex; align-items: center; gap: 6px;
+    text-align: right; max-width: 200px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .divider { width: 100%; height: 1px; background: #ebe8e1; }
+
+  .reset-btn {
+    background: none; border: none;
+    color: #9c9a93; font-size: 13px;
+    cursor: pointer; padding: 6px 0;
+    transition: color 130ms ease;
+    font-family: inherit;
+  }
+  .reset-btn:hover { color: #2c2b28; }
+</style>
+</head>
+<body>
+
+<div id="ica-root">
+
+  <p class="first-header">ICA (Interfaz de Comunicación Adolescente)</p>
+
+  <div class="step-dots" id="dots"></div>
+
+  <!-- P1: estado general — siempre -->
+  <div class="screen active" id="screen0">
+    <p class="question">¿Cómo estás hoy?</p>
+    <div class="pills">
+      <button class="pill pill-green" data-val="green" data-label="tiro" onclick="pick(0,this)">
+        <span class="dot"></span> tiro
+      </button>
+      <button class="pill pill-amber" data-val="amber" data-label="voy justo" onclick="pick(0,this)">
+        <span class="dot"></span> voy justo
+      </button>
+      <button class="pill pill-red" data-val="red" data-label="hoy no puedo" onclick="pick(0,this)">
+        <span class="dot"></span> hoy no puedo
+      </button>
+    </div>
+  </div>
+
+  <!-- P2: qué pesa — versión completa (verde / ámbar) -->
+  <div class="screen" id="screen1-full">
+    <p class="question">¿Qué es lo que más pesa?</p>
+    <div class="pills">
+      <button class="pill pill-neutral" data-label="la cabeza no arranca" onclick="pick(1,this)"><span class="dot"></span> la cabeza no arranca</button>
+      <button class="pill pill-neutral" data-label="demasiado ruido" onclick="pick(1,this)"><span class="dot"></span> demasiado ruido</button>
+      <button class="pill pill-neutral" data-label="demasiada gente" onclick="pick(1,this)"><span class="dot"></span> demasiada gente</button>
+      <button class="pill pill-neutral" data-label="cuerpo agotado" onclick="pick(1,this)"><span class="dot"></span> cuerpo agotado</button>
+      <button class="pill pill-neutral" data-label="todo a la vez en todas partes" onclick="pick(1,this)"><span class="dot"></span> todo a la vez en todas partes</button>
+      <button class="pill pill-neutral" data-label="ni idea" onclick="pick(1,this)"><span class="dot"></span> ni idea</button>
+    </div>
+  </div>
+
+  <!-- P2: qué pesa — versión reducida (rojo) -->
+  <div class="screen" id="screen1-short">
+    <p class="question">¿Qué es lo que más pesa?</p>
+    <div class="pills">
+      <button class="pill pill-neutral" data-label="demasiado ruido" onclick="pick(1,this)"><span class="dot"></span> demasiado ruido</button>
+      <button class="pill pill-neutral" data-label="demasiada gente" onclick="pick(1,this)"><span class="dot"></span> demasiada gente</button>
+      <button class="pill pill-neutral" data-label="cuerpo agotado" onclick="pick(1,this)"><span class="dot"></span> cuerpo agotado</button>
+      <button class="pill pill-neutral" data-label="todo a la vez" onclick="pick(1,this)"><span class="dot"></span> todo a la vez</button>
+      <button class="pill pill-neutral" data-label="ni idea" onclick="pick(1,this)"><span class="dot"></span> ni idea</button>
+    </div>
+  </div>
+
+  <!-- P3: cómo ha sido el día — solo verde -->
+  <div class="screen" id="screen2-dia">
+    <p class="question">¿Cómo ha sido el día?</p>
+    <div class="pills">
+      <button class="pill pill-green" data-label="yuhuuu" onclick="pick(2,this)"><span class="dot"></span> yuhuuu</button>
+      <button class="pill pill-green" data-label="bien"   onclick="pick(2,this)"><span class="dot" style="background:#8ab832;"></span> bien</button>
+      <button class="pill pill-amber" data-label="meh"    onclick="pick(2,this)"><span class="dot"></span> meh</button>
+      <button class="pill pill-amber" data-label="flojo"  onclick="pick(2,this)"><span class="dot" style="background:#c46a10;"></span> flojo</button>
+      <button class="pill pill-red"   data-label="fatal"  onclick="pick(2,this)"><span class="dot"></span> fatal</button>
+    </div>
+  </div>
+
+  <!-- P3/P4: qué necesitas — versión completa (verde / ámbar) -->
+  <div class="screen" id="screen3-full">
+    <p class="question">¿Qué necesitas ahora?</p>
+    <div class="pills">
+      <button class="pill pill-neutral" data-label="dar un paseo" onclick="pick(3,this)"><span class="dot"></span> dar un paseo</button>
+      <button class="pill pill-neutral" data-label="música / auriculares" onclick="pick(3,this)"><span class="dot"></span> música / auriculares</button>
+      <button class="pill pill-neutral" data-label="hibernar un rato" onclick="pick(3,this)"><span class="dot"></span> hibernar un rato</button>
+      <button class="pill pill-neutral" data-label="hablar con alguien" onclick="pick(3,this)"><span class="dot"></span> hablar con alguien</button>
+      <button class="pill pill-neutral" data-label="estar solo/a" onclick="pick(3,this)"><span class="dot"></span> estar solo/a</button>
+      <button class="pill pill-neutral" data-label="hacer algo con las manos" onclick="pick(3,this)"><span class="dot"></span> hacer algo con las manos</button>
+      <button class="pill pill-neutral" data-label="jugar" onclick="pick(3,this)"><span class="dot"></span> jugar</button>
+      <button class="pill pill-neutral" data-label="ni idea" onclick="pick(3,this)"><span class="dot"></span> ni idea</button>
+    </div>
+  </div>
+
+  <!-- P3: qué necesitas — versión reducida (rojo) -->
+  <div class="screen" id="screen3-short">
+    <p class="question">¿Qué necesitas ahora?</p>
+    <div class="pills">
+      <button class="pill pill-neutral" data-label="música / auriculares" onclick="pick(3,this)"><span class="dot"></span> música / auriculares</button>
+      <button class="pill pill-neutral" data-label="hibernar un rato" onclick="pick(3,this)"><span class="dot"></span> hibernar un rato</button>
+      <button class="pill pill-neutral" data-label="estar solo/a" onclick="pick(3,this)"><span class="dot"></span> estar solo/a</button>
+      <button class="pill pill-neutral" data-label="ni idea" onclick="pick(3,this)"><span class="dot"></span> ni idea</button>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="screen" id="screen-result">
+    <p class="result-header">esto es lo que hay</p>
+    <div class="result-card">
+      <div class="result-row">
+        <span class="result-label">cabeza</span>
+        <span class="result-value"><span class="status-dot" id="r-dot"></span><span id="r-estado"></span></span>
+      </div>
+      <div class="divider"></div>
+      <div class="result-row">
+        <span class="result-label">pesa</span>
+        <span class="result-value" id="r-pesa"></span>
+      </div>
+      <div class="divider" id="r-dia-divider"></div>
+      <div class="result-row" id="r-dia-row">
+        <span class="result-label">día</span>
+        <span class="result-value" id="r-dia"></span>
+      </div>
+      <div class="divider"></div>
+      <div class="result-row">
+        <span class="result-label">necesito</span>
+        <span class="result-value" id="r-necesito"></span>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="reset()">→ repetir</button>
+  </div>
+
+</div>
+
+<script>
+  var answers = {};
+  var dotColors = { green: '#639922', amber: '#ba7517', red: '#a32d2d' };
+
+  // flujos por nivel de energía
+  // verde: p0 → p1-full → p2-dia → p3-full → result
+  // ámbar: p0 → p1-full → p3-full → result
+  // rojo:  p0 → p1-short → p3-short → result
+
+  var flows = {
+    green: ['screen0', 'screen1-full', 'screen2-dia', 'screen3-full', 'screen-result'],
+    amber: ['screen0', 'screen1-full', 'screen3-full', 'screen-result'],
+    red:   ['screen0', 'screen1-short', 'screen3-short', 'screen-result']
+  };
+
+  var currentFlow = [];
+  var currentStep = 0;
+
+  function buildDots(count) {
+    var container = document.getElementById('dots');
+    container.innerHTML = '';
+    for (var i = 0; i < count; i++) {
+      var d = document.createElement('div');
+      d.className = 'step-dot' + (i === 0 ? ' active' : '');
+      d.id = 'dot-' + i;
+      container.appendChild(d);
+    }
+  }
+
+  function updateDots(step) {
+    var dotCount = currentFlow.length - 1; // sin contar result
+    for (var i = 0; i < dotCount; i++) {
+      var el = document.getElementById('dot-' + i);
+      if (el) el.classList.toggle('active', i === step);
+    }
+  }
+
+  function pick(stepType, btn) {
+    // stepType: 0 = P1 estado, 1 = P2 pesa, 2 = P3 dia, 3 = P4 necesito
+    var screenId = btn.closest('.screen').id;
+    document.querySelectorAll('#' + screenId + ' .pill').forEach(function(p) {
+      p.classList.remove('selected');
+    });
+    btn.classList.add('selected');
+
+    if (stepType === 0) {
+      var val = btn.dataset.val;
+      answers.estado = btn.dataset.label;
+      answers.color  = dotColors[val] || '#888';
+      answers.level  = val;
+      currentFlow = flows[val];
+      buildDots(currentFlow.length - 1);
+      updateDots(0);
+    } else if (stepType === 1) {
+      answers.pesa = btn.dataset.label;
+    } else if (stepType === 2) {
+      answers.dia = btn.dataset.label;
+    } else if (stepType === 3) {
+      answers.necesito = btn.dataset.label;
+    }
+
+    setTimeout(function() { advance(); }, 160);
+  }
+
+  function advance() {
+    currentStep++;
+    var nextId = currentFlow[currentStep];
+    if (nextId === 'screen-result') {
+      showResult();
+    } else {
+      goToId(nextId);
+      updateDots(currentStep);
+    }
+  }
+
+  function goToId(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showResult() {
+    // mostrar u ocultar fila "día" según nivel
+    var showDia = answers.level === 'green';
+    document.getElementById('r-dia-row').style.display    = showDia ? 'flex' : 'none';
+    document.getElementById('r-dia-divider').style.display = showDia ? 'block' : 'none';
+
+    document.getElementById('r-dot').style.background = answers.color || '#888';
+    document.getElementById('r-estado').textContent   = answers.estado  || '';
+    document.getElementById('r-pesa').textContent     = answers.pesa    || '';
+    document.getElementById('r-dia').textContent      = answers.dia     || '';
+    document.getElementById('r-necesito').textContent = answers.necesito || '';
+
+    goToId('screen-result');
+    document.querySelectorAll('.step-dot').forEach(function(d) { d.classList.remove('active'); });
+  }
+
+  function reset() {
+    answers = {};
+    currentFlow = [];
+    currentStep = 0;
+    document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('selected'); });
+    document.getElementById('dots').innerHTML = '';
+    goToId('screen0');
+  }
+
+  // init: sin dots hasta que se elija nivel
+  document.getElementById('dots').innerHTML = '';
+</script>
+
+</body>
+</html>
