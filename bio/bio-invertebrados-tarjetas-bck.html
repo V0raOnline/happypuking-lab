@@ -7,17 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #181511;
-    --paper-dark: #201d18;
-    --ink: #F8FAFF;
-    --ink-soft: #8892A4;
-    --ink-faint: #5A6478;
-    --accent-global: #4ADE80;
+    --paper: #f5f0e8;
+    --paper-dark: #e8e0cc;
+    --ink: #1a1208;
+    --ink-soft: #4a3f2f;
+    --ink-faint: #9a8f7a;
+    --accent-global: #2d5a3d;
 
     /* colores por grupo */
     --c-poriferos: #E8B84B;
     --c-cnidarios: #7BAFD4;
-    --c-gusanos: #A08060;
+    --c-gusanos: #8B6B3D;
     --c-moluscos: #C17E5A;
     --c-artropodos: #E05C3A;
     --c-equinodermos: #9B4F9E;
@@ -25,13 +25,13 @@
     --card-w: 380px;
     --card-h: 520px;
     --radius: 6px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.2);
+    --shadow: 0 4px 24px rgba(26,18,8,0.18), 0 1px 4px rgba(26,18,8,0.10);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background-color: #080A0F;
+    background-color: #2a2318;
     background-image:
       radial-gradient(ellipse at 20% 20%, rgba(70,55,30,0.4) 0%, transparent 60%),
       radial-gradient(ellipse at 80% 80%, rgba(45,90,61,0.15) 0%, transparent 50%),
@@ -54,7 +54,7 @@ body::before {
 
   /* ── CABECERA ── */
   header {
-    padding: 1.4rem 1.4rem 0.6rem;
+    padding: 0.55rem 1.4rem 0.6rem;
     border-bottom: 1px solid rgba(245,240,232,0.08);
     text-align: center;
     position: relative;
@@ -67,7 +67,7 @@ body::before {
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(248,250,255,0.80);
+    color: rgba(245,240,232,0.4);
     margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
@@ -105,7 +105,7 @@ body::before {
     border-radius: 100px;
     border: 1px solid transparent;
     text-decoration: none;
-    color: rgba(248,250,255,0.80);
+    color: rgba(245,240,232,0.4);
     background: transparent;
     transition: all 0.2s ease;
     white-space: nowrap;
@@ -150,14 +150,14 @@ body::before {
     border-radius: 100px;
     border: 2px solid rgba(245,240,232,0.15);
     background: transparent;
-    color: rgba(248,250,255,0.80);
+    color: rgba(245,240,232,0.4);
     cursor: pointer;
     text-decoration: none;
     transition: all 0.2s;
   }
 
   .header-nav-btn:hover {
-    border-color: rgba(248,250,255,0.80);
+    border-color: rgba(245,240,232,0.4);
     color: rgba(245,240,232,0.8);
   }
 
@@ -211,7 +211,7 @@ body::before {
     color: rgba(245,240,232,0.85);
   }
   .filter-btn.active {
-    background: #0e0c0a;
+    background: var(--paper);
     color: var(--ink);
     border-color: var(--paper);
   }
@@ -235,18 +235,18 @@ body::before {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     padding: 0.4rem 1rem;
-    border: 1px solid rgba(248,250,255,0.18);
-    background: rgba(248,250,255,0.04);
-    color: rgba(248,250,255,0.80);
+    border: 1px solid rgba(245,240,232,0.15);
+    background: rgba(245,240,232,0.05);
+    color: rgba(245,240,232,0.4);
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 2px;
   }
-  .mode-btn:hover { color: rgba(248,250,255,0.9); border-color: rgba(248,250,255,0.3); }
+  .mode-btn:hover { color: rgba(245,240,232,0.7); border-color: rgba(245,240,232,0.3); }
   .mode-btn.active {
-    background: rgba(248,250,255,0.06);
-    color: #c8c4bc;
-    border-color: rgba(248,250,255,0.45);
+    background: rgba(245,240,232,0.12);
+    color: var(--paper);
+    border-color: rgba(245,240,232,0.4);
   }
 
   /* ── GRID DE TARJETAS ── */
@@ -288,7 +288,7 @@ body::before {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     border-radius: var(--radius);
-    background: #0e0c0a;
+    background: var(--paper);
     box-shadow: var(--shadow);
     overflow: hidden;
     display: flex;
@@ -1086,7 +1086,7 @@ function makePoderCard(g) {
         <div class="pr-text">${p.rareza}</div>
       </div>
     </div>
-    <div class="card-face card-back poder-face" style="background:#F8FAFF; color:#111318;">
+    <div class="card-face card-back poder-face" style="background:#1a1208; color:#f5f0e8;">
       <div class="card-band" style="background:${color}"></div>
       <div class="poder-title-row">
         <span class="poder-emoji">${g.emoji}</span>

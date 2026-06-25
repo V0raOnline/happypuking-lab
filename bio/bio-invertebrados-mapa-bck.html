@@ -7,13 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --paper:      #181511;
-  --paper-dark: #201d18;
-  --paper-mid:  #181C26;
-  --ink:        #F8FAFF;
-  --ink-soft:   #8892A4;
-  --ink-faint:  #5A6478;
-  --bg:         #0e0c0a;
+  --paper:      #f5f0e8;
+  --paper-dark: #e8e0cc;
+  --paper-mid:  #ede5d0;
+  --ink:        #1a1208;
+  --ink-soft:   #4a3f2f;
+  --ink-faint:  #9a8f7a;
+  --bg:         #2a2318;
   --c-poriferos:    #E8B84B;
   --c-cnidarios:    #7BAFD4;
   --c-gusanos:      #8B6B3D;
@@ -599,28 +599,28 @@ footer {
         <svg id="mapsvg" viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="nodeGrad-poriferos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#2a2210"/>
-              <stop offset="100%" stop-color="#1a1508"/>
+              <stop offset="0%" stop-color="#fffdf5"/>
+              <stop offset="100%" stop-color="#f0e8d0"/>
             </radialGradient>
             <radialGradient id="nodeGrad-cnidarios" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#0e1c28"/>
-              <stop offset="100%" stop-color="#081218"/>
+              <stop offset="0%" stop-color="#f0f8ff"/>
+              <stop offset="100%" stop-color="#dceef8"/>
             </radialGradient>
             <radialGradient id="nodeGrad-gusanos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#1e1508"/>
-              <stop offset="100%" stop-color="#130e04"/>
+              <stop offset="0%" stop-color="#f8f3ec"/>
+              <stop offset="100%" stop-color="#e8dccc"/>
             </radialGradient>
             <radialGradient id="nodeGrad-moluscos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#221408"/>
-              <stop offset="100%" stop-color="#160d04"/>
+              <stop offset="0%" stop-color="#fdf5f0"/>
+              <stop offset="100%" stop-color="#f0ddd0"/>
             </radialGradient>
             <radialGradient id="nodeGrad-artropodos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#220e08"/>
-              <stop offset="100%" stop-color="#160804"/>
+              <stop offset="0%" stop-color="#fff5f2"/>
+              <stop offset="100%" stop-color="#f5dcd5"/>
             </radialGradient>
             <radialGradient id="nodeGrad-equinodermos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#1a0e22"/>
-              <stop offset="100%" stop-color="#100816"/>
+              <stop offset="0%" stop-color="#faf0ff"/>
+              <stop offset="100%" stop-color="#ead5f0"/>
             </radialGradient>
           </defs>
 
@@ -644,13 +644,13 @@ footer {
 
           <!-- Anillos decorativos centrales -->
           <circle class="center-ring" cx="310" cy="310" r="90" stroke="rgba(245,240,232,0.07)" stroke-width="1"/>
-          <circle cx="310" cy="310" r="70" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-          <circle cx="310" cy="310" r="48" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <circle cx="310" cy="310" r="70" fill="rgba(245,240,232,0.03)" stroke="rgba(245,240,232,0.09)" stroke-width="1"/>
+          <circle cx="310" cy="310" r="48" fill="rgba(245,240,232,0.04)" stroke="rgba(245,240,232,0.07)" stroke-width="0.5"/>
 
           <!-- Texto central -->
-          <text x="310" y="295" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="rgba(248,250,255,0.92)">6 grupos</text>
-          <text x="310" y="315" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" letter-spacing="3" fill="rgba(248,250,255,0.6)">INCREÍBLES</text>
-          <text x="310" y="333" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="10" fill="rgba(248,250,255,0.38)" font-style="italic">miles de formas</text>
+          <text x="310" y="298" text-anchor="middle" font-family="DM Serif Display,serif" font-size="14" font-weight="700" fill="rgba(245,240,232,0.75)">6 grupos</text>
+          <text x="310" y="314" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" letter-spacing="3" fill="rgba(245,240,232,0.4)">INCREÍBLES</text>
+          <text x="310" y="330" text-anchor="middle" font-family="DM Serif Display,serif" font-size="8" fill="rgba(245,240,232,0.28)" font-style="italic">miles de formas</text>
 
           <!-- ══════════════════════════════════
                NODOS — r=52, posiciones calculadas
@@ -667,7 +667,7 @@ footer {
             <circle class="node-circle" cx="310" cy="110" r="52" fill="url(#nodeGrad-poriferos)" stroke="#E8B84B" stroke-width="2.5"/>
             <text x="310" y="88" text-anchor="middle" font-size="28" dominant-baseline="middle">🧽</text>
             <text x="310" y="108" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E8B84B" letter-spacing="1">01</text>
-            <text x="310" y="123" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Poríferos</text>
+            <text x="310" y="123" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Poríferos</text>
           </g>
 
           <!-- 2. Cnidarios -->
@@ -675,15 +675,15 @@ footer {
             <circle class="node-circle" cx="483" cy="210" r="52" fill="url(#nodeGrad-cnidarios)" stroke="#7BAFD4" stroke-width="2.5"/>
             <text x="483" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪼</text>
             <text x="483" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#7BAFD4" letter-spacing="1">02</text>
-            <text x="483" y="223" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Cnidarios</text>
+            <text x="483" y="223" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Cnidarios</text>
           </g>
 
           <!-- 3. Gusanos -->
           <g class="group-node" id="node-gusanos" onclick="openGroup('gusanos')">
             <circle class="node-circle" cx="137" cy="210" r="52" fill="url(#nodeGrad-gusanos)" stroke="#8B6B3D" stroke-width="2.5"/>
             <text x="137" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪱</text>
-            <text x="137" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#A08060" letter-spacing="1">03</text>
-            <text x="137" y="223" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Gusanos</text>
+            <text x="137" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#8B6B3D" letter-spacing="1">03</text>
+            <text x="137" y="223" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Gusanos</text>
           </g>
 
           <!-- 4. Moluscos -->
@@ -691,7 +691,7 @@ footer {
             <circle class="node-circle" cx="483" cy="410" r="52" fill="url(#nodeGrad-moluscos)" stroke="#C17E5A" stroke-width="2.5"/>
             <text x="483" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🐚</text>
             <text x="483" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#C17E5A" letter-spacing="1">04</text>
-            <text x="483" y="423" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Moluscos</text>
+            <text x="483" y="423" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Moluscos</text>
           </g>
 
           <!-- 5. Artrópodos -->
@@ -699,7 +699,7 @@ footer {
             <circle class="node-circle" cx="137" cy="410" r="52" fill="url(#nodeGrad-artropodos)" stroke="#E05C3A" stroke-width="2.5"/>
             <text x="137" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🦋</text>
             <text x="137" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E05C3A" letter-spacing="1">05</text>
-            <text x="137" y="423" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Artrópodos</text>
+            <text x="137" y="423" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" font-weight="700" fill="#1a1208">Artrópodos</text>
           </g>
 
           <!-- 6. Equinodermos — texto largo: dos líneas -->
@@ -707,8 +707,8 @@ footer {
             <circle class="node-circle" cx="310" cy="510" r="52" fill="url(#nodeGrad-equinodermos)" stroke="#9B4F9E" stroke-width="2.5"/>
             <text x="310" y="488" text-anchor="middle" font-size="28" dominant-baseline="middle">⭐</text>
             <text x="310" y="508" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#9B4F9E" letter-spacing="1">06</text>
-            <text x="310" y="522" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#F8FAFF">Equino-</text>
-            <text x="310" y="535" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#F8FAFF">dermos</text>
+            <text x="310" y="522" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#1a1208">Equino-</text>
+            <text x="310" y="535" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#1a1208">dermos</text>
           </g>
 
         </svg>

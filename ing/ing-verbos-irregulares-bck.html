@@ -341,133 +341,10 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: auto;
-  padding: 1.5rem 1rem 2rem;
+  background: radial-gradient(ellipse at center, rgba(74,222,128,0.04) 0%, transparent 65%);
   min-height: 0;
 }
-
-/* ── TIMELINE TRACK ── */
-.timeline-track {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding-left: 2.5rem;
-}
-
-.tl-line {
-  position: absolute;
-  left: 0.65rem;
-  top: 1.2rem;
-  bottom: 1.2rem;
-  width: 2px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 2px;
-}
-
-.tl-cursor {
-  position: absolute;
-  left: calc(0.65rem - 7px);
-  top: 1.2rem;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--magenta);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--magenta) 60%, transparent);
-  border: 2px solid var(--bg);
-  transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 2;
-}
-
-.tl-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tl-card:hover {
-  border-color: rgba(255,255,255,0.12);
-  background: var(--surface2);
-}
-
-.tl-card.active {
-  border-color: color-mix(in srgb, var(--card-color) 50%, transparent);
-  background: color-mix(in srgb, var(--card-color) 8%, var(--surface));
-}
-
-.tl-node-dot {
-  position: absolute;
-  left: -2.05rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--card-color);
-  border: 2px solid var(--bg);
-  transition: all 0.2s;
-}
-
-.tl-card.active .tl-node-dot {
-  width: 14px;
-  height: 14px;
-  left: -2.1rem;
-  box-shadow: 0 0 8px var(--card-color);
-}
-
-.tl-card-left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  flex-shrink: 0;
-  min-width: 3.5rem;
-}
-
-.tl-level {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-}
-
-.tl-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--card-color);
-  background: color-mix(in srgb, var(--card-color) 12%, var(--surface2));
-  border-radius: 20px;
-  padding: 0.15rem 0.5rem;
-  white-space: nowrap;
-}
-
-.tl-card-body { flex: 1; min-width: 0; }
-
-.tl-family-name {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.2rem;
-}
-
-.tl-card.active .tl-family-name { color: var(--card-color); }
-
-.tl-pattern {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-}
-
+#map-canvas { width: 100%; height: 100%; }
 .map-hint-center {
   position: absolute;
   bottom: 1rem;
@@ -701,8 +578,8 @@ body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
     <span class="sep">//</span>
     LEARN · EXPAND · VOMIT HAPPINESS
   </div>
-  <h1 class="header-title" id="h1-title">Verbos Irregulares</h1>
-  <p class="header-subtitle" id="h1-sub">Familias fonológicas y patrones ocultos</p>
+  <h1 class="header-title">Verbos Irregulares</h1>
+  <p class="header-subtitle">Familias fonológicas y patrones ocultos</p>
   <nav class="header-nav">
     <span class="nav-domain">Inglés →</span>
     <a class="nav-tool active" href="#">Verbos Irregulares</a>
@@ -772,7 +649,7 @@ body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
         <div class="verb-family-pattern" id="vf-pattern"></div>
       </div>
 
-      <a id="btn-practicar" href="ing-verbos-quiz.html" style="
+      <a id="btn-practicar" href="verbos_quiz.html" style="
         margin-left:auto;font-family:'Nunito',sans-serif;font-weight:900;
         font-size:0.68rem;padding:0.25rem 0.7rem;border-radius:6px;
         border:1px solid rgba(217,70,239,0.4);background:rgba(217,70,239,0.08);
@@ -780,7 +657,7 @@ body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
         white-space:nowrap;flex-shrink:0;
       " onmouseover="this.style.background='rgba(217,70,239,0.16)'"
          onmouseout="this.style.background='rgba(217,70,239,0.08)'">Practicar →</a>
-      <a id="btn-sing" href="ing-sing-and-learn.html" style="
+      <a id="btn-sing" href="Sing&Learn.html" style="
         font-family:'Nunito',sans-serif;font-weight:900;
         font-size:0.68rem;padding:0.25rem 0.7rem;border-radius:6px;
         border:1px solid rgba(74,222,128,0.4);background:rgba(74,222,128,0.08);
@@ -791,14 +668,10 @@ body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
     </div>
 
     <div class="map-view" id="map-view">
-      <div class="timeline-track" id="timeline-track">
-        <div class="tl-line"></div>
-        <div class="tl-cursor" id="tl-cursor"></div>
-        <div class="tl-nodes" id="tl-nodes"></div>
-      </div>
-      <div class="map-hint-center" id="map-hint-center">Haz clic en una familia para explorarla</div>
+      <svg id="map-canvas"></svg>
+      <div class="node-tooltip" id="tooltip"></div>
+      <div class="map-hint-center" id="map-hint-center">Haz clic en un nodo para explorar esa familia</div>
     </div>
-    
 
     <div class="verb-area" id="verb-area" style="display:none">
       <div class="verb-col-headers" id="verb-col-headers" style="display:none">
@@ -840,7 +713,7 @@ body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
 const LANG = { current: 'es' };
 let showIPA = false;
 let activeFamily = null;
-
+let mapNodes = [];
 let searchQuery = '';
 
 // ── MAP / FAMILIA TOGGLE ──
@@ -1358,53 +1231,104 @@ function buildSidebar() {
 
 // ── MAP ──
 function buildMap() {
-  const container = document.getElementById('tl-nodes');
-  const cursor = document.getElementById('tl-cursor');
-  if (!container) return;
-
+  const svg = document.getElementById('map-canvas');
+  const W = svg.clientWidth || 700;
+  const H = svg.clientHeight || 400;
+  const cx = W / 2, cy = H / 2;
+  const n = FAMILIES.length;
+  const margin = 70;
+  const R = Math.min((W - margin * 2) / 2, (H - margin * 2) / 2);
   const ordered = [...FAMILIES].sort((a, b) => a.level - b.level);
-  container.innerHTML = '';
 
-  ordered.forEach((f, i) => {
-    const card = document.createElement('div');
-    card.className = 'tl-card';
-    card.id = 'tl-card-' + f.id;
-    card.style.setProperty('--card-color', f.color);
+  mapNodes = ordered.map((f, i) => {
+    const angle = (2 * Math.PI / n) * i - Math.PI / 2;
+    const nodeR = 16 + f.verbs.length * 1.4;
+    return { id: f.id, x: cx + Math.cos(angle) * R, y: cy + Math.sin(angle) * R, r: nodeR, angle, color: f.color, family: f };
+  });
 
-    card.innerHTML = `
-      <div class="tl-node-dot"></div>
-      <div class="tl-card-left">
-        <span class="tl-level">L${f.level}</span>
-        <span class="tl-count">${f.verbs.length} verbos</span>
-      </div>
-      <div class="tl-card-body">
-        <div class="tl-family-name">${f.label[LANG.current]}</div>
-        <div class="tl-pattern">${f.pattern}</div>
-      </div>
-    `;
+  svg.innerHTML = '';
 
-    card.onclick = () => {
-      // Mover cursor al nodo
-      const dot = card.querySelector('.tl-node-dot');
-      const track = document.getElementById('timeline-track');
-      const trackRect = track.getBoundingClientRect();
-      const dotRect = dot.getBoundingClientRect();
-      const dotCenter = dotRect.top - trackRect.top + dotRect.height / 2;
-      cursor.style.top = (dotCenter - 8) + 'px';
+  for (let i = 0; i < mapNodes.length; i++) {
+    const a = mapNodes[i], b = mapNodes[(i + 1) % mapNodes.length];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / dist, uy = dy / dist;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', a.x + ux * a.r); line.setAttribute('y1', a.y + uy * a.r);
+    line.setAttribute('x2', b.x - ux * b.r); line.setAttribute('y2', b.y - uy * b.r);
+    line.setAttribute('stroke', `color-mix(in srgb, ${a.color} 40%, ${b.color})`);
+    line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-opacity', '0.25');
+    line.setAttribute('stroke-dasharray', '4 4');
+    svg.appendChild(line);
+  }
 
-      // Activar card
-      document.querySelectorAll('.tl-card').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
+  mapNodes.forEach(n => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.style.cursor = 'pointer';
+    g.setAttribute('data-id', n.id);
+    g.setAttribute('class', 'map-node');
 
-      openFamily(f.id);
-    };
+    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    glow.setAttribute('cx', n.x); glow.setAttribute('cy', n.y); glow.setAttribute('r', n.r + 12);
+    glow.setAttribute('fill', n.color); glow.setAttribute('fill-opacity', '0.07');
+    g.appendChild(glow);
 
-    container.appendChild(card);
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', n.x); circle.setAttribute('cy', n.y); circle.setAttribute('r', n.r);
+    circle.setAttribute('fill', n.color); circle.setAttribute('fill-opacity', '0.18');
+    circle.setAttribute('stroke', n.color); circle.setAttribute('stroke-width', '1.8');
+    circle.setAttribute('stroke-opacity', '0.6'); circle.style.transition = 'all 0.2s';
+    circle.setAttribute('class', 'node-circle');
+    g.appendChild(circle);
+
+    const lvlTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lvlTxt.setAttribute('x', n.x); lvlTxt.setAttribute('y', n.y - 6);
+    lvlTxt.setAttribute('text-anchor', 'middle'); lvlTxt.setAttribute('fill', n.color);
+    lvlTxt.setAttribute('font-family', 'DM Mono, monospace'); lvlTxt.setAttribute('font-size', '8');
+    lvlTxt.setAttribute('font-weight', '500'); lvlTxt.setAttribute('fill-opacity', '0.7');
+    lvlTxt.textContent = `L${n.family.level}`;
+    g.appendChild(lvlTxt);
+
+    const cnt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    cnt.setAttribute('x', n.x); cnt.setAttribute('y', n.y + 7);
+    cnt.setAttribute('text-anchor', 'middle'); cnt.setAttribute('dominant-baseline', 'central');
+    cnt.setAttribute('fill', n.color); cnt.setAttribute('font-family', 'DM Mono, monospace');
+    cnt.setAttribute('font-size', '13'); cnt.setAttribute('font-weight', '700');
+    cnt.textContent = n.family.verbs.length;
+    g.appendChild(cnt);
+
+    const labelDist = n.r + 18;
+    const lx = n.x + Math.cos(n.angle) * labelDist;
+    const ly = n.y + Math.sin(n.angle) * labelDist;
+    const anchor = Math.cos(n.angle) > 0.2 ? 'start' : Math.cos(n.angle) < -0.2 ? 'end' : 'middle';
+    const shortLabel = n.family.label[LANG.current].split('(')[0].trim();
+    const displayLabel = shortLabel.length > 18 ? shortLabel.substring(0, 16) + '…' : shortLabel;
+
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lbl.setAttribute('x', lx); lbl.setAttribute('y', ly);
+    lbl.setAttribute('text-anchor', anchor); lbl.setAttribute('dominant-baseline', 'central');
+    lbl.setAttribute('fill', 'rgba(240,242,255,0.82)');
+    lbl.setAttribute('font-family', 'Nunito, sans-serif'); lbl.setAttribute('font-size', '11.5');
+    lbl.setAttribute('font-weight', '700'); lbl.setAttribute('class', 'node-label');
+    lbl.textContent = displayLabel;
+    g.appendChild(lbl);
+
+    g.onclick = () => openFamily(n.id);
+    g.onmouseenter = (e) => showTooltip(e, n);
+    g.onmouseleave = hideTooltip;
+    svg.appendChild(g);
   });
 }
 
-
-// showTooltip / hideTooltip removed (tooltip no longer used)
+function showTooltip(e, n) {
+  const tip = document.getElementById('tooltip');
+  const rect = document.getElementById('map-canvas').getBoundingClientRect();
+  tip.innerHTML = `<strong style="color:${n.color}">${n.family.label[LANG.current]}</strong><br><span style="color:var(--muted);font-size:0.62rem">${n.family.pattern}</span>`;
+  tip.style.left = (e.clientX - rect.left + 12) + 'px';
+  tip.style.top = (e.clientY - rect.top - 44) + 'px';
+  tip.style.opacity = '1';
+}
+function hideTooltip() { document.getElementById('tooltip').style.opacity = '0'; }
 
 // ── OPEN FAMILY ──
 // verbToHighlight: infinitivo opcional — resalta esa fila al abrir
@@ -1417,21 +1341,15 @@ function openFamily(id, verbToHighlight) {
   document.querySelectorAll('.family-item').forEach(el => {
     el.classList.toggle('active', el.id === 'fam-item-' + id);
   });
-  // Sincronizar timeline card y cursor
-  document.querySelectorAll('.tl-card').forEach(card => card.classList.remove('active'));
-  const activeCard = document.getElementById('tl-card-' + id);
-  if (activeCard) {
-    activeCard.classList.add('active');
-    const dot = activeCard.querySelector('.tl-node-dot');
-    const cursor = document.getElementById('tl-cursor');
-    const track = document.getElementById('timeline-track');
-    if (dot && cursor && track) {
-      const trackRect = track.getBoundingClientRect();
-      const dotRect = dot.getBoundingClientRect();
-      const dotCenter = dotRect.top - trackRect.top + dotRect.height / 2;
-      cursor.style.top = (dotCenter - 8) + 'px';
+  document.querySelectorAll('.map-node').forEach(g => {
+    const isActive = g.getAttribute('data-id') === id;
+    const c = g.querySelector('.node-circle');
+    if (c) {
+      c.setAttribute('fill-opacity', isActive ? '0.5' : '0.1');
+      c.setAttribute('stroke-opacity', isActive ? '1' : '0.35');
+      c.setAttribute('stroke-width', isActive ? '2.5' : '1.5');
     }
-  }
+  });
 
   hideMap();
   const meta = document.getElementById('verb-family-meta');
