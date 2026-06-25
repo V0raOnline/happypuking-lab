@@ -1,0 +1,1154 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Tenses — Mapa Temporal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --surface: #161820;
+  --surface2: #1e2030;
+  --border: rgba(255,255,255,0.07);
+  --magenta: #D946EF;
+  --magenta-dim: rgba(217,70,239,0.15);
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --green: #4ade80;
+  --green-dim: rgba(74,222,128,0.12);
+  --violet: #a78bfa;
+  --violet-dim: rgba(167,139,250,0.12);
+  --now-color: #ffffff;
+  --text: #e8e9f0;
+  --text-muted: #7a7d8e;
+  --text-dim: #3a3d4e;
+  --muted: #7a7d8e;
+  --muted2: #4B5563;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 1.4rem 2rem 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-topbar {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.header-topbar a { color: var(--text); text-decoration: none; transition: color 0.2s; }
+.header-topbar a:hover { color: var(--magenta); }
+.header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+  line-height: 1.15;
+}
+
+.header-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.1rem;
+  margin-bottom: 1rem;
+}
+.nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
+.nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
+.nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
+.nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+.nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
+.header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
+
+/* ── METRO MAP (sticky below header) ── */
+.metro-wrap {
+  position: sticky;
+  top: 52px;
+  z-index: 100;
+  background: rgba(15,17,23,0.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.25rem 0.85rem;
+}
+
+.metro-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.6rem;
+}
+
+.metro-track {
+  position: relative;
+  height: 48px;
+}
+
+/* Main line */
+.metro-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: translateY(-50%);
+  background: linear-gradient(to right,
+    var(--amber) 0%,
+    var(--amber) 38%,
+    var(--magenta) 42%,
+    var(--magenta) 52%,
+    var(--green) 56%,
+    var(--green) 68%,
+    var(--cyan) 72%,
+    var(--cyan) 100%
+  );
+  border-radius: 2px;
+}
+
+/* Conditionals line (secondary, below) */
+.metro-cond-line {
+  position: absolute;
+  top: calc(50% + 10px);
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: var(--violet);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+/* Station dots */
+.station {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 2;
+}
+.station:hover { transform: translate(-50%, -50%) scale(1.4); }
+.station.active {
+  transform: translate(-50%, -50%) scale(1.5);
+  box-shadow: 0 0 10px currentColor;
+}
+
+.station.pasado { background: var(--amber); color: var(--amber); }
+.station.puente { background: var(--magenta); color: var(--magenta); }
+.station.presente { background: var(--green); color: var(--green); }
+.station.futuro { background: var(--cyan); color: var(--cyan); }
+.station.condicional { background: var(--violet); color: var(--violet); top: calc(50% + 10px); }
+
+/* Station tooltip on hover */
+.station-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  white-space: nowrap;
+  color: var(--text-muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.station:hover .station-tip,
+.station.active .station-tip { opacity: 1; }
+
+/* YOU ARE HERE indicator */
+.you-here {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.you-here-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px white, 0 0 16px rgba(255,255,255,0.6);
+}
+.you-here-label {
+  position: absolute;
+  top: calc(100% + 4px);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  color: white;
+  white-space: nowrap;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+/* NOW marker */
+.now-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,0.15);
+  pointer-events: none;
+}
+.now-label {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.5rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+}
+
+/* Zone labels */
+.zone-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding: 0 0;
+}
+.zlabel {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.zlabel.pasado { color: var(--amber); }
+.zlabel.puente { color: var(--magenta); }
+.zlabel.presente { color: var(--green); }
+.zlabel.futuro { color: var(--cyan); }
+
+/* ── CONTENT AREA ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 5rem;
+}
+
+/* Zone section headers */
+.zone-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2rem 0 1rem;
+}
+.zone-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.65rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.zone-rule { flex: 1; height: 1px; background: var(--border); }
+
+.zone-pasado .zone-pill { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.zone-puente .zone-pill { background: var(--magenta-dim); color: var(--magenta); border: 1px solid rgba(217,70,239,0.25); }
+.zone-presente .zone-pill { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+.zone-futuro .zone-pill { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(34,211,238,0.2); }
+.zone-condicionales .zone-pill { background: var(--violet-dim); color: var(--violet); border: 1px solid rgba(167,139,250,0.2); }
+
+/* Puente note */
+.puente-note {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  padding: 0.65rem 0.9rem;
+  background: var(--magenta-dim);
+  border: 1px solid rgba(217,70,239,0.15);
+  border-radius: 7px;
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+.puente-note strong { color: var(--magenta); }
+
+/* ── TENSE CARDS ── */
+.tense-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.65rem;
+  cursor: pointer;
+  transition: transform 0.16s, border-color 0.16s, box-shadow 0.16s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tense-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 10px 0 0 10px;
+}
+
+.tense-card:hover { transform: translateX(3px); }
+
+.zone-pasado .tense-card::before { background: var(--amber); }
+.zone-pasado .tense-card:hover { border-color: rgba(245,158,11,0.25); box-shadow: 0 4px 20px rgba(245,158,11,0.08); }
+
+.zone-puente .tense-card::before { background: var(--magenta); }
+.zone-puente .tense-card:hover { border-color: rgba(217,70,239,0.25); box-shadow: 0 4px 20px rgba(217,70,239,0.08); }
+
+.zone-presente .tense-card::before { background: var(--green); }
+.zone-presente .tense-card:hover { border-color: rgba(74,222,128,0.25); box-shadow: 0 4px 20px rgba(74,222,128,0.08); }
+
+.zone-futuro .tense-card::before { background: var(--cyan); }
+.zone-futuro .tense-card:hover { border-color: rgba(34,211,238,0.25); box-shadow: 0 4px 20px rgba(34,211,238,0.08); }
+
+.zone-condicionales .tense-card::before { background: var(--violet); }
+.zone-condicionales .tense-card:hover { border-color: rgba(167,139,250,0.25); box-shadow: 0 4px 20px rgba(167,139,250,0.08); }
+
+/* Active card (open) */
+.tense-card.open { transform: translateX(3px); }
+.zone-pasado .tense-card.open { border-color: rgba(245,158,11,0.3); }
+.zone-puente .tense-card.open { border-color: rgba(217,70,239,0.3); }
+.zone-presente .tense-card.open { border-color: rgba(74,222,128,0.3); }
+.zone-futuro .tense-card.open { border-color: rgba(34,211,238,0.3); }
+.zone-condicionales .tense-card.open { border-color: rgba(167,139,250,0.3); }
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card-meta { flex: 1; }
+
+.tense-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.18rem;
+}
+
+.tense-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.tense-descriptor {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.card-chevron {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  padding-top: 0.2rem;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.tense-card.open .card-chevron { transform: rotate(180deg); color: var(--text-muted); }
+
+/* Card body (expandable) */
+.card-body {
+  display: none;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+  animation: fadeSlide 0.2s ease;
+}
+.tense-card.open .card-body { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tense-formula {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  padding: 0.35rem 0.65rem;
+  border-radius: 5px;
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.tense-use {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.examples { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.example {
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.025);
+  border-left: 2px solid;
+}
+.zone-pasado .example { border-color: var(--amber); }
+.zone-puente .example { border-color: var(--magenta); }
+.zone-presente .example { border-color: var(--green); }
+.zone-futuro .example { border-color: var(--cyan); }
+.zone-condicionales .example { border-color: var(--violet); }
+
+.example-en {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.73rem;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+.example-note {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.use-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+.utag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.18rem 0.48rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.zone-pasado .utag { background: var(--amber-dim); color: var(--amber); }
+.zone-puente .utag { background: var(--magenta-dim); color: var(--magenta); }
+.zone-presente .utag { background: var(--green-dim); color: var(--green); }
+.zone-futuro .utag { background: var(--cyan-dim); color: var(--cyan); }
+.zone-condicionales .utag { background: var(--violet-dim); color: var(--violet); }
+
+
+footer {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 2rem auto 0;
+  border-top: 1px solid var(--border);
+  padding: 1.2rem 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.footer-left { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+.footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
+.footer-left a:hover { opacity: 0.75; }
+.footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span> hAppYpUkIng · Lab
+    <span class="sep">//</span>
+    LEARN · EXPAND · VOMIT HAPPINESS
+  </div>
+  <h1 class="header-title">Timeline de Tiempos</h1>
+  <p class="header-subtitle">El metro de los tiempos verbales en inglés</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Inglés →</span>
+    <a class="nav-tool" href="./ing-verbos-irregulares.html">Verbos Irregulares</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./ing-verbos-quiz.html">Quiz</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./ing-sing-and-learn.html">Sing&amp;Learn</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool active" href="#">Timeline</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./ing-grammar-builder.html">Grammar Builder</a>
+  </nav>
+</header>
+
+<!-- METRO MAP -->
+<div class="metro-wrap">
+  <div class="metro-label">línea temporal — selecciona una estación</div>
+  <div class="metro-track" id="metroTrack">
+    <div class="metro-line"></div>
+    <div class="metro-cond-line"></div>
+
+    <!-- NOW marker at ~47% (between puente and presente) -->
+    <div class="now-marker" style="left:47%">
+      <span class="now-label">NOW</span>
+    </div>
+
+    <!-- YOU ARE HERE (moves on card open) -->
+    <div class="you-here" id="youHere" style="left:47%; opacity:0">
+      <div class="you-here-dot"></div>
+      <span class="you-here-label">YOU ARE HERE</span>
+    </div>
+
+    <!-- PASADO stations -->
+    <div class="station pasado" style="left:5%" data-pos="5" onclick="jumpTo('past-perf-cont')" title="Past Perfect Continuous">
+      <span class="station-tip">Past Perfect Continuous</span>
+    </div>
+    <div class="station pasado" style="left:13%" data-pos="13" onclick="jumpTo('past-perf')" title="Past Perfect">
+      <span class="station-tip">Past Perfect</span>
+    </div>
+    <div class="station pasado" style="left:21%" data-pos="21" onclick="jumpTo('past-cont')" title="Past Continuous">
+      <span class="station-tip">Past Continuous</span>
+    </div>
+    <div class="station pasado" style="left:29%" data-pos="29" onclick="jumpTo('past-simple')" title="Past Simple">
+      <span class="station-tip">Past Simple</span>
+    </div>
+
+    <!-- PUENTE stations -->
+    <div class="station puente" style="left:38%" data-pos="38" onclick="jumpTo('pres-perf-cont')" title="Present Perfect Continuous">
+      <span class="station-tip">Present Perfect Continuous</span>
+    </div>
+    <div class="station puente" style="left:44%" data-pos="44" onclick="jumpTo('pres-perf')" title="Present Perfect">
+      <span class="station-tip">Present Perfect</span>
+    </div>
+
+    <!-- PRESENTE stations -->
+    <div class="station presente" style="left:54%" data-pos="54" onclick="jumpTo('pres-simple')" title="Present Simple">
+      <span class="station-tip">Present Simple</span>
+    </div>
+    <div class="station presente" style="left:62%" data-pos="62" onclick="jumpTo('pres-cont')" title="Present Continuous">
+      <span class="station-tip">Present Continuous</span>
+    </div>
+
+    <!-- FUTURO stations -->
+    <div class="station futuro" style="left:72%" data-pos="72" onclick="jumpTo('going-to')" title="Going to">
+      <span class="station-tip">Going to</span>
+    </div>
+    <div class="station futuro" style="left:82%" data-pos="82" onclick="jumpTo('pres-cont-fut')" title="Present Continuous → futuro">
+      <span class="station-tip">Pres. Continuous → futuro</span>
+    </div>
+    <div class="station futuro" style="left:91%" data-pos="91" onclick="jumpTo('will')" title="Will">
+      <span class="station-tip">Will</span>
+    </div>
+
+    <!-- CONDICIONALES stations (on lower line) -->
+    <div class="station condicional" style="left:25%" data-pos="25" onclick="jumpTo('zero-cond')" title="Zero Conditional">
+      <span class="station-tip">Zero Conditional</span>
+    </div>
+    <div class="station condicional" style="left:47%" data-pos="47" onclick="jumpTo('first-cond')" title="First Conditional">
+      <span class="station-tip">First Conditional</span>
+    </div>
+    <div class="station condicional" style="left:65%" data-pos="65" onclick="jumpTo('second-cond')" title="Second Conditional">
+      <span class="station-tip">Second Conditional</span>
+    </div>
+  </div>
+
+  <div class="zone-labels">
+    <span class="zlabel pasado">← pasado</span>
+    <span class="zlabel puente">puente</span>
+    <span class="zlabel presente">presente</span>
+    <span class="zlabel futuro">futuro →</span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main class="main">
+
+  <!-- PASADO -->
+  <div class="zone-pasado">
+    <div class="zone-header">
+      <span class="zone-pill">Pasado</span>
+      <div class="zone-rule"></div>
+    </div>
+
+    <div class="tense-card" id="past-perf-cont" data-metro-pos="5" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">past perfect continuous</div>
+          <div class="tense-name">Past Perfect Continuous</div>
+          <div class="tense-descriptor">Duración antes de otro pasado</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">had + been + verb-ing</div>
+        <div class="tense-use">Acción continua que ocurrió durante un período antes de un momento pasado. Enfatiza la duración o explica un estado posterior.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">She was tired because she had been working all day.</div>
+            <div class="example-note">La duración previa explica el estado pasado</div>
+          </div>
+          <div class="example">
+            <div class="example-en">He had been waiting for two hours when she finally arrived.</div>
+            <div class="example-note">Duración de espera antes de otro evento pasado</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">duración previa</span>
+          <span class="utag">causa en el pasado</span>
+          <span class="utag">contexto narrativo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="past-perf" data-metro-pos="13" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">past perfect</div>
+          <div class="tense-name">Past Perfect</div>
+          <div class="tense-descriptor">El pasado del pasado</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">had + past participle</div>
+        <div class="tense-use">Acción que ocurrió antes de otra acción pasada. Establece qué fue primero cuando narras una secuencia de eventos.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">When I arrived, she had already left.</div>
+            <div class="example-note">She left → I arrived: ella se fue primero</div>
+          </div>
+          <div class="example">
+            <div class="example-en">He hadn't eaten, so he was very hungry.</div>
+            <div class="example-note">No comer → explicación del estado pasado</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">anterior a otro pasado</span>
+          <span class="utag">secuencia temporal</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="past-cont" data-metro-pos="21" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">past continuous</div>
+          <div class="tense-name">Past Continuous</div>
+          <div class="tense-descriptor">Acción en progreso en el pasado</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">was / were + verb-ing</div>
+        <div class="tense-use">Acción en progreso en un momento del pasado. Con frecuencia aparece con Past Simple para mostrar una interrupción.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">I was reading when she called.</div>
+            <div class="example-note">Progreso (reading) + interrupción (called)</div>
+          </div>
+          <div class="example">
+            <div class="example-en">They were sleeping at midnight.</div>
+            <div class="example-note">Acción en progreso en ese momento concreto</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">acción en progreso</span>
+          <span class="utag">contexto narrativo</span>
+          <span class="utag">interrupción</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="past-simple" data-metro-pos="29" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">past simple</div>
+          <div class="tense-name">Past Simple</div>
+          <div class="tense-descriptor">Acción completa en momento específico</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">verb-ed (o forma irregular)</div>
+        <div class="tense-use">Acciones completas en un momento específico del pasado. El momento está cerrado, ya no conecta con el presente.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">I visited Rome last summer.</div>
+            <div class="example-note">Momento específico: "last summer"</div>
+          </div>
+          <div class="example">
+            <div class="example-en">She didn't call yesterday.</div>
+            <div class="example-note">Hecho concreto, momento cerrado: "yesterday"</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">momento concreto</span>
+          <span class="utag">acción completa</span>
+          <span class="utag">narración</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUENTE -->
+  <div class="zone-puente">
+    <div class="zone-header">
+      <span class="zone-pill">Puente</span>
+      <div class="zone-rule"></div>
+    </div>
+    <div class="puente-note">
+      <strong>Zona de conexión.</strong> El Present Perfect no es pasado ni presente: es pasado con relevancia ahora. Por eso vive aquí, entre las dos zonas. El momento exacto no importa — importa el resultado o la experiencia en el presente.
+    </div>
+
+    <div class="tense-card" id="pres-perf-cont" data-metro-pos="38" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">present perfect continuous</div>
+          <div class="tense-name">Present Perfect Continuous</div>
+          <div class="tense-descriptor">Duración desde el pasado hasta ahora</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">have / has + been + verb-ing</div>
+        <div class="tense-use">Acción que empezó en el pasado y continúa ahora, o que acaba de terminar dejando evidencia visible.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">I've been waiting for an hour.</div>
+            <div class="example-note">Empezó hace una hora: sigo esperando ahora</div>
+          </div>
+          <div class="example">
+            <div class="example-en">You've been crying. Your eyes are red.</div>
+            <div class="example-note">Acción reciente con evidencia visible ahora</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">acción continuada</span>
+          <span class="utag">duración hasta ahora</span>
+          <span class="utag">evidencia presente</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="pres-perf" data-metro-pos="44" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">present perfect</div>
+          <div class="tense-name">Present Perfect</div>
+          <div class="tense-descriptor">Pasado con relevancia ahora</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">have / has + past participle</div>
+        <div class="tense-use">Experiencias de vida sin especificar cuándo, acciones pasadas con resultado visible ahora, acciones recientes relevantes para el presente.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">I have been to Japan.</div>
+            <div class="example-note">Experiencia: cuándo no importa</div>
+          </div>
+          <div class="example">
+            <div class="example-en">She has broken her arm.</div>
+            <div class="example-note">Resultado visible ahora: lleva el brazo escayolado</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">experiencia</span>
+          <span class="utag">resultado presente</span>
+          <span class="utag">acción reciente</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESENTE -->
+  <div class="zone-presente">
+    <div class="zone-header">
+      <span class="zone-pill">Presente</span>
+      <div class="zone-rule"></div>
+    </div>
+
+    <div class="tense-card" id="pres-simple" data-metro-pos="54" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">present simple</div>
+          <div class="tense-name">Present Simple</div>
+          <div class="tense-descriptor">Hábitos, verdades, estados permanentes</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">base verb (+ -s en 3ª persona)</div>
+        <div class="tense-use">Hábitos, rutinas, verdades generales o científicas, estados permanentes. No describe lo que pasa ahora mismo.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">She reads every morning.</div>
+            <div class="example-note">Hábito, no acción en curso ahora mismo</div>
+          </div>
+          <div class="example">
+            <div class="example-en">Water boils at 100°C.</div>
+            <div class="example-note">Verdad científica, siempre cierta</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">hábito</span>
+          <span class="utag">verdad general</span>
+          <span class="utag">estado permanente</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="pres-cont" data-metro-pos="62" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">present continuous</div>
+          <div class="tense-name">Present Continuous</div>
+          <div class="tense-descriptor">Acción en progreso ahora</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">am / is / are + verb-ing</div>
+        <div class="tense-use">Acciones en progreso en este momento, situaciones temporales (no permanentes), tendencias o cambios en curso.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">I'm studying right now.</div>
+            <div class="example-note">Acción en curso: este momento exacto</div>
+          </div>
+          <div class="example">
+            <div class="example-en">She's living with her parents this year.</div>
+            <div class="example-note">Situación temporal, no permanente</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">acción en curso</span>
+          <span class="utag">situación temporal</span>
+          <span class="utag">tendencia</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUTURO -->
+  <div class="zone-futuro">
+    <div class="zone-header">
+      <span class="zone-pill">Futuro</span>
+      <div class="zone-rule"></div>
+    </div>
+
+    <div class="tense-card" id="going-to" data-metro-pos="72" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">future intention</div>
+          <div class="tense-name">Going to</div>
+          <div class="tense-descriptor">Plan decidido o predicción con evidencia</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">am / is / are + going to + base verb</div>
+        <div class="tense-use">Planes decididos de antemano, predicciones basadas en evidencia visible ahora mismo.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">She's going to study medicine.</div>
+            <div class="example-note">Plan ya decidido antes de este momento</div>
+          </div>
+          <div class="example">
+            <div class="example-en">Look at those clouds — it's going to rain.</div>
+            <div class="example-note">Predicción: hay evidencia visible ahora</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">plan previo</span>
+          <span class="utag">predicción con evidencia</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="pres-cont-fut" data-metro-pos="82" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">future arrangement</div>
+          <div class="tense-name">Present Continuous → futuro</div>
+          <div class="tense-descriptor">Cita o plan ya acordado</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">am / is / are + verb-ing</div>
+        <div class="tense-use">Eventos futuros ya acordados y organizados con otras personas. Existe un acuerdo concreto, no solo intención.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">We're meeting at 7 tomorrow.</div>
+            <div class="example-note">Cita acordada: hora y lugar ya fijados</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">cita acordada</span>
+          <span class="utag">plan concreto</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="will" data-metro-pos="91" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">future simple</div>
+          <div class="tense-name">Will</div>
+          <div class="tense-descriptor">Predicción, decisión espontánea, promesa</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">will + base verb</div>
+        <div class="tense-use">Predicciones sin evidencia visible, decisiones tomadas en el momento de hablar, promesas y ofrecimientos espontáneos.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">I will call you tomorrow.</div>
+            <div class="example-note">Decisión tomada ahora mismo, en este momento</div>
+          </div>
+          <div class="example">
+            <div class="example-en">It will rain next week.</div>
+            <div class="example-note">Predicción sin evidencia visible</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">predicción</span>
+          <span class="utag">decisión espontánea</span>
+          <span class="utag">promesa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONDICIONALES -->
+  <div class="zone-condicionales">
+    <div class="zone-header">
+      <span class="zone-pill">Condicionales</span>
+      <div class="zone-rule"></div>
+    </div>
+
+    <div class="tense-card" id="zero-cond" data-metro-pos="25" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">zero conditional</div>
+          <div class="tense-name">Zero Conditional</div>
+          <div class="tense-descriptor">Verdad universal, causa-efecto fijo</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">if + present simple, present simple</div>
+        <div class="tense-use">Verdades universales, hechos científicos, relaciones causa-efecto siempre ciertas. No hay hipótesis: es una ley.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">If you heat water to 100°C, it boils.</div>
+            <div class="example-note">Siempre cierto: no es hipótesis, es ley</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">verdad universal</span>
+          <span class="utag">causa-efecto fijo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="first-cond" data-metro-pos="47" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">first conditional</div>
+          <div class="tense-name">First Conditional</div>
+          <div class="tense-descriptor">Situación real y posible en el futuro</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">if + present simple, will + base verb</div>
+        <div class="tense-use">Situaciones reales o posibles en el futuro. El hablante cree que la condición puede cumplirse.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">If it rains tomorrow, we will cancel the trip.</div>
+            <div class="example-note">Posible: puede llover mañana, es real</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">posible</span>
+          <span class="utag">futuro real</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tense-card" id="second-cond" data-metro-pos="65" onclick="openCard(this)">
+      <div class="card-head">
+        <div class="card-meta">
+          <div class="tense-tag">second conditional</div>
+          <div class="tense-name">Second Conditional</div>
+          <div class="tense-descriptor">Hipotético, contrario a la realidad</div>
+        </div>
+        <div class="card-chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="tense-formula">if + past simple, would + base verb</div>
+        <div class="tense-use">Situaciones hipotéticas en el presente o futuro, improbables o contrarias a la realidad actual.</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-en">If I had a million euros, I would travel the world.</div>
+            <div class="example-note">Hipotético: no tengo un millón ahora mismo</div>
+          </div>
+        </div>
+        <div class="use-tags">
+          <span class="utag">hipotético</span>
+          <span class="utag">irreal presente</span>
+          <span class="utag">imaginario</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const youHere = document.getElementById('youHere');
+  let currentCard = null;
+
+  function openCard(card) {
+    const isOpen = card.classList.contains('open');
+
+    // Close all
+    document.querySelectorAll('.tense-card.open').forEach(c => c.classList.remove('open'));
+    document.querySelectorAll('.station.active').forEach(s => s.classList.remove('active'));
+
+    if (!isOpen) {
+      card.classList.add('open');
+      currentCard = card;
+
+      // Move YOU ARE HERE
+      const pos = card.dataset.metroPos;
+      if (pos) {
+        youHere.style.left = pos + '%';
+        youHere.style.opacity = '1';
+      }
+
+      // Highlight matching station
+      const id = card.id;
+      const stations = document.querySelectorAll('.station');
+      stations.forEach(s => {
+        if (s.getAttribute('onclick') && s.getAttribute('onclick').includes(id)) {
+          s.classList.add('active');
+        }
+      });
+
+      // Scroll card into view smoothly
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 60);
+
+    } else {
+      currentCard = null;
+      youHere.style.opacity = '0';
+    }
+  }
+
+  function jumpTo(id) {
+    const card = document.getElementById(id);
+    if (!card) return;
+
+    // Close all, open target
+    document.querySelectorAll('.tense-card.open').forEach(c => c.classList.remove('open'));
+    document.querySelectorAll('.station.active').forEach(s => s.classList.remove('active'));
+
+    card.classList.add('open');
+
+    // Move YOU ARE HERE
+    const pos = card.dataset.metroPos;
+    if (pos) {
+      youHere.style.left = pos + '%';
+      youHere.style.opacity = '1';
+    }
+
+    // Highlight station
+    const stations = document.querySelectorAll('.station');
+    stations.forEach(s => {
+      if (s.getAttribute('onclick') && s.getAttribute('onclick').includes(id)) {
+        s.classList.add('active');
+      }
+    });
+
+    // Scroll to card
+    setTimeout(() => {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }
+</script>
+
+
+<footer>
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
+  </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
+</footer>
+</body>
+</html>

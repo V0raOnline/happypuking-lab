@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -64,52 +64,63 @@ body::before {
 
 /* ── HEADER ── */
 header {
-  padding: 0.55rem 1.4rem 0.6rem;
+  padding: 1.4rem 2rem 0;
   border-bottom: 1px solid var(--border);
   text-align: center;
   position: relative;
   z-index: 1;
 }
 
-.header-top {
-  position: relative;
+.header-topbar {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.35rem;
+  flex-wrap: wrap;
+  gap: 0.3rem;
 }
+.header-topbar a { color: var(--text); text-decoration: none; transition: color 0.2s; }
+.header-topbar a:hover { color: var(--magenta); }
+.header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
 
-.header-tagline {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0;
-}
-
-.header-tagline span { margin: 0 0.4rem; opacity: 0.4; }
-
-.btn-inicio {
-  display: inline-block;
+.header-title {
   font-family: 'DM Serif Display', serif;
-  font-style: italic;
-  font-size: 0.88rem;
-  padding: 0.35rem 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--magenta);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
   color: var(--text);
-  background: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s;
-  position: absolute;
-  right: 0;
+  margin-bottom: 0.3rem;
+  line-height: 1.15;
 }
 
-.btn-inicio:hover {
-  background: rgba(217,70,239,0.08);
+.header-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
 }
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.1rem;
+  margin-bottom: 1rem;
+}
+.nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
+.nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
+.nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
+.nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+.nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
+.header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
 .header-title {
   font-family: 'DM Serif Display', serif;
@@ -131,24 +142,22 @@ header {
 
 /* ── FOOTER ── */
 footer {
-  border-top: 1px solid var(--border);
-  padding: 1.4rem 2rem;
-  text-align: center;
   position: relative;
   z-index: 1;
-  margin-top: 2rem;
+  max-width: 1100px;
+  margin: 2rem auto 0;
+  border-top: 1px solid var(--border);
+  padding: 1.2rem 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
-
-.footer-text {
-  font-size: 0.75rem;
-  color: var(--muted2);
-  font-weight: 600;
-}
-
-.footer-text strong {
-  color: var(--muted);
-  font-weight: 900;
-}
+.footer-left { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+.footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
+.footer-left a:hover { opacity: 0.75; }
+.footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
 
 /* ── BTN YAML (ahora dentro de la interfaz) ── */
 .btn-yaml {
@@ -1291,12 +1300,18 @@ footer {
 <body>
 
 <header>
-  <div class="header-top">
-    <div class="header-tagline">HAPPYPUKING <span>·</span> LEARN <span>·</span> EXPAND <span>·</span> VOMIT HAPPINESS</div>
-    <a class="btn-inicio" href="./../index.html">← happypuking-lab</a>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span> hAppYpUkIng · Lab
+    <span class="sep">//</span>
+    LEARN · EXPAND · VOMIT HAPPINESS
   </div>
   <div class="header-title">Morfosintaxis</div>
-  <div class="header-subtitle">Explora la lengua como sistema · Analiza oraciones paso a paso</div>
+  <p class="header-subtitle">Explora la lengua como sistema · Analiza oraciones paso a paso</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Lengua →</span>
+    <a class="nav-tool active" href="#">Morfosintaxis</a>
+  </nav>
 </header>
 
 <div class="main-tabs">
@@ -1528,11 +1543,7 @@ footer {
   </div>
 </div>
 
-<footer>
-  <div class="footer-text">
-    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
-  </div>
-</footer>
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
@@ -2767,9 +2778,12 @@ init();
 </script>
 
 <footer>
-  <div class="footer-text">
-    <strong>hAppYpUkIng</strong> · Ix(A+H) = Expanded heart and brain! · Contenido libre para aprender distinto
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
   </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
 </footer>
 
 </body>

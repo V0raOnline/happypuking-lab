@@ -1,0 +1,1159 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grammar Builder — hAppYpUkIng Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --surface2: #22263A;
+  --surface3: #2A2F45;
+  --border: rgba(255,255,255,0.07);
+  --text: #F0F2FF;
+  --muted: #6B7280;
+  --muted2: #4B5563;
+  --magenta: #D946EF;
+  --green-lab: #4ADE80;
+  --col-subject: #38bdf8;
+  --col-aux1:    #fb923c;
+  --col-aux2:    #a78bfa;
+  --col-verb:    #f472b6;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 1.4rem 2rem 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-topbar {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.header-topbar a { color: var(--text); text-decoration: none; transition: color 0.2s; }
+.header-topbar a:hover { color: var(--magenta); }
+.header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+  line-height: 1.15;
+}
+
+.header-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.1rem;
+  margin-bottom: 1rem;
+}
+.nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
+.nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
+.nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
+.nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+.nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
+.header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
+/* btn-inicio deprecated */
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.1rem;
+}
+header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
+
+/* ── WORKSPACE ── */
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem 1.25rem 3rem;
+  gap: 1.25rem;
+}
+
+/* ── SCORE BAR ── */
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.score-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 0.5rem;
+  gap: 0.1rem;
+  border-right: 1px solid var(--border);
+}
+.score-item:last-child { border-right: none; }
+.score-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.score-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+.score-item.correct .score-value { color: var(--green-lab); }
+.score-item.hint-used .score-value { color: var(--amber, #f59e0b); }
+
+/* ── CHALLENGE PANEL ── */
+.challenge-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+}
+.challenge-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+.challenge-meta { flex: 1; min-width: 0; }
+.challenge-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+.challenge-tense {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 0.3rem;
+}
+.challenge-person {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--magenta);
+  font-weight: 600;
+}
+.challenge-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+.btn-next {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.72rem;
+  padding: 0.38rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-next:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+.btn-hint {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.72rem;
+  padding: 0.38rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(245,158,11,0.35);
+  background: rgba(245,158,11,0.08);
+  color: #f59e0b;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.btn-hint:hover { background: rgba(245,158,11,0.15); }
+.btn-hint:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-hint.used {
+  border-color: rgba(245,158,11,0.15);
+  background: none;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.hint-box {
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: #fcd34d;
+  background: rgba(245,158,11,0.07);
+  border: 1px solid rgba(245,158,11,0.18);
+  border-radius: 7px;
+  padding: 0.55rem 0.85rem;
+  line-height: 1.5;
+}
+.hint-box.visible { display: block; }
+.hint-box strong { color: #fde68a; }
+
+.challenge-hint-semantic {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+  border-left: 2px solid rgba(217,70,239,0.3);
+  padding-left: 0.75rem;
+}
+
+/* ── ASSEMBLY ZONE ── */
+.assembly-zone {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+}
+.zone-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.85rem;
+}
+.assembly-track {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  min-height: 68px;
+  padding: 0.7rem 0.85rem;
+  background: rgba(255,255,255,0.018);
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+.assembly-track.drag-over {
+  border-color: rgba(217,70,239,0.45);
+  background: rgba(217,70,239,0.05);
+}
+.assembly-track.correct {
+  border-color: rgba(74,222,128,0.5);
+  background: rgba(74,222,128,0.04);
+  border-style: solid;
+}
+.assembly-track.incorrect {
+  border-color: rgba(248,113,113,0.5);
+  background: rgba(248,113,113,0.04);
+  border-style: solid;
+}
+.track-empty-hint {
+  font-size: 0.73rem;
+  color: var(--muted2);
+  font-style: italic;
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* connector between placed pieces */
+.piece-connector {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted2);
+  pointer-events: none;
+  user-select: none;
+}
+
+.feedback-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+}
+.feedback-msg {
+  flex: 1;
+  min-width: 200px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  line-height: 1.45;
+  display: none;
+}
+.feedback-msg.ok {
+  display: block;
+  background: rgba(74,222,128,0.08);
+  border: 1px solid rgba(74,222,128,0.25);
+  color: #4ADE80;
+}
+.feedback-msg.error {
+  display: block;
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.25);
+  color: #F87171;
+}
+.btn-reset {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 0.38rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-reset:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+.btn-check {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.5rem 1.3rem;
+  border-radius: 8px;
+  border: 1px solid var(--magenta);
+  background: rgba(217,70,239,0.1);
+  color: var(--magenta);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-check:hover { background: rgba(217,70,239,0.18); }
+
+/* ── PIECES ── */
+.piece {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.48rem 0.82rem;
+  border-radius: 8px;
+  border: 2px solid;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  position: relative;
+  white-space: nowrap;
+  margin-top: 6px; /* space for stud */
+}
+.piece:active { cursor: grabbing; }
+.piece.dragging { opacity: 0.35; transform: scale(0.95); }
+
+/* Lego stud */
+.piece::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 14px;
+  width: 11px;
+  height: 6px;
+  border-radius: 3px 3px 0 0;
+  border: 2px solid;
+  border-bottom: none;
+  border-color: inherit;
+  opacity: 0.55;
+}
+
+.piece-subject { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.32); color: var(--col-subject); }
+.piece-aux1    { background: rgba(251,146,60,0.1);  border-color: rgba(251,146,60,0.32);  color: var(--col-aux1); }
+.piece-aux2    { background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.32); color: var(--col-aux2); }
+.piece-verb    { background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.32); color: var(--col-verb); }
+
+.piece:hover:not(.dragging) { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+
+.piece-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.piece-subject .piece-dot { background: var(--col-subject); }
+.piece-aux1    .piece-dot { background: var(--col-aux1); }
+.piece-aux2    .piece-dot { background: var(--col-aux2); }
+.piece-verb    .piece-dot { background: var(--col-verb); }
+
+.piece-remove {
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.58rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.15rem;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.piece-remove:hover { background: rgba(248,113,113,0.3); color: #f87171; }
+
+/* ── TRAYS ── */
+.trays-section { display: flex; flex-direction: column; gap: 0.55rem; }
+.trays-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.trays-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.7rem;
+}
+.tray {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+}
+.tray-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.tray-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.tray-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tray-pieces { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  font-size: 0.67rem;
+  color: var(--muted);
+}
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── DRAG GHOST ── */
+.drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.88;
+  transform: rotate(3deg) scale(1.08);
+}
+
+/* ── FOOTER ── */
+
+  footer {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    border-top: 1px solid var(--border);
+    padding: 1.2rem 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .footer-left { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+  .footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
+  .footer-left a:hover { opacity: 0.75; }
+  .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span> hAppYpUkIng · Lab
+    <span class="sep">//</span>
+    LEARN · EXPAND · VOMIT HAPPINESS
+  </div>
+  <h1 class="header-title">Grammar Builder</h1>
+  <p class="header-subtitle">Construye oraciones pieza a pieza</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Inglés →</span>
+    <a class="nav-tool" href="./ing-verbos-irregulares.html">Verbos Irregulares</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./ing-verbos-quiz.html">Quiz</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./ing-sing-and-learn.html">Sing&amp;Learn</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./ing-timeline.html">Timeline</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool active" href="#">Grammar Builder</a>
+  </nav>
+</header>
+
+<div class="workspace">
+
+  <!-- SCORE -->
+  <div class="score-bar">
+    <div class="score-item correct">
+      <span class="score-value" id="sc-correct">0</span>
+      <span class="score-label">✓ correctas</span>
+    </div>
+    <div class="score-item hint-used">
+      <span class="score-value" id="sc-hint">0</span>
+      <span class="score-label">💡 con pista</span>
+    </div>
+    <div class="score-item">
+      <span class="score-value" id="sc-total">0</span>
+      <span class="score-label">intentos</span>
+    </div>
+    <div class="score-item">
+      <span class="score-value" id="sc-pct">—</span>
+      <span class="score-label">autonomía</span>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge-panel">
+    <div class="challenge-top">
+      <div class="challenge-meta">
+        <div class="challenge-label">construye la estructura de</div>
+        <div class="challenge-tense" id="ch-tense">—</div>
+        <div class="challenge-person" id="ch-person">—</div>
+      </div>
+      <div class="challenge-actions">
+        <button class="btn-next" onclick="nextChallenge()">Siguiente →</button>
+        <button class="btn-hint" id="btn-hint" onclick="useHint()">💡 Pista</button>
+      </div>
+    </div>
+    <div class="hint-box" id="hint-box"></div>
+    <div class="challenge-hint-semantic" id="ch-hint">—</div>
+  </div>
+
+  <!-- ASSEMBLY -->
+  <div class="assembly-zone">
+    <div class="zone-label">zona de ensamblaje — arrastra las piezas aquí en orden</div>
+    <div class="assembly-track" id="assembly-track">
+      <span class="track-empty-hint" id="empty-hint">arrastra piezas desde abajo · o haz clic en ellas</span>
+    </div>
+    <div class="feedback-row">
+      <div class="feedback-msg" id="feedback-msg"></div>
+      <button class="btn-reset" onclick="resetAssembly()">↺ limpiar</button>
+      <button class="btn-check" onclick="checkAssembly()">Comprobar</button>
+    </div>
+  </div>
+
+  <!-- TRAYS -->
+  <div class="trays-section">
+    <div class="trays-label">piezas disponibles — arrastra o haz clic para añadir</div>
+    <div class="trays-grid" id="trays-grid"></div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--col-subject)"></div>
+      <span>Sujeto</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--col-aux1)"></div>
+      <span>Auxiliar 1 — be / have / will / would</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--col-aux2)"></div>
+      <span>Auxiliar 2 — been / going to</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--col-verb)"></div>
+      <span>Forma verbal</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
+  </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// PERSONS
+// ═══════════════════════════════════════════════════════
+const PERSONS = [
+  { id: '1s', label: '1ª persona singular', subject: 'I',           be_pres: 'am',  be_past: 'was',  have: 'have' },
+  { id: '2s', label: '2ª persona singular', subject: 'You',         be_pres: 'are', be_past: 'were', have: 'have' },
+  { id: '3s', label: '3ª persona singular', subject: 'He / She / It', be_pres: 'is', be_past: 'was', have: 'has' },
+  { id: '1p', label: '1ª persona plural',   subject: 'We',          be_pres: 'are', be_past: 'were', have: 'have' },
+  { id: '2p', label: '2ª persona plural',   subject: 'You',         be_pres: 'are', be_past: 'were', have: 'have' },
+  { id: '3p', label: '3ª persona plural',   subject: 'They',        be_pres: 'are', be_past: 'were', have: 'have' },
+];
+
+// ═══════════════════════════════════════════════════════
+// TENSE TEMPLATES
+// buildStructure(person) → array of { role, label, display }
+//   role:    grammatical role for color
+//   label:   what the piece shows
+//   accept:  array of valid labels (for validation)
+// ═══════════════════════════════════════════════════════
+const TENSES = [
+  {
+    id: 'present-simple',
+    name: 'Present Simple',
+    tag: 'presente · hábito',
+    hint: 'Hábito, rutina, verdad general. El verbo va solo — sin auxiliar.',
+    hintPerson: p => `El sujeto correcto para ${p.label} es: ${p.subject}`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,    accept: [p.subject] },
+      { role: 'verb',    label: 'base verb',  accept: ['base verb'] },
+    ],
+  },
+  {
+    id: 'present-continuous',
+    name: 'Present Continuous',
+    tag: 'presente · en progreso ahora',
+    hint: 'Acción en curso ahora mismo. Necesita BE conjugado + verbo-ing.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + ${p.be_pres} + verb-ing`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,    accept: [p.subject] },
+      { role: 'aux1',    label: p.be_pres,    accept: [p.be_pres] },
+      { role: 'verb',    label: 'verb-ing',   accept: ['verb-ing'] },
+    ],
+  },
+  {
+    id: 'past-simple',
+    name: 'Past Simple',
+    tag: 'pasado · momento concreto',
+    hint: 'Acción completa en un momento específico del pasado. El verbo va solo.',
+    hintPerson: p => `El sujeto correcto para ${p.label} es: ${p.subject}`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,    accept: [p.subject] },
+      { role: 'verb',    label: 'past verb',  accept: ['past verb'] },
+    ],
+  },
+  {
+    id: 'past-continuous',
+    name: 'Past Continuous',
+    tag: 'pasado · en progreso entonces',
+    hint: 'Acción en progreso en un momento del pasado. BE va en pasado.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + ${p.be_past} + verb-ing`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,    accept: [p.subject] },
+      { role: 'aux1',    label: p.be_past,    accept: [p.be_past] },
+      { role: 'verb',    label: 'verb-ing',   accept: ['verb-ing'] },
+    ],
+  },
+  {
+    id: 'present-perfect',
+    name: 'Present Perfect',
+    tag: 'puente · pasado relevante ahora',
+    hint: 'Pasado con resultado o relevancia en el presente. HAVE/HAS + participio.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + ${p.have} + past participle`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,         accept: [p.subject] },
+      { role: 'aux1',    label: p.have,             accept: [p.have] },
+      { role: 'verb',    label: 'past participle',  accept: ['past participle'] },
+    ],
+  },
+  {
+    id: 'present-perfect-continuous',
+    name: 'Present Perfect Continuous',
+    tag: 'puente · duración hasta ahora',
+    hint: 'Acción que empezó en el pasado y continúa. HAVE/HAS + BEEN + verbo-ing.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + ${p.have} + been + verb-ing`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,    accept: [p.subject] },
+      { role: 'aux1',    label: p.have,        accept: [p.have] },
+      { role: 'aux2',    label: 'been',        accept: ['been'] },
+      { role: 'verb',    label: 'verb-ing',    accept: ['verb-ing'] },
+    ],
+  },
+  {
+    id: 'past-perfect',
+    name: 'Past Perfect',
+    tag: 'pasado · anterior a otro pasado',
+    hint: 'El pasado del pasado. Siempre HAD — no importa la persona.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + had + past participle`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,         accept: [p.subject] },
+      { role: 'aux1',    label: 'had',              accept: ['had'] },
+      { role: 'verb',    label: 'past participle',  accept: ['past participle'] },
+    ],
+  },
+  {
+    id: 'past-perfect-continuous',
+    name: 'Past Perfect Continuous',
+    tag: 'pasado · duración previa',
+    hint: 'Duración antes de un momento pasado. HAD + BEEN + verbo-ing.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + had + been + verb-ing`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,  accept: [p.subject] },
+      { role: 'aux1',    label: 'had',      accept: ['had'] },
+      { role: 'aux2',    label: 'been',     accept: ['been'] },
+      { role: 'verb',    label: 'verb-ing', accept: ['verb-ing'] },
+    ],
+  },
+  {
+    id: 'future-will',
+    name: 'Future — Will',
+    tag: 'futuro · predicción / espontáneo',
+    hint: 'Predicción o decisión espontánea. WILL no cambia con ningún sujeto.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + will + base verb`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,   accept: [p.subject] },
+      { role: 'aux1',    label: 'will',      accept: ['will'] },
+      { role: 'verb',    label: 'base verb', accept: ['base verb'] },
+    ],
+  },
+  {
+    id: 'future-going-to',
+    name: 'Going to',
+    tag: 'futuro · plan previo',
+    hint: 'Plan decidido o predicción con evidencia. BE conjugado + going to + base verb.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + ${p.be_pres} + going to + base verb`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,   accept: [p.subject] },
+      { role: 'aux1',    label: p.be_pres,   accept: [p.be_pres] },
+      { role: 'aux2',    label: 'going to',  accept: ['going to'] },
+      { role: 'verb',    label: 'base verb', accept: ['base verb'] },
+    ],
+  },
+  {
+    id: 'second-conditional',
+    name: 'Second Conditional',
+    tag: 'condicional · hipotético',
+    hint: 'Situación hipotética. La cláusula principal usa WOULD + base verb.',
+    hintPerson: p => `Para ${p.label}: ${p.subject} + would + base verb`,
+    buildStructure: p => [
+      { role: 'subject', label: p.subject,   accept: [p.subject] },
+      { role: 'aux1',    label: 'would',     accept: ['would'] },
+      { role: 'verb',    label: 'base verb', accept: ['base verb'] },
+    ],
+  },
+];
+
+// ═══════════════════════════════════════════════════════
+// ALL PIECES PER TRAY (fixed, always shown)
+// ═══════════════════════════════════════════════════════
+const TRAY_PIECES = {
+  subject: ['I', 'You', 'He / She / It', 'We', 'They'],
+  aux1:    ['am', 'is', 'are', 'was', 'were', 'have', 'has', 'had', 'will', 'would'],
+  aux2:    ['been', 'going to'],
+  verb:    ['base verb', 'verb-ing', 'past verb', 'past participle'],
+};
+
+const TRAY_META = {
+  subject: { name: 'Sujeto',     color: 'var(--col-subject)' },
+  aux1:    { name: 'Auxiliar 1', color: 'var(--col-aux1)' },
+  aux2:    { name: 'Auxiliar 2', color: 'var(--col-aux2)' },
+  verb:    { name: 'Verbo',      color: 'var(--col-verb)' },
+};
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let currentTense  = null;
+let currentPerson = null;
+let currentStruct = null;   // built structure for current challenge
+let assembled     = [];
+let hintUsed      = false;
+let score         = { correct: 0, hints: 0, total: 0 };
+let dragItem      = null;
+let dragGhost     = null;
+let touchSource   = null;
+let lastTenseId   = null;
+let lastPersonId  = null;
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+function init() {
+  buildTrays();
+  setupDropZone();
+  nextChallenge();
+}
+
+// ═══════════════════════════════════════════════════════
+// CHALLENGE
+// ═══════════════════════════════════════════════════════
+function nextChallenge() {
+  // Pick tense (avoid repeat)
+  let tensePool = TENSES.filter(t => t.id !== lastTenseId);
+  currentTense = tensePool[Math.floor(Math.random() * tensePool.length)];
+  lastTenseId = currentTense.id;
+
+  // Pick person (avoid repeat)
+  let personPool = PERSONS.filter(p => p.id !== lastPersonId);
+  currentPerson = personPool[Math.floor(Math.random() * personPool.length)];
+  lastPersonId = currentPerson.id;
+
+  // Build concrete structure
+  currentStruct = currentTense.buildStructure(currentPerson);
+
+  // Update UI
+  document.getElementById('ch-tense').textContent = currentTense.name;
+  document.getElementById('ch-person').textContent = currentPerson.label;
+  document.getElementById('ch-hint').textContent = currentTense.hint;
+
+  // Reset hint
+  hintUsed = false;
+  const btnHint = document.getElementById('btn-hint');
+  btnHint.disabled = false;
+  btnHint.className = 'btn-hint';
+  btnHint.textContent = '💡 Pista';
+  document.getElementById('hint-box').className = 'hint-box';
+  document.getElementById('hint-box').innerHTML = '';
+
+  resetAssembly();
+  hideFeedback();
+}
+
+// ═══════════════════════════════════════════════════════
+// HINT
+// ═══════════════════════════════════════════════════════
+function useHint() {
+  if (hintUsed) return;
+  hintUsed = true;
+
+  const box = document.getElementById('hint-box');
+  box.innerHTML = `<strong>Pista:</strong> ${currentTense.hintPerson(currentPerson)}`;
+  box.className = 'hint-box visible';
+
+  const btn = document.getElementById('btn-hint');
+  btn.className = 'btn-hint used';
+  btn.textContent = '💡 Pista usada';
+  btn.disabled = true;
+}
+
+// ═══════════════════════════════════════════════════════
+// TRAYS
+// ═══════════════════════════════════════════════════════
+function buildTrays() {
+  const grid = document.getElementById('trays-grid');
+  grid.innerHTML = '';
+
+  Object.entries(TRAY_PIECES).forEach(([role, labels]) => {
+    const meta = TRAY_META[role];
+    const tray = document.createElement('div');
+    tray.className = 'tray';
+    tray.innerHTML = `
+      <div class="tray-header">
+        <div class="tray-dot" style="background:${meta.color}"></div>
+        <div class="tray-name" style="color:${meta.color}">${meta.name}</div>
+      </div>
+      <div class="tray-pieces" id="tray-${role}"></div>
+    `;
+    grid.appendChild(tray);
+
+    const container = tray.querySelector(`#tray-${role}`);
+    labels.forEach(label => {
+      const el = makePiece({ role, label }, false);
+      container.appendChild(el);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// PIECE FACTORY
+// ═══════════════════════════════════════════════════════
+function makePiece(data, inAssembly) {
+  const el = document.createElement('div');
+  el.className = `piece piece-${data.role}`;
+  el.dataset.role = data.role;
+  el.dataset.label = data.label;
+
+  el.innerHTML = `<span class="piece-dot"></span><span>${data.label}</span>`;
+
+  if (inAssembly) {
+    const btn = document.createElement('button');
+    btn.className = 'piece-remove';
+    btn.textContent = '✕';
+    btn.onclick = e => { e.stopPropagation(); removePieceAt(parseInt(el.dataset.idx)); };
+    el.appendChild(btn);
+  } else {
+    el.draggable = true;
+    el.addEventListener('dragstart', onDragStart);
+    el.addEventListener('dragend', onDragEnd);
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
+    // Click fallback
+    el.addEventListener('click', () => addPiece(data.role, data.label));
+  }
+
+  return el;
+}
+
+// ═══════════════════════════════════════════════════════
+// ASSEMBLY
+// ═══════════════════════════════════════════════════════
+function addPiece(role, label) {
+  assembled.push({ role, label });
+  renderAssembly();
+  hideFeedback();
+}
+
+function removePieceAt(idx) {
+  assembled.splice(idx, 1);
+  renderAssembly();
+  hideFeedback();
+}
+
+function resetAssembly() {
+  assembled = [];
+  renderAssembly();
+  hideFeedback();
+  const track = document.getElementById('assembly-track');
+  track.classList.remove('correct', 'incorrect');
+}
+
+function renderAssembly() {
+  const track = document.getElementById('assembly-track');
+  const hint  = document.getElementById('empty-hint');
+
+  Array.from(track.children).forEach(c => {
+    if (c.id !== 'empty-hint') track.removeChild(c);
+  });
+
+  if (assembled.length === 0) {
+    hint.style.display = 'block';
+    return;
+  }
+
+  hint.style.display = 'none';
+  assembled.forEach((p, i) => {
+    // connector between pieces
+    if (i > 0) {
+      const conn = document.createElement('span');
+      conn.className = 'piece-connector';
+      conn.textContent = '+';
+      track.appendChild(conn);
+    }
+    const el = makePiece(p, true);
+    el.dataset.idx = i;
+    track.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// CHECK
+// ═══════════════════════════════════════════════════════
+function checkAssembly() {
+  if (!currentStruct || assembled.length === 0) return;
+
+  score.total++;
+
+  let correct = assembled.length === currentStruct.length;
+  if (correct) {
+    for (let i = 0; i < currentStruct.length; i++) {
+      const expected = currentStruct[i];
+      const given    = assembled[i];
+      // Role must match; label must be in accept list
+      if (given.role !== expected.role || !expected.accept.includes(given.label)) {
+        correct = false;
+        break;
+      }
+    }
+  }
+
+  if (correct) {
+    if (!hintUsed) score.correct++;
+    else score.hints++;
+    const msg = hintUsed
+      ? `✓ Correcto — con pista. Intenta el siguiente sin usarla.`
+      : `✓ Correcto. ${currentTense.name} · ${currentPerson.label}`;
+    showFeedback(true, msg);
+    document.getElementById('assembly-track').classList.add('correct');
+    document.getElementById('assembly-track').classList.remove('incorrect');
+  } else {
+    const expectedStr = currentStruct.map(s => `[${s.label}]`).join(' + ');
+    showFeedback(false, `✗ No es correcto. Estructura esperada: ${expectedStr}`);
+    document.getElementById('assembly-track').classList.add('incorrect');
+    document.getElementById('assembly-track').classList.remove('correct');
+  }
+
+  updateScore();
+}
+
+function showFeedback(ok, msg) {
+  const el = document.getElementById('feedback-msg');
+  el.textContent = msg;
+  el.className = 'feedback-msg ' + (ok ? 'ok' : 'error');
+}
+
+function hideFeedback() {
+  document.getElementById('feedback-msg').className = 'feedback-msg';
+  const track = document.getElementById('assembly-track');
+  track.classList.remove('correct', 'incorrect');
+}
+
+function updateScore() {
+  document.getElementById('sc-correct').textContent = score.correct;
+  document.getElementById('sc-hint').textContent    = score.hints;
+  document.getElementById('sc-total').textContent   = score.total;
+  const autonomous = score.correct + score.hints > 0
+    ? Math.round((score.correct / (score.correct + score.hints)) * 100) + '%'
+    : '—';
+  document.getElementById('sc-pct').textContent = autonomous;
+}
+
+// ═══════════════════════════════════════════════════════
+// DROP ZONE
+// ═══════════════════════════════════════════════════════
+function setupDropZone() {
+  const track = document.getElementById('assembly-track');
+  track.addEventListener('dragover', e => {
+    e.preventDefault();
+    track.classList.add('drag-over');
+  });
+  track.addEventListener('dragleave', () => track.classList.remove('drag-over'));
+  track.addEventListener('drop', e => {
+    e.preventDefault();
+    track.classList.remove('drag-over');
+    if (dragItem) { addPiece(dragItem.role, dragItem.label); dragItem = null; }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// DRAG — mouse
+// ═══════════════════════════════════════════════════════
+function onDragStart(e) {
+  dragItem = { role: e.currentTarget.dataset.role, label: e.currentTarget.dataset.label };
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'copy';
+}
+function onDragEnd(e) { e.currentTarget.classList.remove('dragging'); }
+
+// ═══════════════════════════════════════════════════════
+// TOUCH — mobile
+// ═══════════════════════════════════════════════════════
+function onTouchStart(e) {
+  touchSource = e.currentTarget;
+  dragItem = { role: touchSource.dataset.role, label: touchSource.dataset.label };
+  dragGhost = touchSource.cloneNode(true);
+  dragGhost.className = touchSource.className + ' drag-ghost';
+  dragGhost.style.width = touchSource.offsetWidth + 'px';
+  document.body.appendChild(dragGhost);
+  const t = e.touches[0];
+  dragGhost.style.left = (t.clientX - touchSource.offsetWidth / 2) + 'px';
+  dragGhost.style.top  = (t.clientY - touchSource.offsetHeight / 2) + 'px';
+  touchSource.classList.add('dragging');
+}
+
+function onTouchMove(e) {
+  e.preventDefault();
+  if (!dragGhost) return;
+  const t = e.touches[0];
+  dragGhost.style.left = (t.clientX - dragGhost.offsetWidth / 2) + 'px';
+  dragGhost.style.top  = (t.clientY - dragGhost.offsetHeight / 2) + 'px';
+  const track = document.getElementById('assembly-track');
+  const r = track.getBoundingClientRect();
+  if (t.clientX > r.left && t.clientX < r.right && t.clientY > r.top && t.clientY < r.bottom) {
+    track.classList.add('drag-over');
+  } else {
+    track.classList.remove('drag-over');
+  }
+}
+
+function onTouchEnd(e) {
+  if (dragGhost) { dragGhost.remove(); dragGhost = null; }
+  if (touchSource) { touchSource.classList.remove('dragging'); touchSource = null; }
+  const track = document.getElementById('assembly-track');
+  track.classList.remove('drag-over');
+  const t = e.changedTouches[0];
+  const r = track.getBoundingClientRect();
+  if (t.clientX > r.left && t.clientX < r.right && t.clientY > r.top && t.clientY < r.bottom) {
+    if (dragItem) addPiece(dragItem.role, dragItem.label);
+  }
+  dragItem = null;
+}
+
+init();
+</script>
+</body>
+</html>

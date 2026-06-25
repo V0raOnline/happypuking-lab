@@ -1,4 +1,4 @@
-  :root {
+﻿  :root {
     --bg: #09080d;
     --surface: #13111a;
     --surface2: #1c1926;
@@ -367,6 +367,65 @@
   .card:hover .card-arrow {
     background: color-mix(in srgb, var(--accent) 25%, var(--surface2));
     transform: translateX(2px);
+  }
+
+
+  /* ── DOMAIN LANES ── */
+  .domain-lane {
+    margin-top: 2.4rem;
+  }
+
+  .domain-lane-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .domain-lane-emoji {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .domain-lane-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--magenta);
+  }
+
+  .domain-lane-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-left: auto;
+    letter-spacing: 0.06em;
+  }
+
+
+  /* ── SATELLITE GRID ── */
+  .satellite-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .satellite-img {
+    display: flex;
+    align-items: center;
+  }
+
+  .satellite-img img {
+    height: 4.5rem;
+    width: auto;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+  @media (max-width: 600px) {
+    .satellite-grid { grid-template-columns: 1fr; }
   }
 
   /* ── WIP SECTION ── */
