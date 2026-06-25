@@ -1,11 +1,11 @@
 ﻿  :root {
-    --bg: #0F1117;
-    --surface: #1A1D27;
-    --surface2: #22263A;
-    --text: #F0F2FF;
-    --muted: #6B7280;
-    --muted2: #4B5563;
-    --magenta: #D946EF;
+    --bg: #080A0F;
+    --surface: #111318;
+    --surface2: #181C26;
+    --text: #F8FAFF;
+    --muted: #8892A4;
+    --muted2: #5A6478;
+    --magenta: #E040FB;
     --border: rgba(255,255,255,0.08);
 
     --square-color: #FFD700;
@@ -69,7 +69,7 @@
   .header-topbar a { color: var(--text); text-decoration: none; transition: color 0.2s; }
   .header-topbar a:hover { color: var(--magenta); }
   .header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
-  .header-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 400; letter-spacing: -0.02em; color: var(--text); margin-bottom: 0.3rem; line-height: 1.15; }
+  .header-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 400; letter-spacing: -0.02em; color: var(--text); margin-bottom: 0.3rem; line-height: 1.15; }
   .header-subtitle { font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 600; color: var(--muted); margin-bottom: 1.1rem; }
   .header-nav { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.2rem 0.1rem; margin-bottom: 1rem; }
   .nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
@@ -350,7 +350,7 @@
   }
 
   .panel-box h3 {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1rem;
     margin-bottom: 0.8rem;
     display: flex;
@@ -371,7 +371,7 @@
   }
 
   .detail-main {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 2.5rem;
     line-height: 1;
     margin-bottom: 0.4rem;

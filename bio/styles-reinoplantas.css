@@ -9,8 +9,8 @@
     --pink: #ff7eb3;
     --text: #e8f5e9;
     --muted: #4a6a4a;
-    --muted2: #4B5563;
-    --magenta: #D946EF;
+    --muted2: #5A6478;
+    --magenta: #E040FB;
     --surface: #0f160f;
     --surface2: #141e14;
     --border: rgba(57,255,106,0.1);
@@ -66,7 +66,7 @@
   .header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
 
   .header-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(1.6rem, 3.5vw, 2.4rem);
     font-weight: 400;
     letter-spacing: -0.02em;

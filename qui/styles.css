@@ -1,12 +1,12 @@
 ﻿:root {
-  --bg: #0F1117;
-  --surface: #1A1D27;
-  --surface2: #22263A;
+  --bg: #080A0F;
+  --surface: #111318;
+  --surface2: #181C26;
   --surface3: #2A2F48;
-  --text: #F0F2FF;
-  --muted: #6B7280;
-  --muted2: #4B5563;
-  --magenta: #D946EF;
+  --text: #F8FAFF;
+  --muted: #8892A4;
+  --muted2: #5A6478;
+  --magenta: #E040FB;
   --border: rgba(255,255,255,0.07);
   /* Category colors */
   --metal-alcalino: #EF4444;
@@ -65,7 +65,7 @@ header {
 .header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
 
 .header-title {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -193,7 +193,7 @@ header {
 }
 
 .el-symbol {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(0.9rem, 1.5vw, 1.15rem);
   color: var(--cat-color, #fff);
   line-height: 1;
@@ -286,7 +286,7 @@ header {
 }
 
 .card-symbol {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 4.5rem;
   line-height: 1;
   color: var(--accent, #3B82F6);
@@ -294,7 +294,7 @@ header {
 }
 
 .card-name {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.2rem;
   color: var(--text);
 }
@@ -386,7 +386,7 @@ header {
 }
 
 .card-empty .big-symbol {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 3rem;
   opacity: 0.15;
   margin-bottom: 0.5rem;
@@ -434,7 +434,7 @@ header {
 }
 
 .shell-letter {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.78rem;
   opacity: 0.6;
 }

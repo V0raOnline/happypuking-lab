@@ -4,13 +4,13 @@
     --hongos: #F59E0B;
     --animales: #EF4444;
     --plantas: #8B5CF6;
-    --bg: #0F1117;
-    --surface: #1A1D27;
-    --surface2: #22263A;
-    --text: #F0F2FF;
-    --muted: #6B7280;
-    --muted2: #4B5563;
-    --magenta: #D946EF;
+    --bg: #080A0F;
+    --surface: #111318;
+    --surface2: #181C26;
+    --text: #F8FAFF;
+    --muted: #8892A4;
+    --muted2: #5A6478;
+    --magenta: #E040FB;
     --border: rgba(255,255,255,0.08);
   }
 
@@ -61,7 +61,7 @@
   .header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
 
   .header-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(1.6rem, 3.5vw, 2.4rem);
     font-weight: 400;
     letter-spacing: -0.02em;
@@ -209,7 +209,7 @@
   }
 
   .panel-box h3 {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.1rem;
     margin-bottom: 0.8rem;
     display: flex;
