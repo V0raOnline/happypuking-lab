@@ -22,25 +22,40 @@ Todo el contenido está alineado con el currículo oficial de la ESO (España).
 
 ## 📁 Estructura del repo
 
+Las carpetas usan un prefijo de tres letras por materia, y cada archivo
+repite ese prefijo. Así se sabe de dónde viene un fichero solo con verlo.
+
 ```
 happypuking-lab/
-├── Reinos/
-│   └── bio-5reinos.html              # Explorador interactivo de los 5 Reinos
-├── Reino Plantas/
-│   └── bio-reinoplantas.html         # Tema 6 ESO — Reino de las Plantas
-├── Quimica/
-│   └── tabla_periodica.html          # Tabla periódica interactiva
-├── Mates/
-│   └── tabla-pitagorica.html         # Tablas de multiplicar interactivas
-├── Lengua/
-│   └── sintaxis.html                 # Morfosintaxis — explorador y analizador
-├── Ingles/
-│   └── verbos_irregulares.html       # Verbos irregulares — explorador de familias
-├── Tiempo/
-│   └── reloj.html                    # El Reloj · The Clock — fracciones y tiempo
-└── ND/
-    └── sensory_overload_model.html   # Modelo de Carga Sensorial — DPS / TEA
+├── index.html                          # Portada — catálogo de todas las herramientas
+├── about.html                          # De dónde viene esto y por qué
+├── bio/                                # Biología
+│   ├── bio-5reinos.html                # Los 5 Reinos — explorador de conexiones
+│   ├── bio-invertebrados-mapa.html     # Invertebrados — mapa de los 6 grupos
+│   ├── bio-invertebrados-tarjetas.html # Invertebrados — tarjetas
+│   └── bio-reino-plantas.html          # Reino de las Plantas — explorador e historia
+├── ing/                                # Inglés
+│   ├── ing-verbos-irregulares.html     # Familias fonológicas de verbos irregulares
+│   ├── ing-verbos-quiz.html            # Quiz de verbos — con banco de frases en YAML
+│   ├── ing-grammar-builder.html        # Construir oraciones pieza a pieza
+│   ├── ing-timeline.html               # Mapa de metro de los tiempos verbales
+│   └── ing-sing-and-learn.html         # Patrones de verbos cantando
+├── len/                                # Lengua
+│   └── len-morfosintaxis.html          # Morfosintaxis — explorador y analizador
+├── mat/                                # Matemáticas
+│   └── mat-tabla-pitagorica.html       # Tabla pitagórica — patrones y simetría
+├── qui/                                # Química
+│   ├── qui-tabla-periodica.html        # Tabla periódica — 3 modos de lectura
+│   └── qui-elementos-tarjetas.html     # Tarjetas de elementos — práctica
+├── nd/                                 # Neurodivergencia
+│   ├── nd-carga-sensorial.html         # Modelo de Carga Sensorial (ES)
+│   └── nd-carga-sensorial-en.html      # Sensory Load Model (EN)
+└── trn/                                # Transversal
+    └── trn-reloj.html                  # El Reloj · The Clock — bilingüe
 ```
+
+Los archivos terminados en `-bck` o `-v2` son versiones de trabajo, no la
+versión viva. La referencia siempre es lo que enlaza `index.html`.
 
 ---
 
@@ -48,23 +63,47 @@ happypuking-lab/
 
 ### ✅ Publicados
 
-| Recurso                             | Materia                   | Nivel             | Archivo                               |
-| ----------------------------------- | ------------------------- | ----------------- | ------------------------------------- |
-| Explorador de los 5 Reinos          | Ciencias Naturales        | 1º ESO            | `Reinos/bio-5reinos.html`             |
-| Reino de las Plantas                | Ciencias Naturales        | 1º ESO            | `Reino Plantas/bio-reinoplantas.html` |
-| Tabla Periódica                     | Química                   | ESO               | `Quimica/tabla_periodica.html`        |
-| Tablas de Multiplicar               | Matemáticas               | Primaria / 1º ESO | `Mates/tabla-pitagorica.html`         |
-| Morfosintaxis — Explorador          | Lengua Castellana         | ESO               | `Lengua/sintaxis.html`                |
-| Verbos Irregulares Inglés           | Inglés                    | ESO               | `Ingles/verbos_irregulares.html`      |
-| El Reloj · The Clock                | Matemáticas · Tiempo      | Primaria / ESO    | `Tiempo/reloj.html`                   |
-| Modelo de Carga Sensorial           | Neurodivergencia          | Divulgativo       | `ND/sensory_overload_model.html`      |
+| Recurso                   | Materia              | Nivel             | Archivo                               |
+| ------------------------- | -------------------- | ----------------- | ------------------------------------- |
+| Los 5 Reinos              | Ciencias Naturales   | 1º ESO            | `bio/bio-5reinos.html`                |
+| Invertebrados             | Ciencias Naturales   | 1º ESO            | `bio/bio-invertebrados-mapa.html`     |
+| Reino de las Plantas      | Ciencias Naturales   | 1º ESO            | `bio/bio-reino-plantas.html`          |
+| Verbos Irregulares        | Inglés               | ESO               | `ing/ing-verbos-irregulares.html`     |
+| Quiz de Verbos            | Inglés               | ESO               | `ing/ing-verbos-quiz.html`            |
+| Grammar Builder           | Inglés               | ESO               | `ing/ing-grammar-builder.html`        |
+| Timeline de Tiempos       | Inglés               | ESO               | `ing/ing-timeline.html`               |
+| Sing & Learn              | Inglés               | ESO               | `ing/ing-sing-and-learn.html`         |
+| Morfosintaxis             | Lengua Castellana    | ESO               | `len/len-morfosintaxis.html`          |
+| Tabla Pitagórica          | Matemáticas          | Primaria / ESO    | `mat/mat-tabla-pitagorica.html`       |
+| Tabla Periódica           | Química              | ESO               | `qui/qui-tabla-periodica.html`        |
+| Tarjetas de Elementos     | Química              | ESO               | `qui/qui-elementos-tarjetas.html`     |
+| El Reloj · The Clock      | Matemáticas · Tiempo | Primaria / ESO    | `trn/trn-reloj.html`                  |
+| Modelo de Carga Sensorial | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial.html`          |
+
+### ⚗️ Química — el viaje hacia la formulación
+
+Las dos herramientas de Química están pensadas como una secuencia, no como
+piezas sueltas. La idea es que formular deje de ser memorizar.
+
+La **Tabla Periódica** se lee en tres capas, con el mismo tablero:
+
+1. **Categorías** — reconocer el territorio: quién es quién y de qué familia.
+2. **Valencia** — cuántos electrones tiene cada átomo en la última capa, que
+   es lo único que cuenta al unirse. Se ve que cada columna comparte valencia.
+3. **Electronegatividad** — con cuánta fuerza los agarra. La diagonal que
+   explica la forma de la tabla.
+
+Las **Tarjetas de Elementos** cierran el ciclo: practicar símbolos, nombres,
+familias y electrones de valencia, con filtro por familia y lista de fallos
+para repasar.
 
 ### 🔧 En desarrollo
 
-| Recurso                         | Materia           | Nivel     |
-| ------------------------------- | ----------------- | --------- |
-| Verbos irregulares español      | Lengua Castellana | ESO       |
-| Chuletarios interactivos        | Todas             | VARIOS    |
+| Recurso                    | Materia           | Nivel  |
+| -------------------------- | ----------------- | ------ |
+| Formulador de compuestos   | Química           | ESO    |
+| Verbos irregulares español | Lengua Castellana | ESO    |
+| Chuletarios interactivos   | Todas             | VARIOS |
 
 ---
 
@@ -152,7 +191,7 @@ Abre un issue o un PR. Esto es un taller abierto, no un producto terminado.
 
 ## 🦄 Sobre el proyecto
 
-Lee el [ABOUT.html](./ABOUT.html) para entender de dónde viene esto, por qué se llama así y quién hay detrás.
+Lee el [about.html](./about.html) para entender de dónde viene esto, por qué se llama así y quién hay detrás.
 
 Spoiler: una persona, un cerebro lokito y una IA bien entrenada.
 
