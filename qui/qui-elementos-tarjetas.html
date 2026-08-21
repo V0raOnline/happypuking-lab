@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarjetas de Elementos — hAppYpUkIng</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ── TARJETAS ── */
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem 2rem;
+  position: relative; z-index: 1;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+}
+.setup-block { margin-bottom: 1.3rem; }
+.setup-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--magenta);
+  font-weight: 900;
+  margin-bottom: 0.55rem;
+}
+.opt-row { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.opt-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.opt-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.opt-chip.active {
+  color: var(--magenta);
+  border-color: rgba(224,64,251,0.4);
+  background: rgba(224,64,251,0.1);
+}
+.opt-hint { font-size: 0.68rem; color: var(--muted2); margin-top: 0.4rem; line-height: 1.5; }
+
+/* Familias: 2 filas de 5 para no alargar la pantalla */
+.fam-all { display: block; text-align: center; margin-bottom: 0.45rem; }
+.fam-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.45rem;
+}
+@media (max-width: 620px) { .fam-grid { grid-template-columns: repeat(2, 1fr); } }
+.fam-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.62rem;
+  padding: 0.4rem 0.35rem;
+  text-align: center;
+  line-height: 1.2;
+}
+.fam-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.opt-chip.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.setup-warn {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 0.7rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.setup-warn.is-error { color: #FBBF24; border-color: rgba(251,191,36,0.3); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-primary {
+  width: 100%;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--magenta);
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-ghost {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+
+/* Progreso */
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.progress-track {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 1.4rem;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--magenta);
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+
+/* Pregunta */
+.q-prompt {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 0.7rem;
+}
+.q-focus {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.4rem, 9vw, 3.6rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+  word-break: break-word;
+}
+.q-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted2);
+  text-align: center;
+  margin-bottom: 1.4rem;
+}
+
+.answers { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+@media (max-width: 520px) { .answers { grid-template-columns: 1fr; } }
+.ans-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.ans-btn:hover:not(:disabled) { border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+.ans-btn:disabled { cursor: default; }
+.ans-btn.correct {
+  border-color: #4ADE80;
+  background: rgba(74,222,128,0.12);
+  color: #4ADE80;
+}
+.ans-btn.wrong {
+  border-color: #F87171;
+  background: rgba(248,113,113,0.1);
+  color: #F87171;
+}
+.ans-btn.faded { opacity: 0.35; }
+
+.feedback {
+  min-height: 1.3rem;
+  text-align: center;
+  font-size: 0.78rem;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+.feedback.ok { color: #4ADE80; }
+.feedback.ko { color: #F87171; }
+.feedback-hint { display: block; color: var(--muted); font-size: 0.72rem; margin-top: 0.2rem; }
+
+/* Resultados */
+.res-score {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1;
+}
+.res-score.good { color: #4ADE80; }
+.res-score.mid  { color: #FBBF24; }
+.res-score.low  { color: #F87171; }
+.res-sub {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0.5rem 0 1.4rem;
+  line-height: 1.55;
+}
+.res-wrong-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--magenta);
+  font-weight: 900;
+  margin-bottom: 0.6rem;
+}
+.wrong-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+}
+.wrong-item:last-child { border-bottom: none; }
+.wrong-q { font-weight: 700; color: var(--text); min-width: 3.5rem; }
+.wrong-given { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #F87171; text-decoration: line-through; }
+.wrong-arrow { color: var(--muted2); font-size: 0.7rem; }
+.wrong-correct { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #4ADE80; font-weight: 600; }
+.res-actions { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1.4rem; flex-wrap: wrap; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span> hAppYpUkIng · Lab
+    <span class="sep">//</span>
+    LEARN · EXPAND · VOMIT HAPPINESS
+  </div>
+  <h1 class="header-title">Tarjetas de Elementos</h1>
+  <p class="header-subtitle">Reconoce símbolos, familias y valencias — la segunda etapa del viaje</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Química →</span>
+    <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
+    <a class="nav-tool active" href="#">Tarjetas</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- SETUP -->
+  <div class="panel" id="screen-setup">
+    <div class="setup-block">
+      <div class="setup-label">Qué practicar</div>
+      <div class="opt-row" id="opt-mode"></div>
+      <p class="opt-hint" id="mode-hint"></p>
+    </div>
+
+    <div class="setup-block">
+      <div class="setup-label">Qué familia</div>
+      <div class="opt-chip fam-all" id="fam-all">Todas las familias</div>
+      <div class="fam-grid" id="opt-family"></div>
+      <p class="opt-hint">Practicar una sola familia ayuda a verla como un conjunto: los halógenos se comportan igual entre ellos.</p>
+    </div>
+
+    <div class="setup-block">
+      <div class="setup-label">Hasta dónde</div>
+      <div class="opt-row" id="opt-scope"></div>
+      <p class="opt-hint">Empieza por los 20 primeros: son los que salen una y otra vez en clase.</p>
+    </div>
+
+    <div class="setup-block">
+      <div class="setup-label">Cuántas preguntas</div>
+      <div class="opt-row" id="opt-len"></div>
+    </div>
+
+    <p class="setup-warn hidden" id="setup-warn"></p>
+    <button class="btn-primary" id="btn-start">Empezar</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="panel hidden" id="screen-quiz">
+    <div class="progress-row">
+      <span id="prog-count">1 / 10</span>
+      <span id="prog-score">0 ✓</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+
+    <div class="q-prompt" id="q-prompt"></div>
+    <div class="q-focus" id="q-focus"></div>
+    <div class="q-sub" id="q-sub"></div>
+
+    <div class="answers" id="answers"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="panel hidden" id="screen-results">
+    <div class="res-score" id="res-score"></div>
+    <p class="res-sub" id="res-sub"></p>
+    <div id="res-wrong-wrap">
+      <div class="res-wrong-title">Para repasar</div>
+      <div id="res-wrong"></div>
+    </div>
+    <div class="res-actions">
+      <button class="btn-ghost" id="btn-again">Otra tanda</button>
+      <button class="btn-ghost" id="btn-setup">Cambiar ajustes</button>
+      <a class="btn-ghost" href="./qui-tabla-periodica.html" style="text-decoration:none">Volver a la tabla</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
+  </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
+</footer>
+
+<script>
+// Datos: [numero, simbolo, nombre, categoria, grupo, periodo]
+// Solo datos fisicos inmutables. El contenido editorial (origen del nombre,
+// aplicaciones) vive unicamente en qui-tabla-periodica.html.
+const ELEMENTS = [
+  [1,'H','Hidrógeno','no-metal',1,1],
+  [2,'He','Helio','gas-noble',18,1],
+  [3,'Li','Litio','metal-alcalino',1,2],
+  [4,'Be','Berilio','metal-alcalinoterreo',2,2],
+  [5,'B','Boro','metaloide',13,2],
+  [6,'C','Carbono','no-metal',14,2],
+  [7,'N','Nitrógeno','no-metal',15,2],
+  [8,'O','Oxígeno','no-metal',16,2],
+  [9,'F','Flúor','halogeno',17,2],
+  [10,'Ne','Neón','gas-noble',18,2],
+  [11,'Na','Sodio','metal-alcalino',1,3],
+  [12,'Mg','Magnesio','metal-alcalinoterreo',2,3],
+  [13,'Al','Aluminio','metal-postransicion',13,3],
+  [14,'Si','Silicio','metaloide',14,3],
+  [15,'P','Fósforo','no-metal',15,3],
+  [16,'S','Azufre','no-metal',16,3],
+  [17,'Cl','Cloro','halogeno',17,3],
+  [18,'Ar','Argón','gas-noble',18,3],
+  [19,'K','Potasio','metal-alcalino',1,4],
+  [20,'Ca','Calcio','metal-alcalinoterreo',2,4],
+  [21,'Sc','Escandio','metal-transicion',3,4],
+  [22,'Ti','Titanio','metal-transicion',4,4],
+  [23,'V','Vanadio','metal-transicion',5,4],
+  [24,'Cr','Cromo','metal-transicion',6,4],
+  [25,'Mn','Manganeso','metal-transicion',7,4],
+  [26,'Fe','Hierro','metal-transicion',8,4],
+  [27,'Co','Cobalto','metal-transicion',9,4],
+  [28,'Ni','Níquel','metal-transicion',10,4],
+  [29,'Cu','Cobre','metal-transicion',11,4],
+  [30,'Zn','Zinc','metal-transicion',12,4],
+  [31,'Ga','Galio','metal-postransicion',13,4],
+  [32,'Ge','Germanio','metaloide',14,4],
+  [33,'As','Arsénico','metaloide',15,4],
+  [34,'Se','Selenio','no-metal',16,4],
+  [35,'Br','Bromo','halogeno',17,4],
+  [36,'Kr','Kriptón','gas-noble',18,4],
+  [37,'Rb','Rubidio','metal-alcalino',1,5],
+  [38,'Sr','Estroncio','metal-alcalinoterreo',2,5],
+  [39,'Y','Itrio','metal-transicion',3,5],
+  [40,'Zr','Circonio','metal-transicion',4,5],
+  [41,'Nb','Niobio','metal-transicion',5,5],
+  [42,'Mo','Molibdeno','metal-transicion',6,5],
+  [43,'Tc','Tecnecio','metal-transicion',7,5],
+  [44,'Ru','Rutenio','metal-transicion',8,5],
+  [45,'Rh','Rodio','metal-transicion',9,5],
+  [46,'Pd','Paladio','metal-transicion',10,5],
+  [47,'Ag','Plata','metal-transicion',11,5],
+  [48,'Cd','Cadmio','metal-transicion',12,5],
+  [49,'In','Indio','metal-postransicion',13,5],
+  [50,'Sn','Estaño','metal-postransicion',14,5],
+  [51,'Sb','Antimonio','metaloide',15,5],
+  [52,'Te','Telurio','metaloide',16,5],
+  [53,'I','Yodo','halogeno',17,5],
+  [54,'Xe','Xenón','gas-noble',18,5],
+  [55,'Cs','Cesio','metal-alcalino',1,6],
+  [56,'Ba','Bario','metal-alcalinoterreo',2,6],
+  [57,'La','Lantano','lantanido',3,6],
+  [58,'Ce','Cerio','lantanido',4,6],
+  [59,'Pr','Praseodimio','lantanido',5,6],
+  [60,'Nd','Neodimio','lantanido',6,6],
+  [61,'Pm','Prometio','lantanido',7,6],
+  [62,'Sm','Samario','lantanido',8,6],
+  [63,'Eu','Europio','lantanido',9,6],
+  [64,'Gd','Gadolinio','lantanido',10,6],
+  [65,'Tb','Terbio','lantanido',11,6],
+  [66,'Dy','Disprosio','lantanido',12,6],
+  [67,'Ho','Holmio','lantanido',13,6],
+  [68,'Er','Erbio','lantanido',14,6],
+  [69,'Tm','Tulio','lantanido',15,6],
+  [70,'Yb','Iterbio','lantanido',16,6],
+  [71,'Lu','Lutecio','lantanido',17,6],
+  [72,'Hf','Hafnio','metal-transicion',4,6],
+  [73,'Ta','Tántalo','metal-transicion',5,6],
+  [74,'W','Wolframio','metal-transicion',6,6],
+  [75,'Re','Renio','metal-transicion',7,6],
+  [76,'Os','Osmio','metal-transicion',8,6],
+  [77,'Ir','Iridio','metal-transicion',9,6],
+  [78,'Pt','Platino','metal-transicion',10,6],
+  [79,'Au','Oro','metal-transicion',11,6],
+  [80,'Hg','Mercurio','metal-transicion',12,6],
+  [81,'Tl','Talio','metal-postransicion',13,6],
+  [82,'Pb','Plomo','metal-postransicion',14,6],
+  [83,'Bi','Bismuto','metal-postransicion',15,6],
+  [84,'Po','Polonio','metaloide',16,6],
+  [85,'At','Ástato','halogeno',17,6],
+  [86,'Rn','Radón','gas-noble',18,6],
+  [87,'Fr','Francio','metal-alcalino',1,7],
+  [88,'Ra','Radio','metal-alcalinoterreo',2,7],
+  [89,'Ac','Actinio','actinido',3,7],
+  [90,'Th','Torio','actinido',4,7],
+  [91,'Pa','Protactinio','actinido',5,7],
+  [92,'U','Uranio','actinido',6,7],
+  [93,'Np','Neptunio','actinido',7,7],
+  [94,'Pu','Plutonio','actinido',8,7],
+  [95,'Am','Americio','actinido',9,7],
+  [96,'Cm','Curio','actinido',10,7],
+  [97,'Bk','Berkelio','actinido',11,7],
+  [98,'Cf','Californio','actinido',12,7],
+  [99,'Es','Einstenio','actinido',13,7],
+  [100,'Fm','Fermio','actinido',14,7],
+  [101,'Md','Mendelevio','actinido',15,7],
+  [102,'No','Nobelio','actinido',16,7],
+  [103,'Lr','Laurencio','actinido',17,7],
+  [104,'Rf','Rutherfordio','metal-transicion',4,7],
+  [105,'Db','Dubnio','metal-transicion',5,7],
+  [106,'Sg','Seaborgio','metal-transicion',6,7],
+  [107,'Bh','Bohrio','metal-transicion',7,7],
+  [108,'Hs','Hassio','metal-transicion',8,7],
+  [109,'Mt','Meitnerio','metal-transicion',9,7],
+  [110,'Ds','Darmstadtio','metal-transicion',10,7],
+  [111,'Rg','Roentgenio','metal-transicion',11,7],
+  [112,'Cn','Copernicio','metal-transicion',12,7],
+  [113,'Nh','Nihonio','metal-postransicion',13,7],
+  [114,'Fl','Flerovio','metal-postransicion',14,7],
+  [115,'Mc','Moscovio','metal-postransicion',15,7],
+  [116,'Lv','Livermorio','metal-postransicion',16,7],
+  [117,'Ts','Teneso','halogeno',17,7],
+  [118,'Og','Oganesón','gas-noble',18,7],
+];
+
+const CAT_LABEL = {
+  'metal-alcalino':       'Metal alcalino',
+  'metal-alcalinoterreo': 'Metal alcalinotérreo',
+  'metal-transicion':     'Metal de transición',
+  'metal-postransicion':  'Metal pos-transición',
+  'metaloide':            'Metaloide',
+  'no-metal':             'No metal',
+  'halogeno':             'Halógeno',
+  'gas-noble':            'Gas noble',
+  'lantanido':            'Lantánido',
+  'actinido':             'Actínido',
+};
+
+const N = 0, SYM = 1, NAME = 2, CAT = 3, GROUP = 4;
+
+// Electrones de valencia derivados del grupo (misma regla que la tabla).
+// null = "va por libre": transicion, lantanidos y actinidos.
+function valenceOf(el) {
+  const cat = el[CAT], g = el[GROUP];
+  if (cat === 'metal-transicion' || cat === 'lantanido' || cat === 'actinido') return null;
+  if (cat === 'gas-noble') return 'completa';
+  if (g === 1) return 1;
+  if (g === 2) return 2;
+  if (g >= 13 && g <= 17) return g - 10;
+  return null;
+}
+
+const MODES = {
+  sym2name: {
+    label: 'Símbolo → Nombre',
+    hint: 'Ves el símbolo y eliges de qué elemento es. Lo más básico y lo que más se usa.',
+    prompt: '¿Qué elemento es?',
+    focus: el => el[SYM],
+    sub:   el => `número ${el[N]}`,
+    answer: el => el[NAME],
+    pool:  els => els.map(e => e[NAME]),
+  },
+  name2sym: {
+    label: 'Nombre → Símbolo',
+    hint: 'Ves el nombre y eliges su símbolo. Ojo con los que vienen del latín: sodio es Na, hierro es Fe.',
+    prompt: '¿Cuál es su símbolo?',
+    focus: el => el[NAME],
+    sub:   el => `número ${el[N]}`,
+    answer: el => el[SYM],
+    pool:  els => els.map(e => e[SYM]),
+  },
+  family: {
+    label: '¿De qué familia?',
+    hint: 'La familia (categoría) dice cómo se comporta. Es el paso previo a entender por qué se une con quién.',
+    prompt: '¿A qué familia pertenece?',
+    focus: el => el[SYM],
+    sub:   el => el[NAME],
+    answer: el => CAT_LABEL[el[CAT]],
+    pool:  els => Object.values(CAT_LABEL),
+  },
+  valence: {
+    label: 'Electrones de valencia',
+    hint: 'Cuántos electrones tiene en la última capa — el dato que decide con quién se une y en qué proporción. Solo elementos de valencia fija.',
+    prompt: '¿Cuántos electrones tiene en su última capa?',
+    focus: el => el[SYM],
+    sub:   el => el[NAME],
+    answer: el => valenceOf(el) === 'completa' ? 'capa completa' : `${valenceOf(el)} e⁻`,
+    pool:  () => ['1 e⁻','2 e⁻','3 e⁻','4 e⁻','5 e⁻','6 e⁻','7 e⁻','capa completa'],
+    filter: el => valenceOf(el) !== null,
+  },
+};
+
+const SCOPES = {
+  20:  'Primeros 20',
+  36:  'Primeros 36',
+  118: 'Todos (118)',
+};
+
+const LENGTHS = [10, 20, 30];
+
+// Familias: etiqueta corta para el pill + color de la tabla (continuidad visual).
+// El orden es el de la tabla: metales → no metales → bloque f.
+const FAMILIES = [
+  ['metal-alcalino',       'Alcalinos',      '#EF4444'],
+  ['metal-alcalinoterreo', 'Alcalinotérreos','#F97316'],
+  ['metal-transicion',     'Transición',     '#3B82F6'],
+  ['metal-postransicion',  'Pos-transición', '#6366F1'],
+  ['metaloide',            'Metaloides',     '#10B981'],
+  ['no-metal',             'No metales',     '#F59E0B'],
+  ['halogeno',             'Halógenos',      '#EC4899'],
+  ['gas-noble',            'Gases nobles',   '#8B5CF6'],
+  ['lantanido',            'Lantánidos',     '#06B6D4'],
+  ['actinido',             'Actínidos',      '#84CC16'],
+];
+
+let cfg = { mode: 'sym2name', scope: 20, len: 10, family: 'all' };
+let queue = [], idx = 0, score = 0, wrong = [], locked = false;
+
+// ── Setup UI ──
+function buildChips(containerId, entries, current, onPick) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  entries.forEach(([value, label]) => {
+    const d = document.createElement('div');
+    d.className = 'opt-chip' + (String(value) === String(current) ? ' active' : '');
+    d.textContent = label;
+    d.onclick = () => onPick(value);
+    wrap.appendChild(d);
+  });
+}
+
+function renderFamilies() {
+  const all = document.getElementById('fam-all');
+  all.classList.toggle('active', cfg.family === 'all');
+  all.onclick = () => { cfg.family = 'all'; renderSetup(); };
+
+  const wrap = document.getElementById('opt-family');
+  wrap.innerHTML = '';
+  FAMILIES.forEach(([key, label, color]) => {
+    const disponibles = questionPool(key).length;
+    const invalido = comboInvalido(key);
+    const d = document.createElement('div');
+    d.className = 'opt-chip fam-chip'
+      + (cfg.family === key ? ' active' : '')
+      + (invalido ? ' disabled' : '');
+    d.innerHTML = `<span class="fam-dot" style="background:${color}"></span><span>${label}</span>`;
+    d.title = invalido === 'familia-fija'
+      ? 'No aplica al modo "¿De qué familia?"'
+      : invalido === 'vacio'
+        ? 'Ningún elemento de esta familia en el ámbito elegido'
+        : `${disponibles} elemento${disponibles === 1 ? '' : 's'} disponibles`;
+    if (!invalido) d.onclick = () => { cfg.family = key; renderSetup(); };
+    wrap.appendChild(d);
+  });
+}
+
+function renderSetup() {
+  buildChips('opt-mode', Object.entries(MODES).map(([k, m]) => [k, m.label]), cfg.mode, v => { cfg.mode = v; renderSetup(); });
+  buildChips('opt-scope', Object.entries(SCOPES).map(([k, l]) => [k, l]), cfg.scope, v => { cfg.scope = parseInt(v); renderSetup(); });
+  buildChips('opt-len', LENGTHS.map(n => [n, `${n} preguntas`]), cfg.len, v => { cfg.len = parseInt(v); renderSetup(); });
+  document.getElementById('mode-hint').textContent = MODES[cfg.mode].hint;
+  renderFamilies();
+
+  // Aviso + bloqueo si la combinación elegida no da preguntas con sentido
+  const problema = comboInvalido();
+  const disponibles = questionPool().length;
+  const warn = document.getElementById('setup-warn');
+  const btn = document.getElementById('btn-start');
+  if (problema === 'familia-fija') {
+    warn.textContent = 'En el modo «¿De qué familia?» la respuesta sería siempre la misma. Elige «Todas las familias» o cambia de modo.';
+  } else if (problema === 'vacio') {
+    warn.textContent = 'No hay elementos de esa familia en este ámbito. Amplía el ámbito o elige otra familia.';
+  } else if (disponibles < cfg.len) {
+    warn.textContent = `Solo hay ${disponibles} elemento${disponibles === 1 ? '' : 's'} con estos ajustes: la tanda será de ${disponibles} pregunta${disponibles === 1 ? '' : 's'}.`;
+  }
+  const bloquear = problema !== null;
+  warn.classList.toggle('hidden', !problema && disponibles >= cfg.len);
+  warn.classList.toggle('is-error', bloquear);
+  btn.disabled = bloquear;
+}
+
+// ── Utilidades ──
+const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(p => p[1]);
+
+// Distractores: TODO el ámbito (sin filtro de familia), para que siempre
+// haya 4 opciones aunque la familia elegida tenga solo 2 elementos.
+function distractorPool() {
+  const m = MODES[cfg.mode];
+  let els = ELEMENTS.filter(e => e[N] <= cfg.scope);
+  if (m.filter) els = els.filter(m.filter);
+  return els;
+}
+
+// Preguntas: además filtradas por la familia elegida.
+function questionPool(family = cfg.family, mode = cfg.mode, scope = cfg.scope) {
+  const m = MODES[mode];
+  let els = ELEMENTS.filter(e => e[N] <= scope);
+  if (m.filter) els = els.filter(m.filter);
+  if (family !== 'all') els = els.filter(e => e[CAT] === family);
+  return els;
+}
+
+// "¿De qué familia?" con una sola familia elegida no tiene sentido:
+// la respuesta correcta sería siempre la misma.
+function comboInvalido(family = cfg.family, mode = cfg.mode, scope = cfg.scope) {
+  if (mode === 'family' && family !== 'all') return 'familia-fija';
+  if (questionPool(family, mode, scope).length === 0) return 'vacio';
+  return null;
+}
+
+// ── Quiz ──
+function start() {
+  if (comboInvalido()) return;
+  const els = questionPool();
+  if (!els.length) return;
+  queue = shuffle(els).slice(0, Math.min(cfg.len, els.length));
+  idx = 0; score = 0; wrong = []; locked = false;
+  show('screen-quiz');
+  renderQuestion();
+}
+
+function show(id) {
+  ['screen-setup', 'screen-quiz', 'screen-results'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+}
+
+function renderQuestion() {
+  const m = MODES[cfg.mode];
+  const el = queue[idx];
+  locked = false;
+
+  document.getElementById('prog-count').textContent = `${idx + 1} / ${queue.length}`;
+  document.getElementById('prog-score').textContent = `${score} ✓`;
+  document.getElementById('prog-fill').style.width = `${(idx / queue.length) * 100}%`;
+
+  document.getElementById('q-prompt').textContent = m.prompt;
+  document.getElementById('q-focus').textContent = m.focus(el);
+  document.getElementById('q-sub').textContent = m.sub(el);
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+
+  const right = m.answer(el);
+  const candidates = [...new Set(m.pool(distractorPool()))].filter(o => o !== right);
+  const options = shuffle([right, ...shuffle(candidates).slice(0, 3)]);
+
+  const wrap = document.getElementById('answers');
+  wrap.innerHTML = '';
+  options.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'ans-btn';
+    b.textContent = opt;
+    b.onclick = () => answer(b, opt, right, el);
+    wrap.appendChild(b);
+  });
+}
+
+function answer(btn, given, right, el) {
+  if (locked) return;
+  locked = true;
+  const buttons = [...document.querySelectorAll('.ans-btn')];
+  buttons.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === right) b.classList.add('correct');
+    else if (b === btn) b.classList.add('wrong');
+    else b.classList.add('faded');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (given === right) {
+    score++;
+    fb.className = 'feedback ok';
+    fb.textContent = '✓ Correcto';
+  } else {
+    fb.className = 'feedback ko';
+    fb.innerHTML = `La respuesta era <strong>${right}</strong><span class="feedback-hint">${el[NAME]} · ${CAT_LABEL[el[CAT]]} · grupo ${el[GROUP]}</span>`;
+    wrong.push({ focus: MODES[cfg.mode].focus(el), given, right });
+  }
+  document.getElementById('prog-score').textContent = `${score} ✓`;
+
+  setTimeout(() => {
+    idx++;
+    if (idx < queue.length) renderQuestion();
+    else finish();
+  }, given === right ? 700 : 1900);
+}
+
+function finish() {
+  show('screen-results');
+  const total = queue.length;
+  const pct = Math.round((score / total) * 100);
+  const scoreEl = document.getElementById('res-score');
+  scoreEl.textContent = `${score}/${total}`;
+  scoreEl.className = 'res-score ' + (pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'low');
+
+  document.getElementById('res-sub').textContent =
+    pct === 100 ? 'Pleno. Súbete el ámbito o cambia de modo.' :
+    pct >= 80   ? 'Muy bien. Repasa los de abajo y repite.' :
+    pct >= 50   ? 'Vas encontrándole el sitio. Repite esta misma tanda.' :
+                  'Normal al principio. Baja el ámbito a los 20 primeros y vuelve a la tabla a mirarlos.';
+
+  const wrap = document.getElementById('res-wrong-wrap');
+  wrap.classList.toggle('hidden', wrong.length === 0);
+  const list = document.getElementById('res-wrong');
+  list.innerHTML = '';
+  wrong.forEach(w => {
+    const d = document.createElement('div');
+    d.className = 'wrong-item';
+    d.innerHTML = `<span class="wrong-q">${w.focus}</span><span class="wrong-given">${w.given}</span><span class="wrong-arrow">→</span><span class="wrong-correct">${w.right}</span>`;
+    list.appendChild(d);
+  });
+}
+
+document.getElementById('btn-start').onclick = start;
+document.getElementById('btn-again').onclick = start;
+document.getElementById('btn-setup').onclick = () => { renderSetup(); show('screen-setup'); };
+
+renderSetup();
+</script>
+</body>
+</html>
