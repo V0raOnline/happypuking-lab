@@ -430,7 +430,7 @@ function onCellHover(r, c, entering) {
 }
 
 function onCellClick(r, c) {
-  if (viewMode === 'conquistar') return;          // ahi la rejilla solo muestra progreso
+  if (viewMode === 'conquistar') { onPistaClick(r, c); return; }
   if (viewMode === 'caza') { onCazaClick(r, c); return; }
   const val = r * c;
 
@@ -659,6 +659,9 @@ function nextQuestion() {
         txt += ` Paraste ${boardPausas} ${boardPausas === 1 ? 'vez' : 'veces'} a pensar, y eso no cuenta en contra.`;
       }
     }
+    if (conqPistas) {
+      txt += ` Pistas descubiertas: ${conqPistas}. Consultar la tabla también es aprendérsela.`;
+    }
     document.getElementById('conq-done-text').textContent = txt;
     currentTarget = null;
     return;
@@ -681,6 +684,31 @@ function nextQuestion() {
 
 // Las de tabla alta cuestan mas: 7x8 no se recuerda como 2x3
 const tiempoParaMina = (a, b) => (a >= 6 && b >= 6) ? 14 : 10;
+
+// ── PISTAS ────────────────────────────────────────────────────────────────────
+// Pinchar una casilla enseña su valor. No es hacer trampa: la tabla pitagorica
+// es material de consulta, y buscar donde vive el 56 construye memoria espacial
+// de la tabla, que es justo lo que la herramienta quiere enseñar.
+// La casilla VUELVE A LA NIEBLA: una casilla iluminada solo puede significar que
+// la desactivaste tu. Consultar esta bien; disfrazar la consulta de conquista no.
+const PISTA_MS = 1600;
+let conqPistas = 0;
+
+function onPistaClick(r, c) {
+  if (boardPausado) return;                       // el tablero esta tapado
+  if (conquered.has(cellKey(r, c))) return;       // ya esta despejada, no es pista
+  const td = document.getElementById(`cell-${r}-${c}`);
+  if (!td || td.classList.contains('pista')) return;
+
+  conqPistas++;
+  td.classList.add('pista');
+  setTimeout(() => td.classList.remove('pista'), PISTA_MS);
+
+  // El hueco de descubribilidad original: la rejilla parece un tablero, pero
+  // aqui se responde escribiendo. Se lleva el foco donde toca.
+  const inp = document.getElementById('conq-input');
+  if (!conqLocked && !inp.disabled) inp.focus();
+}
 
 function minaAgotada() {
   if (!currentTarget) return;
@@ -773,6 +801,7 @@ document.getElementById('conq-input').addEventListener('keydown', e => {
 });
 // Vuelve a armar las minas del ambito actual (todas, o solo las de una tabla)
 function reminar() {
+  conqPistas = 0;
   targets().forEach(([r, c]) => conquered.delete(cellKey(r, c)));
   saveProgress();
   paintConquered();
@@ -866,7 +895,7 @@ function resetBoardState() {
   document.body.classList.remove('caza-pausa');
   document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
   document.querySelectorAll('.cell').forEach(td =>
-    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss'));
+    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss', 'pista'));
 }
 
 // Fallo/acierto genericos: el respiro se ofrece igual en cualquier modo
@@ -1132,7 +1161,7 @@ function setViewMode(mode) {
   selectedCell = null;
 
   if (mode === 'conquistar') {
-    conqAgotados = 0; conqFallos = 0;
+    conqAgotados = 0; conqFallos = 0; conqPistas = 0;
     paintConquered();
     updateConqStats();
     nextQuestion();

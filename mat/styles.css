@@ -932,3 +932,26 @@
     padding: 0.4rem 1.1rem;
   }
   .pausa-acciones.visible ~ .pausa-seguir:hover { color: var(--text); }
+
+  /* ── PISTA: un vistazo, no una conquista ── */
+  /* Deliberadamente distinta de .conquered (azul solido con borde): la pista es
+     un destello ambar y punteado, para que nunca se confunda con territorio
+     ganado. Y se va sola: la casilla vuelve a la niebla. */
+  body.mode-conquista .cell.pista {
+    color: var(--highlight);
+    background: rgba(245,158,11,0.12);
+    border-color: rgba(245,158,11,0.5);
+    border-style: dashed;
+    animation: pistaFade 1.6s ease forwards;
+  }
+  body.mode-conquista .cell.pista::after { display: none; }
+  @keyframes pistaFade {
+    0%   { transform: scale(1.12); opacity: 1; }
+    15%  { transform: scale(1);    opacity: 1; }
+    70%  { opacity: 1; }
+    100% { opacity: 0.25; }
+  }
+  body.mode-conquista .cell:not(.conquered):hover {
+    border-color: rgba(245,158,11,0.35);
+    cursor: help;
+  }
