@@ -140,6 +140,11 @@
         <div class="pausa-msg">
           <span class="pausa-title" id="pausa-title">Pensando</span>
           <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
+          <div class="pausa-acciones" id="pausa-acciones">
+            <button class="pausa-ir" data-ir="explorar">Mirar la tabla</button>
+            <button class="pausa-ir" data-ir="conquistar">Minas gemelas</button>
+            <button class="pausa-ir" data-ir="caza">Caza topos</button>
+          </div>
           <button class="pausa-seguir" id="pausa-seguir">Seguir</button>
         </div>
       </div>
@@ -158,6 +163,7 @@
           </div>
           <div class="conq-feedback" id="conq-feedback"></div>
           <button class="caza-pause" data-role="pausa">Estoy pensando</button>
+          <button class="btn-aburro" data-role="aburro">Me aburro</button>
         </div>
         <div class="conq-done" id="conq-done">
           <div class="conq-done-big">Campo despejado</div>
@@ -173,6 +179,7 @@
           <div class="caza-remaining" id="caza-remaining"></div>
           <div class="conq-feedback" id="caza-feedback"></div>
           <button class="caza-pause" data-role="pausa">Estoy pensando</button>
+          <button class="btn-aburro" data-role="aburro">Me aburro</button>
         </div>
         <div class="conq-done" id="caza-done">
           <div class="conq-done-big">Cacería terminada</div>
@@ -875,6 +882,7 @@ function marcaAcierto() { boardSeguidos = 0; }
 const PAUSA_TEXTO = {
   manual:  ['Pensando', 'el reloj está parado · cuando estés listo retomamos'],
   respira: ['Respira', 'Puedes tomarte un tiempo para pensar'],
+  aburro:  ['Vale', ''],   // el subtitulo depende del modo, se rellena al vuelo
 };
 
 function setPausa(on, motivo = 'manual') {
@@ -887,8 +895,21 @@ function setPausa(on, motivo = 'manual') {
     if (motivo === 'manual') boardPausas++;
     const [titulo, sub] = PAUSA_TEXTO[motivo];
     document.getElementById('pausa-title').textContent = titulo;
-    document.getElementById('pausa-sub').textContent = sub;
+    document.getElementById('pausa-sub').textContent = motivo === 'aburro'
+      ? (viewMode === 'conquistar'
+          ? 'Lo que llevas desactivado se queda guardado. ¿Qué te apetece?'
+          : 'Dejamos la cacería donde está. ¿Qué te apetece?')
+      : sub;
+    // Solo al abandonar se ofrecen los otros modos: salir tiene que ser una
+    // eleccion, no un escape lateral que deja la partida a medias por detras.
+    document.getElementById('pausa-acciones').classList.toggle('visible', motivo === 'aburro');
+    document.querySelectorAll('.pausa-ir').forEach(b =>
+      b.style.display = b.dataset.ir === viewMode ? 'none' : 'inline-block');
+    document.getElementById('pausa-seguir').textContent =
+      motivo === 'aburro' ? 'Sigo un poco más' : 'Seguir';
   } else {
+    document.getElementById('pausa-acciones').classList.remove('visible');
+    document.getElementById('pausa-seguir').textContent = 'Seguir';
     boardSeguidos = 0;   // se vuelve con el contador a cero
     if (conqAvancePendiente) { conqAvancePendiente = false; programarAvance(nextQuestion, 250); }
   }
@@ -904,6 +925,10 @@ function setPausa(on, motivo = 'manual') {
 document.querySelectorAll('[data-role="pausa"]').forEach(b =>
   b.onclick = () => setPausa(!boardPausado));
 document.getElementById('pausa-seguir').onclick = () => setPausa(false);
+document.querySelectorAll('[data-role="aburro"]').forEach(b =>
+  b.onclick = () => setPausa(true, 'aburro'));
+document.querySelectorAll('.pausa-ir').forEach(b =>
+  b.onclick = () => setViewMode(b.dataset.ir));
 
 function tiempoAgotado() {
   const val = cazaQueue[cazaIdx];
