@@ -602,11 +602,19 @@ function targets() {
 
 const pending = () => targets().filter(([r, c]) => !conquered.has(cellKey(r, c)));
 
+const enAmbito = (r, c) => scopeTable === 'all' || r === +scopeTable || c === +scopeTable;
+
+// Lo conquistado FUERA del ámbito de la ronda se marca, pero no se lee: enseña
+// la geometría (la cruz de la tabla del 7, el reflejo en la diagonal) sin
+// regalar los resultados de casillas que no toca practicar ahora.
 function paintConquered() {
   for (let r = 1; r <= N; r++) {
     for (let c = 1; c <= N; c++) {
-      document.getElementById(`cell-${r}-${c}`)
-        ?.classList.toggle('conquered', conquered.has(cellKey(r, c)));
+      const td = document.getElementById(`cell-${r}-${c}`);
+      if (!td) continue;
+      const hecha = conquered.has(cellKey(r, c));
+      td.classList.toggle('conquered', hecha);
+      td.classList.toggle('solo-geometria', hecha && !enAmbito(r, c));
     }
   }
 }
@@ -696,7 +704,9 @@ let conqPistas = 0;
 
 function onPistaClick(r, c) {
   if (boardPausado) return;                       // el tablero esta tapado
-  if (conquered.has(cellKey(r, c))) return;       // ya esta despejada, no es pista
+  // No hace falta pista donde el numero YA se lee. Las conquistadas fuera del
+  // ambito solo enseñan geometria, asi que esas si se pueden consultar.
+  if (conquered.has(cellKey(r, c)) && enAmbito(r, c)) return;
   const td = document.getElementById(`cell-${r}-${c}`);
   if (!td || td.classList.contains('pista')) return;
 
@@ -789,6 +799,7 @@ function checkAnswer() {
       scopeTable = chip.dataset.table;
       document.querySelectorAll('.conq-scope .conq-chip').forEach(c => c.classList.toggle('active', c === chip));
       if (viewMode === 'caza') { startCaza(); return; }
+      paintConquered();          // cambia quien esta dentro y fuera del ambito
       updateConqStats();
       nextQuestion();
     };
@@ -895,7 +906,7 @@ function resetBoardState() {
   document.body.classList.remove('caza-pausa');
   document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
   document.querySelectorAll('.cell').forEach(td =>
-    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss', 'pista'));
+    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss', 'pista', 'solo-geometria'));
 }
 
 // Fallo/acierto genericos: el respiro se ofrece igual en cualquier modo

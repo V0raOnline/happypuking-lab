@@ -955,3 +955,21 @@
     border-color: rgba(245,158,11,0.35);
     cursor: help;
   }
+
+  /* ── GEOMETRÍA SIN NÚMEROS ── */
+  /* Conquistado en otra ronda y fuera del ámbito actual: se ve la forma, no el
+     resultado. Así al elegir la tabla del 7 aparece su cruz y su reflejo en la
+     diagonal, pero el tablero no se llena de respuestas que no tocan ahora. */
+  body.mode-conquista .cell.conquered.solo-geometria {
+    color: transparent;
+    background: rgba(59,130,246,0.06);
+    border-color: rgba(59,130,246,0.22);
+    border-style: dashed;
+  }
+  body.mode-conquista .cell.conquered.solo-geometria::after {
+    display: block;
+    background: rgba(96,165,250,0.6);
+    width: 4px; height: 4px; margin: -2px 0 0 -2px;
+  }
+  /* el ámbar de la pista manda sobre la geometría */
+  body.mode-conquista .cell.pista.solo-geometria { color: var(--highlight); }
