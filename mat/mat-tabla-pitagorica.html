@@ -18,12 +18,33 @@
     LEARN · EXPAND · VOMIT HAPPINESS
   </div>
   <h1 class="header-title">Tablas de Multiplicar</h1>
-  <p class="header-subtitle">La tabla pitagórica — descubre los patrones ocultos</p>
+  <p class="header-subtitle">La tabla pitagórica — descubre los patrones y despeja el campo</p>
   <nav class="header-nav">
     <span class="nav-domain">Matemáticas →</span>
     <a class="nav-tool active" href="#">Tabla Pitagórica</a>
   </nav>
 </header>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="mode-explorar">Explorar</button>
+    <button class="mode-btn" id="mode-conquistar">Minas gemelas</button>
+    <button class="mode-btn" id="mode-caza">Caza topos</button>
+  </div>
+
+  <div class="mode-intro" id="explore-intro">
+    <p>Esto no es una lista de 100 multiplicaciones que memorizar: es un mapa con patrones. La diagonal son los cuadrados, y todo lo que hay a un lado se refleja al otro.</p>
+    <p><strong>Si sabes 7×8, ya sabes 8×7.</strong> Por eso no hay 100 resultados que aprender, hay 55. Cuando lo veas, pasa a <strong>Minas gemelas</strong> y compruébalo.</p>
+  </div>
+
+  <div class="mode-intro" id="conquista-intro">
+    <p>El campo tiene 100 casillas, pero solo <strong>55 minas distintas</strong>: casi todas están duplicadas al otro lado de la diagonal. Desactiva una y <strong>su gemela cae sola</strong>.</p>
+    <p>Las 10 de la diagonal van solas: son los cuadrados, no tienen reflejo. Acierta el resultado para desactivar.</p>
+  </div>
+
+  <div class="mode-intro" id="caza-intro">
+    <p>Ahora al revés: te damos un número y <strong>tú buscas todos los huecos donde se esconde</strong>. El 12 vive en cuatro; el 49, en uno solo.</p>
+    <p>Esto es lo mismo que preguntarse <strong>por cuánto hay que multiplicar para llegar ahí</strong> — o sea, dividir. Si fallas un hueco, te enseñamos quién vivía dentro.</p>
+  </div>
 
   <!-- Stats -->
   <div class="stats-row" id="stats-row">
@@ -44,7 +65,7 @@
     </div>
     <div class="stat-pill">
       <span class="dot" style="background:var(--same-result)"></span>
-      Resultados repetidos entre pares:
+      Resultados con varias combinaciones:
       <span class="count" style="color:#f9a8d4" id="dup-count">—</span>
     </div>
   </div>
@@ -61,34 +82,99 @@
     </button>
     <button class="legend-btn" data-mode="sameresult">
       <span class="swatch" style="background:var(--same-result)"></span>
-      Mismo resultado
+      Combinaciones
     </button>
+  </div>
+
+  <!-- Barra compartida por los dos modos de tablero: ámbito + progreso -->
+  <div class="board-bar" id="board-bar">
+    <div class="conq-scope">
+      <span class="conq-scope-label">Qué tabla</span>
+      <div class="conq-chip active" data-table="all">Todas</div>
+      <div class="conq-tables" id="conq-tables"></div>
+    </div>
+
+    <div class="conq-progress" id="conq-progress">
+      <div class="conq-progress-head">
+        <span id="conq-count">0 de 55 minas desactivadas</span>
+        <span id="conq-squares">solitarias 0/10</span>
+      </div>
+      <div class="conq-track"><div class="conq-fill" id="conq-fill"></div></div>
+      <div class="conq-progress-foot">
+        <span id="conq-cells">0 de 100 casillas despejadas</span>
+        <button class="conq-reset" id="conq-reset">Volver a minar</button>
+      </div>
+    </div>
+
+    <div class="conq-progress" id="caza-progress">
+      <div class="caza-ritmo">
+        <span class="conq-scope-label">A qué ritmo</span>
+        <div class="conq-chip active" data-ritmo="calma">No me estreses</div>
+        <div class="conq-chip" data-ritmo="reloj">Contra reloj</div>
+      </div>
+      <div class="conq-progress-head">
+        <span id="caza-count">objetivo 1 de 10</span>
+        <span id="caza-score">0 cazados · 0 fallos</span>
+      </div>
+      <div class="conq-track"><div class="conq-fill" id="caza-fill"></div></div>
+      <div class="caza-timer" id="caza-timer">
+        <div class="caza-timer-track" id="caza-timer-track"><div class="caza-timer-fill" id="caza-timer-fill"></div></div>
+        <span class="caza-timer-secs" id="caza-timer-secs">—</span>
+      </div>
+    </div>
   </div>
 
   <!-- 3-column layout -->
   <div class="outer-layout">
 
-    <!-- COL 1: table + insight below -->
+    <!-- COL 1: table -->
     <div class="left-col">
       <div class="table-scroll">
         <table id="pythagorean-table"></table>
       </div>
-      <div class="insight-box">
-        <div class="insight-title">💡 ¿Por qué no son 100?</div>
-        <p>La tabla parece tener <strong>100 multiplicaciones</strong>, pero gracias a la <strong>propiedad conmutativa</strong> (3×7 = 7×3), solo hay <strong>45 pares únicos</strong> más <strong>10 cuadrados</strong> en la diagonal.</p>
-        <p>En total: <strong>55 resultados distintos</strong> en lugar de 100.</p>
-        <div class="reduction-visual">
-          <div class="red-bar red-total" style="width:80px">100 total</div>
-          <span style="color:var(--muted);font-size:0.8rem">→</span>
-          <div class="red-bar red-unique" style="width:80px">45 pares</div>
-          <span style="color:var(--muted);font-size:0.8rem">+</span>
-          <div class="red-bar red-diag" style="width:38px">10 □</div>
+      <div class="pausa-overlay" id="pausa-overlay">
+        <div class="pausa-msg">
+          Pensando<span>el reloj está parado · tómate lo que necesites</span>
         </div>
       </div>
     </div>
 
-    <!-- COL 2: cell detail + suma repetida -->
+    <!-- COL 2: cell detail + suma repetida (explorar) / pregunta (conquistar) -->
     <div class="centre-col">
+
+      <div class="panel-box" id="conq-panel">
+        <div class="conq-q" id="conq-q">
+          <div class="conq-q-eq" id="conq-eq">7 × 8</div>
+          <div class="conq-input-row">
+            <input class="conq-input" id="conq-input" type="text" inputmode="numeric"
+                   autocomplete="off" maxlength="3" placeholder="?" aria-label="Resultado">
+            <button class="conq-check" id="conq-check">Desactivar</button>
+          </div>
+          <div class="conq-feedback" id="conq-feedback"></div>
+        </div>
+        <div class="conq-done" id="conq-done">
+          <div class="conq-done-big">Campo despejado</div>
+          <p id="conq-done-text"></p>
+          <button class="conq-check" id="conq-again">Minar otra vez</button>
+        </div>
+      </div>
+
+      <div class="panel-box" id="caza-panel">
+        <div id="caza-q">
+          <div class="caza-label">Busca el</div>
+          <div class="caza-number" id="caza-number">12</div>
+          <div class="caza-remaining" id="caza-remaining"></div>
+          <div class="conq-feedback" id="caza-feedback"></div>
+          <button class="caza-pause" id="caza-pause">Estoy pensando</button>
+        </div>
+        <div class="conq-done" id="caza-done">
+          <div class="conq-done-big">Cacería terminada</div>
+          <p id="caza-done-text"></p>
+          <div class="caza-review" id="caza-review"></div>
+          <button class="conq-check" id="caza-again">Otra cacería</button>
+        </div>
+      </div>
+
       <div class="panel-box" id="cell-detail">
         <h3><span class="dot" style="background:var(--muted)"></span>Selecciona una celda</h3>
         <p style="color:var(--muted);font-size:0.85rem;font-style:italic">Haz clic en cualquier número de la tabla para ver sus propiedades.</p>
@@ -104,6 +190,20 @@
       <div class="panel-box" id="right-col-panel">
         <h3><span class="dot" style="background:var(--same-result)"></span>Se repite en…</h3>
         <div id="dup-panel" style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);line-height:1.9;max-height:320px;overflow-y:auto;padding-right:0.3rem"></div>
+      </div>
+    </div>
+
+    <!-- Fija y a todo lo ancho: es la tesis de la herramienta, no un detalle -->
+    <div class="insight-box">
+      <div class="insight-title">💡 ¿Por qué no son 100?</div>
+      <p>La tabla parece tener <strong>100 multiplicaciones</strong>, pero gracias a la <strong>propiedad conmutativa</strong> (3×7 = 7×3), solo hay <strong>45 pares únicos</strong> más <strong>10 cuadrados</strong> en la diagonal.</p>
+      <p>En total: <strong>55 resultados distintos</strong> en lugar de 100.</p>
+      <div class="reduction-visual">
+        <div class="red-bar red-total" style="width:80px">100 total</div>
+        <span style="color:var(--muted);font-size:0.8rem">→</span>
+        <div class="red-bar red-unique" style="width:80px">45 pares</div>
+        <span style="color:var(--muted);font-size:0.8rem">+</span>
+        <div class="red-bar red-diag" style="width:38px">10 □</div>
       </div>
     </div>
 
@@ -197,6 +297,8 @@ function buildTable() {
       td.dataset.val = r * c;
       td.id = `cell-${r}-${c}`;
       td.textContent = r * c;
+      if (r === c) td.classList.add('is-diag');   // marca estable de la diagonal
+
 
       // Apply visual classes based on mode
       applyClasses(td, r, c);
@@ -240,6 +342,28 @@ function refreshAllClasses() {
     const {r, c} = selectedCell;
     document.getElementById(`cell-${r}-${c}`)?.classList.add('selected');
   }
+}
+
+// En conquista la rejilla es el tablero, no el mapa de patrones: hay que
+// QUITAR las clases de exploracion, no taparlas. Varias (.same-result-hl,
+// .family-hl) usan !important, asi que ninguna regla de conquista las venceria.
+function clearExploreClasses() {
+  document.querySelectorAll('.cell').forEach(td =>
+    td.classList.remove('is-square', 'comm-upper', 'comm-lower', 'same-result-hl', 'selected', 'family-hl'));
+  document.querySelectorAll('.th-row, .th-col').forEach(th =>
+    th.classList.remove('family-header', 'row-active', 'col-active'));
+}
+
+// Los paneles de exploracion tambien vuelven a su estado inicial: si no hay
+// celda seleccionada, no deben seguir mostrando la ultima.
+function resetExplorePanels() {
+  document.getElementById('cell-detail').innerHTML =
+    '<h3><span class="dot" style="background:var(--muted)"></span>Selecciona una celda</h3>' +
+    '<p style="color:var(--muted);font-size:0.85rem;font-style:italic">Haz clic en cualquier número de la tabla para ver sus propiedades.</p>';
+  document.getElementById('suma-visual-box').style.display = 'none';
+  document.getElementById('suma-visual').innerHTML = '';
+  document.getElementById('right-col-panel').style.display = 'none';
+  document.getElementById('dup-panel').innerHTML = '';
 }
 
 function clearFamilyHighlight() {
@@ -291,6 +415,8 @@ function onCellHover(r, c, entering) {
 }
 
 function onCellClick(r, c) {
+  if (viewMode === 'conquistar') return;          // ahi la rejilla solo muestra progreso
+  if (viewMode === 'caza') { onCazaClick(r, c); return; }
   const val = r * c;
 
   // Deselect previous selected ring
@@ -413,6 +539,456 @@ function renderSumaVisual(r, c) {
   box.style.display = 'block';
 }
 
+// ── MODO CONQUISTA ────────────────────────────────────────────────────────────
+// La tesis de la herramienta es que la simetria reduce el territorio: hay 55
+// objetivos canonicos (r<=c), no 100. Acertar un par no cuadrado ilumina DOS
+// casillas; los 10 cuadrados de la diagonal solo se iluminan a si mismos.
+
+const STORE_KEY = 'hpk-pitagorica-conquista';
+const cellKey = (r, c) => `${Math.min(r,c)}-${Math.max(r,c)}`;
+
+let conquered = new Set();
+let scopeTable = 'all';
+let currentTarget = null;
+let conqLocked = false;
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    conquered = new Set(raw ? JSON.parse(raw) : []);
+  } catch (e) { conquered = new Set(); }
+}
+
+function saveProgress() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify([...conquered])); } catch (e) {}
+}
+
+// Objetivos canonicos del ambito actual
+function targets() {
+  const out = [];
+  for (let r = 1; r <= N; r++) {
+    for (let c = r; c <= N; c++) {
+      if (scopeTable === 'all' || r === +scopeTable || c === +scopeTable) out.push([r, c]);
+    }
+  }
+  return out;
+}
+
+const pending = () => targets().filter(([r, c]) => !conquered.has(cellKey(r, c)));
+
+function paintConquered() {
+  for (let r = 1; r <= N; r++) {
+    for (let c = 1; c <= N; c++) {
+      document.getElementById(`cell-${r}-${c}`)
+        ?.classList.toggle('conquered', conquered.has(cellKey(r, c)));
+    }
+  }
+}
+
+function updateConqStats() {
+  const t = targets(), done = t.filter(([r,c]) => conquered.has(cellKey(r,c))).length;
+  const cells = [...conquered].reduce((n, k) => {
+    const [a, b] = k.split('-').map(Number);
+    return n + (a === b ? 1 : 2);
+  }, 0);
+  const squares = [...conquered].filter(k => { const [a,b] = k.split('-'); return a === b; }).length;
+
+  document.getElementById('conq-count').textContent   = `${done} de ${t.length} minas desactivadas`;
+  document.getElementById('conq-squares').textContent = `solitarias ${squares}/10`;
+  document.getElementById('conq-cells').textContent   = `${cells} de 100 casillas despejadas`;
+  document.getElementById('conq-fill').style.width    = `${t.length ? (done / t.length) * 100 : 0}%`;
+}
+
+function nextQuestion() {
+  const left = pending();
+  const done = left.length === 0;
+  document.getElementById('conq-q').style.display    = done ? 'none' : 'block';
+  document.getElementById('conq-done').style.display = done ? 'block' : 'none';
+
+  if (done) {
+    const t = targets().length;
+    const cells = scopeTable === 'all' ? 100 : null;
+    document.getElementById('conq-done-text').textContent = cells
+      ? `Has despejado las ${cells} casillas con ${t} respuestas. Las gemelas hicieron la otra mitad del trabajo.`
+      : `Campo de la tabla del ${scopeTable} despejado con ${t} respuestas.`;
+    currentTarget = null;
+    return;
+  }
+
+  const [r, c] = left[Math.floor(Math.random() * left.length)];
+  // El orden en que se pregunta se sortea: da igual, y esa es la idea
+  currentTarget = Math.random() < 0.5 ? [r, c] : [c, r];
+  document.getElementById('conq-eq').textContent = `${currentTarget[0]} × ${currentTarget[1]}`;
+  const input = document.getElementById('conq-input');
+  input.value = '';
+  input.disabled = false;
+  input.focus();
+  document.getElementById('conq-feedback').textContent = '';
+  document.getElementById('conq-feedback').className = 'conq-feedback';
+  conqLocked = false;
+}
+
+function flash(r, c, cls) {
+  const el = document.getElementById(`cell-${r}-${c}`);
+  if (!el) return;
+  el.classList.remove(cls);
+  void el.offsetWidth;          // reinicia la animacion
+  el.classList.add(cls);
+  setTimeout(() => el.classList.remove(cls), 1200);
+}
+
+function checkAnswer() {
+  if (conqLocked || !currentTarget) return;
+  const input = document.getElementById('conq-input');
+  const given = input.value.trim();
+  if (given === '') return;
+
+  const [a, b] = currentTarget;
+  const right = a * b;
+  const fb = document.getElementById('conq-feedback');
+  conqLocked = true;
+  input.disabled = true;
+
+  if (Number(given) === right) {
+    conquered.add(cellKey(a, b));
+    saveProgress();
+    paintConquered();
+    updateConqStats();
+    flash(a, b, 'just-won');
+    if (a !== b) {
+      flash(b, a, 'twin-won');
+      fb.className = 'conq-feedback ok';
+      fb.innerHTML = `✓ ${a} × ${b} = ${right} — su gemela <strong>${b} × ${a}</strong> cae con ella`;
+    } else {
+      fb.className = 'conq-feedback ok';
+      fb.innerHTML = `✓ ${a} × ${b} = ${right} — mina solitaria de la diagonal`;
+    }
+    setTimeout(nextQuestion, 1250);
+  } else {
+    fb.className = 'conq-feedback ko';
+    fb.innerHTML = `${a} × ${b} = <strong>${right}</strong>. La mina sigue armada.`;
+    setTimeout(nextQuestion, 2100);
+  }
+}
+
+// Chips de ambito
+(function buildScopeChips() {
+  const wrap = document.getElementById('conq-tables');
+  for (let i = 1; i <= N; i++) {
+    const d = document.createElement('div');
+    d.className = 'conq-chip';
+    d.dataset.table = String(i);
+    d.textContent = i;
+    wrap.appendChild(d);
+  }
+  // Acotado a .conq-scope: hay otros .conq-chip en la barra (el ritmo de caza)
+  document.querySelectorAll('.conq-scope .conq-chip').forEach(chip => {
+    chip.onclick = () => {
+      scopeTable = chip.dataset.table;
+      document.querySelectorAll('.conq-scope .conq-chip').forEach(c => c.classList.toggle('active', c === chip));
+      if (viewMode === 'caza') { startCaza(); return; }
+      updateConqStats();
+      nextQuestion();
+    };
+  });
+})();
+
+document.getElementById('conq-check').onclick = checkAnswer;
+document.getElementById('conq-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAnswer();
+});
+// Vuelve a armar las minas del ambito actual (todas, o solo las de una tabla)
+function reminar() {
+  targets().forEach(([r, c]) => conquered.delete(cellKey(r, c)));
+  saveProgress();
+  paintConquered();
+  updateConqStats();
+  nextQuestion();
+}
+
+document.getElementById('conq-again').onclick = reminar;
+document.getElementById('conq-reset').onclick = () => {
+  const que = scopeTable === 'all' ? 'el campo entero' : `la tabla del ${scopeTable}`;
+  if (!confirm(`¿Volver a minar ${que} y empezar de cero?`)) return;
+  reminar();
+};
+
+// ── MODO CAZA TOPOS ───────────────────────────────────────────────────────────
+// El reverso de Minas gemelas: en vez de "7x8=?", se da el resultado y hay que
+// encontrar TODOS los huecos donde vive. Eso es factorizar, que es lo que hace
+// falta para dividir. Sin cronometro a proposito: la prisa estorba a quien
+// procesa distinto, y aqui lo que se entrena es buscar, no correr.
+
+const CAZA_RONDA = 10;
+let cazaQueue = [], cazaIdx = 0, cazaPend = new Set();
+let cazaHits = 0, cazaMisses = 0, cazaFallados = [];
+
+// Ritmo: "calma" por defecto. La prisa estorba a quien procesa distinto, asi que
+// el cronometro se activa, no se sufre. La eleccion se recuerda entre sesiones.
+const RITMO_KEY = 'hpk-pitagorica-ritmo';
+let cazaReloj = false;
+let cazaTimer = null, cazaTimeLeft = 0, cazaTimeTotal = 0;
+let cazaAgotados = 0, cazaElapsed = 0, cazaPausado = false, cazaPausas = 0;
+
+// Tiempo proporcional al numero de huecos: 49 tiene 1, el 12 tiene 4
+const tiempoPara = val => 6 + celdasDe(val).length * 4;
+
+const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+function stopTimer() {
+  if (cazaTimer) { clearInterval(cazaTimer); cazaTimer = null; }
+}
+
+function renderTimer() {
+  const secs = document.getElementById('caza-timer-secs');
+  if (cazaReloj) {
+    document.getElementById('caza-timer-fill').style.width =
+      `${cazaTimeTotal ? (cazaTimeLeft / cazaTimeTotal) * 100 : 0}%`;
+    secs.textContent = `${Math.ceil(cazaTimeLeft)}s`;
+    document.getElementById('caza-timer').classList.toggle('apurado', !cazaPausado && cazaTimeLeft <= 5);
+  } else {
+    secs.textContent = mmss(cazaElapsed);   // solo informativo, sin presion
+  }
+}
+
+// Un unico latido para los dos ritmos: descuenta o acumula, y respeta la pausa
+function startTimer() {
+  stopTimer();
+  if (cazaReloj) {
+    cazaTimeTotal = tiempoPara(cazaQueue[cazaIdx]);
+    cazaTimeLeft  = cazaTimeTotal;
+  }
+  renderTimer();
+  cazaTimer = setInterval(() => {
+    if (cazaPausado) return;
+    cazaElapsed += 0.1;
+    if (cazaReloj) {
+      cazaTimeLeft = Math.max(0, cazaTimeLeft - 0.1);
+      if (cazaTimeLeft === 0) { renderTimer(); stopTimer(); tiempoAgotado(); return; }
+    }
+    renderTimer();
+  }, 100);
+}
+
+// "Estoy pensando": para el reloj sin penalizar y tapa el tablero, para que la
+// pausa sirva para pensar el numero, no para escanear la rejilla con calma.
+function setPausa(on) {
+  if (viewMode !== 'caza' || !cazaReloj) return;
+  if (on && !cazaTimer) return;              // nada que pausar entre objetivos
+  cazaPausado = on;
+  if (on) cazaPausas++;
+  document.body.classList.toggle('caza-pausa', on);
+  document.getElementById('caza-pause').textContent = on ? 'Ya lo tengo' : 'Estoy pensando';
+  renderTimer();
+}
+
+document.getElementById('caza-pause').onclick = () => setPausa(!cazaPausado);
+
+function tiempoAgotado() {
+  const val = cazaQueue[cazaIdx];
+  cazaAgotados++;
+  if (!cazaFallados.includes(val)) cazaFallados.push(val);
+  // Se enseñan los huecos que faltaban: perder tiempo tambien informa
+  cazaPend.forEach(k => {
+    const [r, c] = k.split('-').map(Number);
+    document.getElementById(`cell-${r}-${c}`)?.classList.add('topo-found');
+    flash(r, c, 'topo-miss');
+  });
+  const fb = document.getElementById('caza-feedback');
+  fb.className = 'conq-feedback ko';
+  fb.innerHTML = `Se acabó el tiempo. El ${val} estaba en ${[...cazaPend].map(k => k.replace('-', '×')).join(', ')}`;
+  cazaPend.clear();
+  cazaIdx++;
+  setTimeout(() => { cazaIdx < cazaQueue.length ? cazaTarget() : finCaza(); }, 2000);
+}
+
+function pintaRitmo(modo) {
+  document.querySelectorAll('.caza-ritmo .conq-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.ritmo === modo));
+  const t = document.getElementById('caza-timer');
+  t.classList.toggle('modo-reloj', modo === 'reloj');
+  t.classList.toggle('modo-calma', modo !== 'reloj');
+  document.body.classList.toggle('ritmo-reloj', modo === 'reloj');  // muestra "Estoy pensando"
+}
+
+function setRitmo(modo) {
+  cazaReloj = modo === 'reloj';
+  try { localStorage.setItem(RITMO_KEY, modo); } catch (e) {}
+  setPausa(false);
+  pintaRitmo(modo);
+  if (viewMode === 'caza') startCaza();
+}
+
+document.querySelectorAll('.caza-ritmo .conq-chip').forEach(chip => {
+  chip.onclick = () => setRitmo(chip.dataset.ritmo);
+});
+
+(function loadRitmo() {
+  let guardado = 'calma';
+  try { guardado = localStorage.getItem(RITMO_KEY) || 'calma'; } catch (e) {}
+  cazaReloj = guardado === 'reloj';
+  pintaRitmo(guardado);
+})();
+
+// Numeros que pueden salir: los productos presentes en el ambito elegido
+function cazaPool() {
+  const vals = new Set();
+  targets().forEach(([r, c]) => vals.add(r * c));
+  return [...vals];
+}
+
+// Todas las celdas donde vive un numero (la rejilla entera, no solo el ambito)
+function celdasDe(val) {
+  const out = [];
+  for (let r = 1; r <= N; r++) {
+    for (let c = 1; c <= N; c++) if (r * c === val) out.push([r, c]);
+  }
+  return out;
+}
+
+function startCaza() {
+  const pool = cazaPool();
+  cazaQueue = pool.sort(() => Math.random() - 0.5).slice(0, Math.min(CAZA_RONDA, pool.length));
+  cazaIdx = 0; cazaHits = 0; cazaMisses = 0; cazaFallados = []; cazaAgotados = 0;
+  cazaElapsed = 0; cazaPausas = 0;
+  setPausa(false);
+  document.getElementById('caza-q').style.display = 'block';
+  document.getElementById('caza-done').style.display = 'none';
+  cazaTarget();
+}
+
+function cazaTarget() {
+  document.querySelectorAll('.cell').forEach(td => td.classList.remove('topo-found'));
+  const val = cazaQueue[cazaIdx];
+  cazaPend = new Set(celdasDe(val).map(([r, c]) => `${r}-${c}`));
+  document.getElementById('caza-number').textContent = val;
+  updateCazaStats();
+  const fb = document.getElementById('caza-feedback');
+  fb.textContent = ''; fb.className = 'conq-feedback';
+  startTimer();
+}
+
+function updateCazaStats() {
+  const quedan = cazaPend.size;
+  document.getElementById('caza-remaining').textContent =
+    quedan === 1 ? 'queda 1 hueco' : `quedan ${quedan} huecos`;
+  document.getElementById('caza-count').textContent = `objetivo ${Math.min(cazaIdx + 1, cazaQueue.length)} de ${cazaQueue.length}`;
+  document.getElementById('caza-score').textContent =
+    `${cazaHits} cazados · ${cazaMisses} ${cazaMisses === 1 ? 'fallo' : 'fallos'}`;
+  document.getElementById('caza-fill').style.width = `${(cazaIdx / cazaQueue.length) * 100}%`;
+}
+
+function onCazaClick(r, c) {
+  if (cazaPausado) return;          // el tablero esta tapado mientras se piensa
+  const key = `${r}-${c}`;
+  const val = cazaQueue[cazaIdx];
+  const fb  = document.getElementById('caza-feedback');
+  const td  = document.getElementById(`cell-${r}-${c}`);
+
+  if (cazaPend.has(key)) {
+    cazaPend.delete(key);
+    cazaHits++;
+    td.classList.add('topo-found');
+    flash(r, c, 'just-won');
+    updateCazaStats();
+    if (cazaPend.size === 0) {
+      stopTimer();
+      fb.className = 'conq-feedback ok';
+      fb.innerHTML = `✓ Todos los ${val} cazados: ${celdasDe(val).map(([a,b]) => `${a}×${b}`).join(', ')}`;
+      cazaIdx++;
+      setTimeout(() => { cazaIdx < cazaQueue.length ? cazaTarget() : finCaza(); }, 1600);
+    } else {
+      fb.className = 'conq-feedback ok';
+      fb.innerHTML = `✓ ${r} × ${c} = ${val}`;
+    }
+  } else {
+    if (td.classList.contains('topo-found')) return;   // ya cazado, no penaliza
+    cazaMisses++;
+    if (!cazaFallados.includes(val)) cazaFallados.push(val);
+    flash(r, c, 'topo-miss');
+    fb.className = 'conq-feedback ko';
+    fb.innerHTML = `Ahí vive el <strong>${r * c}</strong>, no el ${val}`;
+    updateCazaStats();
+  }
+}
+
+function finCaza() {
+  stopTimer();
+  document.getElementById('caza-q').style.display = 'none';
+  document.getElementById('caza-done').style.display = 'block';
+  document.getElementById('caza-fill').style.width = '100%';
+  const total = cazaHits + cazaMisses;
+  const pct = total ? Math.round((cazaHits / total) * 100) : 100;
+  const falladas = cazaMisses === 1 ? '1 hueco vacío' : `${cazaMisses} huecos vacíos`;
+  let texto = cazaMisses === 0
+    ? `${cazaHits} topos cazados sin fallar uno. Sabes dónde vive cada número.`
+    : `${cazaHits} topos cazados y ${falladas}: ${pct}% de acierto.`;
+  if (cazaAgotados) {
+    texto += ` Se te acabó el tiempo en ${cazaAgotados} ${cazaAgotados === 1 ? 'número' : 'números'}.`;
+  }
+  if (cazaReloj) {
+    texto += ` Tiempo de juego: ${mmss(cazaElapsed)}.`;
+    if (cazaPausas) {
+      texto += ` Paraste ${cazaPausas} ${cazaPausas === 1 ? 'vez' : 'veces'} a pensar, y eso no cuenta en contra.`;
+    }
+  } else {
+    texto += ` Has tardado ${mmss(cazaElapsed)}, sin prisa.`;
+  }
+  document.getElementById('caza-done-text').textContent = texto;
+  const rev = document.getElementById('caza-review');
+  rev.innerHTML = cazaFallados.length
+    ? `<div class="caza-review-title">Números que se te resistieron</div>` +
+      cazaFallados.map(v => `<span class="caza-review-num">${v} = ${celdasDe(v).filter(([a,b]) => a <= b).map(([a,b]) => `${a}×${b}`).join(' o ')}</span>`).join('')
+    : '';
+}
+
+document.getElementById('caza-again').onclick = startCaza;
+
+let viewMode = 'explorar';
+
+function setViewMode(mode) {
+  if (mode === viewMode) return;
+  viewMode = mode;
+  document.getElementById('mode-explorar').classList.toggle('active', mode === 'explorar');
+  document.getElementById('mode-conquistar').classList.toggle('active', mode === 'conquistar');
+  document.getElementById('mode-caza').classList.toggle('active', mode === 'caza');
+
+  // mode-tablero: la rejilla deja de ser mapa y pasa a ser tablero en niebla
+  document.body.classList.toggle('mode-tablero',  mode !== 'explorar');
+  document.body.classList.toggle('mode-conquista', mode === 'conquistar');
+  document.body.classList.toggle('mode-caza',      mode === 'caza');
+
+  stopTimer();                                        // que no siga de fondo al salir
+  cazaPausado = false;
+  document.body.classList.remove('caza-pausa');
+  document.getElementById('caza-pause').textContent = 'Estoy pensando';
+  // restos de animacion si se cambia de modo a media transicion
+  document.querySelectorAll('.cell').forEach(td =>
+    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss'));
+
+  if (mode === 'explorar') {
+    refreshAllClasses();   // restaura el mapa segun los toggles activos
+    return;
+  }
+
+  clearFamilyHighlight();
+  clearExploreClasses();
+  resetExplorePanels();
+  selectedCell = null;
+
+  if (mode === 'conquistar') {
+    paintConquered();
+    updateConqStats();
+    nextQuestion();
+  } else {
+    startCaza();
+  }
+}
+
+document.getElementById('mode-explorar').onclick   = () => setViewMode('explorar');
+document.getElementById('mode-conquistar').onclick = () => setViewMode('conquistar');
+document.getElementById('mode-caza').onclick       = () => setViewMode('caza');
+
 // Mode toggle buttons
 document.querySelectorAll('.legend-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -425,6 +1001,9 @@ document.querySelectorAll('.legend-btn').forEach(btn => {
 
 // Init
 buildTable();
+loadProgress();
+paintConquered();
+updateConqStats();
 </script>
 </body>
 </html>

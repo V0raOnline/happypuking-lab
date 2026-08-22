@@ -161,7 +161,11 @@
     align-items: start;
   }
 
-  /* Left column: table + insight below */
+  /* La caja "¿Por que no son 100?" cruza las tres columnas: es la tesis de
+     la herramienta, no una nota al margen. Va en su propia fila del grid. */
+  .outer-layout > .insight-box { grid-column: 1 / -1; }
+
+  /* Left column: table */
   .left-col {
     display: flex;
     flex-direction: column;
@@ -543,3 +547,310 @@
   .footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
   .footer-left a:hover { opacity: 0.75; }
   .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+  /* ── TOGGLE DE MODO + INTROS ── */
+  .mode-toggle {
+    display: flex; justify-content: center; gap: 0.5rem;
+    margin-bottom: 0.9rem;
+  }
+  .mode-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--muted); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 0.38rem 1rem; cursor: pointer; transition: all 0.2s;
+  }
+  .mode-btn:hover { color: var(--text); }
+  .mode-btn.active {
+    color: var(--magenta);
+    border-color: rgba(224,64,251,0.35);
+    background: rgba(224,64,251,0.08);
+    cursor: default;
+  }
+  .mode-intro {
+    max-width: 780px; margin: 0 auto 1.1rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .mode-intro p {
+    font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+  }
+  .mode-intro strong { color: var(--text); font-weight: 700; }
+
+  /* Qué se ve en cada modo */
+  #conquista-intro, #caza-intro, .board-bar,
+  #conq-panel, #caza-panel, #conq-progress, #caza-progress { display: none; }
+
+  body.mode-tablero #explore-intro,
+  body.mode-tablero .stats-row,
+  body.mode-tablero .controls,
+  body.mode-tablero #cell-detail,
+  body.mode-tablero #suma-visual-box,
+  body.mode-tablero .right-col { display: none !important; }
+  body.mode-tablero .board-bar { display: flex; }
+
+  body.mode-conquista #conquista-intro { display: flex; }
+  body.mode-conquista #conq-panel,
+  body.mode-conquista #conq-progress { display: block; }
+
+  body.mode-caza #caza-intro { display: flex; }
+  body.mode-caza #caza-panel,
+  body.mode-caza #caza-progress { display: block; }
+  body.mode-caza .cell { cursor: pointer; }
+
+  /* ── BARRA DE CONQUISTA ── */
+  .board-bar {
+    flex-direction: column; gap: 0.9rem;
+    max-width: 780px; margin: 0 auto 1.3rem;
+  }
+  .conq-scope { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; }
+  .conq-scope-label {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted2); margin-right: 0.4rem;
+  }
+  .conq-tables { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .conq-chip {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    color: var(--muted); background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 0.28rem 0.7rem; cursor: pointer;
+    transition: all 0.2s; user-select: none; min-width: 2rem; text-align: center;
+  }
+  .conq-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .conq-chip.active {
+    color: var(--magenta); border-color: rgba(224,64,251,0.4);
+    background: rgba(224,64,251,0.1);
+  }
+  .conq-progress-head, .conq-progress-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  .conq-progress-foot { margin: 0.35rem 0 0; color: var(--muted2); }
+  .conq-track {
+    height: 6px; background: var(--surface2);
+    border-radius: 100px; overflow: hidden;
+  }
+  .conq-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--comm-a), var(--square-color));
+    border-radius: 100px; transition: width 0.45s ease;
+  }
+  .conq-reset {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    color: var(--muted2); background: transparent;
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 0.2rem 0.6rem; cursor: pointer; transition: all 0.2s;
+  }
+  .conq-reset:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+
+  /* ── PANEL DE PREGUNTA ── */
+  .conq-q-eq {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 6vw, 2.8rem); font-weight: 700;
+    color: var(--text); text-align: center; line-height: 1.1;
+    margin-bottom: 0.9rem;
+  }
+  .conq-input-row { display: flex; gap: 0.5rem; }
+  .conq-input {
+    flex: 1; min-width: 0;
+    font-family: 'DM Mono', monospace; font-size: 1.3rem; font-weight: 600;
+    text-align: center; color: var(--text);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.6rem 0.5rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .conq-input:focus { border-color: var(--magenta); }
+  .conq-input:disabled { opacity: 0.6; }
+  .conq-check {
+    font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700;
+    color: var(--bg); background: var(--magenta);
+    border: none; border-radius: 10px; padding: 0.6rem 1rem;
+    cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
+  }
+  .conq-check:hover { opacity: 0.88; }
+  .conq-feedback {
+    min-height: 2.4rem; margin-top: 0.7rem;
+    font-size: 0.8rem; line-height: 1.5; text-align: center;
+  }
+  .conq-feedback.ok { color: #4ADE80; }
+  .conq-feedback.ko { color: #F87171; }
+  .conq-feedback strong { font-weight: 700; }
+  .conq-done { display: none; text-align: center; }
+  .conq-done-big {
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem;
+    font-weight: 700; color: var(--square-color); margin-bottom: 0.5rem;
+  }
+  .conq-done p {
+    font-size: 0.8rem; color: var(--muted);
+    line-height: 1.6; margin-bottom: 1rem;
+  }
+
+  /* ── LA REJILLA COMO TABLERO: niebla y conquista ── */
+  body.mode-tablero .cell {
+    color: transparent;
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.05);
+    cursor: default;
+  }
+  body.mode-tablero .cell::after {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px;
+    border-radius: 50%; background: rgba(255,255,255,0.12);
+  }
+  body.mode-tablero .cell:hover { transform: none; }
+  body.mode-conquista .cell.conquered {
+    color: var(--text);
+    background: rgba(59,130,246,0.14);
+    border-color: rgba(59,130,246,0.3);
+  }
+  body.mode-conquista .cell.conquered::after { display: none; }
+  /* Los cuadrados de la diagonal, como hitos */
+  body.mode-conquista .cell.conquered.is-diag {
+    background: rgba(255,215,0,0.16);
+    border-color: rgba(255,215,0,0.4);
+    color: var(--square-color);
+  }
+  @keyframes conqWin {
+    0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
+    40%  { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+    100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+  }
+  @keyframes conqTwin {
+    0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(224,64,251,0.6); }
+    40%  { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(224,64,251,0); }
+    100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(224,64,251,0); }
+  }
+  body.mode-tablero .cell.just-won { animation: conqWin 0.75s ease; z-index: 5; }
+  body.mode-tablero .cell.twin-won { animation: conqTwin 0.75s ease 0.18s; z-index: 5; }
+
+  @media (max-width: 900px) {
+    body.mode-tablero .outer-layout { grid-template-columns: 1fr; }
+    .conq-input-row { flex-direction: column; }
+  }
+
+  /* ── CAZA TOPOS ── */
+  .caza-label {
+    font-family: 'DM Mono', monospace; font-size: 0.66rem;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted2); text-align: center;
+  }
+  .caza-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.6rem, 8vw, 3.6rem); font-weight: 700;
+    color: var(--same-result); text-align: center; line-height: 1.1;
+    margin: 0.1rem 0 0.3rem;
+  }
+  .caza-remaining {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    color: var(--muted); text-align: center;
+  }
+  .caza-review { margin-bottom: 1rem; }
+  .caza-review-title {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted2); margin-bottom: 0.5rem;
+  }
+  .caza-review-num {
+    display: block; font-family: 'DM Mono', monospace;
+    font-size: 0.74rem; color: var(--muted);
+    padding: 0.25rem 0; border-bottom: 1px solid var(--border);
+  }
+  .caza-review-num:last-child { border-bottom: none; }
+
+  /* Topo cazado: el hueco se abre y ensena el numero */
+  body.mode-caza .cell.topo-found {
+    color: var(--text);
+    background: rgba(236,72,153,0.18);
+    border-color: rgba(236,72,153,0.45);
+    font-weight: 700;
+  }
+  body.mode-caza .cell.topo-found::after { display: none; }
+  @keyframes topoMiss {
+    0%   { transform: translateX(0);    box-shadow: 0 0 0 0 rgba(248,113,113,0.6); }
+    25%  { transform: translateX(-3px); box-shadow: 0 0 0 5px rgba(248,113,113,0); }
+    75%  { transform: translateX(3px); }
+    100% { transform: translateX(0);    box-shadow: 0 0 0 0 rgba(248,113,113,0); }
+  }
+  body.mode-tablero .cell.topo-miss {
+    animation: topoMiss 0.4s ease;
+    border-color: rgba(248,113,113,0.5);
+    z-index: 5;
+  }
+
+  /* ── CAZA: ritmo y cronometro ── */
+  .caza-ritmo {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 0.35rem; margin-bottom: 0.7rem;
+  }
+  .caza-timer {
+    display: flex;
+    align-items: center; gap: 0.6rem; margin-top: 0.5rem;
+  }
+  /* En calma solo se ve el tiempo transcurrido: ni barra ni pausa */
+  .caza-timer.modo-calma .caza-timer-track { display: none; }
+  .caza-timer.modo-calma .caza-timer-secs { text-align: left; }
+  .caza-timer-track {
+    flex: 1; height: 4px;
+    background: var(--surface2); border-radius: 100px; overflow: hidden;
+  }
+  .caza-timer-fill {
+    height: 100%; width: 100%;
+    background: var(--comm-b); border-radius: 100px;
+    transition: width 0.1s linear, background 0.3s;
+  }
+  .caza-timer-secs {
+    font-family: 'DM Mono', monospace; font-size: 0.66rem;
+    color: var(--muted); min-width: 2.2rem; text-align: right;
+  }
+  .caza-timer.apurado .caza-timer-fill { background: #F87171; }
+  .caza-timer.apurado .caza-timer-secs { color: #F87171; }
+
+  /* ── "ESTOY PENSANDO": pausa sin penalizacion ── */
+  /* Es el boton al que se echa mano cuando aprieta el agobio: grande y a mano */
+  .caza-pause {
+    display: none;
+    width: 100%;
+    margin-top: 0.9rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem; font-weight: 800;
+    color: var(--comm-b);
+    background: rgba(16,185,129,0.08);
+    border: 2px solid rgba(16,185,129,0.35);
+    border-radius: 12px;
+    padding: 0.7rem 1rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  body.ritmo-reloj .caza-pause { display: block; }
+  .caza-pause:hover {
+    background: rgba(16,185,129,0.16);
+    border-color: rgba(16,185,129,0.6);
+  }
+  body.caza-pausa .caza-pause {
+    color: var(--bg);
+    background: var(--comm-b);
+    border-color: var(--comm-b);
+  }
+  body.caza-pausa .caza-timer-fill { background: var(--muted2); }
+
+  /* La rejilla se tapa al pensar: la pausa es para la cabeza, no para escanear */
+  .left-col { position: relative; }
+  .pausa-overlay {
+    display: none;
+    position: absolute; inset: 0;
+    background: rgba(8,10,15,0.92);
+    border-radius: 16px;
+    align-items: center; justify-content: center;
+    z-index: 30;
+  }
+  body.caza-pausa .pausa-overlay { display: flex; }
+  .pausa-msg {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--comm-b); text-align: center; line-height: 1.3;
+  }
+  .pausa-msg span {
+    display: block; margin-top: 0.4rem;
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    font-weight: 400; color: var(--muted); letter-spacing: 0.04em;
+  }
