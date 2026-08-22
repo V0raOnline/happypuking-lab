@@ -94,6 +94,13 @@
       <div class="conq-tables" id="conq-tables"></div>
     </div>
 
+    <!-- El ritmo es una preferencia de la persona, no del juego: vale para los dos -->
+    <div class="caza-ritmo">
+      <span class="conq-scope-label">A qué ritmo</span>
+      <div class="conq-chip active" data-ritmo="calma">No me estreses</div>
+      <div class="conq-chip" data-ritmo="reloj">Contra reloj</div>
+    </div>
+
     <div class="conq-progress" id="conq-progress">
       <div class="conq-progress-head">
         <span id="conq-count">0 de 55 minas desactivadas</span>
@@ -107,20 +114,17 @@
     </div>
 
     <div class="conq-progress" id="caza-progress">
-      <div class="caza-ritmo">
-        <span class="conq-scope-label">A qué ritmo</span>
-        <div class="conq-chip active" data-ritmo="calma">No me estreses</div>
-        <div class="conq-chip" data-ritmo="reloj">Contra reloj</div>
-      </div>
       <div class="conq-progress-head">
         <span id="caza-count">objetivo 1 de 10</span>
         <span id="caza-score">0 cazados · 0 fallos</span>
       </div>
       <div class="conq-track"><div class="conq-fill" id="caza-fill"></div></div>
-      <div class="caza-timer" id="caza-timer">
-        <div class="caza-timer-track" id="caza-timer-track"><div class="caza-timer-fill" id="caza-timer-fill"></div></div>
-        <span class="caza-timer-secs" id="caza-timer-secs">—</span>
-      </div>
+    </div>
+
+    <!-- Reloj compartido: cuenta atrás en contrarreloj, tiempo transcurrido en calma -->
+    <div class="caza-timer" id="caza-timer">
+      <div class="caza-timer-track" id="caza-timer-track"><div class="caza-timer-fill" id="caza-timer-fill"></div></div>
+      <span class="caza-timer-secs" id="caza-timer-secs">—</span>
     </div>
   </div>
 
@@ -134,7 +138,9 @@
       </div>
       <div class="pausa-overlay" id="pausa-overlay">
         <div class="pausa-msg">
-          Pensando<span>el reloj está parado · tómate lo que necesites</span>
+          <span class="pausa-title" id="pausa-title">Pensando</span>
+          <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
+          <button class="pausa-seguir" id="pausa-seguir">Seguir</button>
         </div>
       </div>
     </div>
@@ -151,6 +157,7 @@
             <button class="conq-check" id="conq-check">Desactivar</button>
           </div>
           <div class="conq-feedback" id="conq-feedback"></div>
+          <button class="caza-pause" data-role="pausa">Estoy pensando</button>
         </div>
         <div class="conq-done" id="conq-done">
           <div class="conq-done-big">Campo despejado</div>
@@ -165,7 +172,7 @@
           <div class="caza-number" id="caza-number">12</div>
           <div class="caza-remaining" id="caza-remaining"></div>
           <div class="conq-feedback" id="caza-feedback"></div>
-          <button class="caza-pause" id="caza-pause">Estoy pensando</button>
+          <button class="caza-pause" data-role="pausa">Estoy pensando</button>
         </div>
         <div class="conq-done" id="caza-done">
           <div class="conq-done-big">Cacería terminada</div>
@@ -548,6 +555,7 @@ const STORE_KEY = 'hpk-pitagorica-conquista';
 const cellKey = (r, c) => `${Math.min(r,c)}-${Math.max(r,c)}`;
 
 let conquered = new Set();
+let conqAgotados = 0, conqFallos = 0, conqAvancePendiente = false;
 let scopeTable = 'all';
 let currentTarget = null;
 let conqLocked = false;
@@ -606,11 +614,21 @@ function nextQuestion() {
   document.getElementById('conq-done').style.display = done ? 'block' : 'none';
 
   if (done) {
+    stopTimer();
     const t = targets().length;
     const cells = scopeTable === 'all' ? 100 : null;
-    document.getElementById('conq-done-text').textContent = cells
+    let txt = cells
       ? `Has despejado las ${cells} casillas con ${t} respuestas. Las gemelas hicieron la otra mitad del trabajo.`
       : `Campo de la tabla del ${scopeTable} despejado con ${t} respuestas.`;
+    if (boardElapsed > 0) {
+      txt += boardReloj
+        ? ` Tiempo de juego: ${mmss(boardElapsed)}.`
+        : ` Has tardado ${mmss(boardElapsed)}, sin prisa.`;
+      if (boardReloj && boardPausas) {
+        txt += ` Paraste ${boardPausas} ${boardPausas === 1 ? 'vez' : 'veces'} a pensar, y eso no cuenta en contra.`;
+      }
+    }
+    document.getElementById('conq-done-text').textContent = txt;
     currentTarget = null;
     return;
   }
@@ -626,6 +644,25 @@ function nextQuestion() {
   document.getElementById('conq-feedback').textContent = '';
   document.getElementById('conq-feedback').className = 'conq-feedback';
   conqLocked = false;
+  onTimeout = minaAgotada;
+  startTimer(tiempoParaMina(currentTarget[0], currentTarget[1]));
+}
+
+// Las de tabla alta cuestan mas: 7x8 no se recuerda como 2x3
+const tiempoParaMina = (a, b) => (a >= 6 && b >= 6) ? 14 : 10;
+
+function minaAgotada() {
+  if (!currentTarget) return;
+  const [a, b] = currentTarget;
+  conqLocked = true;
+  conqAgotados++;
+  document.getElementById('conq-input').disabled = true;
+  const fb = document.getElementById('conq-feedback');
+  fb.className = 'conq-feedback ko';
+  fb.innerHTML = `Se acabó el tiempo. ${a} × ${b} = <strong>${a * b}</strong>. La mina sigue armada.`;
+  marcaFallo();
+  if (boardPausado) { conqAvancePendiente = true; return; }
+  setTimeout(nextQuestion, 2100);
 }
 
 function flash(r, c, cls) {
@@ -650,6 +687,8 @@ function checkAnswer() {
   input.disabled = true;
 
   if (Number(given) === right) {
+    stopTimer();
+    marcaAcierto();
     conquered.add(cellKey(a, b));
     saveProgress();
     paintConquered();
@@ -665,8 +704,12 @@ function checkAnswer() {
     }
     setTimeout(nextQuestion, 1250);
   } else {
+    stopTimer();
+    conqFallos++;
     fb.className = 'conq-feedback ko';
     fb.innerHTML = `${a} × ${b} = <strong>${right}</strong>. La mina sigue armada.`;
+    marcaFallo();
+    if (boardPausado) { conqAvancePendiente = true; return; }
     setTimeout(nextQuestion, 2100);
   }
 }
@@ -726,9 +769,14 @@ let cazaHits = 0, cazaMisses = 0, cazaFallados = [];
 // Ritmo: "calma" por defecto. La prisa estorba a quien procesa distinto, asi que
 // el cronometro se activa, no se sufre. La eleccion se recuerda entre sesiones.
 const RITMO_KEY = 'hpk-pitagorica-ritmo';
-let cazaReloj = false;
-let cazaTimer = null, cazaTimeLeft = 0, cazaTimeTotal = 0;
-let cazaAgotados = 0, cazaElapsed = 0, cazaPausado = false, cazaPausas = 0;
+let boardReloj = false;
+let boardTimer = null, boardTimeLeft = 0, boardTimeTotal = 0;
+let cazaAgotados = 0, boardElapsed = 0, boardPausado = false, boardPausas = 0;
+
+// Fallos seguidos sin acertar. A partir de RESPIRO el juego ofrece parar:
+// tres pinchazos en vano ya son bastante frustracion para nadie.
+const RESPIRO = 3;
+let boardSeguidos = 0;
 
 // Tiempo proporcional al numero de huecos: 49 tiene 1, el 12 tiene 4
 const tiempoPara = val => 6 + celdasDe(val).length * 4;
@@ -736,53 +784,86 @@ const tiempoPara = val => 6 + celdasDe(val).length * 4;
 const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
 function stopTimer() {
-  if (cazaTimer) { clearInterval(cazaTimer); cazaTimer = null; }
+  if (boardTimer) { clearInterval(boardTimer); boardTimer = null; }
 }
 
 function renderTimer() {
   const secs = document.getElementById('caza-timer-secs');
-  if (cazaReloj) {
+  if (boardReloj) {
     document.getElementById('caza-timer-fill').style.width =
-      `${cazaTimeTotal ? (cazaTimeLeft / cazaTimeTotal) * 100 : 0}%`;
-    secs.textContent = `${Math.ceil(cazaTimeLeft)}s`;
-    document.getElementById('caza-timer').classList.toggle('apurado', !cazaPausado && cazaTimeLeft <= 5);
+      `${boardTimeTotal ? (boardTimeLeft / boardTimeTotal) * 100 : 0}%`;
+    secs.textContent = `${Math.ceil(boardTimeLeft)}s`;
+    document.getElementById('caza-timer').classList.toggle('apurado', !boardPausado && boardTimeLeft <= 5);
   } else {
-    secs.textContent = mmss(cazaElapsed);   // solo informativo, sin presion
+    secs.textContent = mmss(boardElapsed);   // solo informativo, sin presion
   }
 }
 
-// Un unico latido para los dos ritmos: descuenta o acumula, y respeta la pausa
-function startTimer() {
+// Un unico latido para los dos ritmos y los dos modos de tablero: descuenta o
+// acumula, respeta la pausa, y avisa a quien corresponda al vencer.
+let onTimeout = null;
+
+function startTimer(segundos) {
   stopTimer();
-  if (cazaReloj) {
-    cazaTimeTotal = tiempoPara(cazaQueue[cazaIdx]);
-    cazaTimeLeft  = cazaTimeTotal;
+  if (boardReloj) {
+    boardTimeTotal = segundos;
+    boardTimeLeft  = segundos;
   }
   renderTimer();
-  cazaTimer = setInterval(() => {
-    if (cazaPausado) return;
-    cazaElapsed += 0.1;
-    if (cazaReloj) {
-      cazaTimeLeft = Math.max(0, cazaTimeLeft - 0.1);
-      if (cazaTimeLeft === 0) { renderTimer(); stopTimer(); tiempoAgotado(); return; }
+  boardTimer = setInterval(() => {
+    if (boardPausado) return;
+    boardElapsed += 0.1;
+    if (boardReloj) {
+      boardTimeLeft = Math.max(0, boardTimeLeft - 0.1);
+      if (boardTimeLeft === 0) { renderTimer(); stopTimer(); onTimeout && onTimeout(); return; }
     }
     renderTimer();
   }, 100);
 }
 
+// Fallo/acierto genericos: el respiro se ofrece igual en cualquier modo
+function marcaFallo() {
+  boardSeguidos++;
+  if (boardSeguidos >= RESPIRO) setPausa(true, 'respira');
+}
+function marcaAcierto() { boardSeguidos = 0; }
+
 // "Estoy pensando": para el reloj sin penalizar y tapa el tablero, para que la
 // pausa sirva para pensar el numero, no para escanear la rejilla con calma.
-function setPausa(on) {
-  if (viewMode !== 'caza' || !cazaReloj) return;
-  if (on && !cazaTimer) return;              // nada que pausar entre objetivos
-  cazaPausado = on;
-  if (on) cazaPausas++;
+// motivo 'respira' = la ofrece el juego tras varios fallos seguidos; esa no
+// cuenta como pausa pedida, porque no la pidio nadie.
+const PAUSA_TEXTO = {
+  manual:  ['Pensando', 'el reloj está parado · cuando estés listo retomamos'],
+  respira: ['Respira', 'Puedes tomarte un tiempo para pensar'],
+};
+
+function setPausa(on, motivo = 'manual') {
+  if (viewMode === 'explorar') return;
+  // El respiro puede saltar aunque el reloj ya se haya parado (en minas se para
+  // al resolver la pregunta); la pausa manual solo tiene sentido con reloj vivo.
+  if (on && motivo === 'manual' && (!boardTimer || !boardReloj)) return;
+  boardPausado = on;
+  if (on) {
+    if (motivo === 'manual') boardPausas++;
+    const [titulo, sub] = PAUSA_TEXTO[motivo];
+    document.getElementById('pausa-title').textContent = titulo;
+    document.getElementById('pausa-sub').textContent = sub;
+  } else {
+    boardSeguidos = 0;   // se vuelve con el contador a cero
+    if (conqAvancePendiente) { conqAvancePendiente = false; setTimeout(nextQuestion, 250); }
+  }
   document.body.classList.toggle('caza-pausa', on);
-  document.getElementById('caza-pause').textContent = on ? 'Ya lo tengo' : 'Estoy pensando';
+  document.querySelectorAll('[data-role="pausa"]').forEach(b =>
+    b.textContent = on ? 'Ya lo tengo' : 'Estoy pensando');
+  // al pensar no se puede seguir escribiendo la respuesta
+  const inp = document.getElementById('conq-input');
+  if (viewMode === 'conquistar' && !conqLocked) { inp.disabled = on; if (!on) inp.focus(); }
   renderTimer();
 }
 
-document.getElementById('caza-pause').onclick = () => setPausa(!cazaPausado);
+document.querySelectorAll('[data-role="pausa"]').forEach(b =>
+  b.onclick = () => setPausa(!boardPausado));
+document.getElementById('pausa-seguir').onclick = () => setPausa(false);
 
 function tiempoAgotado() {
   const val = cazaQueue[cazaIdx];
@@ -812,11 +893,12 @@ function pintaRitmo(modo) {
 }
 
 function setRitmo(modo) {
-  cazaReloj = modo === 'reloj';
+  boardReloj = modo === 'reloj';
   try { localStorage.setItem(RITMO_KEY, modo); } catch (e) {}
   setPausa(false);
   pintaRitmo(modo);
   if (viewMode === 'caza') startCaza();
+  else if (viewMode === 'conquistar') nextQuestion();
 }
 
 document.querySelectorAll('.caza-ritmo .conq-chip').forEach(chip => {
@@ -826,7 +908,7 @@ document.querySelectorAll('.caza-ritmo .conq-chip').forEach(chip => {
 (function loadRitmo() {
   let guardado = 'calma';
   try { guardado = localStorage.getItem(RITMO_KEY) || 'calma'; } catch (e) {}
-  cazaReloj = guardado === 'reloj';
+  boardReloj = guardado === 'reloj';
   pintaRitmo(guardado);
 })();
 
@@ -850,7 +932,7 @@ function startCaza() {
   const pool = cazaPool();
   cazaQueue = pool.sort(() => Math.random() - 0.5).slice(0, Math.min(CAZA_RONDA, pool.length));
   cazaIdx = 0; cazaHits = 0; cazaMisses = 0; cazaFallados = []; cazaAgotados = 0;
-  cazaElapsed = 0; cazaPausas = 0;
+  boardElapsed = 0; boardPausas = 0; boardSeguidos = 0;
   setPausa(false);
   document.getElementById('caza-q').style.display = 'block';
   document.getElementById('caza-done').style.display = 'none';
@@ -865,7 +947,8 @@ function cazaTarget() {
   updateCazaStats();
   const fb = document.getElementById('caza-feedback');
   fb.textContent = ''; fb.className = 'conq-feedback';
-  startTimer();
+  onTimeout = tiempoAgotado;
+  startTimer(tiempoPara(val));
 }
 
 function updateCazaStats() {
@@ -879,7 +962,7 @@ function updateCazaStats() {
 }
 
 function onCazaClick(r, c) {
-  if (cazaPausado) return;          // el tablero esta tapado mientras se piensa
+  if (boardPausado) return;          // el tablero esta tapado mientras se piensa
   const key = `${r}-${c}`;
   const val = cazaQueue[cazaIdx];
   const fb  = document.getElementById('caza-feedback');
@@ -888,6 +971,7 @@ function onCazaClick(r, c) {
   if (cazaPend.has(key)) {
     cazaPend.delete(key);
     cazaHits++;
+    marcaAcierto();
     td.classList.add('topo-found');
     flash(r, c, 'just-won');
     updateCazaStats();
@@ -909,6 +993,7 @@ function onCazaClick(r, c) {
     fb.className = 'conq-feedback ko';
     fb.innerHTML = `Ahí vive el <strong>${r * c}</strong>, no el ${val}`;
     updateCazaStats();
+    marcaFallo();
   }
 }
 
@@ -918,21 +1003,30 @@ function finCaza() {
   document.getElementById('caza-done').style.display = 'block';
   document.getElementById('caza-fill').style.width = '100%';
   const total = cazaHits + cazaMisses;
-  const pct = total ? Math.round((cazaHits / total) * 100) : 100;
+  const pct = total ? Math.round((cazaHits / total) * 100) : 0;
   const falladas = cazaMisses === 1 ? '1 hueco vacío' : `${cazaMisses} huecos vacíos`;
-  let texto = cazaMisses === 0
-    ? `${cazaHits} topos cazados sin fallar uno. Sabes dónde vive cada número.`
-    : `${cazaHits} topos cazados y ${falladas}: ${pct}% de acierto.`;
-  if (cazaAgotados) {
-    texto += ` Se te acabó el tiempo en ${cazaAgotados} ${cazaAgotados === 1 ? 'número' : 'números'}.`;
-  }
-  if (cazaReloj) {
-    texto += ` Tiempo de juego: ${mmss(cazaElapsed)}.`;
-    if (cazaPausas) {
-      texto += ` Paraste ${cazaPausas} ${cazaPausas === 1 ? 'vez' : 'veces'} a pensar, y eso no cuenta en contra.`;
-    }
+  let texto;
+
+  if (cazaHits === 0) {
+    // Sin aciertos no se felicita a nadie: cazaMisses puede ser 0 y aun asi
+    // haberse agotado el tiempo en todo, y ahi el elogio sonaba a burla.
+    texto = 'No cazaste ninguno esta vez. ¿Te apetece repasar antes de volver a intentarlo?';
   } else {
-    texto += ` Has tardado ${mmss(cazaElapsed)}, sin prisa.`;
+    const impecable = cazaMisses === 0 && cazaAgotados === 0;
+    texto = impecable
+      ? `${cazaHits} topos cazados sin fallar uno. Sabes dónde vive cada número.`
+      : `${cazaHits} topos cazados${cazaMisses ? ` y ${falladas}: ${pct}% de acierto` : ''}.`;
+    if (cazaAgotados) {
+      texto += ` Se te acabó el tiempo en ${cazaAgotados} ${cazaAgotados === 1 ? 'número' : 'números'}.`;
+    }
+    if (boardReloj) {
+      texto += ` Tiempo de juego: ${mmss(boardElapsed)}.`;
+      if (boardPausas) {
+        texto += ` Paraste ${boardPausas} ${boardPausas === 1 ? 'vez' : 'veces'} a pensar, y eso no cuenta en contra.`;
+      }
+    } else {
+      texto += ` Has tardado ${mmss(boardElapsed)}, sin prisa.`;
+    }
   }
   document.getElementById('caza-done-text').textContent = texto;
   const rev = document.getElementById('caza-review');
@@ -959,9 +1053,9 @@ function setViewMode(mode) {
   document.body.classList.toggle('mode-caza',      mode === 'caza');
 
   stopTimer();                                        // que no siga de fondo al salir
-  cazaPausado = false;
+  boardPausado = false;
   document.body.classList.remove('caza-pausa');
-  document.getElementById('caza-pause').textContent = 'Estoy pensando';
+  document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
   // restos de animacion si se cambia de modo a media transicion
   document.querySelectorAll('.cell').forEach(td =>
     td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss'));
@@ -977,6 +1071,8 @@ function setViewMode(mode) {
   selectedCell = null;
 
   if (mode === 'conquistar') {
+    boardElapsed = 0; boardPausas = 0; boardSeguidos = 0;
+    conqAgotados = 0; conqFallos = 0;
     paintConquered();
     updateConqStats();
     nextQuestion();
