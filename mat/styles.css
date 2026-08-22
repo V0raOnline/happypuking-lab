@@ -836,8 +836,10 @@
   }
   body.caza-pausa .caza-timer-fill { background: var(--muted2); }
 
-  /* La rejilla se tapa al pensar: la pausa es para la cabeza, no para escanear */
-  .left-col { position: relative; }
+  /* Al pausar se tapa TODA la zona de juego, no solo la rejilla: en Minas la
+     accion pasa en el panel de la derecha, y un aviso sobre la tabla (ya oscura)
+     no se ve. Si el juego se para, tiene que verse donde el ojo esta puesto. */
+  .outer-layout { position: relative; }
   .pausa-overlay {
     display: none;
     position: absolute; inset: 0;
