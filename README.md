@@ -87,7 +87,7 @@ piezas sueltas. La idea es que formular deje de ser memorizar.
 
 La **Tabla Periódica** se lee en tres capas, con el mismo tablero:
 
-1. **Categorías** — reconocer el territorio: quién es quién y de qué familia.
+1. **Familias** — reconocer el territorio: quién es quién y de qué familia.
 2. **Valencia** — cuántos electrones tiene cada átomo en la última capa, que
    es lo único que cuenta al unirse. Se ve que cada columna comparte valencia.
 3. **Electronegatividad** — con cuánta fuerza los agarra. La diagonal que

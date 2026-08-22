@@ -665,7 +665,26 @@ header {
 .en-legend-note strong { color: var(--text); font-weight: 700; }
 .legend.hidden { display: none; }
 
-/* Intro del modo categorías: encuadra el viaje completo */
+/* Pill iluminado al seleccionar un elemento (modos Familias y Valencia).
+   Mismo gesto que el pin sobre la barra de electronegatividad. */
+.legend-item.selected,
+.val-chip.selected {
+  color: var(--text);
+  border-color: var(--pill-color, rgba(255,255,255,0.3));
+  background: color-mix(in srgb, var(--pill-color, #fff) 14%, transparent);
+}
+.pill-badge:not(:empty) {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--pill-color, var(--text));
+  margin-left: 0.4rem;
+  padding-left: 0.4rem;
+  border-left: 1px solid rgba(255,255,255,0.18);
+  white-space: nowrap;
+}
+
+/* Intro del modo familias: encuadra el viaje completo */
 .cat-intro {
   display: flex;
   flex-direction: column;

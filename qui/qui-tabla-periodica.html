@@ -30,14 +30,14 @@
 </div>
 
 <div class="mode-toggle">
-  <button class="mode-btn active" id="mode-cat">Categorías</button>
+  <button class="mode-btn active" id="mode-cat">Familias</button>
   <button class="mode-btn" id="mode-en">Electronegatividad</button>
   <button class="mode-btn" id="mode-val">Valencia</button>
 </div>
 
 <div class="legend" id="legend"></div>
 <div class="cat-intro" id="cat-intro">
-  <p class="en-legend-note"><strong>Esto es un viaje, y esta es la primera etapa.</strong> Aquí solo reconoces el territorio: quién es quién y a qué familia pertenece. Pincha cualquier elemento para ver su ficha.</p>
+  <p class="en-legend-note"><strong>Esto es un viaje, y esta es la primera etapa.</strong> Aquí solo reconoces el territorio: quién es quién y a qué familia pertenece. Pincha cualquier elemento y se iluminará su familia, con el grupo al que pertenece.</p>
   <p class="en-legend-note">Las otras dos pestañas añaden las piezas que faltan: <strong>Valencia</strong> — cuántos electrones tiene cada átomo en la última capa, que es lo único que cuenta al unirse — y <strong>Electronegatividad</strong> — con cuánta fuerza los agarra.</p>
   <p class="en-legend-note">Cuando esas tres cosas encajen, <strong>formular dejará de ser memorizar</strong>: será leer la tabla. No hay que aprenderse nada de esto; hay que jugar con ello hasta que se vea.</p>
 </div>
@@ -337,7 +337,7 @@ Object.entries(CATS).forEach(([k, v]) => {
   const d = document.createElement('div');
   d.className = 'legend-item';
   d.dataset.cat = k;
-  d.innerHTML = `<span class="legend-dot" style="background:${v.color}"></span>${v.label}`;
+  d.innerHTML = `<span class="legend-dot" style="background:${v.color}"></span>${v.label}<span class="pill-badge"></span>`;
   d.onclick = () => filterCat(k);
   legendEl.appendChild(d);
 });
@@ -464,6 +464,7 @@ function selectElement(num) {
   if (cur) cur.classList.add('active');
   renderCard(num);
   updateEnPin(num);
+  updateModePills(num);
 }
 
 const SHELL_NAMES = ['K','L','M','N','O','P','Q'];
@@ -776,14 +777,14 @@ function valColor(num) {
     const d = document.createElement('div');
     d.className = 'val-chip';
     d.dataset.val = v;
-    d.innerHTML = `<span class="val-dot" style="background:${VAL_COLORS[v]}"></span>${v} e&#8315;`;
+    d.innerHTML = `<span class="val-dot" style="background:${VAL_COLORS[v]}"></span>${v} e&#8315;<span class="pill-badge"></span>`;
     d.onclick = () => filterVal(String(v));
     wrap.appendChild(d);
   }
   const full = document.createElement('div');
   full.className = 'val-chip';
   full.dataset.val = 'complete';
-  full.innerHTML = `<span class="val-dot" style="background:${VAL_COMPLETE}"></span>capa completa`;
+  full.innerHTML = `<span class="val-dot" style="background:${VAL_COMPLETE}"></span>capa completa<span class="pill-badge"></span>`;
   full.onclick = () => filterVal('complete');
   wrap.appendChild(full);
 })();
@@ -842,12 +843,52 @@ function setViewMode(mode) {
       el.style.setProperty('--cat-color', CATS[el.dataset.cat]?.color || '#888');
     }
   });
-  updateEnPin(activeNum); // restaura el pin si ya había un elemento seleccionado
+  updateEnPin(activeNum);      // restaura el pin si ya había un elemento seleccionado
+  updateModePills(activeNum);  // idem el pill iluminado del modo destino
 }
 
 document.getElementById('mode-cat').onclick = () => setViewMode('cat');
 document.getElementById('mode-en').onclick = () => setViewMode('en');
 document.getElementById('mode-val').onclick = () => setViewMode('val');
+
+// Tendencia iónica por grupo — el dato que se muestra en el pill de Valencia
+const TENDENCIA_ION = { 1:'+1', 2:'+2', 13:'+3', 14:'±4', 15:'−3', 16:'−2', 17:'−1' };
+
+function tendenciaIon(num) {
+  const e = elMap[num];
+  if (!e) return '';
+  if (e[4] === 'gas-noble') return 'no forma iones';
+  return TENDENCIA_ION[e[5]] || 'variable';
+}
+
+// Misma filosofía que el pin de electronegatividad: al seleccionar un elemento
+// se ilumina su pill en el modo actual, con el dato concreto de ese elemento.
+function updateModePills(num) {
+  document.querySelectorAll('.legend-item.selected, .val-chip.selected')
+    .forEach(c => { c.classList.remove('selected'); c.style.removeProperty('--pill-color'); });
+  document.querySelectorAll('.pill-badge').forEach(b => { b.textContent = ''; });
+
+  const e = num != null ? elMap[num] : null;
+  if (!e) return;
+  const color = CATS[e[4]]?.color || '#888';
+
+  let pill = null, dato = '';
+  if (viewMode === 'cat') {
+    pill = document.querySelector(`.legend-item[data-cat="${e[4]}"]`);
+    dato = `${e[1]} · grupo ${e[5]}`;
+  } else if (viewMode === 'val') {
+    const key = valGroupOf(num);
+    if (key) {
+      pill = document.querySelector(`.val-chip[data-val="${key}"]`);
+      dato = `${e[1]} · ${tendenciaIon(num)}`;
+    }
+  }
+  if (!pill) return;
+  pill.classList.add('selected');
+  pill.style.setProperty('--pill-color', color);
+  const badge = pill.querySelector('.pill-badge');
+  if (badge) badge.textContent = dato;
+}
 
 // Pin "este elemento está aquí" sobre la barra de gradiente
 function updateEnPin(num) {
