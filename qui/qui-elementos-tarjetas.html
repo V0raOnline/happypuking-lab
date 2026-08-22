@@ -74,6 +74,8 @@
   cursor: not-allowed;
   pointer-events: none;
 }
+/* El ámbito se apaga cuando manda la familia: deja de tener efecto */
+.opt-row.inactivo { opacity: 0.35; pointer-events: none; }
 
 .setup-warn {
   font-size: 0.7rem;
@@ -286,7 +288,7 @@
     <div class="setup-block">
       <div class="setup-label">Hasta dónde</div>
       <div class="opt-row" id="opt-scope"></div>
-      <p class="opt-hint">Empieza por los 20 primeros: son los que salen una y otra vez en clase.</p>
+      <p class="opt-hint" id="scope-hint">Empieza por los 20 primeros: son los que salen una y otra vez en clase.</p>
     </div>
 
     <div class="setup-block">
@@ -599,6 +601,11 @@ function renderFamilies() {
 function renderSetup() {
   buildChips('opt-mode', Object.entries(MODES).map(([k, m]) => [k, m.label]), cfg.mode, v => { cfg.mode = v; renderSetup(); });
   buildChips('opt-scope', Object.entries(SCOPES).map(([k, l]) => [k, l]), cfg.scope, v => { cfg.scope = parseInt(v); renderSetup(); });
+  const porFamilia = cfg.family !== 'all';
+  document.getElementById('opt-scope').classList.toggle('inactivo', porFamilia);
+  document.getElementById('scope-hint').textContent = porFamilia
+    ? 'Con una familia elegida entran todos sus elementos, sin límite de número atómico.'
+    : 'Empieza por los 20 primeros: son los que salen una y otra vez en clase.';
   buildChips('opt-len', LENGTHS.map(n => [n, `${n} preguntas`]), cfg.len, v => { cfg.len = parseInt(v); renderSetup(); });
   document.getElementById('mode-hint').textContent = MODES[cfg.mode].hint;
   renderFamilies();
@@ -611,7 +618,7 @@ function renderSetup() {
   if (problema === 'familia-fija') {
     warn.textContent = 'En el modo «¿De qué familia?» la respuesta sería siempre la misma. Elige «Todas las familias» o cambia de modo.';
   } else if (problema === 'vacio') {
-    warn.textContent = 'No hay elementos de esa familia en este ámbito. Amplía el ámbito o elige otra familia.';
+    warn.textContent = 'Esa familia no tiene elementos con valencia fija. Elige otra familia o cambia de modo.';
   } else if (disponibles < cfg.len) {
     warn.textContent = `Solo hay ${disponibles} elemento${disponibles === 1 ? '' : 's'} con estos ajustes: la tanda será de ${disponibles} pregunta${disponibles === 1 ? '' : 's'}.`;
   }
@@ -628,17 +635,21 @@ const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).
 // haya 4 opciones aunque la familia elegida tenga solo 2 elementos.
 function distractorPool() {
   const m = MODES[cfg.mode];
-  let els = ELEMENTS.filter(e => e[N] <= cfg.scope);
+  let els = cfg.family === 'all' ? ELEMENTS.filter(e => e[N] <= cfg.scope) : ELEMENTS.slice();
   if (m.filter) els = els.filter(m.filter);
   return els;
 }
 
 // Preguntas: además filtradas por la familia elegida.
+// Elegir una familia MANDA sobre el ambito: son dos formas distintas de acotar
+// (por numero atomico y por grupo quimico) y cruzarlas dejaba familias enteras
+// sin elementos. Si eliges halogenos, quieres los halogenos, no los que caigan
+// por debajo del 20.
 function questionPool(family = cfg.family, mode = cfg.mode, scope = cfg.scope) {
   const m = MODES[mode];
-  let els = ELEMENTS.filter(e => e[N] <= scope);
+  let els = family === 'all' ? ELEMENTS.filter(e => e[N] <= scope)
+                             : ELEMENTS.filter(e => e[CAT] === family);
   if (m.filter) els = els.filter(m.filter);
-  if (family !== 'all') els = els.filter(e => e[CAT] === family);
   return els;
 }
 
