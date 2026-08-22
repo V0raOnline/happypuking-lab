@@ -556,6 +556,16 @@ const cellKey = (r, c) => `${Math.min(r,c)}-${Math.max(r,c)}`;
 
 let conquered = new Set();
 let conqAgotados = 0, conqFallos = 0, conqAvancePendiente = false;
+
+// Los avances diferidos (mostrar el fallo y pasar a la siguiente) tienen que ser
+// cancelables: si no, uno lanzado en Minas se ejecuta ya estando en Caza y deja
+// dos relojes compitiendo. Todo avance pasa por aqui.
+let avanceTimer = null;
+function programarAvance(fn, ms) {
+  clearTimeout(avanceTimer);
+  avanceTimer = setTimeout(fn, ms);
+}
+function cancelarAvance() { clearTimeout(avanceTimer); avanceTimer = null; }
 let scopeTable = 'all';
 let currentTarget = null;
 let conqLocked = false;
@@ -622,6 +632,7 @@ function updateConqStats() {
 }
 
 function nextQuestion() {
+  if (viewMode !== 'conquistar') return;   // no actuar fuera de su modo
   const left = pending();
   const done = left.length === 0;
   document.getElementById('conq-q').style.display    = done ? 'none' : 'block';
@@ -674,7 +685,7 @@ function minaAgotada() {
   fb.innerHTML = `Se acabó el tiempo. ${a} × ${b} = <strong>${a * b}</strong>. La mina sigue armada.`;
   marcaFallo();
   if (boardPausado) { conqAvancePendiente = true; return; }
-  setTimeout(nextQuestion, 2100);
+  programarAvance(nextQuestion, 2100);
 }
 
 function flash(r, c, cls) {
@@ -714,7 +725,7 @@ function checkAnswer() {
       fb.className = 'conq-feedback ok';
       fb.innerHTML = `✓ ${a} × ${b} = ${right} — mina solitaria de la diagonal`;
     }
-    setTimeout(nextQuestion, 1250);
+    programarAvance(nextQuestion, 1250);
   } else {
     stopTimer();
     conqFallos++;
@@ -722,7 +733,7 @@ function checkAnswer() {
     fb.innerHTML = `${a} × ${b} = <strong>${right}</strong>. La mina sigue armada.`;
     marcaFallo();
     if (boardPausado) { conqAvancePendiente = true; return; }
-    setTimeout(nextQuestion, 2100);
+    programarAvance(nextQuestion, 2100);
   }
 }
 
@@ -833,6 +844,23 @@ function startTimer(segundos) {
   }, 100);
 }
 
+// Cambiar de modo deja el tablero en limpio: sin relojes, sin avances en vuelo,
+// sin pausa a medias y sin rachas de fallos heredadas del modo anterior.
+function resetBoardState() {
+  stopTimer();
+  cancelarAvance();
+  onTimeout = null;
+  boardPausado = false;
+  boardSeguidos = 0;
+  boardElapsed = 0;
+  boardPausas = 0;
+  conqAvancePendiente = false;
+  document.body.classList.remove('caza-pausa');
+  document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
+  document.querySelectorAll('.cell').forEach(td =>
+    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss'));
+}
+
 // Fallo/acierto genericos: el respiro se ofrece igual en cualquier modo
 function marcaFallo() {
   boardSeguidos++;
@@ -862,7 +890,7 @@ function setPausa(on, motivo = 'manual') {
     document.getElementById('pausa-sub').textContent = sub;
   } else {
     boardSeguidos = 0;   // se vuelve con el contador a cero
-    if (conqAvancePendiente) { conqAvancePendiente = false; setTimeout(nextQuestion, 250); }
+    if (conqAvancePendiente) { conqAvancePendiente = false; programarAvance(nextQuestion, 250); }
   }
   document.body.classList.toggle('caza-pausa', on);
   document.querySelectorAll('[data-role="pausa"]').forEach(b =>
@@ -892,7 +920,7 @@ function tiempoAgotado() {
   fb.innerHTML = `Se acabó el tiempo. El ${val} estaba en ${[...cazaPend].map(k => k.replace('-', '×')).join(', ')}`;
   cazaPend.clear();
   cazaIdx++;
-  setTimeout(() => { cazaIdx < cazaQueue.length ? cazaTarget() : finCaza(); }, 2000);
+  programarAvance(() => { cazaIdx < cazaQueue.length ? cazaTarget() : finCaza(); }, 2000);
 }
 
 function pintaRitmo(modo) {
@@ -952,6 +980,7 @@ function startCaza() {
 }
 
 function cazaTarget() {
+  if (viewMode !== 'caza') return;         // no actuar fuera de su modo
   document.querySelectorAll('.cell').forEach(td => td.classList.remove('topo-found'));
   const val = cazaQueue[cazaIdx];
   cazaPend = new Set(celdasDe(val).map(([r, c]) => `${r}-${c}`));
@@ -992,7 +1021,7 @@ function onCazaClick(r, c) {
       fb.className = 'conq-feedback ok';
       fb.innerHTML = `✓ Todos los ${val} cazados: ${celdasDe(val).map(([a,b]) => `${a}×${b}`).join(', ')}`;
       cazaIdx++;
-      setTimeout(() => { cazaIdx < cazaQueue.length ? cazaTarget() : finCaza(); }, 1600);
+      programarAvance(() => { cazaIdx < cazaQueue.length ? cazaTarget() : finCaza(); }, 1600);
     } else {
       fb.className = 'conq-feedback ok';
       fb.innerHTML = `✓ ${r} × ${c} = ${val}`;
@@ -1064,13 +1093,7 @@ function setViewMode(mode) {
   document.body.classList.toggle('mode-conquista', mode === 'conquistar');
   document.body.classList.toggle('mode-caza',      mode === 'caza');
 
-  stopTimer();                                        // que no siga de fondo al salir
-  boardPausado = false;
-  document.body.classList.remove('caza-pausa');
-  document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
-  // restos de animacion si se cambia de modo a media transicion
-  document.querySelectorAll('.cell').forEach(td =>
-    td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss'));
+  resetBoardState();
 
   if (mode === 'explorar') {
     refreshAllClasses();   // restaura el mapa segun los toggles activos
@@ -1083,7 +1106,6 @@ function setViewMode(mode) {
   selectedCell = null;
 
   if (mode === 'conquistar') {
-    boardElapsed = 0; boardPausas = 0; boardSeguidos = 0;
     conqAgotados = 0; conqFallos = 0;
     paintConquered();
     updateConqStats();
