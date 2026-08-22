@@ -593,18 +593,32 @@ function paintConquered() {
   }
 }
 
-function updateConqStats() {
-  const t = targets(), done = t.filter(([r,c]) => conquered.has(cellKey(r,c))).length;
-  const cells = [...conquered].reduce((n, k) => {
-    const [a, b] = k.split('-').map(Number);
-    return n + (a === b ? 1 : 2);
-  }, 0);
-  const squares = [...conquered].filter(k => { const [a,b] = k.split('-'); return a === b; }).length;
+// Todo relativo al ambito elegido: si juegas la tabla del 7, el marcador habla
+// de sus 10 minas y sus 19 casillas, no del campo entero.
+function scopeStats() {
+  const t = targets();
+  const s = { minas: t.length, minasDone: 0, casillas: 0, casillasDone: 0, solitarias: 0, solitariasDone: 0 };
+  t.forEach(([r, c]) => {
+    const esSolitaria = r === c;
+    const cubre = esSolitaria ? 1 : 2;      // la gemela cae con ella
+    const hecha = conquered.has(cellKey(r, c));
+    s.casillas += cubre;
+    if (esSolitaria) s.solitarias++;
+    if (hecha) {
+      s.minasDone++;
+      s.casillasDone += cubre;
+      if (esSolitaria) s.solitariasDone++;
+    }
+  });
+  return s;
+}
 
-  document.getElementById('conq-count').textContent   = `${done} de ${t.length} minas desactivadas`;
-  document.getElementById('conq-squares').textContent = `solitarias ${squares}/10`;
-  document.getElementById('conq-cells').textContent   = `${cells} de 100 casillas despejadas`;
-  document.getElementById('conq-fill').style.width    = `${t.length ? (done / t.length) * 100 : 0}%`;
+function updateConqStats() {
+  const s = scopeStats();
+  document.getElementById('conq-count').textContent   = `${s.minasDone} de ${s.minas} minas desactivadas`;
+  document.getElementById('conq-squares').textContent = `solitarias ${s.solitariasDone}/${s.solitarias}`;
+  document.getElementById('conq-cells').textContent   = `${s.casillasDone} de ${s.casillas} casillas despejadas`;
+  document.getElementById('conq-fill').style.width    = `${s.minas ? (s.minasDone / s.minas) * 100 : 0}%`;
 }
 
 function nextQuestion() {
@@ -615,11 +629,9 @@ function nextQuestion() {
 
   if (done) {
     stopTimer();
-    const t = targets().length;
-    const cells = scopeTable === 'all' ? 100 : null;
-    let txt = cells
-      ? `Has despejado las ${cells} casillas con ${t} respuestas. Las gemelas hicieron la otra mitad del trabajo.`
-      : `Campo de la tabla del ${scopeTable} despejado con ${t} respuestas.`;
+    const s = scopeStats();
+    const donde = scopeTable === 'all' ? '' : ` de la tabla del ${scopeTable}`;
+    let txt = `Has despejado las ${s.casillas} casillas${donde} con ${s.minas} respuestas. Las gemelas hicieron el resto.`;
     if (boardElapsed > 0) {
       txt += boardReloj
         ? ` Tiempo de juego: ${mmss(boardElapsed)}.`
