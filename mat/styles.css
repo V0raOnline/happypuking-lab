@@ -849,7 +849,20 @@
     z-index: 30;
   }
   body.caza-pausa .pausa-overlay { display: flex; }
-  .pausa-msg { text-align: center; padding: 1rem; }
+  /* Fijo al viewport, no centrado dentro del overlay: el overlay puede medir
+     mas que la pantalla y el mensaje quedaba debajo del fondo, invisible. */
+  .pausa-msg {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 31;
+    text-align: center;
+    padding: 1.2rem 1.4rem;
+    max-width: min(420px, 88vw);
+    background: rgba(8,10,15,0.96);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
   .pausa-title {
     display: block;
     font-family: 'Space Grotesk', sans-serif;
