@@ -639,7 +639,15 @@ function scopeStats() {
   return s;
 }
 
+// El boton dice a que alcanza ANTES de pulsarlo: reminar solo limpia el ambito
+// elegido, y con la geometria a la vista los restos de otras tablas se notan.
+function pintaBotonReminar() {
+  document.getElementById('conq-reset').textContent =
+    scopeTable === 'all' ? 'Volver a minar todo' : `Volver a minar la del ${scopeTable}`;
+}
+
 function updateConqStats() {
+  pintaBotonReminar();
   const s = scopeStats();
   document.getElementById('conq-count').textContent   = `${s.minasDone} de ${s.minas} minas desactivadas`;
   document.getElementById('conq-squares').textContent = `solitarias ${s.solitariasDone}/${s.solitarias}`;
