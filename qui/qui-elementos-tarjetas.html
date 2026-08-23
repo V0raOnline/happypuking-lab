@@ -248,6 +248,56 @@
 .wrong-correct { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #4ADE80; font-weight: 600; }
 .res-actions { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1.4rem; flex-wrap: wrap; }
 .hidden { display: none !important; }
+
+/* ── RELOJ Y PAUSA ── */
+.q-timer { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; }
+.q-timer.modo-calma .q-timer-track { display: none; }
+.q-timer.modo-calma .q-timer-secs { text-align: left; }
+.q-timer-track { flex: 1; height: 4px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
+.q-timer-fill { height: 100%; width: 100%; background: var(--green-lab, #4ADE80); border-radius: 100px; transition: width 0.1s linear, background 0.3s; }
+.q-timer-secs { font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--muted); min-width: 2.4rem; text-align: right; }
+.q-timer.apurado .q-timer-fill { background: #F87171; }
+.q-timer.apurado .q-timer-secs { color: #F87171; }
+body.en-pausa .q-timer-fill { background: var(--muted2); }
+
+/* El boton al que se echa mano cuando aprieta: grande y a mano */
+.btn-pensar {
+  display: none;
+  width: 100%;
+  margin-top: 0.9rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem; font-weight: 800;
+  color: #4ADE80;
+  background: rgba(74,222,128,0.08);
+  border: 2px solid rgba(74,222,128,0.35);
+  border-radius: 12px;
+  padding: 0.7rem 1rem; cursor: pointer; transition: all 0.2s;
+}
+body.ritmo-reloj .btn-pensar { display: block; }
+.btn-pensar:hover { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.6); }
+body.en-pausa .btn-pensar { color: var(--bg); background: #4ADE80; border-color: #4ADE80; }
+
+/* Tapa las respuestas al pensar: la pausa es para la cabeza, no para mirar */
+#screen-quiz { position: relative; }
+.pausa-overlay {
+  display: none;
+  position: absolute; inset: 0;
+  background: rgba(8,10,15,0.94);
+  border-radius: 14px;
+  align-items: center; justify-content: center;
+  z-index: 30;
+}
+body.en-pausa .pausa-overlay { display: flex; }
+.pausa-msg { text-align: center; padding: 1.2rem; }
+.pausa-title { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #4ADE80; }
+.pausa-sub { display: block; margin-top: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
+.pausa-seguir {
+  margin-top: 1.1rem;
+  font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 800;
+  color: var(--bg); background: #4ADE80; border: none; border-radius: 10px;
+  padding: 0.6rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
+}
+.pausa-seguir:hover { opacity: 0.88; }
 </style>
 </head>
 <body>
@@ -296,6 +346,12 @@
       <div class="opt-row" id="opt-len"></div>
     </div>
 
+    <div class="setup-block">
+      <div class="setup-label">A qué ritmo</div>
+      <div class="opt-row" id="opt-ritmo"></div>
+      <p class="opt-hint" id="ritmo-hint"></p>
+    </div>
+
     <p class="setup-warn hidden" id="setup-warn"></p>
     <button class="btn-primary" id="btn-start">Empezar</button>
   </div>
@@ -307,6 +363,10 @@
       <span id="prog-score">0 ✓</span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="q-timer" id="q-timer">
+      <div class="q-timer-track"><div class="q-timer-fill" id="q-timer-fill"></div></div>
+      <span class="q-timer-secs" id="q-timer-secs">—</span>
+    </div>
 
     <div class="q-prompt" id="q-prompt"></div>
     <div class="q-focus" id="q-focus"></div>
@@ -314,6 +374,15 @@
 
     <div class="answers" id="answers"></div>
     <div class="feedback" id="feedback"></div>
+    <button class="btn-pensar" id="btn-pensar">Estoy pensando</button>
+
+    <div class="pausa-overlay" id="pausa-overlay">
+      <div class="pausa-msg">
+        <span class="pausa-title" id="pausa-title">Pensando</span>
+        <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
+        <button class="pausa-seguir" id="pausa-seguir">Seguir</button>
+      </div>
+    </div>
   </div>
 
   <!-- RESULTADOS -->
@@ -560,6 +629,139 @@ const FAMILIES = [
 let cfg = { mode: 'sym2name', scope: 20, len: 10, family: 'all' };
 let queue = [], idx = 0, score = 0, wrong = [], locked = false;
 
+// ── RITMO ─────────────────────────────────────────────────────────────────────
+// Mismo contrato que en la tabla pitagorica: "No me estreses" por defecto con
+// crono informativo, y "Contra reloj" con cuenta atras + pausa sin penalizacion.
+// La preferencia se comparte con la pitagorica? NO: cada herramienta guarda la
+// suya, porque el ritmo comodo puede no ser el mismo en cada juego.
+const RITMO_KEY = 'hpk-tarjetas-ritmo';
+const RESPIRO = 3;
+const RITMOS = { calma: 'No me estreses', reloj: 'Contra reloj' };
+const RITMO_HINT = {
+  calma: 'Sin cuenta atras. Solo se apunta cuanto has tardado, para ti.',
+  reloj: 'Cuenta atras por pregunta. Puedes parar el reloj cuando quieras, sin penalizacion.',
+};
+// Reconocer un simbolo es mas rapido que decidir una familia o una valencia
+const SEGUNDOS = { sym2name: 8, name2sym: 8, family: 12, valence: 12 };
+
+let ritmoReloj = false;
+let qTimer = null, qLeft = 0, qTotal = 0;
+let qElapsed = 0, qPausado = false, qPausas = 0, qSeguidos = 0, qAgotadas = 0;
+
+const mmss = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+
+function stopTimer() { if (qTimer) { clearInterval(qTimer); qTimer = null; } }
+
+function renderTimer() {
+  const secs = document.getElementById('q-timer-secs');
+  if (ritmoReloj) {
+    document.getElementById('q-timer-fill').style.width = `${qTotal ? (qLeft / qTotal) * 100 : 0}%`;
+    secs.textContent = `${Math.ceil(qLeft)}s`;
+    document.getElementById('q-timer').classList.toggle('apurado', !qPausado && qLeft <= 3);
+  } else {
+    secs.textContent = mmss(qElapsed);
+  }
+}
+
+function startTimer() {
+  stopTimer();
+  if (ritmoReloj) { qTotal = SEGUNDOS[cfg.mode] || 10; qLeft = qTotal; }
+  renderTimer();
+  qTimer = setInterval(() => {
+    if (qPausado) return;
+    qElapsed += 0.1;
+    if (ritmoReloj) {
+      qLeft = Math.max(0, qLeft - 0.1);
+      if (qLeft === 0) { renderTimer(); stopTimer(); tiempoAgotado(); return; }
+    }
+    renderTimer();
+  }, 100);
+}
+
+// Se acaba el tiempo: se ensena la respuesta y cuenta como fallo, sin drama
+function tiempoAgotado() {
+  if (locked) return;
+  const el = queue[idx];
+  const right = MODES[cfg.mode].answer(el);
+  locked = true;
+  qAgotadas++;
+  [...document.querySelectorAll('.ans-btn')].forEach(b => {
+    b.disabled = true;
+    b.classList.add(b.textContent === right ? 'correct' : 'faded');
+  });
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback ko';
+  fb.innerHTML = `Se acabó el tiempo. Era <strong>${right}</strong><span class="feedback-hint">${el[NAME]} · ${CAT_LABEL[el[CAT]]} · grupo ${el[GROUP]}</span>`;
+  wrong.push({ focus: MODES[cfg.mode].focus(el), given: '—', right });
+  marcaFallo();
+  if (qPausado) { avancePendiente = true; return; }
+  programarAvance(2100);
+}
+
+// Un solo avance en vuelo, cancelable: si no, uno lanzado antes de volver al
+// setup se ejecuta ya fuera de la tanda.
+let avanceTimer = null, avancePendiente = false;
+function programarAvance(ms) {
+  clearTimeout(avanceTimer);
+  avanceTimer = setTimeout(() => {
+    idx++;
+    if (idx < queue.length) renderQuestion(); else finish();
+  }, ms);
+}
+function cancelarAvance() { clearTimeout(avanceTimer); avanceTimer = null; }
+
+function marcaAcierto() { qSeguidos = 0; }
+function marcaFallo() {
+  qSeguidos++;
+  if (qSeguidos >= RESPIRO) setPausa(true, 'respira');
+}
+
+const PAUSA_TEXTO = {
+  manual:  ['Pensando', 'el reloj está parado · cuando estés listo retomamos'],
+  respira: ['Respira', 'Puedes tomarte un tiempo para pensar'],
+};
+
+function setPausa(on, motivo = 'manual') {
+  if (document.getElementById('screen-quiz').classList.contains('hidden')) return;
+  if (on && motivo === 'manual' && (!qTimer || !ritmoReloj)) return;
+  qPausado = on;
+  if (on) {
+    if (motivo === 'manual') qPausas++;
+    const [titulo, sub] = PAUSA_TEXTO[motivo];
+    document.getElementById('pausa-title').textContent = titulo;
+    document.getElementById('pausa-sub').textContent = sub;
+  } else {
+    qSeguidos = 0;
+    if (avancePendiente) { avancePendiente = false; programarAvance(250); }
+  }
+  document.body.classList.toggle('en-pausa', on);
+  document.getElementById('btn-pensar').textContent = on ? 'Ya lo tengo' : 'Estoy pensando';
+  renderTimer();
+}
+
+function resetRonda() {
+  stopTimer();
+  cancelarAvance();
+  qElapsed = 0; qPausas = 0; qSeguidos = 0; qAgotadas = 0;
+  qPausado = false; avancePendiente = false;
+  document.body.classList.remove('en-pausa');
+  document.getElementById('btn-pensar').textContent = 'Estoy pensando';
+}
+
+function pintaRitmo() {
+  const t = document.getElementById('q-timer');
+  t.classList.toggle('modo-reloj', ritmoReloj);
+  t.classList.toggle('modo-calma', !ritmoReloj);
+  document.body.classList.toggle('ritmo-reloj', ritmoReloj);
+  document.getElementById('ritmo-hint').textContent = RITMO_HINT[ritmoReloj ? 'reloj' : 'calma'];
+}
+
+(function loadRitmo() {
+  let g = 'calma';
+  try { g = localStorage.getItem(RITMO_KEY) || 'calma'; } catch (e) {}
+  ritmoReloj = g === 'reloj';
+})();
+
 // ── Setup UI ──
 function buildChips(containerId, entries, current, onPick) {
   const wrap = document.getElementById(containerId);
@@ -607,6 +809,12 @@ function renderSetup() {
     ? 'Con una familia elegida entran todos sus elementos, sin límite de número atómico.'
     : 'Empieza por los 20 primeros: son los que salen una y otra vez en clase.';
   buildChips('opt-len', LENGTHS.map(n => [n, `${n} preguntas`]), cfg.len, v => { cfg.len = parseInt(v); renderSetup(); });
+  buildChips('opt-ritmo', Object.entries(RITMOS), ritmoReloj ? 'reloj' : 'calma', v => {
+    ritmoReloj = v === 'reloj';
+    try { localStorage.setItem(RITMO_KEY, v); } catch (e) {}
+    renderSetup();
+  });
+  pintaRitmo();
   document.getElementById('mode-hint').textContent = MODES[cfg.mode].hint;
   renderFamilies();
 
@@ -668,6 +876,7 @@ function start() {
   if (!els.length) return;
   queue = shuffle(els).slice(0, Math.min(cfg.len, els.length));
   idx = 0; score = 0; wrong = []; locked = false;
+  resetRonda();
   show('screen-quiz');
   renderQuestion();
 }
@@ -706,11 +915,13 @@ function renderQuestion() {
     b.onclick = () => answer(b, opt, right, el);
     wrap.appendChild(b);
   });
+  startTimer();
 }
 
 function answer(btn, given, right, el) {
-  if (locked) return;
+  if (locked || qPausado) return;
   locked = true;
+  stopTimer();
   const buttons = [...document.querySelectorAll('.ans-btn')];
   buttons.forEach(b => {
     b.disabled = true;
@@ -722,23 +933,25 @@ function answer(btn, given, right, el) {
   const fb = document.getElementById('feedback');
   if (given === right) {
     score++;
+    marcaAcierto();
     fb.className = 'feedback ok';
     fb.textContent = '✓ Correcto';
   } else {
     fb.className = 'feedback ko';
     fb.innerHTML = `La respuesta era <strong>${right}</strong><span class="feedback-hint">${el[NAME]} · ${CAT_LABEL[el[CAT]]} · grupo ${el[GROUP]}</span>`;
     wrong.push({ focus: MODES[cfg.mode].focus(el), given, right });
+    marcaFallo();
   }
   document.getElementById('prog-score').textContent = `${score} ✓`;
 
-  setTimeout(() => {
-    idx++;
-    if (idx < queue.length) renderQuestion();
-    else finish();
-  }, given === right ? 700 : 1900);
+  if (qPausado) { avancePendiente = true; return; }
+  programarAvance(given === right ? 700 : 1900);
 }
 
 function finish() {
+  stopTimer();
+  cancelarAvance();
+  setPausa(false);
   show('screen-results');
   const total = queue.length;
   const pct = Math.round((score / total) * 100);
@@ -746,11 +959,18 @@ function finish() {
   scoreEl.textContent = `${score}/${total}`;
   scoreEl.className = 'res-score ' + (pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'low');
 
-  document.getElementById('res-sub').textContent =
+  let sub =
+    score === 0 ? 'No salió ninguna esta vez. ¿Repasas en la tabla y volvemos?' :
     pct === 100 ? 'Pleno. Súbete el ámbito o cambia de modo.' :
     pct >= 80   ? 'Muy bien. Repasa los de abajo y repite.' :
     pct >= 50   ? 'Vas encontrándole el sitio. Repite esta misma tanda.' :
                   'Normal al principio. Baja el ámbito a los 20 primeros y vuelve a la tabla a mirarlos.';
+  if (qAgotadas) sub += ` Se te acabó el tiempo en ${qAgotadas} ${qAgotadas === 1 ? 'pregunta' : 'preguntas'}.`;
+  sub += ritmoReloj ? ` Tiempo de juego: ${mmss(qElapsed)}.` : ` Has tardado ${mmss(qElapsed)}, sin prisa.`;
+  if (ritmoReloj && qPausas) {
+    sub += ` Paraste ${qPausas} ${qPausas === 1 ? 'vez' : 'veces'} a pensar, y eso no cuenta en contra.`;
+  }
+  document.getElementById('res-sub').textContent = sub;
 
   const wrap = document.getElementById('res-wrong-wrap');
   wrap.classList.toggle('hidden', wrong.length === 0);
@@ -764,9 +984,11 @@ function finish() {
   });
 }
 
+document.getElementById('btn-pensar').onclick   = () => setPausa(!qPausado);
+document.getElementById('pausa-seguir').onclick = () => setPausa(false);
 document.getElementById('btn-start').onclick = start;
 document.getElementById('btn-again').onclick = start;
-document.getElementById('btn-setup').onclick = () => { renderSetup(); show('screen-setup'); };
+document.getElementById('btn-setup').onclick = () => { resetRonda(); renderSetup(); show('screen-setup'); };
 
 renderSetup();
 </script>
