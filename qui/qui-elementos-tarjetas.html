@@ -332,7 +332,7 @@ body.en-pausa .pausa-overlay { display: flex; }
       <div class="setup-label">Qué familia</div>
       <div class="opt-chip fam-all" id="fam-all">Todas las familias</div>
       <div class="fam-grid" id="opt-family"></div>
-      <p class="opt-hint">Practicar una sola familia ayuda a verla como un conjunto: los halógenos se comportan igual entre ellos.</p>
+      <p class="opt-hint">Puedes elegir varias. Una sola ayuda a verla como conjunto; dos o tres vecinas es donde de verdad se aprende a distinguirlas.</p>
     </div>
 
     <div class="setup-block">
@@ -626,7 +626,9 @@ const FAMILIES = [
   ['actinido',             'Actínidos',      '#84CC16'],
 ];
 
-let cfg = { mode: 'sym2name', scope: 20, len: 10, family: 'all' };
+// familias = [] significa TODAS. Con una o varias elegidas manda la familia
+// sobre el ambito: son dos formas distintas de acotar y cruzarlas deja huecos.
+let cfg = { mode: 'sym2name', scope: 20, len: 10, familias: [] };
 let queue = [], idx = 0, score = 0, wrong = [], locked = false;
 
 // ── RITMO ─────────────────────────────────────────────────────────────────────
@@ -777,25 +779,28 @@ function buildChips(containerId, entries, current, onPick) {
 
 function renderFamilies() {
   const all = document.getElementById('fam-all');
-  all.classList.toggle('active', cfg.family === 'all');
-  all.onclick = () => { cfg.family = 'all'; renderSetup(); };
+  all.classList.toggle('active', cfg.familias.length === 0);
+  all.onclick = () => { cfg.familias = []; renderSetup(); };
 
   const wrap = document.getElementById('opt-family');
   wrap.innerHTML = '';
   FAMILIES.forEach(([key, label, color]) => {
-    const disponibles = questionPool(key).length;
-    const invalido = comboInvalido(key);
+    const elegida = cfg.familias.includes(key);
+    const futuras = elegida ? cfg.familias.filter(f => f !== key) : [...cfg.familias, key];
+    const disponibles = questionPool([key]).length;
+    // Un chip solo se apaga si ESA familia no aporta nada en este modo (p.ej.
+    // transicion cuando se pregunta la valencia). Nunca por como quede el
+    // conjunto: si no, en "¿De qué familia?" seria imposible elegir la primera,
+    // porque una sola es invalida y nunca se llegaria a dos.
+    const muerta = !elegida && disponibles === 0;
+
     const d = document.createElement('div');
-    d.className = 'opt-chip fam-chip'
-      + (cfg.family === key ? ' active' : '')
-      + (invalido ? ' disabled' : '');
+    d.className = 'opt-chip fam-chip' + (elegida ? ' active' : '') + (muerta ? ' disabled' : '');
     d.innerHTML = `<span class="fam-dot" style="background:${color}"></span><span>${label}</span>`;
-    d.title = invalido === 'familia-fija'
-      ? 'No aplica al modo "¿De qué familia?"'
-      : invalido === 'vacio'
-        ? 'Ningún elemento de esta familia en el ámbito elegido'
-        : `${disponibles} elemento${disponibles === 1 ? '' : 's'} disponibles`;
-    if (!invalido) d.onclick = () => { cfg.family = key; renderSetup(); };
+    d.title = muerta
+      ? 'Esta familia no tiene elementos con valencia fija'
+      : `${disponibles} elemento${disponibles === 1 ? '' : 's'}${elegida ? ' · pulsa para quitarla' : ''}`;
+    if (!muerta) d.onclick = () => { cfg.familias = futuras; renderSetup(); };
     wrap.appendChild(d);
   });
 }
@@ -803,10 +808,10 @@ function renderFamilies() {
 function renderSetup() {
   buildChips('opt-mode', Object.entries(MODES).map(([k, m]) => [k, m.label]), cfg.mode, v => { cfg.mode = v; renderSetup(); });
   buildChips('opt-scope', Object.entries(SCOPES).map(([k, l]) => [k, l]), cfg.scope, v => { cfg.scope = parseInt(v); renderSetup(); });
-  const porFamilia = cfg.family !== 'all';
+  const porFamilia = cfg.familias.length > 0;
   document.getElementById('opt-scope').classList.toggle('inactivo', porFamilia);
   document.getElementById('scope-hint').textContent = porFamilia
-    ? 'Con una familia elegida entran todos sus elementos, sin límite de número atómico.'
+    ? `Con ${cfg.familias.length === 1 ? 'una familia elegida' : 'familias elegidas'} entran todos sus elementos, sin límite de número atómico.`
     : 'Empieza por los 20 primeros: son los que salen una y otra vez en clase.';
   buildChips('opt-len', LENGTHS.map(n => [n, `${n} preguntas`]), cfg.len, v => { cfg.len = parseInt(v); renderSetup(); });
   buildChips('opt-ritmo', Object.entries(RITMOS), ritmoReloj ? 'reloj' : 'calma', v => {
@@ -823,10 +828,10 @@ function renderSetup() {
   const disponibles = questionPool().length;
   const warn = document.getElementById('setup-warn');
   const btn = document.getElementById('btn-start');
-  if (problema === 'familia-fija') {
-    warn.textContent = 'En el modo «¿De qué familia?» la respuesta sería siempre la misma. Elige «Todas las familias» o cambia de modo.';
+  if (problema === 'familia-unica') {
+    warn.textContent = 'Con una sola familia la respuesta sería siempre la misma. Añade otra familia para comparar, o vuelve a «Todas».';
   } else if (problema === 'vacio') {
-    warn.textContent = 'Esa familia no tiene elementos con valencia fija. Elige otra familia o cambia de modo.';
+    warn.textContent = 'Ninguna de las familias elegidas tiene elementos con valencia fija. Cambia la selección o el modo.';
   } else if (disponibles < cfg.len) {
     warn.textContent = `Solo hay ${disponibles} elemento${disponibles === 1 ? '' : 's'} con estos ajustes: la tanda será de ${disponibles} pregunta${disponibles === 1 ? '' : 's'}.`;
   }
@@ -843,7 +848,7 @@ const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).
 // haya 4 opciones aunque la familia elegida tenga solo 2 elementos.
 function distractorPool() {
   const m = MODES[cfg.mode];
-  let els = cfg.family === 'all' ? ELEMENTS.filter(e => e[N] <= cfg.scope) : ELEMENTS.slice();
+  let els = cfg.familias.length ? ELEMENTS.slice() : ELEMENTS.filter(e => e[N] <= cfg.scope);
   if (m.filter) els = els.filter(m.filter);
   return els;
 }
@@ -853,19 +858,22 @@ function distractorPool() {
 // (por numero atomico y por grupo quimico) y cruzarlas dejaba familias enteras
 // sin elementos. Si eliges halogenos, quieres los halogenos, no los que caigan
 // por debajo del 20.
-function questionPool(family = cfg.family, mode = cfg.mode, scope = cfg.scope) {
+function questionPool(familias = cfg.familias, mode = cfg.mode, scope = cfg.scope) {
   const m = MODES[mode];
-  let els = family === 'all' ? ELEMENTS.filter(e => e[N] <= scope)
-                             : ELEMENTS.filter(e => e[CAT] === family);
+  let els = familias.length ? ELEMENTS.filter(e => familias.includes(e[CAT]))
+                            : ELEMENTS.filter(e => e[N] <= scope);
   if (m.filter) els = els.filter(m.filter);
   return els;
 }
 
 // "¿De qué familia?" con una sola familia elegida no tiene sentido:
 // la respuesta correcta sería siempre la misma.
-function comboInvalido(family = cfg.family, mode = cfg.mode, scope = cfg.scope) {
-  if (mode === 'family' && family !== 'all') return 'familia-fija';
-  if (questionPool(family, mode, scope).length === 0) return 'vacio';
+// Con UNA sola familia, "¿De qué familia?" no tiene sentido: la respuesta seria
+// siempre la misma. Con dos o mas vuelve a ser una pregunta de verdad, y ademas
+// la mas util: comparar familias vecinas es donde esta la confusion.
+function comboInvalido(familias = cfg.familias, mode = cfg.mode, scope = cfg.scope) {
+  if (mode === 'family' && familias.length === 1) return 'familia-unica';
+  if (questionPool(familias, mode, scope).length === 0) return 'vacio';
   return null;
 }
 
