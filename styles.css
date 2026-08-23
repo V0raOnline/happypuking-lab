@@ -234,43 +234,49 @@
   .card:hover::after { opacity: 1; }
 
   /* accent variants */
-  .card[data-color="green"] {
+  [data-color="green"] {
     --accent: #39ff6a;
     --accent-glow: rgba(57,255,106,0.12);
     --accent-border: rgba(57,255,106,0.35);
     --accent-shadow: rgba(57,255,106,0.12);
   }
-  .card[data-color="blue"] {
+  [data-color="blue"] {
     --accent: #3B82F6;
     --accent-glow: rgba(59,130,246,0.12);
     --accent-border: rgba(59,130,246,0.35);
     --accent-shadow: rgba(59,130,246,0.12);
   }
-  .card[data-color="amber"] {
+  [data-color="amber"] {
     --accent: #F59E0B;
     --accent-glow: rgba(245,158,11,0.12);
     --accent-border: rgba(245,158,11,0.35);
     --accent-shadow: rgba(245,158,11,0.12);
   }
-  .card[data-color="purple"] {
+  [data-color="purple"] {
     --accent: #8B5CF6;
     --accent-glow: rgba(139,92,246,0.12);
     --accent-border: rgba(139,92,246,0.35);
     --accent-shadow: rgba(139,92,246,0.12);
   }
-  .card[data-color="pink"] {
+  [data-color="pink"] {
     --accent: #D946EF;
     --accent-glow: rgba(217,70,239,0.12);
     --accent-border: rgba(217,70,239,0.35);
     --accent-shadow: rgba(217,70,239,0.12);
   }
-  .card[data-color="orange"] {
+  [data-color="red"] {
+    --accent: #F87171;
+    --accent-glow: rgba(248,113,113,0.12);
+    --accent-border: rgba(248,113,113,0.35);
+    --accent-shadow: rgba(248,113,113,0.12);
+  }
+  [data-color="orange"] {
     --accent: #F97316;
     --accent-glow: rgba(249,115,22,0.12);
     --accent-border: rgba(249,115,22,0.35);
     --accent-shadow: rgba(249,115,22,0.12);
   }
-  .card[data-color="nd"] {
+  [data-color="nd"] {
     --accent: #d4006a;
     --accent-glow: rgba(212,0,106,0.12);
     --accent-border: rgba(212,0,106,0.35);
@@ -308,7 +314,9 @@
     white-space: nowrap;
   }
 
-  .badge.nivel {
+  /* El color codifica la materia: se ilumina el pill de materia, no el de
+     nivel. El de nivel se queda con el gris neutro de .badge. */
+  .badge.materia {
     color: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
@@ -528,3 +536,80 @@
     .wip-grid { grid-template-columns: 1fr; }
     footer { padding: 1.5rem 1rem 2rem; flex-direction: column; align-items: flex-start; }
   }
+/* ── ¿QUÉ NECESITAS HOY? ──────────────────────────────────────────────────── */
+/* Entrada por problema, no por materia. Nadie navega un catálogo: se llega
+   con una necesidad concreta. Esta capa va ANTES del catálogo a propósito. */
+.necesito {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 0.5rem;
+}
+.necesito-head { margin-bottom: 1.4rem; }
+.necesito-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 62ch;
+  margin-top: 0.6rem;
+}
+.necesito-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.6rem;
+}
+.nec-item {
+  display: block;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-border, rgba(224, 0, 122, 0.35));
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  transition: all 0.2s ease;
+}
+.nec-item:hover {
+  border-color: var(--accent-border, rgba(224, 0, 122, 0.35));
+  border-left-color: var(--accent, var(--magenta));
+  background: var(--accent-glow, var(--magenta-soft));
+  transform: translateX(2px);
+}
+.nec-problema {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+  margin-bottom: 0.3rem;
+}
+.nec-item:hover .nec-problema { color: var(--accent, var(--magenta)); }
+.nec-como {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.necesito-pie {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  opacity: 0.7;
+  margin-top: 1.2rem;
+}
+@media (max-width: 620px) {
+  .necesito { padding: 1.4rem 1.2rem 0.4rem; }
+  .necesito-grid { grid-template-columns: 1fr; }
+}
+
+/* Pills de nivel y materia en las entradas por necesidad.
+   Reutilizan .badge del catálogo a propósito: son la misma información y
+   deben leerse igual en los dos sitios. */
+.nec-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+}
