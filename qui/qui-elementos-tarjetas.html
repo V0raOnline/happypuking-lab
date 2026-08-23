@@ -44,9 +44,9 @@
 }
 .opt-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 .opt-chip.active {
-  color: var(--magenta);
-  border-color: rgba(224,64,251,0.4);
-  background: rgba(224,64,251,0.1);
+  color: #22D3EE;
+  border-color: rgba(34,211,238,0.4);
+  background: rgba(34,211,238,0.1);
 }
 .opt-hint { font-size: 0.68rem; color: var(--muted2); margin-top: 0.4rem; line-height: 1.5; }
 
@@ -254,7 +254,7 @@
 .q-timer.modo-calma .q-timer-track { display: none; }
 .q-timer.modo-calma .q-timer-secs { text-align: left; }
 .q-timer-track { flex: 1; height: 4px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
-.q-timer-fill { height: 100%; width: 100%; background: var(--green-lab, #4ADE80); border-radius: 100px; transition: width 0.1s linear, background 0.3s; }
+.q-timer-fill { height: 100%; width: 100%; background: #F59E0B; border-radius: 100px; transition: width 0.1s linear, background 0.3s; }
 .q-timer-secs { font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--muted); min-width: 2.4rem; text-align: right; }
 .q-timer.apurado .q-timer-fill { background: #F87171; }
 .q-timer.apurado .q-timer-secs { color: #F87171; }
@@ -267,15 +267,15 @@ body.en-pausa .q-timer-fill { background: var(--muted2); }
   margin-top: 0.9rem;
   font-family: 'Nunito', sans-serif;
   font-size: 0.9rem; font-weight: 800;
-  color: #4ADE80;
-  background: rgba(74,222,128,0.08);
-  border: 2px solid rgba(74,222,128,0.35);
+  color: #F59E0B;
+  background: rgba(245,158,11,0.08);
+  border: 2px solid rgba(245,158,11,0.35);
   border-radius: 12px;
   padding: 0.7rem 1rem; cursor: pointer; transition: all 0.2s;
 }
 body.ritmo-reloj .btn-pensar { display: block; }
-.btn-pensar:hover { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.6); }
-body.en-pausa .btn-pensar { color: var(--bg); background: #4ADE80; border-color: #4ADE80; }
+.btn-pensar:hover { background: rgba(245,158,11,0.16); border-color: rgba(245,158,11,0.6); }
+body.en-pausa .btn-pensar { color: var(--bg); background: #F59E0B; border-color: #F59E0B; }
 
 /* Tapa las respuestas al pensar: la pausa es para la cabeza, no para mirar */
 #screen-quiz { position: relative; }
@@ -288,13 +288,17 @@ body.en-pausa .btn-pensar { color: var(--bg); background: #4ADE80; border-color:
   z-index: 30;
 }
 body.en-pausa .pausa-overlay { display: flex; }
-.pausa-msg { text-align: center; padding: 1.2rem; }
-.pausa-title { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #4ADE80; }
+.pausa-msg {
+  text-align: center; padding: 1.2rem 1.4rem;
+  border: 1px solid rgba(245,158,11,0.3); border-radius: 14px;
+  background: rgba(8,10,15,0.6);
+}
+.pausa-title { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #F59E0B; }
 .pausa-sub { display: block; margin-top: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
 .pausa-seguir {
   margin-top: 1.1rem;
   font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 800;
-  color: var(--bg); background: #4ADE80; border: none; border-radius: 10px;
+  color: var(--bg); background: #F59E0B; border: none; border-radius: 10px;
   padding: 0.6rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
 }
 .pausa-seguir:hover { opacity: 0.88; }

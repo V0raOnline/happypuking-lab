@@ -576,9 +576,9 @@ header {
 }
 .mode-btn:hover { color: var(--text); }
 .mode-btn.active {
-  color: var(--magenta);
-  border-color: rgba(224,64,251,0.35);
-  background: rgba(224,64,251,0.08);
+  color: #22D3EE;
+  border-color: rgba(34,211,238,0.35);
+  background: rgba(34,211,238,0.08);
   cursor: default;
 }
 
