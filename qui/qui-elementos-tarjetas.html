@@ -1002,6 +1002,12 @@ document.getElementById('btn-start').onclick = start;
 document.getElementById('btn-again').onclick = start;
 document.getElementById('btn-setup').onclick = () => { resetRonda(); renderSetup(); show('screen-setup'); };
 
+// El tipo de practica tambien es compartible: ?modo=valence, ?modo=sym2name...
+(function modoDeURL() {
+  const q = new URLSearchParams(location.search).get('modo');
+  if (q && MODES[q]) cfg.mode = q;
+})();
+
 renderSetup();
 </script>
 </body>

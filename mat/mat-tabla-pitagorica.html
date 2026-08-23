@@ -1203,11 +1203,23 @@ document.querySelectorAll('.legend-btn').forEach(btn => {
   });
 });
 
+// Los modos son compartibles: ?modo=minas y ?modo=caza aterrizan directamente.
+// Sin esto, un enlace que promete "practicar factorizacion" cae en Explorar y
+// rompe la promesa.
+const MODO_URL = { minas: 'conquistar', conquistar: 'conquistar',
+                   caza: 'caza', topos: 'caza', explorar: 'explorar' };
+function aplicarModoDeURL() {
+  const q = new URLSearchParams(location.search).get('modo');
+  const destino = MODO_URL[(q || '').toLowerCase()];
+  if (destino && destino !== 'explorar') setViewMode(destino);
+}
+
 // Init
 buildTable();
 loadProgress();
 paintConquered();
 updateConqStats();
+aplicarModoDeURL();
 </script>
 </body>
 </html>
