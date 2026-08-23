@@ -545,6 +545,63 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
   .footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
   .footer-left a:hover { opacity: 0.75; }
   .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+/* ── RITMO, RELOJ Y PAUSA ── */
+.ritmo-bar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem;
+  margin: 0.6rem 0 1rem;
+}
+.ritmo-label {
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted2, #5A6478); margin-right: 0.3rem;
+}
+.ritmo-pill {
+  font-family: 'DM Mono', monospace; font-size: 0.66rem;
+  color: var(--muted, #8892A4); background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 100px;
+  padding: 0.25rem 0.7rem; cursor: pointer; transition: all 0.2s; user-select: none;
+}
+.ritmo-pill:hover { color: var(--text, #F8FAFF); }
+.ritmo-pill.active {
+  color: var(--magenta, #E040FB);
+  border-color: rgba(224,64,251,0.4); background: rgba(224,64,251,0.1);
+}
+.q-timer { display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 120px; }
+.q-timer.modo-calma { display: none; }
+.q-timer-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 100px; overflow: hidden; }
+.q-timer-fill { height: 100%; width: 100%; background: #4ADE80; border-radius: 100px; transition: width 0.1s linear, background 0.3s; }
+.q-timer-secs { font-family: 'DM Mono', monospace; font-size: 0.64rem; color: var(--muted, #8892A4); min-width: 2.2rem; text-align: right; }
+.q-timer.apurado .q-timer-fill { background: #F87171; }
+.q-timer.apurado .q-timer-secs { color: #F87171; }
+body.en-pausa .q-timer-fill { background: #5A6478; }
+
+.btn-pensar {
+  display: none;
+  font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800;
+  color: #4ADE80; background: rgba(74,222,128,0.08);
+  border: 2px solid rgba(74,222,128,0.35); border-radius: 10px;
+  padding: 0.55rem 1rem; cursor: pointer; transition: all 0.2s;
+}
+body.ritmo-reloj .btn-pensar { display: inline-block; }
+.btn-pensar:hover { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.6); }
+body.en-pausa .btn-pensar { color: #0b0d12; background: #4ADE80; border-color: #4ADE80; }
+
+.workspace { position: relative; }
+.pausa-overlay {
+  display: none; position: absolute; inset: 0;
+  background: rgba(8,10,15,0.94); border-radius: 14px;
+  align-items: center; justify-content: center; z-index: 40;
+}
+body.en-pausa .pausa-overlay { display: flex; }
+.pausa-msg { text-align: center; padding: 1.2rem; }
+.pausa-title { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #4ADE80; }
+.pausa-sub { display: block; margin-top: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted, #8892A4); line-height: 1.5; }
+.pausa-seguir {
+  margin-top: 1.1rem; font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 800;
+  color: #0b0d12; background: #4ADE80; border: none; border-radius: 10px;
+  padding: 0.6rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
+}
+.pausa-seguir:hover { opacity: 0.88; }
 </style>
 </head>
 <body>
@@ -574,6 +631,14 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
 
 <div class="workspace">
 
+  <div class="pausa-overlay" id="pausa-overlay">
+    <div class="pausa-msg">
+      <span class="pausa-title" id="pausa-title">Pensando</span>
+      <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
+      <button class="pausa-seguir" onclick="setPausa(false)">Seguir</button>
+    </div>
+  </div>
+
   <!-- SCORE -->
   <div class="score-bar">
     <div class="score-item correct">
@@ -591,6 +656,20 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
     <div class="score-item">
       <span class="score-value" id="sc-pct">—</span>
       <span class="score-label">autonomía</span>
+    </div>
+    <div class="score-item">
+      <span class="score-value" id="sc-tiempo">0:00</span>
+      <span class="score-label" id="sc-tiempo-label">en marcha</span>
+    </div>
+  </div>
+
+  <div class="ritmo-bar">
+    <span class="ritmo-label">A qué ritmo</span>
+    <span class="ritmo-pill" data-ritmo="calma" onclick="setRitmo('calma')">No me estreses</span>
+    <span class="ritmo-pill" data-ritmo="reloj" onclick="setRitmo('reloj')">Contra reloj</span>
+    <div class="q-timer" id="q-timer">
+      <div class="q-timer-track"><div class="q-timer-fill" id="q-timer-fill"></div></div>
+      <span class="q-timer-secs" id="q-timer-secs">—</span>
     </div>
   </div>
 
@@ -621,6 +700,7 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
       <div class="feedback-msg" id="feedback-msg"></div>
       <button class="btn-reset" onclick="resetAssembly()">↺ limpiar</button>
       <button class="btn-check" onclick="checkAssembly()">Comprobar</button>
+      <button class="btn-pensar" id="btn-pensar" onclick="setPausa(!qPausado)">Estoy pensando</button>
     </div>
   </div>
 
@@ -861,6 +941,117 @@ function init() {
 // ═══════════════════════════════════════════════════════
 // CHALLENGE
 // ═══════════════════════════════════════════════════════
+
+// ── RITMO Y RELOJ ─────────────────────────────────────────────────────────────
+// Adaptado: aqui NO hay rondas, el marcador es continuo. Asi que el tiempo es
+// una metrica mas del marcador ("en marcha" / "restante"), no un cierre. Y la
+// cuenta atras es generosa: montar una frase pieza a pieza es explorar, no
+// recordar, y penalizar la exploracion seria contradecir la herramienta.
+const RITMO_KEY = 'hpk-grammar-ritmo';
+const RESPIRO = 3;
+const SEGUNDOS_RETO = 45;
+
+let ritmoReloj = false;
+let qTimer = null, qLeft = 0;
+let qElapsed = 0, qPausado = false, qPausas = 0, qSeguidos = 0, qAgotados = 0;
+
+const mmss = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+
+function stopTimer() { if (qTimer) { clearInterval(qTimer); qTimer = null; } }
+
+function renderTimer() {
+  const secs = document.getElementById('q-timer-secs');
+  const marcador = document.getElementById('sc-tiempo');
+  if (ritmoReloj) {
+    document.getElementById('q-timer-fill').style.width = (qLeft / SEGUNDOS_RETO) * 100 + '%';
+    secs.textContent = Math.ceil(qLeft) + 's';
+    document.getElementById('q-timer').classList.toggle('apurado', !qPausado && qLeft <= 8);
+    marcador.textContent = Math.ceil(qLeft) + 's';
+    document.getElementById('sc-tiempo-label').textContent = 'restante';
+  } else {
+    secs.textContent = mmss(qElapsed);
+    marcador.textContent = mmss(qElapsed);
+    document.getElementById('sc-tiempo-label').textContent = 'en marcha';
+  }
+}
+
+function startTimer() {
+  stopTimer();
+  if (ritmoReloj) qLeft = SEGUNDOS_RETO;
+  renderTimer();
+  qTimer = setInterval(function () {
+    if (qPausado) return;
+    qElapsed += 0.1;
+    if (ritmoReloj) {
+      qLeft = Math.max(0, qLeft - 0.1);
+      if (qLeft === 0) { renderTimer(); stopTimer(); tiempoAgotado(); return; }
+    }
+    renderTimer();
+  }, 100);
+}
+
+// Al agotarse se ensena la estructura esperada, igual que fallar, pero sin
+// contar como intento: el crio no llego a decidir nada.
+function tiempoAgotado() {
+  qAgotados++;
+  marcaFallo();
+  const esperado = currentStruct.map(x => '[' + x.label + ']').join(' + ');
+  showFeedback(false, 'Se acabó el tiempo. La estructura era: ' + esperado);
+  document.getElementById('assembly-track').classList.add('incorrect');
+}
+
+function marcaAcierto() { qSeguidos = 0; }
+function marcaFallo() {
+  qSeguidos++;
+  if (qSeguidos >= RESPIRO) setPausa(true, 'respira');
+}
+
+const PAUSA_TEXTO = {
+  manual:  ['Pensando', 'el reloj está parado · cuando estés listo retomamos'],
+  respira: ['Respira', 'Puedes tomarte un tiempo para pensar'],
+};
+
+function setPausa(on, motivo) {
+  motivo = motivo || 'manual';
+  if (on && motivo === 'manual' && (!qTimer || !ritmoReloj)) return;
+  qPausado = on;
+  if (on) {
+    if (motivo === 'manual') qPausas++;
+    document.getElementById('pausa-title').textContent = PAUSA_TEXTO[motivo][0];
+    document.getElementById('pausa-sub').textContent = PAUSA_TEXTO[motivo][1];
+  } else {
+    qSeguidos = 0;
+  }
+  document.body.classList.toggle('en-pausa', on);
+  document.getElementById('btn-pensar').textContent = on ? 'Ya lo tengo' : 'Estoy pensando';
+  renderTimer();
+}
+
+function setRitmo(modo) {
+  ritmoReloj = modo === 'reloj';
+  try { localStorage.setItem(RITMO_KEY, modo); } catch (e) {}
+  pintaRitmo();
+  startTimer();
+}
+
+function pintaRitmo() {
+  const modo = ritmoReloj ? 'reloj' : 'calma';
+  document.querySelectorAll('[data-ritmo]').forEach(function (p) {
+    p.classList.toggle('active', p.dataset.ritmo === modo);
+  });
+  const t = document.getElementById('q-timer');
+  t.classList.toggle('modo-reloj', ritmoReloj);
+  t.classList.toggle('modo-calma', !ritmoReloj);
+  document.body.classList.toggle('ritmo-reloj', ritmoReloj);
+  renderTimer();
+}
+
+(function loadRitmo() {
+  let g = 'calma';
+  try { g = localStorage.getItem(RITMO_KEY) || 'calma'; } catch (e) {}
+  ritmoReloj = g === 'reloj';
+})();
+
 function nextChallenge() {
   // Pick tense (avoid repeat)
   let tensePool = TENSES.filter(t => t.id !== lastTenseId);
@@ -891,6 +1082,7 @@ function nextChallenge() {
 
   resetAssembly();
   hideFeedback();
+  startTimer();          // cada reto arranca su propio reloj
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1024,7 +1216,9 @@ function renderAssembly() {
 // CHECK
 // ═══════════════════════════════════════════════════════
 function checkAssembly() {
+  if (qPausado) return;
   if (!currentStruct || assembled.length === 0) return;
+  stopTimer();
 
   score.total++;
 
@@ -1042,6 +1236,7 @@ function checkAssembly() {
   }
 
   if (correct) {
+    marcaAcierto();
     if (!hintUsed) score.correct++;
     else score.hints++;
     const msg = hintUsed
@@ -1051,6 +1246,7 @@ function checkAssembly() {
     document.getElementById('assembly-track').classList.add('correct');
     document.getElementById('assembly-track').classList.remove('incorrect');
   } else {
+    marcaFallo();
     const expectedStr = currentStruct.map(s => `[${s.label}]`).join(' + ');
     showFeedback(false, `✗ No es correcto. Estructura esperada: ${expectedStr}`);
     document.getElementById('assembly-track').classList.add('incorrect');
@@ -1154,6 +1350,7 @@ function onTouchEnd(e) {
 }
 
 init();
+pintaRitmo();   // el ritmo se ve desde el primer reto, no solo al cambiarlo
 </script>
 </body>
 </html>
