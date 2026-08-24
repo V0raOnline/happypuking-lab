@@ -289,9 +289,18 @@ body.en-pausa .btn-pensar { color: var(--bg); background: #F59E0B; border-color:
 }
 body.en-pausa .pausa-overlay { display: flex; }
 .pausa-msg {
+  /* Fijo al viewport, no centrado dentro del overlay: el overlay cubre un
+     panel que puede ser mas alto que la pantalla, y entonces el mensaje y su
+     boton caen fuera. Mismo remedio que en la tabla pitagorica. */
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 31;
+  max-width: min(420px, 88vw);
+  max-height: 92vh; overflow-y: auto;
   text-align: center; padding: 1.2rem 1.4rem;
   border: 1px solid rgba(245,158,11,0.3); border-radius: 14px;
-  background: rgba(8,10,15,0.6);
+  background: rgba(8,10,15,0.96);
 }
 .pausa-title { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #F59E0B; }
 .pausa-sub { display: block; margin-top: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
@@ -302,6 +311,34 @@ body.en-pausa .pausa-overlay { display: flex; }
   padding: 0.6rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
 }
 .pausa-seguir:hover { opacity: 0.88; }
+
+/* Glitch, la rata del laboratorio. Es DECORACION: no informa de nada que no
+   diga ya el texto, asi que va aria-hidden y sin capturar el raton. Si se
+   apaga, la herramienta se comporta exactamente igual. */
+/* Glitch en la ficha de resultados. Aqui SI: es raro (una vez por tanda) y
+   central (donde ya esta mirando). La esquina era frecuente y periferica, que
+   es la definicion de moscardon. */
+.mascota-res {
+  display: block; height: 150px; width: auto;
+  margin: 0 auto 0.6rem;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5));
+}
+.pausa-glitch { display: block; height: 128px; width: auto; margin: 0 auto 0.2rem; }
+body.sin-mascota .pausa-glitch,
+body.sin-mascota .mascota-res { display: none; }
+@media (max-width: 640px) {
+  .pausa-glitch { height: 96px; }
+  .mascota-res { height: 110px; }
+}
+/* Andamiaje retirado: esta regla ocultaba a Glitch por debajo de 640px de
+   alto, de cuando el mensaje de pausa desbordaba. Eso se arreglo de raiz
+   poniendo .pausa-msg en position:fixed con max-height:92vh, asi que la pose
+   ya cabe: a 620px de alto el mensaje ocupa 283 y sobran 337.
+   Solo se retira en ventanas de verdad estrechas, donde compite por el sitio
+   con el boton. La decoracion cede, el control nunca. */
+@media (max-height: 420px) {
+  .pausa-glitch { display: none; }
+}
 </style>
 </head>
 <body>
@@ -356,6 +393,12 @@ body.en-pausa .pausa-overlay { display: flex; }
       <p class="opt-hint" id="ritmo-hint"></p>
     </div>
 
+    <div class="setup-block">
+      <div class="setup-label">Glitch</div>
+      <div class="opt-row" id="opt-mascota"></div>
+      <p class="opt-hint">Glitch es la rata del laboratorio: sale al acertar, al fallar y cuando paras a pensar. Si distrae, se apaga y todo funciona igual.</p>
+    </div>
+
     <p class="setup-warn hidden" id="setup-warn"></p>
     <button class="btn-primary" id="btn-start">Empezar</button>
   </div>
@@ -382,6 +425,7 @@ body.en-pausa .pausa-overlay { display: flex; }
 
     <div class="pausa-overlay" id="pausa-overlay">
       <div class="pausa-msg">
+        <img class="pausa-glitch" src="../assets/glitch/pensar.png" alt="" aria-hidden="true">
         <span class="pausa-title" id="pausa-title">Pensando</span>
         <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
         <button class="pausa-seguir" id="pausa-seguir">Seguir</button>
@@ -391,6 +435,7 @@ body.en-pausa .pausa-overlay { display: flex; }
 
   <!-- RESULTADOS -->
   <div class="panel hidden" id="screen-results">
+    <img class="mascota-res" id="mascota-res" alt="" aria-hidden="true">
     <div class="res-score" id="res-score"></div>
     <p class="res-sub" id="res-sub"></p>
     <div id="res-wrong-wrap">
@@ -641,6 +686,41 @@ let queue = [], idx = 0, score = 0, wrong = [], locked = false;
 // La preferencia se comparte con la pitagorica? NO: cada herramienta guarda la
 // suya, porque el ritmo comodo puede no ser el mismo en cada juego.
 const RITMO_KEY = 'hpk-tarjetas-ritmo';
+
+// --- Glitch ---------------------------------------------------------------
+// La clave es COMPARTIDA por todo el lab, no propia de esta herramienta:
+// quien apaga la mascota la apaga en todas partes, no once veces.
+const MASCOTA_KEY = 'hpk-mascota';
+let mascotaOn = true;
+try { mascotaOn = localStorage.getItem(MASCOTA_KEY) !== 'off'; } catch (e) {}
+
+// 'hmmm' y no 'error': el dibujo no señala un fallo, dice "esto no terminó de
+// encajar, otra vez". Si se llama error, acaba usándose donde hay un error.
+const GLITCH = { celebracion: '../assets/glitch/celebracion.png',
+                 hmmm:        '../assets/glitch/hmmm.png',
+                 pensar:      '../assets/glitch/pensar.png' };
+// Precarga: sin esto la primera reaccion llega tarde y se pierde el momento.
+Object.values(GLITCH).forEach(src => { const i = new Image(); i.src = src; });
+
+// Glitch NO reacciona pregunta a pregunta: aparecia en la esquina cada dos por
+// tres y cansaba. Sale en dos sitios, los dos raros y centrales: la pausa (la
+// pinta el CSS con body.en-pausa) y la ficha de resultados.
+//
+// Las poses se reparten sobre las tres bandas que la ficha YA calcula y pinta
+// en color, para no inventar una clasificacion paralela:
+//   good (>=80%) celebracion · mid (50-79%) pensar · low (<50%) hmmm
+function poseDelCierre(banda) {
+  return banda === 'good' ? 'celebracion' : banda === 'mid' ? 'pensar' : 'hmmm';
+}
+function pintaGlitchResultados(banda) {
+  const el = document.getElementById('mascota-res');
+  if (!el) return;   // Glitch es decoracion: si no esta, no puede tumbar nada
+  el.src = GLITCH[poseDelCierre(banda)];
+}
+function aplicarMascota() {
+  document.body.classList.toggle('sin-mascota', !mascotaOn);
+}
+aplicarMascota();
 const RESPIRO = 3;
 const RITMOS = { calma: 'No me estreses', reloj: 'Contra reloj' };
 const RITMO_HINT = {
@@ -818,6 +898,13 @@ function renderSetup() {
     ? `Con ${cfg.familias.length === 1 ? 'una familia elegida' : 'familias elegidas'} entran todos sus elementos, sin límite de número atómico.`
     : 'Empieza por los 20 primeros: son los que salen una y otra vez en clase.';
   buildChips('opt-len', LENGTHS.map(n => [n, `${n} preguntas`]), cfg.len, v => { cfg.len = parseInt(v); renderSetup(); });
+  buildChips('opt-mascota', [['on', 'Con Glitch'], ['off', 'Sin Glitch']],
+              mascotaOn ? 'on' : 'off', v => {
+    mascotaOn = v === 'on';
+    try { localStorage.setItem(MASCOTA_KEY, v); } catch (e) {}
+    aplicarMascota();
+    renderSetup();
+  });
   buildChips('opt-ritmo', Object.entries(RITMOS), ritmoReloj ? 'reloj' : 'calma', v => {
     ritmoReloj = v === 'reloj';
     try { localStorage.setItem(RITMO_KEY, v); } catch (e) {}
@@ -969,7 +1056,9 @@ function finish() {
   const pct = Math.round((score / total) * 100);
   const scoreEl = document.getElementById('res-score');
   scoreEl.textContent = `${score}/${total}`;
-  scoreEl.className = 'res-score ' + (pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'low');
+  const banda = pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'low';
+  scoreEl.className = 'res-score ' + banda;
+  pintaGlitchResultados(banda);
 
   let sub =
     score === 0 ? 'No salió ninguna esta vez. ¿Repasas en la tabla y volvemos?' :
