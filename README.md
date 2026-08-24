@@ -1,4 +1,4 @@
-<img src="assets/HappypukingNuevoBanner.jpg" alt="HappypukingNuevoBanner.jpg" width="590">
+<img src="assets/readme-banner.png" alt="LEARN with hAppYpUkIng — ¿Exploramos? Una caja de laboratorio rotulada hAppYpUkIng-lab con Glitch, la mascota, asomando por la tapa." width="760">
 
 ### hAppYpUkIng — Lab
 
@@ -151,7 +151,7 @@ Weird, pero funcional. Así somos.
 
 ---
 
-## <img title="" src="assets/AX0.png" alt="AX0.png" width="77" data-align="inline"> Otros recursos
+## <img title="" src="assets/ax0-icono.png" alt="AX0, el ajolote de ARKINESIS" width="77" data-align="inline"> Otros recursos
 
 #### [ARKINESIS](https://v0raonline.github.io/arkinesis/)
 
