@@ -20,6 +20,20 @@ Todo el contenido está alineado con el currículo oficial de la ESO (España).
 
 ---
 
+## 🚪 ¿Qué necesitas hoy?
+
+La portada no empieza por el catálogo. Empieza por el problema.
+
+Nadie llega a un laboratorio solo a explorar. Se llega un martes con algo
+concreto: *no se saben las tablas*, *la formulación parece magia negra*,
+*confunden CD, CI y atributo*. Catorce entradas escritas así, cada una
+apuntando a la herramienta que sirve para eso.
+
+El catálogo por materias sigue estando, justo debajo. Pero primero se
+pregunta qué duele.
+
+---
+
 ## 📁 Estructura del repo
 
 Las carpetas usan un prefijo de tres letras por materia, y cada archivo
@@ -54,8 +68,9 @@ happypuking-lab/
     └── trn-reloj.html                  # El Reloj · The Clock — bilingüe
 ```
 
-Los archivos terminados en `-bck` o `-v2` son versiones de trabajo, no la
-versión viva. La referencia siempre es lo que enlaza `index.html`.
+Una carpeta, una materia, un prefijo. La referencia siempre es lo que enlaza
+`index.html`: aquí no hay copias de seguridad ni versiones paralelas — para
+eso está el historial de git.
 
 ---
 
@@ -68,6 +83,7 @@ versión viva. La referencia siempre es lo que enlaza `index.html`.
 | Los 5 Reinos              | Ciencias Naturales   | 1º ESO            | `bio/bio-5reinos.html`                |
 | Invertebrados             | Ciencias Naturales   | 1º ESO            | `bio/bio-invertebrados-mapa.html`     |
 | Reino de las Plantas      | Ciencias Naturales   | 1º ESO            | `bio/bio-reino-plantas.html`          |
+| Invertebrados — tarjetas  | Ciencias Naturales   | 1º ESO            | `bio/bio-invertebrados-tarjetas.html` |
 | Verbos Irregulares        | Inglés               | ESO               | `ing/ing-verbos-irregulares.html`     |
 | Quiz de Verbos            | Inglés               | ESO               | `ing/ing-verbos-quiz.html`            |
 | Grammar Builder           | Inglés               | ESO               | `ing/ing-grammar-builder.html`        |
@@ -79,6 +95,7 @@ versión viva. La referencia siempre es lo que enlaza `index.html`.
 | Tarjetas de Elementos     | Química              | ESO               | `qui/qui-elementos-tarjetas.html`     |
 | El Reloj · The Clock      | Matemáticas · Tiempo | Primaria / ESO    | `trn/trn-reloj.html`                  |
 | Modelo de Carga Sensorial | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial.html`          |
+| Sensory Load Model (EN)   | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial-en.html`       |
 
 ### ⚗️ Química — el viaje hacia la formulación
 
@@ -96,6 +113,44 @@ La **Tabla Periódica** se lee en tres capas, con el mismo tablero:
 Las **Tarjetas de Elementos** cierran el ciclo: practicar símbolos, nombres,
 familias y electrones de valencia, con filtro por familia y lista de fallos
 para repasar.
+
+### 🔢 Matemáticas — la tabla pitagórica no es una lista
+
+Tres modos sobre el mismo tablero, porque son tres cosas distintas:
+
+1. **Explorar** — ver el patrón. No son 100 resultados, son 55: la diagonal
+   es un espejo. Eso se ve antes de repetir nada.
+2. **Minas gemelas** — practicar la multiplicación. Cada resultado aparece
+   dos veces, y descubrir uno descubre su gemelo.
+3. **Caza topos** — factorización al revés: te damos el 12 y buscas 3×4, 2×6.
+   Es lo que hace falta después para dividir.
+
+### ⏱ Ritmos — parar a pensar no es fallar
+
+Las herramientas de práctica tienen dos ritmos, y se elige antes de empezar:
+
+- **No me estreses** — sin cuenta atrás. El reloj cuenta hacia arriba y no
+  pasa nada.
+- **Contra reloj** — con cuenta atrás, pero con un botón **«Estoy pensando»**
+  que la congela sin penalizar. Pensar no descuenta.
+
+Además, tras tres fallos seguidos aparece un **respiro** automático, y hay una
+salida explícita —**«Me aburro»**— para dejarlo sin sensación de abandono.
+
+Ninguna herramienta guarda nada en ningún sitio ni pide una cuenta.
+
+### 🔗 Enlaces directos a un modo
+
+Los modos se pueden enlazar. Sirve para mandarle a alguien exactamente lo que
+necesita, no la portada:
+
+```
+mat/mat-tabla-pitagorica.html?modo=minas      # practicar multiplicación
+mat/mat-tabla-pitagorica.html?modo=caza       # factorizar
+qui/qui-elementos-tarjetas.html?modo=sym2name # símbolo → nombre
+qui/qui-elementos-tarjetas.html?modo=family   # ¿de qué familia?
+qui/qui-elementos-tarjetas.html?modo=valence  # electrones de valencia
+```
 
 ### 🔧 En desarrollo
 
@@ -145,8 +200,24 @@ Plantilla y prompt de ejemplo incluidos en cada herramienta que lo soporte.
 
 ## 🎨 Identidad visual
 
-Fondo oscuro · Verde bioluminiscente · Tipografía Unbounded  
-Diseño pensado para reducir fatiga visual y maximizar contraste.  
+Fondo oscuro · Tipografía Unbounded · Diseño pensado para reducir fatiga
+visual y maximizar contraste.
+
+El color significa algo y siempre lo mismo, en las once herramientas:
+
+| Color       | Qué dice                                        |
+| ----------- | ----------------------------------------------- |
+| **Magenta** | Identidad del laboratorio · navegación           |
+| **Cian**    | El control activo · el foco del teclado          |
+| **Ámbar**   | Apoyo: pausar, pensar, pedir pista, dejarlo      |
+| **Verde**   | Correcto · confirmar                             |
+| **Rojo**    | Error                                            |
+
+Dos reglas que lo sostienen: los colores de dato viven en el tablero y los de
+control en los bordes; y **el color nunca es lo único que dice el estado**,
+siempre hay texto que lo acompaña. Verde y ámbar son el par peor distinguido
+en deuteranopia y son dos de nuestros significados opuestos.
+
 Weird, pero funcional. Así somos.
 
 ---
@@ -156,6 +227,20 @@ Weird, pero funcional. Así somos.
 #### [ARKINESIS](https://v0raonline.github.io/arkinesis/)
 
 Simulador de física interactivo para Bachillerato.
+
+---
+
+## 🐀 Glitch
+
+La mascota del laboratorio. Es una rata, porque las ratas saben encontrar
+caminos incluso cuando el sitio está lleno de piezas que no encajan.
+
+No dice si has acertado. Aparece en dos momentos y nada más: cuando paras a
+pensar y cuando termina una ronda. No reacciona pregunta a pregunta —se probó
+así y cansaba.
+
+**Se puede esconder.** El interruptor está en la portada y vale para todo el
+laboratorio de una vez.
 
 ---
 
