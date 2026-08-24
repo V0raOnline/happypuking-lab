@@ -133,6 +133,7 @@
 
     <div class="pausa-overlay" id="pausa-overlay">
       <div class="pausa-msg">
+        <img class="pausa-glitch" src="../assets/glitch/pensar.png" alt="" aria-hidden="true">
         <span class="pausa-title" id="pausa-title">Pensando</span>
         <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
         <div class="pausa-acciones" id="pausa-acciones">
@@ -167,6 +168,7 @@
           <button class="btn-aburro" data-role="aburro">Me aburro</button>
         </div>
         <div class="conq-done" id="conq-done">
+          <img class="mascota-res" id="conq-done-glitch" alt="" aria-hidden="true">
           <div class="conq-done-big">Campo despejado</div>
           <p id="conq-done-text"></p>
           <button class="conq-check" id="conq-again">Minar otra vez</button>
@@ -183,6 +185,7 @@
           <button class="btn-aburro" data-role="aburro">Me aburro</button>
         </div>
         <div class="conq-done" id="caza-done">
+          <img class="mascota-res" id="caza-done-glitch" alt="" aria-hidden="true">
           <div class="conq-done-big">Cacería terminada</div>
           <p id="caza-done-text"></p>
           <div class="caza-review" id="caza-review"></div>
@@ -235,6 +238,27 @@
 </footer>
 
 <script>
+// ── Glitch ────────────────────────────────────────────────────────────────
+// Clave COMPARTIDA con el resto del lab: quien la esconde en el indice la
+// esconde en todas partes, no once veces.
+const MASCOTA_KEY = 'hpk-mascota';
+let mascotaOn = true;
+try { mascotaOn = localStorage.getItem(MASCOTA_KEY) !== 'off'; } catch (e) {}
+document.body.classList.toggle('sin-mascota', !mascotaOn);
+
+const GLITCH = { celebracion: '../assets/glitch/celebracion.png',
+                 pensar:      '../assets/glitch/pensar.png',
+                 hmmm:        '../assets/glitch/hmmm.png' };
+Object.values(GLITCH).forEach(src => { const i = new Image(); i.src = src; });
+
+// 'hmmm' y no 'error': el dibujo dice "esto no encajo, otra vez", no "has
+// fracasado". Las tres poses se reparten por porcentaje de acierto.
+function pintaGlitch(id, pct) {
+  const el = document.getElementById(id);
+  if (!el) return;   // decoracion: si no esta, no puede tumbar nada
+  el.src = GLITCH[pct >= 80 ? 'celebracion' : pct >= 50 ? 'pensar' : 'hmmm'];
+}
+
 const N = 10;
 let modes = { squares: true, commutative: true, sameresult: false };
 let selectedCell = null;
@@ -679,6 +703,9 @@ function nextQuestion() {
       txt += ` Pistas descubiertas: ${conqPistas}. Consultar la tabla también es aprendérsela.`;
     }
     document.getElementById('conq-done-text').textContent = txt;
+    // Aqui solo se llega con el campo despejado: siempre celebracion.
+    const gc = document.getElementById('conq-done-glitch');
+    if (gc) gc.src = GLITCH.celebracion;
     currentTarget = null;
     return;
   }
@@ -1144,6 +1171,7 @@ function finCaza() {
     }
   }
   document.getElementById('caza-done-text').textContent = texto;
+  pintaGlitch('caza-done-glitch', cazaHits === 0 ? 0 : pct);
   const rev = document.getElementById('caza-review');
   rev.innerHTML = cazaFallados.length
     ? `<div class="caza-review-title">Números que se te resistieron</div>` +

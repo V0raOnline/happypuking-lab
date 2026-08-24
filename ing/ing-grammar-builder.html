@@ -606,6 +606,19 @@ body.en-pausa .pausa-overlay { display: flex; }
   padding: 0.6rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
 }
 .pausa-seguir:hover { opacity: 0.88; }
+
+/* ── GLITCH ────────────────────────────────────────────────────────────────
+   Aqui SOLO en la pausa: el Grammar Builder es practica continua, no tiene
+   cierre de ronda, asi que no hay un momento de resultados donde salir.
+   La regla es que Glitch aparece donde hay reloj y solo en momentos raros y
+   centrales; si no existe ese momento, no se inventa. */
+.pausa-glitch {
+  display: block; height: 128px; width: auto;
+  margin: 0 auto 0.4rem;
+}
+body.sin-mascota .pausa-glitch { display: none; }
+@media (max-width: 640px) { .pausa-glitch { height: 96px; } }
+@media (max-height: 420px) { .pausa-glitch { display: none; } }
 </style>
 </head>
 <body>
@@ -637,6 +650,7 @@ body.en-pausa .pausa-overlay { display: flex; }
 
   <div class="pausa-overlay" id="pausa-overlay">
     <div class="pausa-msg">
+      <img class="pausa-glitch" src="../assets/glitch/pensar.png" alt="" aria-hidden="true">
       <span class="pausa-title" id="pausa-title">Pensando</span>
       <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
       <button class="pausa-seguir" onclick="setPausa(false)">Seguir</button>
@@ -746,6 +760,15 @@ body.en-pausa .pausa-overlay { display: flex; }
 </footer>
 
 <script>
+
+// ── Glitch ────────────────────────────────────────────────────────────────
+// Clave COMPARTIDA con el resto del lab. Aqui solo hace falta para esconderla:
+// la unica pose es la de la pausa y la pinta el CSS con body.sin-mascota.
+try {
+  if (localStorage.getItem('hpk-mascota') === 'off') {
+    document.body.classList.add('sin-mascota');
+  }
+} catch (e) {}
 // ═══════════════════════════════════════════════════════
 // PERSONS
 // ═══════════════════════════════════════════════════════

@@ -991,6 +991,30 @@ body.en-pausa .pausa-overlay { display: flex; }
   padding: 0.6rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
 }
 .pausa-seguir:hover { opacity: 0.88; }
+
+/* ── GLITCH ────────────────────────────────────────────────────────────────
+   Vive donde hay reloj, y solo en dos momentos raros y centrales: la pausa y
+   la ficha de resultados. Es decoracion: aria-hidden y si se apaga, la
+   herramienta se comporta igual. */
+.pausa-glitch {
+  display: block; height: 128px; width: auto;
+  margin: 0 auto 0.4rem;
+}
+.mascota-res {
+  display: block; height: 140px; width: auto;
+  margin: 0 auto 0.6rem;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5));
+}
+body.sin-mascota .pausa-glitch,
+body.sin-mascota .mascota-res { display: none; }
+@media (max-width: 640px) {
+  .pausa-glitch { height: 96px; }
+  .mascota-res  { height: 104px; }
+}
+/* Solo en ventanas de verdad estrechas: la decoracion cede, el control no. */
+@media (max-height: 420px) {
+  .pausa-glitch { display: none; }
+}
 </style>
 </head>
 <body>
@@ -1082,6 +1106,7 @@ body.en-pausa .pausa-overlay { display: flex; }
     <div class="quiz-screen" id="quiz-screen">
       <div class="pausa-overlay" id="pausa-overlay">
         <div class="pausa-msg">
+          <img class="pausa-glitch" src="../assets/glitch/pensar.png" alt="" aria-hidden="true">
           <span class="pausa-title" id="pausa-title">Pensando</span>
           <span class="pausa-sub" id="pausa-sub">el reloj está parado · cuando estés listo retomamos</span>
           <button class="pausa-seguir" onclick="setPausa(false)">Seguir</button>
@@ -1125,6 +1150,7 @@ body.en-pausa .pausa-overlay { display: flex; }
     <div class="results-screen" id="results-screen">
       <div class="results-inner">
         <div class="results-header">
+          <img class="mascota-res" id="results-glitch" alt="" aria-hidden="true">
           <div class="results-score-big" id="results-score-big"></div>
           <div class="results-msg" id="results-msg"></div>
           <div class="results-sub" id="results-sub"></div>
@@ -1229,6 +1255,26 @@ body.en-pausa .pausa-overlay { display: flex; }
 </footer>
 
 <script>
+
+// ── Glitch ────────────────────────────────────────────────────────────────
+// Clave COMPARTIDA con el resto del lab: quien la esconde en el indice la
+// esconde en todas partes.
+const MASCOTA_KEY = 'hpk-mascota';
+let mascotaOn = true;
+try { mascotaOn = localStorage.getItem(MASCOTA_KEY) !== 'off'; } catch (e) {}
+document.body.classList.toggle('sin-mascota', !mascotaOn);
+
+const GLITCH = { celebracion: '../assets/glitch/celebracion.png',
+                 pensar:      '../assets/glitch/pensar.png',
+                 hmmm:        '../assets/glitch/hmmm.png' };
+Object.values(GLITCH).forEach(src => { const i = new Image(); i.src = src; });
+
+// 'hmmm' y no 'error': el dibujo dice "esto no encajo, otra vez".
+function pintaGlitch(id, pct) {
+  const el = document.getElementById(id);
+  if (!el) return;   // decoracion: si no esta, no puede tumbar nada
+  el.src = GLITCH[pct >= 80 ? 'celebracion' : pct >= 50 ? 'pensar' : 'hmmm'];
+}
 // ══════════════════════════════════════════════════════════════
 // FAMILIES METADATA (for display)
 // ══════════════════════════════════════════════════════════════
@@ -1791,6 +1837,7 @@ function showResults() {
   scoreEl.textContent = `${pct}%`;
   const cls = pct === 100 ? 'perfect' : pct >= 80 ? 'good' : pct >= 60 ? 'ok' : 'poor';
   scoreEl.className = 'results-score-big ' + cls;
+  pintaGlitch('results-glitch', pct);
 
   const msgData = SCORE_MSGS.find(m => pct >= m.min);
   document.getElementById('results-msg').textContent = msgData.msg;
