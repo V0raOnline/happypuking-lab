@@ -9,21 +9,77 @@
 </head>
 <body>
 
-<header>
-  <div class="banner-wrap">
-    <img src="./assets/HappypukingNuevoBanner.jpg" alt="hAppYpUkIng banner">
-    <div class="banner-overlay"></div>
+<!-- ══ CABECERA ═════════════════════════════════════════════════════════════
+     El banner venia en un solo PNG con el texto dibujado dentro. Se separo en
+     dos piezas (unicornio y caja) y el texto pasa a ser texto de verdad:
+       · se lee igual a 340px que a 1100, sin depender de la resolucion
+       · es traducible sin rehacer la imagen
+       · lo leen buscadores y lectores de pantalla, que dentro de un PNG no ven
+         nada. Hasta ahora esta pagina no tenia ningun <h1>.
+══════════════════════════════════════════════════════════════════════════ -->
+<header class="cabecera">
+  <img class="cab-unicornio" src="./assets/glitch/unicornio.png" alt="" aria-hidden="true">
+
+  <div class="cab-texto">
+    <h1 class="cab-titulo">LEARN with <span>hAppYpUkIng</span></h1>
+    <p class="cab-invita">¿Exploramos?</p>
   </div>
-  <div class="tagline">
-    <p>recursos educativos interactivos · open source · ESO</p>
-    <div class="claim">Ix(A+H) = Expanded heart and brain!</div>
-  </div>
+
+  <img class="cab-caja" src="./assets/glitch/caja.png"
+       alt="Una caja de laboratorio rotulada hAppYpUkIng-lab con Glitch asomando por la tapa">
+
+  <!-- Fuera de la columna del medio a proposito: ahi solo tenia 388px y se
+       partia dejando "ESO" solo en una linea. Cruzando las tres columnas tiene
+       1036px, y la caja no ha tenido que encoger para dejarle sitio. -->
+  <p class="cab-sub">recursos educativos interactivos · open source · ESO</p>
 </header>
 
 <a class="about-banner" href="./about.html">
   <span class="about-banner-text">El proyecto · quiénes somos · por qué existe esto</span>
   <span class="about-banner-arrow">→</span>
 </a>
+
+
+<!-- ══ FICHA DE GLITCH ══════════════════════════════════════════════════════
+     Texto de V0ra. Estructura calcada de la ficha de AX0 en ARKINESIS.
+     El interruptor vive aqui porque la clave hpk-mascota es global: apagarla
+     en el indice la apaga en las once herramientas.
+══════════════════════════════════════════════════════════════════════════ -->
+<section class="mascota-ficha">
+  <div class="mascota-retrato">
+    <!-- NO es la misma imagen que la de la cabecera, aunque lo parezca: arriba
+         la caja esta CERRADA y Glitch asoma por la rendija; aqui, ya dentro
+         del lab, esta ABIERTA y Glitch ha salido. Es una secuencia, y la
+         segunda mitad es la recompensa de haber entrado.
+         Si alguien "detecta la repeticion" y quita esta, se carga el remate.
+         (Ya paso una vez.) -->
+    <img src="./assets/glitch/retrato.png"
+         alt="La caja del laboratorio ya abierta, con Glitch fuera, sentada sobre el relleno">
+  </div>
+
+  <div class="mascota-cuerpo">
+    <span class="mascota-kicker">// mascota del laboratorio · error de clasificación</span>
+    <span class="mascota-nombre">GLITCH</span>
+
+    <p class="mascota-linea">Es una rata. Porque las ratas saben encontrar caminos incluso cuando el laboratorio está lleno de piezas que no encajan.</p>
+    <p class="mascota-linea">Y además se ríen en ultrasonidos.</p>
+    <p class="mascota-linea">No estaba prevista. Probablemente por eso funciona.</p>
+
+    <p class="mascota-cierre">GLITCH no viene a decirte si has acertado.<br>
+      Viene a recordarte que equivocarse también genera datos.</p>
+
+    <div class="mascota-switch">
+      <button class="glitch-toggle" id="glitch-toggle" type="button" role="switch" aria-checked="true">
+        <span class="glitch-toggle-bola"></span>
+      </button>
+      <span class="mascota-switch-texto">
+        <strong id="glitch-estado">GLITCH TE ACOMPAÑA</strong>
+        <span>Solo aparece cuando necesitas pensar un poco más, celebrar que algo ha salido bien o sentarse a mirar por qué una ronda ha salido mal.</span>
+        <span>Si te distrae, puedes esconderla. No la verás más por el laboratorio.</span>
+      </span>
+    </div>
+  </div>
+</section>
 
 <div class="divider">
   <div class="divider-line"></div>
@@ -32,7 +88,7 @@
 <section class="necesito">
   <div class="necesito-head">
     <span class="section-label">¿Qué necesitas hoy?</span>
-    <p class="necesito-sub">Nadie llega a un laboratorio a explorar. Se llega un martes con un problema concreto. Elige el tuyo — se abre en el navegador, sin instalar nada y sin cuentas.</p>
+    <p class="necesito-sub"><span class="nec-complice">Tú lo sabes, yo lo sé.</span> Nadie llega a un laboratorio solo a explorar. Se llega un martes con un problema concreto. Busca el tuyo — se abre en el navegador, sin instalar nada y sin cuentas.</p>
   </div>
   <div class="necesito-grid">
       <a class="nec-item" data-color="purple" href="mat/mat-tabla-pitagorica.html">
@@ -216,7 +272,7 @@
     <div class="cards-grid satellite-grid">
       <a class="card" data-color="blue" href="https://v0raonline.github.io/arkinesis/" target="_blank" rel="noopener">
         <div class="card-top">
-          <div class="card-emoji satellite-img"><img src="./assets/AX0.png" alt="AX0"></div>
+          <div class="card-emoji satellite-img"><img src="./assets/ax0-icono.png" alt="AX0, el ajolote de ARKINESIS"></div>
           <div class="card-badges"><span class="badge">Física · Tecnología</span><span class="badge materia">↗ externo</span></div>
         </div>
         <div class="card-body"><div class="card-title">Arkinesis</div><div class="card-desc">Motor de simulaciones físicas interactivas. Campo magnético, óptica, gravitación, palancas, engranajes y más.</div></div>
@@ -250,6 +306,7 @@
 </main>
 
 <footer>
+  <p class="footer-claim">Ix(A+H) = Expanded heart and brain!</p>
   <div class="footer-left">
     CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
   </div>
@@ -259,5 +316,29 @@
   </div>
 </footer>
 
+<script>
+// Interruptor global de la mascota. La clave es la MISMA que usan las
+// herramientas (hpk-mascota): apagarla aqui la apaga en todo el laboratorio.
+(function () {
+  const KEY = 'hpk-mascota';
+  const btn = document.getElementById('glitch-toggle');
+  const est = document.getElementById('glitch-estado');
+  if (!btn) return;                    // la ficha es decoracion: si no esta, nada revienta
+  let on = true;
+  try { on = localStorage.getItem(KEY) !== 'off'; } catch (e) {}
+  function pinta() {
+    btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    btn.classList.toggle('apagada', !on);
+    // "escondida" y no "apagada": es el verbo que usa el texto de al lado.
+    est.textContent = on ? 'GLITCH TE ACOMPAÑA' : 'GLITCH ESTÁ ESCONDIDA';
+  }
+  btn.addEventListener('click', function () {
+    on = !on;
+    try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch (e) {}
+    pinta();
+  });
+  pinta();
+})();
+</script>
 </body>
 </html>

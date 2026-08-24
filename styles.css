@@ -58,52 +58,78 @@
     margin: 0 auto;
   }
 
-  .banner-wrap {
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid rgba(212,0,106,0.25);
-    box-shadow: 0 0 40px rgba(212,0,106,0.15), 0 0 80px rgba(212,0,106,0.07);
-    position: relative;
+  /* ── CABECERA ──────────────────────────────────────────────────────────
+     Tres columnas: unicornio · texto · caja. Cada pieza escala por su cuenta,
+     asi que el texto no depende del hueco que dejase un PNG. */
+  .cabecera {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 0.5rem;
+    display: grid;
+    /* Columnas laterales iguales aunque los dibujos no lo sean: con "auto" el
+       titular quedaba 95px descentrado, porque la caja pesa 300px y el
+       unicornio 110. */
+    grid-template-columns: minmax(0, 300px) 1fr minmax(0, 300px);
+    align-items: center;
+    justify-items: center;
+    gap: 1.5rem;
   }
+  /* El subtitulo cruza las tres columnas, en su propia fila. */
+  .cabecera > .cab-sub { grid-column: 1 / -1; }
+  .cab-unicornio { width: 100%; max-width: 110px; height: auto; display: block; }
+  .cab-caja      { width: 100%; max-width: 300px; height: auto; display: block; }
 
-  .banner-wrap img {
-    width: 100%;
-    height: auto;
-    display: block;
-    max-height: 220px;
-    object-fit: cover;
-    object-position: center;
+  .cab-texto { text-align: center; }
+
+  .cab-titulo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.3rem, 3.4vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    letter-spacing: 0.01em;
   }
-
-  .banner-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, rgba(9,8,13,0.3) 0%, transparent 40%, transparent 60%, rgba(9,8,13,0.3) 100%);
+  .cab-titulo span {
+    font-weight: 900;
+    color: var(--magenta);
+    text-shadow: 0 0 24px rgba(224,0,122,0.45);
   }
-
-  /* tagline */
-  .tagline {
-    text-align: center;
-    margin-top: 1.8rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .tagline p {
+  .cab-sub {
     font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
+    /* Minimo 0.72rem: por debajo, en versalitas y con espaciado, deja de
+       leerse comodo en un movil. */
+    font-size: clamp(0.72rem, 1.1vw, 0.8rem);
     color: var(--muted);
     letter-spacing: 0.12em;
     text-transform: uppercase;
+    margin-top: 0;
+    text-align: center;
   }
 
-  .tagline .claim {
+  /* La invitacion cierra la cabecera y lleva el peso que antes tenia el claim:
+     aqui su trabajo es empujar hacia dentro. El claim se fue al pie, donde
+     firma en vez de invitar. */
+  .cab-invita {
     font-family: 'Unbounded', sans-serif;
-    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    font-size: clamp(0.85rem, 1.6vw, 1.15rem);
     font-weight: 700;
     color: var(--magenta);
-    letter-spacing: 0.04em;
-    margin-top: 0.4rem;
-    text-shadow: 0 0 20px rgba(212,0,106,0.5);
+    letter-spacing: 0.02em;
+    margin-top: 0.6rem;
+    text-shadow: 0 0 20px rgba(224,0,122,0.5);
+  }
+
+  @media (max-width: 780px) {
+    /* Apilado: la caja manda, el unicornio se retira. Con tres columnas en
+       375px no quedaria sitio ni para el titulo. */
+    .cabecera {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 0.9rem;
+      padding: 1.2rem 1.2rem 0.4rem;
+    }
+    .cab-unicornio { display: none; }
+    .cab-caja { max-width: 230px; order: -1; }
   }
 
   /* ── ABOUT BANNER ── */
@@ -501,6 +527,21 @@
     border-top: 1px solid var(--border);
   }
 
+  /* El claim firma el sitio al cerrarlo. Ocupa linea propia (flex-wrap) por
+     encima de la licencia y los enlaces, y va mas calmado que en la cabecera:
+     aqui no invita a nada, remata. */
+  .footer-claim {
+    width: 100%;
+    text-align: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--magenta);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+    opacity: 0.85;
+  }
+
   .footer-left {
     font-family: 'DM Mono', monospace;
     font-size: 0.72rem;
@@ -552,6 +593,14 @@
   line-height: 1.6;
   max-width: 62ch;
   margin-top: 0.6rem;
+}
+/* "Tu lo sabes, yo lo se." va en linea propia: es el guino que abre, y pegado
+   al resto se pierde dentro del parrafo. Con display:block no hace falta un
+   <br>, que se descoloca al traducir o al cambiar el ancho. */
+.nec-complice {
+  display: block;
+  color: var(--text);
+  font-weight: 600;
 }
 .necesito-grid {
   display: grid;
@@ -612,4 +661,151 @@
   flex-wrap: wrap;
   gap: 0.3rem;
   margin-top: 0.6rem;
+}
+
+/* ── FICHA DE LA MASCOTA ──────────────────────────────────────────────────
+   Rectangulo: retrato a la izquierda, presentacion a la derecha, interruptor
+   dentro. Estamos en el contexto visual A (indice), asi que el acento es
+   magenta y no el cyan de las herramientas. */
+.mascota-ficha {
+  max-width: 1100px;
+  margin: 2rem auto 0;
+  padding: 1.35rem 1.55rem;
+  display: grid;
+  /* El rotulo de la caja ya lo dice el banner de cabecera, asi que aqui no
+     hace falta que se lea: la ficha baja de tamano para no comerse el
+     protagonismo de lo que la gente viene a buscar, que esta justo debajo. */
+  grid-template-columns: minmax(170px, 260px) 1fr;
+  gap: 1.7rem;
+  align-items: center;
+  background: linear-gradient(135deg,
+              rgba(224,0,122,0.07) 0%,
+              rgba(224,0,122,0.02) 55%,
+              transparent 100%), var(--surface);
+  border: 1px solid rgba(224,0,122,0.18);
+  border-radius: 14px;
+  position: relative;
+  z-index: 1;
+}
+.mascota-retrato { display: flex; justify-content: center; }
+.mascota-retrato img {
+  width: 100%; max-width: 260px; height: auto;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.55));
+}
+.mascota-kicker {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  opacity: 0.85;
+}
+.mascota-nombre {
+  display: block;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--magenta);
+  margin: 0.3rem 0 0.75rem;
+}
+.mascota-linea {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+.mascota-cierre {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  margin-top: 0.75rem;
+}
+
+/* El interruptor. Es un control, no un dato: por eso lleva el acento de la
+   pagina y un foco visible. */
+.mascota-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.glitch-toggle {
+  flex: none;
+  width: 46px; height: 26px;
+  padding: 3px;
+  border-radius: 100px;
+  border: 1px solid var(--magenta);
+  background: var(--magenta-soft);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  position: relative;
+}
+/* El dibujo mide 26 px de alto, pero el dedo necesita 44. Se amplia el area
+   de toque sin tocar lo que se ve ni empujar el layout. */
+.glitch-toggle::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%; min-width: 44px;
+  height: 44px;
+}
+.glitch-toggle-bola {
+  display: block;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--magenta);
+  transform: translateX(20px);
+  transition: transform 0.2s, background 0.2s;
+}
+.glitch-toggle.apagada {
+  background: var(--surface2);
+  border-color: var(--border);
+}
+.glitch-toggle.apagada .glitch-toggle-bola {
+  transform: translateX(0);
+  background: var(--muted);
+}
+.glitch-toggle:focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 3px;
+}
+.mascota-switch-texto { display: block; }
+.mascota-switch-texto strong {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--magenta);
+}
+.mascota-switch-texto span {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 620px) {
+  .mascota-ficha {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    padding: 1.3rem 1.2rem;
+    text-align: center;
+  }
+  .mascota-retrato img { max-width: 210px; }
+  .mascota-switch { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch-toggle, .glitch-toggle-bola { transition-duration: 0.01ms; }
 }
