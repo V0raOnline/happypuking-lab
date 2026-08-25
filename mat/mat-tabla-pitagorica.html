@@ -71,17 +71,17 @@
 
   <!-- Barra compartida por los dos modos de tablero: ámbito + progreso -->
   <div class="board-bar" id="board-bar">
-    <div class="conq-scope">
+    <div class="conq-scope" role="radiogroup" aria-label="Qué tabla practicar">
       <span class="conq-scope-label">Qué tabla</span>
-      <div class="conq-chip active" data-table="all">Todas</div>
+      <button type="button" class="conq-chip active" role="radio" aria-checked="true" data-table="all">Todas</button>
       <div class="conq-tables" id="conq-tables"></div>
     </div>
 
     <!-- El ritmo es una preferencia de la persona, no del juego: vale para los dos -->
-    <div class="caza-ritmo">
+    <div class="caza-ritmo" role="radiogroup" aria-label="A qué ritmo">
       <span class="conq-scope-label">A qué ritmo</span>
-      <div class="conq-chip active" data-ritmo="calma">No me estreses</div>
-      <div class="conq-chip" data-ritmo="reloj">Contra reloj</div>
+      <button type="button" class="conq-chip active" role="radio" aria-checked="true" data-ritmo="calma">No me estreses</button>
+      <button type="button" class="conq-chip" role="radio" aria-checked="false" data-ritmo="reloj">Contra reloj</button>
     </div>
 
     <div class="conq-progress" id="conq-progress">
@@ -140,6 +140,7 @@
 
       <div class="panel-box" id="conq-panel">
         <div class="conq-q" id="conq-q">
+          <button type="button" class="btn-vamos" data-role="vamos">¡Vamos!</button>
           <div class="conq-q-eq" id="conq-eq">7 × 8</div>
           <div class="conq-input-row">
             <input class="conq-input" id="conq-input" type="text" inputmode="numeric"
@@ -160,6 +161,7 @@
 
       <div class="panel-box" id="caza-panel">
         <div id="caza-q">
+          <button type="button" class="btn-vamos" data-role="vamos">¡Vamos!</button>
           <div class="caza-label">Busca el</div>
           <div class="caza-number" id="caza-number">12</div>
           <div class="caza-remaining" id="caza-remaining"></div>
@@ -347,6 +349,7 @@ function buildTable() {
     const th = document.createElement('th');
     th.className = 'th-col';
     th.id = `col-${c}`;
+    th.scope = 'col';
     th.textContent = c;
     headRow.appendChild(th);
   }
@@ -359,6 +362,7 @@ function buildTable() {
     // Row header
     const th = document.createElement('th');
     th.className = 'th-row';
+    th.scope = 'row';
     th.id = `row-${r}`;
     th.textContent = r;
     tr.appendChild(th);
@@ -370,7 +374,17 @@ function buildTable() {
       td.dataset.c = c;
       td.dataset.val = r * c;
       td.id = `cell-${r}-${c}`;
-      td.textContent = r * c;
+      // El numero va en un span oculto a la tecnologia asistiva: en los modos
+      // de niebla el CSS lo pinta transparente, pero un lector de pantalla lo
+      // leia igual y cantaba todas las respuestas. Lo que se anuncia es la
+      // etiqueta, que si sabe en que modo estamos.
+      const num = document.createElement('span');
+      num.className = 'cell-num';
+      num.setAttribute('aria-hidden', 'true');
+      num.textContent = r * c;
+      td.appendChild(num);
+      td.setAttribute('role', 'gridcell');
+      td.tabIndex = -1;                     // el foco entra una vez, ver rejilla
       if (r === c) td.classList.add('is-diag');   // marca estable de la diagonal
 
 
@@ -384,10 +398,48 @@ function buildTable() {
     }
     table.appendChild(tr);
   }
+
+  // El tablero entra en el orden de tabulacion una sola vez.
+  table.setAttribute('role', 'grid');
+  const rotulo = document.createElement('caption');
+  rotulo.className = 'sr-only';
+  rotulo.textContent = 'Tabla de multiplicar del 1 al 10. ' +
+    'Usa las flechas para moverte y Enter para elegir una casilla.';
+  table.insertBefore(rotulo, table.firstChild);
+  table.addEventListener('keydown', tecladoTablero);
+  table.addEventListener('focusin', e => {
+    const td = e.target.closest && e.target.closest('.cell');
+    if (!td) return;
+    moverFoco(+td.dataset.r, +td.dataset.c, false);
+    actualizaEtiqueta(td, +td.dataset.r, +td.dataset.c);
+  });
+  moverFoco(1, 1, false);
+}
+
+// Lo que oye quien usa lector de pantalla. Depende del modo, para no cantar
+// la respuesta cuando la gracia es justo no verla.
+function etiquetaCelda(td, r, c) {
+  const resuelta = td.classList.contains('conquered') ||
+                   td.classList.contains('topo-found') ||
+                   td.classList.contains('pista');
+  if (viewMode === 'explorar') return `${r} por ${c}, ${r * c}`;
+  if (resuelta)                return `${r} por ${c}, ${r * c}, resuelta`;
+  return `fila ${r}, columna ${c}, sin resolver`;
+}
+function actualizaEtiqueta(td, r, c) {
+  td.setAttribute('aria-label', etiquetaCelda(td, r, c));
+}
+// Al cambiar de modo cambia lo que se puede contar: en niebla la etiqueta no
+// debe decir el resultado. Sin esto se quedaban con el valor del arranque y
+// un lector de pantalla cantaba todas las respuestas.
+function refrescarEtiquetas() {
+  document.querySelectorAll('.cell').forEach(td =>
+    actualizaEtiqueta(td, +td.dataset.r, +td.dataset.c));
 }
 
 function applyClasses(td, r, c) {
   td.classList.remove('is-square','comm-upper','comm-lower','same-result-hl');
+  actualizaEtiqueta(td, r, c);
 
   if (modes.squares && r === c) {
     td.classList.add('is-square');
@@ -401,6 +453,48 @@ function applyClasses(td, r, c) {
     if (dupMap[val]) {
       td.classList.add('same-result-hl');
     }
+  }
+}
+
+// ── Teclado en el tablero ─────────────────────────────────────────────────
+// Roving tabindex: cien paradas de tabulador serian tan inusables como
+// ninguna, asi que el tablero es UNA parada y dentro se navega con flechas.
+// Es el patron estandar de rejilla (WAI-ARIA grid).
+let focoR = 1, focoC = 1;
+
+function celda(r, c) { return document.getElementById(`cell-${r}-${c}`); }
+
+function moverFoco(r, c, enfocar) {
+  r = Math.min(N, Math.max(1, r));
+  c = Math.min(N, Math.max(1, c));
+  const antes = celda(focoR, focoC);
+  if (antes) antes.tabIndex = -1;
+  focoR = r; focoC = c;
+  const ahora = celda(r, c);
+  if (!ahora) return;
+  ahora.tabIndex = 0;
+  if (enfocar) ahora.focus();
+}
+
+function tecladoTablero(e) {
+  const td = e.target.closest && e.target.closest('.cell');
+  if (!td) return;
+  const r = +td.dataset.r, c = +td.dataset.c;
+  const saltos = {
+    ArrowUp:    [r - 1, c], ArrowDown:  [r + 1, c],
+    ArrowLeft:  [r, c - 1], ArrowRight: [r, c + 1],
+    Home: [r, 1], End: [r, N],
+    PageUp: [1, c], PageDown: [N, c]
+  };
+  if (saltos[e.key]) {
+    e.preventDefault();
+    moverFoco(saltos[e.key][0], saltos[e.key][1], true);
+    return;
+  }
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    onCellClick(r, c);
+    actualizaEtiqueta(td, r, c);   // el estado puede haber cambiado
   }
 }
 
@@ -752,7 +846,7 @@ function nextQuestion() {
   const input = document.getElementById('conq-input');
   input.value = '';
   input.disabled = false;
-  input.focus();
+  enfocaSiProcede(input);
   document.getElementById('conq-feedback').textContent = '';
   document.getElementById('conq-feedback').className = 'conq-feedback';
   conqLocked = false;
@@ -782,12 +876,13 @@ function onPistaClick(r, c) {
 
   conqPistas++;
   td.classList.add('pista');
+  actualizaEtiqueta(td, +td.dataset.r, +td.dataset.c);
   setTimeout(() => td.classList.remove('pista'), PISTA_MS);
 
   // El hueco de descubribilidad original: la rejilla parece un tablero, pero
   // aqui se responde escribiendo. Se lleva el foco donde toca.
   const inp = document.getElementById('conq-input');
-  if (!conqLocked && !inp.disabled) inp.focus();
+  if (!conqLocked && !inp.disabled) enfocaSiProcede(inp);
 }
 
 function minaAgotada() {
@@ -853,12 +948,54 @@ function checkAnswer() {
   }
 }
 
+// ── Grupos de radio accesibles ────────────────────────────────────────────
+// Los chips eran <div> con onclick: el tabulador no los veia, asi que con
+// teclado se saltaba de los modos directo a "minar todo". Ahora son botones
+// con semantica de radio: UNA parada de tabulador por grupo y flechas dentro,
+// que es lo estandar y evita trece paradas antes de llegar al tablero.
+function marcaRadio(grupo, elegido) {
+  grupo.querySelectorAll('[role="radio"]').forEach(ch => {
+    const activo = ch === elegido;
+    ch.classList.toggle('active', activo);
+    ch.setAttribute('aria-checked', activo ? 'true' : 'false');
+    ch.tabIndex = activo ? 0 : -1;        // roving: solo el elegido entra al tab
+  });
+}
+
+function tecladoRadio(e) {
+  const grupo = e.currentTarget;
+  const chips = [...grupo.querySelectorAll('[role="radio"]')];
+  const i = chips.indexOf(document.activeElement);
+  if (i < 0) return;
+  const saltos = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1,
+                   ArrowUp: i - 1, Home: 0, End: chips.length - 1 };
+  if (!(e.key in saltos)) return;
+  e.preventDefault();
+  const destino = chips[Math.min(chips.length - 1, Math.max(0, saltos[e.key]))];
+  destino.focus();
+  destino.click();                        // en un grupo de radio, mover = elegir
+}
+
+function iniciaGruposRadio() {
+  document.querySelectorAll('[role="radiogroup"]').forEach(g => {
+    if (!g.dataset.tecladoListo) {
+      g.addEventListener('keydown', tecladoRadio);
+      g.dataset.tecladoListo = '1';
+    }
+    const activo = g.querySelector('.active') || g.querySelector('[role="radio"]');
+    if (activo) marcaRadio(g, activo);
+  });
+}
+
 // Chips de ambito
 (function buildScopeChips() {
   const wrap = document.getElementById('conq-tables');
   for (let i = 1; i <= N; i++) {
-    const d = document.createElement('div');
+    const d = document.createElement('button');
+    d.type = 'button';
     d.className = 'conq-chip';
+    d.setAttribute('role', 'radio');
+    d.setAttribute('aria-checked', 'false');
     d.dataset.table = String(i);
     d.textContent = i;
     wrap.appendChild(d);
@@ -867,13 +1004,17 @@ function checkAnswer() {
   document.querySelectorAll('.conq-scope .conq-chip').forEach(chip => {
     chip.onclick = () => {
       scopeTable = chip.dataset.table;
-      document.querySelectorAll('.conq-scope .conq-chip').forEach(c => c.classList.toggle('active', c === chip));
+      marcaRadio(document.querySelector('.conq-scope'), chip);
       if (viewMode === 'caza') { startCaza(); return; }
       paintConquered();          // cambia quien esta dentro y fuera del ambito
       updateConqStats();
       nextQuestion();
     };
   });
+  // Aqui, no antes: los chips del 1 al 10 se generan en este mismo bloque y
+  // sin ellos el roving tabindex no llegaba, asi que "Que tabla" metia once
+  // paradas de tabulador en vez de una.
+  iniciaGruposRadio();
 })();
 
 document.getElementById('conq-check').onclick = checkAnswer;
@@ -944,8 +1085,46 @@ function renderTimer() {
 // acumula, respeta la pausa, y avisa a quien corresponda al vencer.
 let onTimeout = null;
 
+// Mover el foco esta bien cuando la persona no esta en medio de otra cosa.
+// Elegir tabla relanzaba la ronda y el input se llevaba el foco del chip que
+// estabas recorriendo con las flechas: te expulsaba del grupo a mitad.
+function puedoLlevarmeElFoco() {
+  const a = document.activeElement;
+  if (!a || a === document.body) return true;
+  return !a.closest('[role="radiogroup"], .mode-toggle, .header-topbar');
+}
+function enfocaSiProcede(el) { if (el && puedoLlevarmeElFoco()) el.focus(); }
+
+// Al entrar en un modo con reloj el tiempo NO arranca solo: no daba tiempo ni
+// a leer que hay que hacer, y con teclado o lector de pantalla hace falta un
+// momento para orientarse. La salida la das tu.
+let salidaPendiente = false, segundosEnEspera = null;
+
+function pedirSalida() {
+  salidaPendiente = true;
+  segundosEnEspera = null;
+  document.body.classList.add('esperando-salida');
+  // El tablero va antes que la tarjeta en el DOM, asi que sin esto el
+  // tabulador pasaba por las cien casillas ANTES de llegar al "¡Vamos!".
+  // Y ademas no se puede jugar todavia: que no sea una parada es lo correcto.
+  document.querySelectorAll('.cell').forEach(td => td.tabIndex = -1);
+}
+function darSalida() {
+  if (!salidaPendiente) return;
+  salidaPendiente = false;
+  document.body.classList.remove('esperando-salida');
+  moverFoco(focoR, focoC, false);      // el tablero vuelve al orden de tabulacion
+  if (segundosEnEspera != null) { const s = segundosEnEspera; segundosEnEspera = null; startTimer(s); }
+  // el foco entra al tablero: quien juega con teclado ya esta dentro
+  const primera = document.querySelector('.cell[tabindex="0"]');
+  const inp = document.getElementById('conq-input');
+  if (viewMode === 'conquistar' && inp && !inp.disabled) inp.focus();
+  else if (primera) primera.focus();
+}
+
 function startTimer(segundos) {
   stopTimer();
+  if (salidaPendiente) { segundosEnEspera = segundos; renderTimer(); return; }
   if (boardReloj) {
     boardTimeTotal = segundos;
     boardTimeLeft  = segundos;
@@ -974,7 +1153,9 @@ function resetBoardState() {
   boardPausas = 0;
   conqAvancePendiente = false;
   document.body.classList.remove('caza-pausa');
-  document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
+  document.querySelectorAll('[data-role="vamos"]').forEach(b =>
+  b.addEventListener('click', darSalida));
+document.querySelectorAll('[data-role="pausa"]').forEach(b => b.textContent = 'Estoy pensando');
   document.querySelectorAll('.cell').forEach(td =>
     td.classList.remove('topo-found', 'just-won', 'twin-won', 'topo-miss', 'pista', 'solo-geometria'));
 }
@@ -1029,7 +1210,7 @@ function setPausa(on, motivo = 'manual') {
     b.textContent = on ? 'Ya lo tengo' : 'Estoy pensando');
   // al pensar no se puede seguir escribiendo la respuesta
   const inp = document.getElementById('conq-input');
-  if (viewMode === 'conquistar' && !conqLocked) { inp.disabled = on; if (!on) inp.focus(); }
+  if (viewMode === 'conquistar' && !conqLocked) { inp.disabled = on; if (!on) enfocaSiProcede(inp); }
   renderTimer();
 }
 
@@ -1048,7 +1229,8 @@ function tiempoAgotado() {
   // Se enseñan los huecos que faltaban: perder tiempo tambien informa
   cazaPend.forEach(k => {
     const [r, c] = k.split('-').map(Number);
-    document.getElementById(`cell-${r}-${c}`)?.classList.add('topo-found');
+    const tf = document.getElementById(`cell-${r}-${c}`);
+    if (tf) { tf.classList.add('topo-found'); actualizaEtiqueta(tf, r, c); }
     flash(r, c, 'topo-miss');
   });
   const fb = document.getElementById('caza-feedback');
@@ -1060,8 +1242,9 @@ function tiempoAgotado() {
 }
 
 function pintaRitmo(modo) {
-  document.querySelectorAll('.caza-ritmo .conq-chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.ritmo === modo));
+  const grupoRitmo = document.querySelector('.caza-ritmo');
+  const elegido = grupoRitmo.querySelector(`[data-ritmo="${modo}"]`);
+  if (elegido) marcaRadio(grupoRitmo, elegido);
   const t = document.getElementById('caza-timer');
   t.classList.toggle('modo-reloj', modo === 'reloj');
   t.classList.toggle('modo-calma', modo !== 'reloj');
@@ -1150,6 +1333,7 @@ function onCazaClick(r, c) {
     cazaHits++;
     marcaAcierto();
     td.classList.add('topo-found');
+    actualizaEtiqueta(td, +td.dataset.r, +td.dataset.c);
     flash(r, c, 'just-won');
     updateCazaStats();
     if (cazaPend.size === 0) {
@@ -1234,12 +1418,15 @@ function setViewMode(mode) {
 
   if (mode === 'explorar') {
     refreshAllClasses();   // restaura el mapa segun los toggles activos
+    refrescarEtiquetas();
     return;
   }
 
   clearFamilyHighlight();
   clearExploreClasses();
   resetExplorePanels();
+  refrescarEtiquetas();
+  pedirSalida();
   selectedCell = null;
 
   if (mode === 'conquistar') {
