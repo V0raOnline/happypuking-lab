@@ -499,7 +499,13 @@ header {
 }
 
 @media (max-width: 900px) {
-  .main-wrap { flex-direction: column; }
+  /* Al pasar a columna hay que soltar el align-items:flex-start heredado: en
+     eje columna hace que los hijos midan lo que su CONTENIDO, asi que
+     .table-wrap se hinchaba a 915px, su overflow-x nunca entraba en juego y
+     la tabla se desbordaba hasta que el body la recortaba a mitad de
+     elemento. Con stretch se cine al ancho real y hace scroll ella sola. */
+  .main-wrap { flex-direction: column; align-items: stretch; }
+  .table-wrap { width: 100%; }
   .info-card { width: 100%; position: static; }
 }
 
@@ -755,4 +761,91 @@ header {
   width: 9px; height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* ── CABECERA PLEGABLE ─────────────────────────────────────────────────────
+   En movil la cabecera se come mas de una pantalla antes de llegar a la
+   herramienta. Plegada deja el topbar y el breadcrumb, que es lo unico que
+   hace falta usandola.
+
+   PARA PORTAR A OTRA HERRAMIENTA:
+     1. copiar este bloque (header-title y header-subtitle son comunes a las 14)
+     2. marcar con data-plegable lo propio: explicaciones, leyendas, lo que se
+        lee una vez. Lo que no se marque, se queda
+     3. copiar el boton del topbar y el modulo JS
+   La preferencia va en hpk-compacto, compartida por todo el laboratorio. */
+.header-topbar { position: relative; padding-right: 88px; }
+
+.plegar {
+  position: absolute; right: 0; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.35rem;
+  /* 44x44 reales: es un control, y no vamos a repetir en un boton nuevo el
+     problema que acabamos de auditar. */
+  min-height: 44px; min-width: 44px;
+  padding: 0 0.6rem;
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted, #8880a0);
+  transition: color 0.2s;
+}
+.plegar:hover { color: var(--cyan, #22D3EE); }
+.plegar:focus-visible {
+  outline: 2px solid var(--cyan, #22D3EE);
+  outline-offset: 2px; border-radius: 6px;
+}
+.plegar-chevron {
+  display: inline-block;
+  font-size: 1.05rem; line-height: 1;
+  color: var(--magenta, #E040FB);
+  transition: transform 0.25s ease;
+}
+.plegar:hover .plegar-chevron { filter: brightness(1.25); }
+body.compacto .plegar-chevron { transform: rotate(180deg); }
+
+body.compacto .header-title,
+body.compacto .header-subtitle,
+body.compacto [data-plegable] { display: none; }
+body.compacto header { padding-bottom: 0.4rem; }
+
+@media (max-width: 900px) {
+  .plegar-texto { display: none; }
+  .header-topbar { padding-right: 52px; }
+}
+@media (max-width: 620px) {
+  .topbar-claim, .topbar-sep-claim { display: none; }
+}
+/* Habia 112px de padding horizontal en un movil de 375: el 30% de la pantalla.
+   Recuperandolo, el topbar cabe en una linea con la marca incluida. */
+@media (max-width: 640px) {
+  html { padding-left: 10px; padding-right: 10px; }
+  header { padding-left: 4px; padding-right: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plegar-chevron { transition: none; }
+}
+
+/* ── AVISO DE ORIENTACION ──────────────────────────────────────────────────
+   La tabla declara min-width:700px y un movil vertical da 360-430. No hay
+   arreglo posible: la forma de la tabla es el contenido. El aviso sale solo
+   cuando de verdad aplica, no siempre en movil. */
+.aviso-apaisado { display: none; }
+@media (max-width: 700px) and (orientation: portrait) {
+  .aviso-apaisado {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 12px;
+    background: rgba(245,158,11,0.08);
+    color: var(--text, #f8f6ff);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .aviso-apaisado span { font-size: 1.1rem; flex: none; }
 }

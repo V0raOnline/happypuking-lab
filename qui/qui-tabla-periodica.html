@@ -12,9 +12,15 @@
 <header>
   <div class="header-topbar">
     <a href="./../index.html">← inicio</a>
-    <span class="sep">·</span> hAppYpUkIng · Lab
-    <span class="sep">//</span>
-    LEARN · EXPAND · VOMIT HAPPINESS
+    <span class="sep">·</span>
+    <span class="topbar-marca">hAppYpUkIng · Lab</span>
+    <span class="sep topbar-sep-claim">//</span>
+    <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
+    <button class="plegar" id="plegar" type="button" aria-expanded="true"
+            aria-label="Plegar la cabecera y la explicación">
+      <span class="plegar-texto">Plegar</span>
+      <span class="plegar-chevron" aria-hidden="true">▲</span>
+    </button>
   </div>
   <h1 class="header-title">Tabla Periódica</h1>
   <p class="header-subtitle">Haz clic en un elemento para explorar su historia, datos y usos</p>
@@ -24,6 +30,15 @@
     <a class="nav-tool" href="./qui-elementos-tarjetas.html">Tarjetas</a>
   </nav>
 </header>
+
+<!-- Solo aparece en movil vertical. No es un fallo que arreglar: la tabla
+     declara min-width 700px porque su forma ES el contenido, y en 375px no
+     cabe. Mas vale decirlo que dejar a alguien peleandose con el scroll. -->
+<p class="aviso-apaisado">
+  <span aria-hidden="true">📱↻</span>
+  Gira el móvil. La tabla periódica necesita casi el doble de ancho del que
+  tienes, y aquí su forma es justo lo que hay que ver.
+</p>
 
 <div class="search-bar">
   <input class="search-input" type="text" id="search" placeholder="🔍  Buscar elemento o símbolo...">
@@ -36,7 +51,7 @@
 </div>
 
 <div class="legend" id="legend"></div>
-<div class="cat-intro" id="cat-intro">
+<div class="cat-intro" id="cat-intro" data-plegable>
   <p class="en-legend-note"><strong>Esto es un viaje, y esta es la primera etapa.</strong> Aquí solo reconoces el territorio: quién es quién y a qué familia pertenece. Pincha cualquier elemento y se iluminará su familia, con el grupo al que pertenece.</p>
   <p class="en-legend-note">Las otras dos pestañas añaden las piezas que faltan: <strong>Valencia</strong> — cuántos electrones tiene cada átomo en la última capa, que es lo único que cuenta al unirse — y <strong>Electronegatividad</strong> — con cuánta fuerza los agarra.</p>
   <p class="en-legend-note">Cuando esas tres cosas encajen, <strong>formular dejará de ser memorizar</strong>: será leer la tabla. No hay que aprenderse nada de esto; hay que jugar con ello hasta que se vea.</p>
@@ -81,6 +96,31 @@
 </footer>
 
 <script>
+
+// ── Cabecera plegable ─────────────────────────────────────────────────────
+// La eleccion se recuerda y es COMPARTIDA por el laboratorio: quien pliega
+// una vez no quiere volver a plegar en cada herramienta.
+(function () {
+  const KEY = 'hpk-compacto';
+  const btn = document.getElementById('plegar');
+  if (!btn) return;                       // sin boton no se rompe nada
+  let compacto = false;
+  try { compacto = localStorage.getItem(KEY) === 'si'; } catch (e) {}
+  function pinta() {
+    document.body.classList.toggle('compacto', compacto);
+    btn.setAttribute('aria-expanded', compacto ? 'false' : 'true');
+    btn.setAttribute('aria-label', compacto
+      ? 'Desplegar la cabecera y la explicación'
+      : 'Plegar la cabecera y la explicación');
+    btn.querySelector('.plegar-texto').textContent = compacto ? 'Desplegar' : 'Plegar';
+  }
+  btn.addEventListener('click', function () {
+    compacto = !compacto;
+    try { localStorage.setItem(KEY, compacto ? 'si' : 'no'); } catch (e) {}
+    pinta();
+  });
+  pinta();
+})();
 const CATS = {
   'metal-alcalino':       { label: 'Metal alcalino',        color: '#EF4444' },
   'metal-alcalinoterreo': { label: 'Metal alcalinotérreo',  color: '#F97316' },
