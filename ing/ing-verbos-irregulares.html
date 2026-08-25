@@ -314,6 +314,22 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
   transition: all 0.15s;
   border-left: 3px solid transparent;
 }
+/* Ahora son <button>. Se neutraliza SOLO lo que impone el navegador y que
+   .family-item nunca declaro porque era un <div>: fondo, color, borde
+   completo, tipografia, ancho y centrado. Lo que si declara el diseno
+   —el border-left y los estados— no se toca, y ademas gana por especificidad. */
+button.family-item {
+  appearance: none;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  border: 0;
+  border-left: 3px solid transparent;
+  width: 100%;
+  text-align: left;
+  margin: 0;
+}
+.family-item:focus-visible { outline: 2px solid #22D3EE; outline-offset: -2px; }
 .family-item:hover { background: var(--surface2); }
 .family-item.active { background: rgba(34,211,238,0.04); border-left-color: #22D3EE; }
 .family-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
@@ -629,6 +645,17 @@ body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
   text-transform: uppercase; transition: opacity 0.15s;
 }
 .accordion-trigger:hover { opacity: 0.85; }
+/* Sin esto se podia tabular hasta aqui pero no se veia donde estabas: parecia
+   que el teclado no llegaba al panel derecho, y si llegaba. */
+/* Convertidos de <div> a <button>: se neutraliza solo el cromo nativo. */
+button.search-result-item, button.tl-card {
+  appearance: none; background: none; color: inherit;
+  font-family: inherit; border: 0; margin: 0;
+  width: 100%; text-align: left;
+}
+.accordion-trigger:focus-visible { outline: 2px solid #22D3EE; outline-offset: -2px; border-radius: 6px; }
+.search-result-item:focus-visible,
+.tl-card:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; }
 .accordion-trigger .acc-icon { margin-left: auto; font-size: 0.6rem; transition: transform 0.2s; opacity: 0.5; }
 .accordion-trigger.open .acc-icon { transform: rotate(180deg); }
 .accordion-body { display: none; padding: 0 0.75rem 0.65rem; font-size: 0.73rem; line-height: 1.55; }
@@ -729,6 +756,98 @@ body.compacto header { padding-bottom: 0.4rem; }
 }
 @media (max-width: 620px) { .topbar-claim, .topbar-sep-claim { display: none; } }
 @media (prefers-reduced-motion: reduce) { .plegar-chevron { transition: none; } }
+
+/* ── FAMILIAS PLEGADAS ─────────────────────────────────────────────────────
+   Las familias SON el contenido de esta herramienta, asi que no se sacan a
+   una pantalla previa. Pero una vez has elegido una, la lista entera cuesta
+   scroll sin aportar: se pliega a una fila con la activa y un boton para
+   reabrirla. Solo por debajo de 900px; en escritorio la columna tiene sitio. */
+.familias-resumen { display: none; }
+
+@media (max-width: 900px) {
+  body.familia-plegada .familias-resumen {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: calc(100% - 1.8rem);
+    margin: 0.5rem 0.9rem;
+    padding: 0 0.75rem;
+    min-height: 44px;                 /* es un control */
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--fr-color, var(--green-lab));
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+  }
+  body.familia-plegada .family-list { display: none; }
+  body.familia-plegada .sidebar-header-block { display: none; }
+
+  .fr-dot { width: 9px; height: 9px; border-radius: 50%; flex: none;
+            background: var(--fr-color, var(--green-lab)); }
+  .fr-nombre { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+               white-space: nowrap; }
+  .fr-accion { font-family: 'DM Mono', monospace; font-size: 0.6rem;
+               letter-spacing: 0.08em; text-transform: uppercase;
+               color: var(--muted); flex: none; }
+  .fr-chevron { color: var(--muted); flex: none; }
+  .familias-resumen:hover .fr-accion,
+  .familias-resumen:hover .fr-chevron { color: var(--green-lab); }
+  .familias-resumen:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; }
+}
+/* ── MAQUETACION DE MOVIL ──────────────────────────────────────────────────
+   Por debajo de 900px esto deja de ser una "aplicacion" de una pantalla y
+   pasa a documento que fluye, como ing-grammar-builder y len-morfosintaxis,
+   que escalan bien.
+
+   El problema que arregla: con body{height:100vh; overflow:hidden}, en
+   apaisado el reparto era cabecera 106px + herramienta 162px + pie 74px, y
+   dentro quedaban ventanas de scroll de 13px. No se podia usar, y como la
+   pagina no scrollea tampoco habia forma de salir de ahi.
+
+   dvh y no vh: descuenta la barra de direcciones del movil, que era la otra
+   mitad del problema al girar.
+
+   En escritorio NO cambia nada. */
+@media (max-width: 900px) {
+  /* 1. la pagina crece con el contenido y hace scroll normal */
+  body {
+    height: auto;
+    min-height: 100dvh;      /* dvh, no vh: descuenta la barra del navegador */
+    overflow: visible;
+  }
+
+  /* 2. el area de trabajo deja de ser rejilla de dos columnas */
+  .workspace {
+    display: block;
+    overflow: visible;
+    min-height: 0;
+  }
+
+  /* 3. los paneles internos dejan de tener ventana propia: fluyen */
+  .family-filter-list, .family-list, .map-view,
+  .sidebar, .quiz-area, .panel-scroll {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* 4. la barra lateral pasa arriba, en horizontal y con scroll propio */
+  .sidebar, .quiz-sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .family-filter-list, .family-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
 </style>
 </head>
 <body>
@@ -795,6 +914,16 @@ body.compacto header { padding-bottom: 0.4rem; }
       <h2 id="sidebar-title">Constelaciones</h2>
       <p id="sidebar-sub">Selecciona una familia</p>
     </div>
+    <!-- Cuando ya has elegido familia, la lista se pliega a esta fila: la
+         familia activa mas un boton para volver a abrirla. Solo en pantallas
+         estrechas, que es donde la lista cuesta scroll. -->
+    <button type="button" class="familias-resumen" id="familias-resumen"
+            aria-expanded="false" aria-controls="family-list">
+      <span class="fr-dot" id="fr-dot"></span>
+      <span class="fr-nombre" id="fr-nombre"></span>
+      <span class="fr-accion" id="fr-accion">Cambiar</span>
+      <span class="fr-chevron" aria-hidden="true">▾</span>
+    </button>
     <div class="family-list" id="family-list"></div>
 
   </div>
@@ -909,6 +1038,7 @@ function hideMap() {
 }
 function closeFamily() {
   activeFamily = null;
+  document.body.classList.remove('familia-plegada');
   document.querySelectorAll('.family-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.map-node').forEach(g => {
     const c = g.querySelector('.node-circle');
@@ -969,14 +1099,14 @@ function searchVerbs(q) {
     );
     const trans = LANG.current === 'es' ? v.trans.es : v.trans.en;
     return `
-      <div class="search-result-item" onclick="goToVerb('${f.id}', '${v.inf}')">
+      <button type="button" class="search-result-item" onclick="goToVerb('${f.id}', '${v.inf}')">
         <div class="search-result-forms">
           <span class="search-result-inf">${hl(v.inf)}</span>
           <span class="search-result-sep">·</span>
           <span class="search-result-form">${hl(v.ps)}</span>
           <span class="search-result-sep">·</span>
           <span class="search-result-form">${hl(v.pp)}</span>
-        </div>
+        </button>
         <div class="search-result-meta">
           <span class="search-result-trans">${hl(trans)}</span>
           <span class="search-result-family" style="color:${f.color};border-color:${f.color}40">${f.label[LANG.current]}</span>
@@ -1378,6 +1508,51 @@ const FAMILIES = [
   }
 ];
 
+// ── Navegacion entre grupos de controles (ver SKILL.md) ──────────────────
+function tecladoEnGrupo(contenedor, selector, seleccionaAlMover) {
+  if (!contenedor || contenedor.dataset.tecladoListo) return;
+  contenedor.dataset.tecladoListo = '1';
+  const items = () => [...contenedor.querySelectorAll(selector)]
+                        .filter(b => b.offsetParent !== null && !b.disabled);
+  contenedor.addEventListener('keydown', e => {
+    const lista = items();
+    const i = lista.indexOf(document.activeElement);
+    if (i < 0) return;
+    const saltos = { ArrowRight: i+1, ArrowDown: i+1, ArrowLeft: i-1,
+                     ArrowUp: i-1, Home: 0, End: lista.length-1 };
+    if (!(e.key in saltos)) return;
+    e.preventDefault();
+    const destino = lista[Math.min(lista.length-1, Math.max(0, saltos[e.key]))];
+    lista.forEach(b => b.tabIndex = (b === destino ? 0 : -1));
+    destino.focus();
+    if (seleccionaAlMover) destino.click();
+  });
+  contenedor.addEventListener('focusin', e => {
+    const lista = items();
+    if (lista.includes(e.target)) lista.forEach(b => b.tabIndex = (b === e.target ? 0 : -1));
+  });
+}
+
+// ── Plegado de familias ──────────────────────────────────────────────────
+function plegarFamilias(f) {
+  if (!f) return;
+  const resumen = document.getElementById('familias-resumen');
+  if (!resumen) return;
+  document.getElementById('fr-nombre').textContent = f.label[LANG.current];
+  resumen.style.setProperty('--fr-color', f.color);
+  resumen.setAttribute('aria-expanded', 'false');
+  resumen.setAttribute('aria-label', 'Familia elegida: ' + f.label[LANG.current] + '. Pulsa para cambiar.');
+  document.body.classList.add('familia-plegada');
+}
+function desplegarFamilias() {
+  const resumen = document.getElementById('familias-resumen');
+  document.body.classList.remove('familia-plegada');
+  if (resumen) resumen.setAttribute('aria-expanded', 'true');
+  const activo = document.querySelector('.family-item.active') ||
+                 document.querySelector('.family-item');
+  if (activo) { activo.tabIndex = 0; activo.focus(); }
+}
+
 // ── SIDEBAR ──
 function buildSidebar() {
   const list = document.getElementById('family-list');
@@ -1386,9 +1561,16 @@ function buildSidebar() {
   const u = UI[l];
 
   FAMILIES.forEach(f => {
-    const item = document.createElement('div');
+    // Eran <div> con onclick: sin foco ni Enter. Excluyentes entre si, asi
+    // que grupo de radio, como "Que tabla" en la pitagorica.
+    const item = document.createElement('button');
+    item.type = 'button';
     item.className = 'family-item' + (activeFamily === f.id ? ' active' : '');
     item.id = 'fam-item-' + f.id;
+    item.setAttribute('role', 'radio');
+    item.setAttribute('aria-checked', activeFamily === f.id ? 'true' : 'false');
+    item.dataset.valor = f.id;
+    item.tabIndex = activeFamily === f.id ? 0 : -1;
     item.innerHTML = `
       <div class="family-dot" style="background:${f.color}"></div>
       <div class="family-label">${f.label[l]}</div>
@@ -1400,6 +1582,13 @@ function buildSidebar() {
     item.onclick = () => openFamily(f.id);
     list.appendChild(item);
   });
+  if (!list.querySelector('[tabindex="0"]')) {
+    const primero = list.querySelector('.family-item');
+    if (primero) primero.tabIndex = 0;
+  }
+  list.setAttribute('role', 'radiogroup');
+  list.setAttribute('aria-label', 'Familias de verbos');
+  tecladoEnGrupo(list, '.family-item', true);
 
   const legend = document.createElement('div');
   legend.style.cssText = `margin:0.8rem 0.9rem 0.9rem;padding:0.6rem 0.75rem;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;flex-direction:column;gap:0.3rem;`;
@@ -1422,7 +1611,7 @@ function buildMap() {
   container.innerHTML = '';
 
   ordered.forEach((f, i) => {
-    const card = document.createElement('div');
+    const card = document.createElement('button');
     card.className = 'tl-card';
     card.id = 'tl-card-' + f.id;
     card.style.setProperty('--card-color', f.color);
@@ -1471,8 +1660,12 @@ function openFamily(id, verbToHighlight) {
   const u = UI[l];
 
   document.querySelectorAll('.family-item').forEach(el => {
-    el.classList.toggle('active', el.id === 'fam-item-' + id);
+    const on = el.id === 'fam-item-' + id;
+    el.classList.toggle('active', on);
+    el.setAttribute('aria-checked', on ? 'true' : 'false');
+    el.tabIndex = on ? 0 : -1;
   });
+  plegarFamilias(f);
   // Sincronizar timeline card y cursor
   document.querySelectorAll('.tl-card').forEach(card => card.classList.remove('active'));
   const activeCard = document.getElementById('tl-card-' + id);
@@ -1559,7 +1752,8 @@ function openFamily(id, verbToHighlight) {
     item.className = `accordion-item ${b.cls}`;
     const open = i === 0;
     item.innerHTML = `
-      <button class="accordion-trigger ${open?'open':''}" onclick="toggleAcc(this)">
+      <button class="accordion-trigger ${open?'open':''}" onclick="toggleAcc(this)"
+              aria-expanded="${open?'true':'false'}">
         ${b.label}<span class="acc-icon">▼</span>
       </button>
       <div class="accordion-body ${open?'open':''}">${b.text}</div>
@@ -1571,6 +1765,7 @@ function openFamily(id, verbToHighlight) {
 function toggleAcc(btn) {
   btn.classList.toggle('open');
   btn.nextElementSibling.classList.toggle('open');
+  btn.setAttribute('aria-expanded', btn.classList.contains('open') ? 'true' : 'false');
 }
 
 // ── TOGGLES ──
@@ -1616,6 +1811,9 @@ function updateStaticText() {
 function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+document.getElementById('familias-resumen')
+  ?.addEventListener('click', desplegarFamilias);
 
 window.addEventListener('resize', () => { if (!activeFamily) buildMap(); });
 

@@ -191,6 +191,15 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
 .sidebar-header-block p { font-size: 0.68rem; color: var(--muted); font-style: italic; }
 
 /* Family filter list */
+/* Ahora son <button>: se neutraliza solo el cromo nativo que la regla
+   original nunca declaro, siendo <div>. */
+button.family-filter-item {
+  appearance: none; background: none; color: inherit;
+  font-family: inherit; border: 0; width: 100%;
+  text-align: left; margin: 0;
+}
+.family-filter-item:focus-visible { outline: 2px solid #22D3EE; outline-offset: -2px; }
+
 .family-filter-list {
   flex: 1;
   overflow-y: auto;
@@ -248,6 +257,13 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
   border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
+button.level-pill {
+  /* Ahora son <button>: fuera el cromo nativo. Fondo, color, borde y
+     tipografia ya los declara la regla de abajo, asi que sobreviven. */
+  appearance: none; margin: 0;
+}
+.level-pill:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; }
+
 .level-pill {
   font-family: 'DM Mono', monospace;
   font-size: 0.62rem;
@@ -1054,6 +1070,96 @@ body.compacto header { padding-bottom: 0.4rem; }
 }
 @media (max-width: 620px) { .topbar-claim, .topbar-sep-claim { display: none; } }
 @media (prefers-reduced-motion: reduce) { .plegar-chevron { transition: none; } }
+/* ── MAQUETACION DE MOVIL ──────────────────────────────────────────────────
+   Por debajo de 900px esto deja de ser una "aplicacion" de una pantalla y
+   pasa a documento que fluye, como ing-grammar-builder y len-morfosintaxis,
+   que escalan bien.
+
+   El problema que arregla: con body{height:100vh; overflow:hidden}, en
+   apaisado el reparto era cabecera 106px + herramienta 162px + pie 74px, y
+   dentro quedaban ventanas de scroll de 13px. No se podia usar, y como la
+   pagina no scrollea tampoco habia forma de salir de ahi.
+
+   dvh y no vh: descuenta la barra de direcciones del movil, que era la otra
+   mitad del problema al girar.
+
+   En escritorio NO cambia nada. */
+@media (max-width: 900px) {
+  /* 1. la pagina crece con el contenido y hace scroll normal */
+  body {
+    height: auto;
+    min-height: 100dvh;      /* dvh, no vh: descuenta la barra del navegador */
+    overflow: visible;
+  }
+
+  /* 2. el area de trabajo deja de ser rejilla de dos columnas */
+  .workspace {
+    display: block;
+    overflow: visible;
+    min-height: 0;
+  }
+
+  /* 3. los paneles internos dejan de tener ventana propia: fluyen */
+  .family-filter-list, .family-list, .map-view,
+  .sidebar, .quiz-area, .panel-scroll {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* 4. la barra lateral pasa arriba, en horizontal y con scroll propio */
+  .sidebar, .quiz-sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .family-filter-list, .family-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
+
+/* ── FILTROS DE FAMILIA PLEGADOS ───────────────────────────────────────────
+   Mismo componente que en ing-verbos-irregulares, con una diferencia: alli se
+   elige UNA familia y el resumen la nombra; aqui son filtros multiples, asi
+   que cuenta cuantas hay puestas y cuantas preguntas salen. */
+.familias-resumen { display: none; }
+
+@media (max-width: 900px) {
+  body.familias-plegadas .familias-resumen {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: calc(100% - 1.8rem);
+    margin: 0.5rem 0.9rem;
+    padding: 0 0.75rem;
+    min-height: 44px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green-lab);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    appearance: none;
+  }
+  body.familias-plegadas .family-filter-list,
+  body.familias-plegadas .level-pills { display: none; }
+
+  .fr-nombre { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+               white-space: nowrap; }
+  .fr-accion { font-family: 'DM Mono', monospace; font-size: 0.6rem;
+               letter-spacing: 0.08em; text-transform: uppercase;
+               color: var(--muted); flex: none; }
+  .fr-chevron { color: var(--muted); flex: none; }
+  .familias-resumen:hover .fr-accion,
+  .familias-resumen:hover .fr-chevron { color: var(--green-lab); }
+  .familias-resumen:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; }
+}
 </style>
 </head>
 <body>
@@ -1104,14 +1210,24 @@ body.compacto header { padding-bottom: 0.4rem; }
       <p id="sidebar-count">Selecciona las que quieras practicar</p>
     </div>
 
+    <!-- Al empezar el quiz la lista de filtros se pliega a esta fila: mientras
+         respondes no eliges familias, y en movil la lista cuesta scroll. Aqui
+         son filtros MULTIPLES, asi que el resumen cuenta cuantas hay elegidas
+         en vez de nombrar una. -->
+    <button type="button" class="familias-resumen" id="familias-resumen"
+            aria-expanded="true" aria-controls="family-filter-list">
+      <span class="fr-nombre" id="fr-nombre"></span>
+      <span class="fr-accion">Cambiar</span>
+      <span class="fr-chevron" aria-hidden="true">▾</span>
+    </button>
     <div class="family-filter-list" id="family-filter-list"></div>
 
-    <div class="level-pills" id="level-pills">
+    <div class="level-pills" id="level-pills" role="toolbar" aria-label="Nivel MCER">
       <div class="sidebar-section-label" style="width:100%;margin-bottom:0.2rem">Nivel MCER</div>
-      <span class="level-pill active" data-level="A1" onclick="toggleLevel(this)">A1</span>
-      <span class="level-pill active" data-level="A2" onclick="toggleLevel(this)">A2</span>
-      <span class="level-pill active" data-level="B1" onclick="toggleLevel(this)">B1</span>
-      <span class="level-pill active" data-level="B2" onclick="toggleLevel(this)">B2</span>
+      <button type="button" class="level-pill active" data-level="A1" aria-pressed="true" tabindex="-1" onclick="toggleLevel(this)">A1</button>
+      <button type="button" class="level-pill active" data-level="A2" aria-pressed="true" tabindex="-1" onclick="toggleLevel(this)">A2</button>
+      <button type="button" class="level-pill active" data-level="B1" aria-pressed="true" tabindex="-1" onclick="toggleLevel(this)">B1</button>
+      <button type="button" class="level-pill active" data-level="B2" aria-pressed="true" tabindex="-1" onclick="toggleLevel(this)">B2</button>
     </div>
   </div>
 
@@ -1138,9 +1254,11 @@ body.compacto header { padding-bottom: 0.4rem; }
       </div>
       <div class="ritmo-block">
         <div class="sidebar-section-label">A qué ritmo</div>
-        <div class="ritmo-row">
-          <span class="level-pill" data-ritmo="calma" onclick="setRitmo('calma')">No me estreses</span>
-          <span class="level-pill" data-ritmo="reloj" onclick="setRitmo('reloj')">Contra reloj</span>
+        <div class="ritmo-row" role="radiogroup" aria-label="A qué ritmo">
+          <button type="button" class="level-pill" data-ritmo="calma" role="radio"
+                  aria-checked="false" tabindex="-1" onclick="setRitmo('calma')">No me estreses</button>
+          <button type="button" class="level-pill" data-ritmo="reloj" role="radio"
+                  aria-checked="false" tabindex="-1" onclick="setRitmo('reloj')">Contra reloj</button>
         </div>
         <p class="ritmo-hint" id="ritmo-hint"></p>
       </div>
@@ -1479,9 +1597,13 @@ function buildSidebar() {
     const meta = FAMILY_META[fid];
     const count = ALL_VERBS.filter(v => v.family === fid).length;
     const isSelected = selectedFamilies.has(fid);
-    const item = document.createElement('div');
+    // Interruptores independientes (se eligen varias) -> barra de botones.
+    const item = document.createElement('button');
+    item.type = 'button';
     item.className = `family-filter-item ${isSelected ? 'selected' : ''}`;
     item.id = 'ffi-' + fid;
+    item.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    item.tabIndex = -1;
     item.innerHTML = `
       <div class="family-check">${isSelected ? '✓' : ''}</div>
       <div class="family-dot" style="background:${meta.color}"></div>
@@ -1491,6 +1613,11 @@ function buildSidebar() {
     item.onclick = () => toggleFamily(fid);
     list.appendChild(item);
   });
+  const primero = list.querySelector('.family-filter-item');
+  if (primero) primero.tabIndex = 0;
+  list.setAttribute('role', 'toolbar');
+  list.setAttribute('aria-label', 'Familias que quieres practicar');
+  tecladoEnGrupo(list, '.family-filter-item', false);
 }
 
 function toggleFamily(fid) {
@@ -1534,6 +1661,8 @@ function toggleLevel(pill) {
     selectedLevels.add(lvl);
     pill.classList.add('active');
   }
+  // el estado tiene que anunciarse, no solo verse
+  pill.setAttribute('aria-pressed', pill.classList.contains('active') ? 'true' : 'false');
   updateStats();
 }
 
@@ -1661,7 +1790,10 @@ function setRitmo(modo) {
 function pintaRitmo() {
   const modo = ritmoReloj ? 'reloj' : 'calma';
   document.querySelectorAll('[data-ritmo]').forEach(function (p) {
-    p.classList.toggle('active', p.dataset.ritmo === modo);
+    const on = p.dataset.ritmo === modo;
+    p.classList.toggle('active', on);
+    p.setAttribute('aria-checked', on ? 'true' : 'false');
+    p.tabIndex = on ? 0 : -1;      // roving: una parada para el grupo
   });
   const t = document.getElementById('q-timer');
   t.classList.toggle('modo-reloj', ritmoReloj);
@@ -1685,7 +1817,72 @@ function resetRonda() {
   ritmoReloj = g === 'reloj';
 })();
 
+// ── Navegacion entre grupos de controles (ver SKILL.md) ──────────────────
+function tecladoEnGrupo(contenedor, selector, seleccionaAlMover) {
+  if (!contenedor || contenedor.dataset.tecladoListo) return;
+  contenedor.dataset.tecladoListo = '1';
+  const items = () => [...contenedor.querySelectorAll(selector)]
+                        .filter(b => b.offsetParent !== null && !b.disabled);
+  contenedor.addEventListener('keydown', e => {
+    const lista = items();
+    const i = lista.indexOf(document.activeElement);
+    if (i < 0) return;
+    const saltos = { ArrowRight: i+1, ArrowDown: i+1, ArrowLeft: i-1,
+                     ArrowUp: i-1, Home: 0, End: lista.length-1 };
+    if (!(e.key in saltos)) return;
+    e.preventDefault();
+    const destino = lista[Math.min(lista.length-1, Math.max(0, saltos[e.key]))];
+    lista.forEach(b => b.tabIndex = (b === destino ? 0 : -1));
+    destino.focus();
+    if (seleccionaAlMover) destino.click();
+  });
+  contenedor.addEventListener('focusin', e => {
+    const lista = items();
+    if (lista.includes(e.target)) lista.forEach(b => b.tabIndex = (b === e.target ? 0 : -1));
+  });
+}
+
+// ── Plegado de los filtros ───────────────────────────────────────────────
+function resumenFamilias() {
+  const total = Object.keys(FAMILY_META).length;
+  const n = selectedFamilies.size;
+  const preguntas = getFilteredVerbs().length;
+  const cuantas = n === total ? 'Todas las familias' :
+                  n === 1 ? '1 familia' : `${n} familias`;
+  return `${cuantas} · ${preguntas} pregunta${preguntas === 1 ? '' : 's'}`;
+}
+function plegarFiltros() {
+  const r = document.getElementById('familias-resumen');
+  if (!r) return;
+  document.getElementById('fr-nombre').textContent = resumenFamilias();
+  r.setAttribute('aria-expanded', 'false');
+  r.setAttribute('aria-label', 'Practicando ' + resumenFamilias() + '. Pulsa para cambiar la seleccion.');
+  document.body.classList.add('familias-plegadas');
+}
+function desplegarFiltros() {
+  const r = document.getElementById('familias-resumen');
+  document.body.classList.remove('familias-plegadas');
+  if (r) r.setAttribute('aria-expanded', 'true');
+  const primero = document.querySelector('.family-filter-item');
+  if (primero) { primero.tabIndex = 0; primero.focus(); }
+}
+
+// Nivel MCER: interruptores (se eligen varios) -> moverse NO marca.
+// A que ritmo: excluyentes -> moverse selecciona.
+tecladoEnGrupo(document.getElementById('level-pills'), '.level-pill', false);
+tecladoEnGrupo(document.querySelector('.ritmo-row'), '[role="radio"]', true);
+(function rovingNiveles() {
+  const g = document.getElementById('level-pills');
+  if (!g) return;
+  const p = g.querySelector('.level-pill.active') || g.querySelector('.level-pill');
+  if (p) p.tabIndex = 0;
+})();
+
+document.getElementById('familias-resumen')
+  ?.addEventListener('click', desplegarFiltros);
+
 function startQuiz() {
+  plegarFiltros();
   quizVerbs = shuffle(getFilteredVerbs());
   currentIdx = 0;
   results = quizVerbs.map(() => null); // null=unanswered, true=correct, false=wrong, 'skip'=skipped
