@@ -365,3 +365,42 @@
   .footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
   .footer-left a:hover { opacity: 0.75; }
   .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+
+/* -- CABECERA PLEGABLE ----------------------------------------------------
+   En movil la cabecera se come pantalla antes de llegar a la herramienta.
+   Plegada deja el topbar y el breadcrumb. La preferencia va en hpk-compacto,
+   compartida por todo el laboratorio.
+   Aqui se pliegan solo titulo y subtitulo: estas herramientas entran directas
+   al contenido. Lo que no se marque con data-plegable, se queda. */
+.header-topbar { position: relative; padding-right: 88px; }
+.plegar {
+  position: absolute; right: 0; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.35rem;
+  min-height: 44px; min-width: 44px;   /* 44x44 reales: es un control */
+  padding: 0 0.6rem;
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(245,240,232,0.45);
+  transition: color 0.2s;
+}
+.plegar:hover { color: #22D3EE; }
+.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar-chevron {
+  display: inline-block; font-size: 1.05rem; line-height: 1;
+  color: #D946EF; transition: transform 0.25s ease;
+}
+.plegar:hover .plegar-chevron { filter: brightness(1.25); }
+body.compacto .plegar-chevron { transform: rotate(180deg); }
+body.compacto .header-title,
+body.compacto .header-subtitle,
+body.compacto [data-plegable] { display: none; }
+body.compacto header { padding-bottom: 0.4rem; }
+@media (max-width: 900px) {
+  .plegar-texto { display: none; }
+  .header-topbar { padding-right: 52px; }
+}
+@media (max-width: 620px) { .topbar-claim, .topbar-sep-claim { display: none; } }
+@media (prefers-reduced-motion: reduce) { .plegar-chevron { transition: none; } }

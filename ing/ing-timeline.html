@@ -514,6 +514,45 @@ footer {
 .footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
 .footer-left a:hover { opacity: 0.75; }
 .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+
+/* -- CABECERA PLEGABLE ----------------------------------------------------
+   En movil la cabecera se come pantalla antes de llegar a la herramienta.
+   Plegada deja el topbar y el breadcrumb. La preferencia va en hpk-compacto,
+   compartida por todo el laboratorio.
+   Aqui se pliegan solo titulo y subtitulo: estas herramientas entran directas
+   al contenido. Lo que no se marque con data-plegable, se queda. */
+.header-topbar { position: relative; padding-right: 88px; }
+.plegar {
+  position: absolute; right: 0; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.35rem;
+  min-height: 44px; min-width: 44px;   /* 44x44 reales: es un control */
+  padding: 0 0.6rem;
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(245,240,232,0.45);
+  transition: color 0.2s;
+}
+.plegar:hover { color: #22D3EE; }
+.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar-chevron {
+  display: inline-block; font-size: 1.05rem; line-height: 1;
+  color: #D946EF; transition: transform 0.25s ease;
+}
+.plegar:hover .plegar-chevron { filter: brightness(1.25); }
+body.compacto .plegar-chevron { transform: rotate(180deg); }
+body.compacto .header-title,
+body.compacto .header-subtitle,
+body.compacto [data-plegable] { display: none; }
+body.compacto header { padding-bottom: 0.4rem; }
+@media (max-width: 900px) {
+  .plegar-texto { display: none; }
+  .header-topbar { padding-right: 52px; }
+}
+@media (max-width: 620px) { .topbar-claim, .topbar-sep-claim { display: none; } }
+@media (prefers-reduced-motion: reduce) { .plegar-chevron { transition: none; } }
 </style>
 </head>
 <body>
@@ -521,9 +560,15 @@ footer {
 <header>
   <div class="header-topbar">
     <a href="./../index.html">← inicio</a>
-    <span class="sep">·</span> hAppYpUkIng · Lab
-    <span class="sep">//</span>
-    LEARN · EXPAND · VOMIT HAPPINESS
+    <span class="sep">·</span>
+    <span class="topbar-marca">hAppYpUkIng · Lab</span>
+    <span class="sep topbar-sep-claim">//</span>
+    <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
+    <button class="plegar" id="plegar" type="button" aria-expanded="true"
+            aria-label="Plegar la cabecera">
+      <span class="plegar-texto">Plegar</span>
+      <span class="plegar-chevron" aria-hidden="true">&#9650;</span>
+    </button>
   </div>
   <h1 class="header-title">Timeline de Tiempos</h1>
   <p class="header-subtitle">El metro de los tiempos verbales en inglés</p>
@@ -1068,6 +1113,29 @@ footer {
 </main>
 
 <script>
+
+// -- Cabecera plegable -----------------------------------------------------
+// La eleccion se recuerda y es COMPARTIDA por el laboratorio: quien pliega
+// una vez no quiere volver a plegar en cada herramienta.
+(function () {
+  var KEY = 'hpk-compacto';
+  var btn = document.getElementById('plegar');
+  if (!btn) return;                       // sin boton no se rompe nada
+  var compacto = false;
+  try { compacto = localStorage.getItem(KEY) === 'si'; } catch (e) {}
+  function pinta() {
+    document.body.classList.toggle('compacto', compacto);
+    btn.setAttribute('aria-expanded', compacto ? 'false' : 'true');
+    btn.setAttribute('aria-label', compacto ? 'Desplegar la cabecera' : 'Plegar la cabecera');
+    btn.querySelector('.plegar-texto').textContent = compacto ? 'Desplegar' : 'Plegar';
+  }
+  btn.addEventListener('click', function () {
+    compacto = !compacto;
+    try { localStorage.setItem(KEY, compacto ? 'si' : 'no'); } catch (e) {}
+    pinta();
+  });
+  pinta();
+})();
   const youHere = document.getElementById('youHere');
   let currentCard = null;
 

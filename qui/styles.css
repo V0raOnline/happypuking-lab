@@ -817,10 +817,11 @@ body.compacto header { padding-bottom: 0.4rem; }
 @media (max-width: 620px) {
   .topbar-claim, .topbar-sep-claim { display: none; }
 }
-/* Habia 112px de padding horizontal en un movil de 375: el 30% de la pantalla.
-   Recuperandolo, el topbar cabe en una linea con la marca incluida. */
+/* Solo el header. La regla de "html" que hay en mates NO se copia aqui: alli
+   el html traia 24px de padding y habia que recuperarlos; aqui viene a 0, asi
+   que ponerle 10px le QUITABA 20px de ancho en vez de devolverselos.
+   Un arreglo especifico no se copia sin medir si aplica. */
 @media (max-width: 640px) {
-  html { padding-left: 10px; padding-right: 10px; }
   header { padding-left: 4px; padding-right: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
