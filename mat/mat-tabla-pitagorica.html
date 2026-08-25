@@ -469,6 +469,11 @@ function tecladoEnGrupo(contenedor, selector, seleccionaAlMover) {
     items().forEach(b => b.tabIndex = (b === primero ? 0 : -1));
     contenedor.dataset.rovingListo = '1';
   }
+  // Sin esta guarda, engancharlo dos veces mueve DOS posiciones por pulsacion:
+  // la flecha se saltaba "Minas gemelas". Lo encontro el beta tester.
+  if (contenedor.dataset.tecladoListo) return;
+  contenedor.dataset.tecladoListo = '1';
+
   contenedor.addEventListener('keydown', e => {
     const lista = items();
     const i = lista.indexOf(document.activeElement);
@@ -488,7 +493,6 @@ function tecladoEnGrupo(contenedor, selector, seleccionaAlMover) {
   });
 }
 
-tecladoEnGrupo(document.querySelector('.mode-toggle'), '[role="radio"]', true);
 tecladoEnGrupo(document.querySelector('.controls'), '.legend-btn', false);
 
 // ── Teclado en el tablero ─────────────────────────────────────────────────
@@ -997,26 +1001,12 @@ function marcaRadio(grupo, elegido) {
   });
 }
 
-function tecladoRadio(e) {
-  const grupo = e.currentTarget;
-  const chips = [...grupo.querySelectorAll('[role="radio"]')];
-  const i = chips.indexOf(document.activeElement);
-  if (i < 0) return;
-  const saltos = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1,
-                   ArrowUp: i - 1, Home: 0, End: chips.length - 1 };
-  if (!(e.key in saltos)) return;
-  e.preventDefault();
-  const destino = chips[Math.min(chips.length - 1, Math.max(0, saltos[e.key]))];
-  destino.focus();
-  destino.click();                        // en un grupo de radio, mover = elegir
-}
 
+// Un solo camino para todos los grupos excluyentes. Antes convivian dos
+// implementaciones que hacian lo mismo, y donde coincidian se sumaban.
 function iniciaGruposRadio() {
   document.querySelectorAll('[role="radiogroup"]').forEach(g => {
-    if (!g.dataset.tecladoListo) {
-      g.addEventListener('keydown', tecladoRadio);
-      g.dataset.tecladoListo = '1';
-    }
+    tecladoEnGrupo(g, '[role="radio"]', true);
     const activo = g.querySelector('.active') || g.querySelector('[role="radio"]');
     if (activo) marcaRadio(g, activo);
   });
