@@ -809,3 +809,73 @@
 @media (prefers-reduced-motion: reduce) {
   .glitch-toggle, .glitch-toggle-bola { transition-duration: 0.01ms; }
 }
+
+/* ── INVITACION A INVITAR ──────────────────────────────────────────────────
+   Despues del catalogo, antes del pie: se pide cuando ya has visto lo que hay.
+   Enlace estatico, sin widget flotante — ese tapa contenido, carga script de
+   terceros y contradice lo que promete el sitio. */
+.cafe {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+/* Dentro de <main>, que ya pone su ancho y su padding: aqui solo hace falta
+   el aire de arriba. */
+.cafe-en-main { max-width: none; padding: 2.5rem 0 0; }
+.cafe-cuerpo {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 1.1rem 1.4rem;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--magenta) 22%, transparent);
+  border-radius: 16px;
+  background-image: linear-gradient(135deg,
+    rgba(224,0,122,0.06) 0%, rgba(224,0,122,0.02) 55%, transparent 100%);
+}
+/* Los parrafos van juntos en su propia caja: si son hijos directos del flex,
+   el gap del contenedor se suma a su separacion y quedan 34px entre lineas. */
+.cafe-parrafos { flex: 1; min-width: 240px; }
+.cafe-texto {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.cafe-texto + .cafe-texto { margin-top: 0.35rem; }
+
+.cafe-boton {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;              /* es un control */
+  padding: 0 1.3rem;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--magenta);
+  background: color-mix(in srgb, var(--magenta) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--magenta) 45%, transparent);
+  border-radius: 12px;
+  box-shadow: 0 0 22px rgba(224,0,122,0.16);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.cafe-boton:hover {
+  background: color-mix(in srgb, var(--magenta) 20%, transparent);
+  box-shadow: 0 0 30px rgba(224,0,122,0.28);
+}
+.cafe-boton:focus-visible { outline: 2px solid #22D3EE; outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  /* Sin padding horizontal: vive dentro de <main>, que ya lo pone. Y con
+     espacio ARRIBA — el atajo anterior lo borraba y el bloque quedaba pegado
+     a la ultima tarjeta del catalogo. */
+  .cafe-en-main { padding: 1.6rem 0 0; }
+  .cafe-cuerpo { flex-direction: column; align-items: stretch; gap: 0.9rem; }
+  .cafe-boton { width: 100%; justify-content: center; }
+}
