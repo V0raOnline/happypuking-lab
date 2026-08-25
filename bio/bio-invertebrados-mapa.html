@@ -919,7 +919,10 @@ function openGroup(id) {
     <div><div class="dp-section-label">Ejemplos</div>
     <div class="dp-ejemplos">${g.ejemplos.map(e=>`<span class="dp-ejemplo-tag" style="border-color:${g.color};color:var(--ink-soft)">${e}</span>`).join('')}</div></div>`;
   document.getElementById('dpCta').style.background = g.color;
-  document.getElementById('dpCta').href = `tarjetas.html?grupo=${id}`;
+  // El nombre completo, no "tarjetas.html": el archivo se renombro y esta
+  // linea se quedo atras, asi que el boton daba 404 en produccion. El href
+  // estatico del HTML si estaba bien, y por eso solo fallaba al abrir un grupo.
+  document.getElementById('dpCta').href = `bio-invertebrados-tarjetas.html?grupo=${id}`;
   if (activeNode) document.getElementById('node-'+activeNode)?.classList.remove('lit');
   activeNode = id;
   document.getElementById('node-'+id)?.classList.add('lit');
