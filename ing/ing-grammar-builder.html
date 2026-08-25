@@ -406,6 +406,19 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
   white-space: nowrap;
   margin-top: 6px; /* space for stud */
 }
+/* Las de la paleta son <button>: solo se quita el cromo nativo. El fondo y el
+   borde los pone .piece-<rol>, y la tipografia la declara .piece. */
+button.piece { appearance: none; color: inherit; margin-top: 6px; }
+
+/* El foco tiene que verse. Antes solo .plegar tenia regla: los siete botones
+   que ya existian eran alcanzables e invisibles al tabular. */
+.piece:focus-visible,
+.ritmo-pill:focus-visible,
+.piece-remove:focus-visible,
+button:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
+}
 .piece:active { cursor: grabbing; }
 .piece.dragging { opacity: 0.35; transform: scale(0.95); }
 
@@ -726,10 +739,10 @@ body.compacto header { padding-bottom: 0.4rem; }
     </div>
   </div>
 
-  <div class="ritmo-bar">
+  <div class="ritmo-bar" role="radiogroup" aria-label="A qué ritmo">
     <span class="ritmo-label">A qué ritmo</span>
-    <span class="ritmo-pill" data-ritmo="calma" onclick="setRitmo('calma')">No me estreses</span>
-    <span class="ritmo-pill" data-ritmo="reloj" onclick="setRitmo('reloj')">Contra reloj</span>
+    <button type="button" class="ritmo-pill" data-ritmo="calma" role="radio" aria-checked="false" tabindex="-1" onclick="setRitmo('calma')">No me estreses</button>
+    <button type="button" class="ritmo-pill" data-ritmo="reloj" role="radio" aria-checked="false" tabindex="-1" onclick="setRitmo('reloj')">Contra reloj</button>
     <div class="q-timer" id="q-timer">
       <div class="q-timer-track"><div class="q-timer-fill" id="q-timer-fill"></div></div>
       <span class="q-timer-secs" id="q-timer-secs">—</span>
@@ -1122,6 +1135,8 @@ function setPausa(on, motivo) {
   renderTimer();
 }
 
+tecladoEnGrupo(document.querySelector('.ritmo-bar'), '[role="radio"]', true);
+
 function setRitmo(modo) {
   ritmoReloj = modo === 'reloj';
   try { localStorage.setItem(RITMO_KEY, modo); } catch (e) {}
@@ -1132,7 +1147,10 @@ function setRitmo(modo) {
 function pintaRitmo() {
   const modo = ritmoReloj ? 'reloj' : 'calma';
   document.querySelectorAll('[data-ritmo]').forEach(function (p) {
-    p.classList.toggle('active', p.dataset.ritmo === modo);
+    const on = p.dataset.ritmo === modo;
+    p.classList.toggle('active', on);
+    p.setAttribute('aria-checked', on ? 'true' : 'false');
+    p.tabIndex = on ? 0 : -1;      // roving: una parada para el grupo
   });
   const t = document.getElementById('q-timer');
   t.classList.toggle('modo-reloj', ritmoReloj);
@@ -1222,14 +1240,50 @@ function buildTrays() {
       const el = makePiece({ role, label }, false);
       container.appendChild(el);
     });
+    // Interruptores independientes: moverse NO anade la pieza, Enter si.
+    const primera = container.querySelector('.piece');
+    if (primera) primera.tabIndex = 0;
+    tecladoEnGrupo(container, '.piece', false);
+    container.setAttribute('role', 'toolbar');
+    container.setAttribute('aria-label', `Piezas de ${meta.name}`);
   });
 }
 
 // ═══════════════════════════════════════════════════════
 // PIECE FACTORY
 // ═══════════════════════════════════════════════════════
+// ── Navegacion entre grupos de controles (ver SKILL.md) ──────────────────
+function tecladoEnGrupo(contenedor, selector, seleccionaAlMover) {
+  if (!contenedor || contenedor.dataset.tecladoListo) return;
+  contenedor.dataset.tecladoListo = '1';
+  const items = () => [...contenedor.querySelectorAll(selector)]
+                        .filter(b => b.offsetParent !== null && !b.disabled);
+  contenedor.addEventListener('keydown', e => {
+    const lista = items();
+    const i = lista.indexOf(document.activeElement);
+    if (i < 0) return;
+    const saltos = { ArrowRight: i+1, ArrowDown: i+1, ArrowLeft: i-1,
+                     ArrowUp: i-1, Home: 0, End: lista.length-1 };
+    if (!(e.key in saltos)) return;
+    e.preventDefault();
+    const destino = lista[Math.min(lista.length-1, Math.max(0, saltos[e.key]))];
+    lista.forEach(b => b.tabIndex = (b === destino ? 0 : -1));
+    destino.focus();
+    if (seleccionaAlMover) destino.click();
+  });
+  contenedor.addEventListener('focusin', e => {
+    const lista = items();
+    if (lista.includes(e.target)) lista.forEach(b => b.tabIndex = (b === e.target ? 0 : -1));
+  });
+}
+
 function makePiece(data, inAssembly) {
-  const el = document.createElement('div');
+  // Las de la paleta son <button>: ya tenian click de respaldo ademas del
+  // arrastre, asi que con teclado funcionan sin inventar nada.
+  // Las del montaje siguen siendo <div> porque llevan dentro el boton de
+  // quitar, y un boton dentro de otro es HTML invalido.
+  const el = document.createElement(inAssembly ? 'div' : 'button');
+  if (!inAssembly) el.type = 'button';
   el.className = `piece piece-${data.role}`;
   el.dataset.role = data.role;
   el.dataset.label = data.label;
@@ -1249,8 +1303,9 @@ function makePiece(data, inAssembly) {
     el.addEventListener('touchstart', onTouchStart, { passive: false });
     el.addEventListener('touchmove', onTouchMove, { passive: false });
     el.addEventListener('touchend', onTouchEnd);
-    // Click fallback
     el.addEventListener('click', () => addPiece(data.role, data.label));
+    el.setAttribute('aria-label', `Añadir ${data.role}: ${data.label}`);
+    el.tabIndex = -1;                     // barra: una parada para la paleta
   }
 
   return el;
