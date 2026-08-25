@@ -9,13 +9,19 @@
 </head>
 <body>
 
-<div class="page-wrap">
+<div class="page-wrap" id="page-wrap">
   <header>
   <div class="header-topbar">
     <a href="./../index.html">← inicio</a>
-    <span class="sep">·</span> hAppYpUkIng · Lab
-    <span class="sep">//</span>
-    LEARN · EXPAND · VOMIT HAPPINESS
+    <span class="sep">·</span>
+    <span class="topbar-marca">hAppYpUkIng · Lab</span>
+    <span class="sep topbar-sep-claim">//</span>
+    <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
+    <button class="plegar" id="plegar" type="button" aria-expanded="true"
+            aria-controls="page-wrap" aria-label="Plegar la cabecera y la explicación">
+      <span class="plegar-texto">Plegar</span>
+      <span class="plegar-chevron" aria-hidden="true">▲</span>
+    </button>
   </div>
   <h1 class="header-title">Tablas de Multiplicar</h1>
   <p class="header-subtitle">La tabla pitagórica — descubre los patrones y despeja el campo</p>
@@ -31,44 +37,21 @@
     <button class="mode-btn" id="mode-caza">Caza topos</button>
   </div>
 
-  <div class="mode-intro" id="explore-intro">
+  <div class="mode-intro" id="explore-intro" data-plegable>
     <p>Esto no es una lista de 100 multiplicaciones que memorizar: es un mapa con patrones. La diagonal son los cuadrados, y todo lo que hay a un lado se refleja al otro.</p>
     <p><strong>Si sabes 7×8, ya sabes 8×7.</strong> Por eso no hay 100 resultados que aprender, hay 55. Cuando lo veas, pasa a <strong>Minas gemelas</strong> y compruébalo.</p>
   </div>
 
-  <div class="mode-intro" id="conquista-intro">
+  <div class="mode-intro" id="conquista-intro" data-plegable>
     <p>El campo tiene 100 casillas, pero solo <strong>55 minas distintas</strong>: casi todas están duplicadas al otro lado de la diagonal. Desactiva una y <strong>su gemela cae sola</strong>.</p>
     <p>Las 10 de la diagonal van solas: son los cuadrados, no tienen reflejo. Acierta el resultado para desactivar.</p>
   </div>
 
-  <div class="mode-intro" id="caza-intro">
+  <div class="mode-intro" id="caza-intro" data-plegable>
     <p>Ahora al revés: te damos un número y <strong>tú buscas todos los huecos donde se esconde</strong>. El 12 vive en cuatro; el 49, en uno solo.</p>
     <p>Esto es lo mismo que preguntarse <strong>por cuánto hay que multiplicar para llegar ahí</strong> — o sea, dividir. Si fallas un hueco, te enseñamos quién vivía dentro.</p>
   </div>
 
-  <!-- Stats -->
-  <div class="stats-row" id="stats-row">
-    <div class="stat-pill">
-      <span class="dot" style="background:var(--muted)"></span>
-      Total de celdas:
-      <span class="count" style="color:var(--text)">100</span>
-    </div>
-    <div class="stat-pill">
-      <span class="dot" style="background:var(--comm-a)"></span>
-      Únicas (triángulo superior):
-      <span class="count" style="color:#93c5fd">45</span>
-    </div>
-    <div class="stat-pill">
-      <span class="dot" style="background:var(--square-color)"></span>
-      Cuadrados perfectos:
-      <span class="count" style="color:var(--square-color)">10</span>
-    </div>
-    <div class="stat-pill">
-      <span class="dot" style="background:var(--same-result)"></span>
-      Resultados con varias combinaciones:
-      <span class="count" style="color:#f9a8d4" id="dup-count">—</span>
-    </div>
-  </div>
 
   <!-- Controls -->
   <div class="controls">
@@ -205,6 +188,32 @@
 
     <!-- COL 3: repeated results — visible only when relevant -->
     <div class="right-col">
+      <!-- Datos, no controles: antes eran pildoras con borde y parecian
+           botones pulsables al lado de los de leyenda, que si lo son. -->
+      <div class="panel-box" id="stats-row">
+        <h3>La tabla en números</h3>
+        <div class="stat-fila">
+          <span class="dot" style="background:var(--muted)"></span>
+          <span class="stat-etiqueta">Total de celdas</span>
+          <span class="count" style="color:var(--text)">100</span>
+        </div>
+        <div class="stat-fila">
+          <span class="dot" style="background:var(--comm-a)"></span>
+          <span class="stat-etiqueta">Únicas (triángulo superior)</span>
+          <span class="count" style="color:#93c5fd">45</span>
+        </div>
+        <div class="stat-fila">
+          <span class="dot" style="background:var(--square-color)"></span>
+          <span class="stat-etiqueta">Cuadrados perfectos</span>
+          <span class="count" style="color:var(--square-color)">10</span>
+        </div>
+        <div class="stat-fila">
+          <span class="dot" style="background:var(--same-result)"></span>
+          <span class="stat-etiqueta">Resultados con varias combinaciones</span>
+          <span class="count" style="color:#f9a8d4" id="dup-count">—</span>
+        </div>
+      </div>
+
       <div class="panel-box" id="right-col-panel">
         <h3><span class="dot" style="background:var(--same-result)"></span>Se repite en…</h3>
         <div id="dup-panel" style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);line-height:1.9;max-height:320px;overflow-y:auto;padding-right:0.3rem"></div>
@@ -238,6 +247,32 @@
 </footer>
 
 <script>
+// ── Cabecera plegable ─────────────────────────────────────────────────────
+// La eleccion se recuerda y es COMPARTIDA por el laboratorio: quien pliega
+// una vez no quiere volver a plegar en cada herramienta.
+(function () {
+  const KEY = 'hpk-compacto';
+  const btn = document.getElementById('plegar');
+  if (!btn) return;                       // sin boton no se rompe nada
+  let compacto = false;
+  try { compacto = localStorage.getItem(KEY) === 'si'; } catch (e) {}
+
+  function pinta() {
+    document.body.classList.toggle('compacto', compacto);
+    btn.setAttribute('aria-expanded', compacto ? 'false' : 'true');
+    btn.setAttribute('aria-label', compacto
+      ? 'Desplegar la cabecera y la explicación'
+      : 'Plegar la cabecera y la explicación');
+    btn.querySelector('.plegar-texto').textContent = compacto ? 'Desplegar' : 'Plegar';
+  }
+  btn.addEventListener('click', () => {
+    compacto = !compacto;
+    try { localStorage.setItem(KEY, compacto ? 'si' : 'no'); } catch (e) {}
+    pinta();
+  });
+  pinta();
+})();
+
 // ── Glitch ────────────────────────────────────────────────────────────────
 // Clave COMPARTIDA con el resto del lab: quien la esconde en el indice la
 // esconde en todas partes, no once veces.
@@ -292,7 +327,7 @@ const dupMap = buildDupMap(allResultMap);
 
 // Count duplicates for stat pill
 const dupResultCount = Object.keys(dupMap).length;
-document.getElementById('dup-count').textContent = dupResultCount + ' resultados';
+document.getElementById('dup-count').textContent = dupResultCount;
 
 
 

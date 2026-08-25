@@ -80,38 +80,7 @@
   .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
   /* ── STAT PILLS ── */
-  .stats-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    justify-content: center;
-    margin-bottom: 1.4rem;
-  }
 
-  .stat-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 0.45rem 1rem;
-    font-size: 0.8rem;
-    font-weight: 700;
-    transition: all 0.2s;
-  }
-
-  .stat-pill .dot {
-    width: 9px; height: 9px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .stat-pill .count {
-    font-family: 'DM Mono', monospace;
-    font-size: 1rem;
-    font-weight: 600;
-  }
 
   /* ── LEGEND / CONTROLS ── */
   .controls {
@@ -490,7 +459,10 @@
     display: flex;
     flex-wrap: wrap;
     gap: 3px;
-    flex: 1;
+    /* Sin "flex: 1": estiraba y empujaba la flecha al borde derecho, dejando
+       un hueco variable en medio. Ahora la flecha va pegada a los puntos y
+       todas las filas empiezan en la misma x. */
+    flex: none;
   }
 
   .suma-dot {
@@ -506,11 +478,18 @@
     font-size: 0.72rem;
     color: var(--muted);
     white-space: nowrap;
-    min-width: 48px;
-    text-align: right;
+    text-align: left;
   }
 
+  /* El resultado en su propia columna, alineado a la derecha y con cifras
+     tabulares: asi las unidades caen unas debajo de otras sin rellenar con
+     espacios, que se descuadran al cambiar de fuente o de zoom.
+     3ch cubre hasta 100, el maximo de la tabla. */
   .suma-arrow .acc {
+    display: inline-block;
+    min-width: 3ch;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
     color: #a78bfa;
     font-weight: 700;
   }
@@ -580,7 +559,6 @@
   #conq-panel, #caza-panel, #conq-progress, #caza-progress { display: none; }
 
   body.mode-tablero #explore-intro,
-  body.mode-tablero .stats-row,
   body.mode-tablero .controls,
   body.mode-tablero #cell-detail,
   body.mode-tablero #suma-visual-box,
@@ -1006,4 +984,108 @@ body.sin-mascota .mascota-res { display: none; }
 /* Solo en ventanas de verdad estrechas: la decoracion cede, el control no. */
 @media (max-height: 420px) {
   .pausa-glitch { display: none; }
+}
+
+/* ── CABECERA PLEGABLE ─────────────────────────────────────────────────────
+   En movil la cabecera y la explicacion se comen 939px antes del tablero: mas
+   de una pantalla de scroll para llegar a la herramienta. Plegada deja el
+   topbar y el breadcrumb, que es lo unico que hace falta jugando.
+
+   SISTEMA PARA REPLICAR EN OTRAS HERRAMIENTAS:
+     1. copiar este bloque (header-title y header-subtitle son comunes a todas)
+     2. marcar con data-plegable lo propio de cada herramienta: explicaciones,
+        estadisticas, leyendas... lo que se lee una vez y no se vuelve a mirar
+     3. copiar el boton .plegar del topbar y el modulo JS
+   Nada mas. Lo que no se marque, se queda. */
+/* El padding derecho reserva el sitio del boton: sin el, el texto centrado
+   del topbar pasa por debajo (comprobado: 53px de solape a 700px de ancho). */
+.header-topbar { position: relative; padding-right: 88px; }
+
+.plegar {
+  position: absolute; right: 0; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  /* 44x44 reales aunque el dibujo sea pequeno: es un control, y no vamos a
+     repetir en el boton nuevo el problema que acabamos de auditar. */
+  min-height: 44px; min-width: 44px;
+  justify-content: center;
+  padding: 0 0.6rem;
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted2, #8880a0);
+  transition: color 0.2s;
+}
+.plegar:hover { color: var(--cyan, #22D3EE); }
+.plegar:focus-visible {
+  outline: 2px solid var(--cyan, #22D3EE);
+  outline-offset: 2px; border-radius: 6px;
+}
+.plegar-chevron {
+  display: inline-block;
+  /* Grande de verdad: a 0.62rem el chevron era un punto y no se veia que
+     fuera pulsable. Magenta porque vive en la franja de identidad, donde los
+     enlaces ya usan magenta; el foco se queda cyan, que es lo que dice la
+     jerarquia. */
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--magenta, #E040FB);
+  transition: transform 0.25s ease;
+}
+.plegar:hover .plegar-chevron { filter: brightness(1.25); }
+body.compacto .plegar-chevron { transform: rotate(180deg); }
+
+body.compacto .header-title,
+body.compacto .header-subtitle,
+body.compacto [data-plegable] { display: none; }
+body.compacto header { padding-bottom: 0.4rem; }
+
+/* El texto del boton se retira antes de que el topbar empiece a apretar; el
+   chevron y el aria-label siguen diciendo lo mismo. */
+@media (max-width: 900px) {
+  .plegar-texto { display: none; }
+  .header-topbar { padding-right: 52px; }
+}
+/* El topbar se amontonaba en cuatro lineas en un movil: el claim y la marca
+   son decoracion, y el breadcrumb de debajo ya dice donde estas. Se retiran
+   por orden de prescindibilidad, no de golpe. */
+@media (max-width: 620px) {
+  .topbar-claim, .topbar-sep-claim { display: none; }
+}
+/* En un movil de 375px habia 112px de padding horizontal entre html,
+   .page-wrap y header: el 30% de la pantalla. Recuperandolo, el topbar pasa de
+   215 a 299px y la marca vuelve a caber, que es justo lo que hace falta
+   plegado: sin el titulo, "← inicio" solo no dice donde estas. */
+@media (max-width: 640px) {
+  html { padding-left: 10px; padding-right: 10px; }
+  .page-wrap { padding-left: 10px; padding-right: 10px; }
+  header { padding-left: 4px; padding-right: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plegar-chevron { transition: none; }
+}
+
+/* ── ESTADISTICAS COMO DATO ────────────────────────────────────────────────
+   Filas dentro de una card, no pildoras con borde: tenian la misma forma que
+   los botones de leyenda que hay al lado, y esos si son pulsables. La forma
+   prometia algo que el elemento no hacia. */
+.stat-fila {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.45rem 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  border-bottom: 1px solid var(--border);
+}
+.stat-fila:last-child { border-bottom: none; padding-bottom: 0; }
+.stat-fila .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex: none; align-self: center;
+}
+.stat-etiqueta { flex: 1; color: var(--muted); }
+.stat-fila .count {
+  font-family: 'DM Mono', monospace;
+  font-weight: 700;
+  white-space: nowrap;
 }
