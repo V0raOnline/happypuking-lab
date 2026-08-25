@@ -850,3 +850,35 @@ body.compacto header { padding-bottom: 0.4rem; }
   }
   .aviso-apaisado span { font-size: 1.1rem; flex: none; }
 }
+
+/* Los elementos son <button> desde que se pueden usar con teclado: fuera el
+   estilo nativo, que traia fuente y fondo propios. */
+button.el {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+/* El foco tiene que verse sobre la tabla, tape lo que tape. */
+.el:focus-visible {
+  outline: 3px solid #22D3EE;
+  outline-offset: 1px;
+  z-index: 6;
+}
+
+/* Leyenda y chips de valencia son <button> desde que se pueden usar con
+   teclado: filtran la tabla, nunca fueron decoracion. */
+button.legend-item, button.val-chip {
+  /* Solo lo que impone el navegador. "font: inherit" y "color: inherit"
+     tenian mas especificidad que .legend-item y le borraban el tamano, el
+     peso y el color del diseno: los pills salian sin texto legible. */
+  appearance: none;
+  background: none;
+  margin: 0;
+  font-family: inherit;
+  text-align: left;
+}
+.legend-item:focus-visible, .val-chip:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
+}
