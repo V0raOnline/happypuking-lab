@@ -1048,6 +1048,24 @@ footer {
   .slider-row { grid-template-columns: 18px 112px 1fr 16px; }
   h1 { font-size: 1.15rem; }
 }
+
+/* ── FOCO VISIBLE ──────────────────────────────────────────────────────────
+   Todo lo que se puede enfocar tiene que verse al enfocarlo. Sin esto se
+   podia tabular por la herramienta entera sin ninguna senal de donde estabas:
+   indistinguible de "el teclado no llega aqui".
+   Cian, que es lo que dice la jerarquia de color para el foco.
+   :focus-visible y no :focus — solo aparece con teclado, no al hacer clic. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 </style>
 </head>
 <body>
