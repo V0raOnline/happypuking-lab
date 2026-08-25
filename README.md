@@ -257,6 +257,22 @@ laboratorio de una vez.
 
 ---
 
+## ☕ Invitar a un café
+
+Todo esto es gratis y va a seguir siéndolo. Detrás no hay una startup: hay una
+madre robando horas de sueño y pagando suscripciones.
+
+Si algo de aquí te ha servido, te ha ahorrado tiempo o te ha salvado un examen,
+puedes invitarme a un café.
+
+**[ko-fi.com/v0raonline](https://ko-fi.com/v0raonline)**
+
+Una cosa importante: las propinas no te suscriben a nada. No uso, exporto ni
+almaceno los emails de quien apoya el proyecto. Solo quiero café, no que seamos
+amigos para siempre.
+
+---
+
 ## 📄 Licencia
 
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
