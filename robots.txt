@@ -1,0 +1,6 @@
+# hAppYpUkIng Lab
+# Todo el laboratorio es publico y esta para que se use. Adelante.
+User-agent: *
+Allow: /
+
+Sitemap: https://v0raonline.github.io/happypuking-lab/sitemap.xml

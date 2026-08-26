@@ -162,6 +162,16 @@ qui/qui-elementos-tarjetas.html?modo=valence  # electrones de valencia
 
 ---
 
+## ⭐ Si te sirve, deja una estrella
+
+No cuesta nada, no me da tu correo y no te suscribe a nada. Es la única señal
+que me llega de que al otro lado hay alguien: una manera muy estúpida de decir
+"te he visto, y me gusta lo que estás haciendo".
+
+Si te has llevado algo de aquí, déjala. Se tarda un segundo.
+
+---
+
 ## 🧠 Sección ND — Neurodivergencia
 
 Recursos explicativos sobre neurodivergencia — no clínicos, no diagnósticos.  
