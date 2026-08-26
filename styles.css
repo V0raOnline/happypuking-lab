@@ -2,7 +2,6 @@
   hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
   Copyright (c) 2024-2026 V0ra (v0raonline)
   Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
-  hpk-id: 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 */
   :root {
     --bg: #050408;
@@ -103,7 +102,8 @@
   .cab-sub {
     font-family: 'DM Mono', monospace;
     /* Minimo 0.72rem: por debajo, en versalitas y con espaciado, deja de
-       leerse comodo en un movil. */
+       leerse comodo en un movil.
+       V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
     font-size: clamp(0.72rem, 1.1vw, 0.8rem);
     color: var(--muted);
     letter-spacing: 0.12em;
@@ -410,7 +410,11 @@
   }
 
 
-  /* ── DOMAIN LANES ── */
+  /* ── DOMAIN LANES ────────────────────────────────────────
+     Las calles por materia. Comparten rejilla con el catalogo pero cambian
+     el eje: alli manda la necesidad, aqui la asignatura.
+     V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
+  ── */
   .domain-lane {
     margin-top: 2.4rem;
   }
@@ -585,7 +589,8 @@
   }
 /* ── ¿QUÉ NECESITAS HOY? ──────────────────────────────────────────────────── */
 /* Entrada por problema, no por materia. Nadie navega un catálogo: se llega
-   con una necesidad concreta. Esta capa va ANTES del catálogo a propósito. */
+   con una necesidad concreta. Esta capa va ANTES del catálogo a propósito.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 .necesito {
   max-width: 1100px;
   margin: 0 auto;

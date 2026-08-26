@@ -2,17 +2,15 @@
 <!--
   hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
   Copyright (c) 2024-2026 V0ra (v0raonline)
-
-  Licencia CC BY-NC-SA 4.0 — se puede usar, copiar y adaptar, citando la
-  fuente y SIN FINES COMERCIALES. Si lo adaptas, se comparte igual.
-  https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
-
-  hpk-id: 09ebf6c6-80eb-4383-b93c-5d8e1085c678
+  Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="V0ra (v0raonline)">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
 <title>Verbos Irregulares — Quiz · hAppYpUkIng Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
@@ -202,6 +200,7 @@ header p { color: var(--muted); font-size: 0.75rem; font-weight: 600; }
 
 /* Family filter list */
 /* Ahora son <button>: se neutraliza solo el cromo nativo que la regla
+V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    original nunca declaro, siendo <div>. */
 button.family-filter-item {
   appearance: none; background: none; color: inherit;
@@ -1020,6 +1019,7 @@ body.en-pausa .pausa-overlay { display: flex; }
 
 /* ── GLITCH ────────────────────────────────────────────────────────────────
    Vive donde hay reloj, y solo en dos momentos raros y centrales: la pausa y
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    la ficha de resultados. Es decoracion: aria-hidden y si se apaga, la
    herramienta se comporta igual. */
 .pausa-glitch {
@@ -1466,6 +1466,7 @@ const GLITCH = { celebracion: '../assets/glitch/celebracion.png',
 Object.values(GLITCH).forEach(src => { const i = new Image(); i.src = src; });
 
 // 'hmmm' y no 'error': el dibujo dice "esto no encajo, otra vez".
+// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 function pintaGlitch(id, pct) {
   const el = document.getElementById(id);
   if (!el) return;   // decoracion: si no esta, no puede tumbar nada

@@ -2,7 +2,6 @@
   hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
   Copyright (c) 2024-2026 V0ra (v0raonline)
   Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
-  hpk-id: 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 */
   :root {
     --bg: #080d08;
@@ -144,6 +143,7 @@
 
   /* ══════════════════════════════
      EXPLORADOR — VISTA A
+     V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   ══════════════════════════════ */
   .section-nav {
     display: flex;
@@ -713,6 +713,7 @@
    En movil la cabecera se come pantalla antes de llegar a la herramienta.
    Plegada deja el topbar y el breadcrumb. La preferencia va en hpk-compacto,
    compartida por todo el laboratorio.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    Aqui se pliegan solo titulo y subtitulo: estas herramientas entran directas
    al contenido. Lo que no se marque con data-plegable, se queda. */
 .header-topbar { position: relative; padding-right: 88px; }
@@ -749,6 +750,7 @@ body.compacto header { padding-bottom: 0.4rem; }
 @media (prefers-reduced-motion: reduce) { .plegar-chevron { transition: none; } }
 
 /* ── FOCO VISIBLE ──────────────────────────────────────────────────────────
+V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    Todo lo que se puede enfocar tiene que verse al enfocarlo. Sin esto se
    podia tabular por la herramienta entera sin ninguna senal de donde estabas:
    indistinguible de "el teclado no llega aqui".

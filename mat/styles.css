@@ -2,7 +2,6 @@
   hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
   Copyright (c) 2024-2026 V0ra (v0raonline)
   Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
-  hpk-id: 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 */
   :root {
     --bg: #080A0F;
@@ -137,6 +136,7 @@
   }
 
   /* La caja "¿Por que no son 100?" cruza las tres columnas: es la tesis de
+  V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
      la herramienta, no una nota al margen. Va en su propia fila del grid. */
   .outer-layout > .insight-box { grid-column: 1 / -1; }
 
@@ -466,6 +466,7 @@
     flex-wrap: wrap;
     gap: 3px;
     /* Sin "flex: 1": estiraba y empujaba la flecha al borde derecho, dejando
+    V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
        un hueco variable en medio. Ahora la flecha va pegada a los puntos y
        todas las filas empiezan en la misma x. */
     flex: none;
@@ -831,6 +832,7 @@
   body.caza-pausa .caza-timer-fill { background: var(--muted2); }
 
   /* Al pausar se tapa TODA la zona de juego, no solo la rejilla: en Minas la
+  V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
      accion pasa en el panel de la derecha, y un aviso sobre la tabla (ya oscura)
      no se ve. Si el juego se para, tiene que verse donde el ojo esta puesto. */
   .outer-layout { position: relative; }

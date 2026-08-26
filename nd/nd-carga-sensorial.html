@@ -2,17 +2,15 @@
 <!--
   hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
   Copyright (c) 2024-2026 V0ra (v0raonline)
-
-  Licencia CC BY-NC-SA 4.0 — se puede usar, copiar y adaptar, citando la
-  fuente y SIN FINES COMERCIALES. Si lo adaptas, se comparte igual.
-  https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
-
-  hpk-id: 09ebf6c6-80eb-4383-b93c-5d8e1085c678
+  Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="V0ra (v0raonline)">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
 <title>Modelo Interactivo de Carga Sensorial · hAppYpUkIng</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1073,6 +1071,7 @@ footer {
 }
 
 /* ── FOCO VISIBLE ──────────────────────────────────────────────────────────
+V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    Todo lo que se puede enfocar tiene que verse al enfocarlo. Sin esto se
    podia tabular por la herramienta entera sin ninguna senal de donde estabas:
    indistinguible de "el teclado no llega aqui".
@@ -1639,6 +1638,7 @@ function update() {
   var costBuf = getCostTotal();
 
   // Prefiltro neurológico — varía con amortiguadores naturales
+  // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   var baseFilter = mode === 'nt' ? NT_BASE_FILTER : DPS_BASE_FILTER;
   var neuralFilter = Math.min(baseFilter + natBuf * 0.5, mode === 'nt' ? 96 : 62);
   neuralFilter = Math.round(neuralFilter);

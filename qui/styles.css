@@ -2,7 +2,6 @@
   hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
   Copyright (c) 2024-2026 V0ra (v0raonline)
   Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
-  hpk-id: 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 */
 :root {
   --bg: #080A0F;
@@ -506,6 +505,7 @@ header {
 
 @media (max-width: 900px) {
   /* Al pasar a columna hay que soltar el align-items:flex-start heredado: en
+  V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
      eje columna hace que los hijos midan lo que su CONTENIDO, asi que
      .table-wrap se hinchaba a 915px, su overflow-x nunca entraba en juego y
      la tabla se desbordaba hasta que el body la recortaba a mitad de
@@ -678,6 +678,7 @@ header {
 .legend.hidden { display: none; }
 
 /* Pill iluminado al seleccionar un elemento (modos Familias y Valencia).
+V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    Mismo gesto que el pin sobre la barra de electronegatividad. */
 .legend-item.selected,
 .val-chip.selected {
@@ -824,6 +825,7 @@ body.compacto header { padding-bottom: 0.4rem; }
   .topbar-claim, .topbar-sep-claim { display: none; }
 }
 /* Solo el header. La regla de "html" que hay en mates NO se copia aqui: alli
+V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    el html traia 24px de padding y habia que recuperarlos; aqui viene a 0, asi
    que ponerle 10px le QUITABA 20px de ancho en vez de devolverselos.
    Un arreglo especifico no se copia sin medir si aplica. */
