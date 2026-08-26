@@ -655,7 +655,16 @@ footer {
   gap: 0.6rem;
 }
 
+/* Las nueve categorias son opciones excluyentes: grupo de radio. Eran <div>
+   con onclick, generados con innerHTML, asi que ni entraban en el tabulador ni
+   se anunciaban como pulsables.
+   El reset toca solo lo que impone el navegador a un <button>: la tipografia,
+   el color y el centrado. Fondo, borde y relleno ya los pone esta regla. */
 .cat-card {
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1518,7 +1527,7 @@ summary:focus-visible,
         <button class="toggle-btn active" onclick="setExploraMode('morfologia')">Morfología</button>
         <button class="toggle-btn" onclick="setExploraMode('sintaxis')">Sintaxis</button>
       </div>
-      <div class="cat-grid" id="cat-grid"></div>
+      <div class="cat-grid" id="cat-grid" role="radiogroup" aria-label="Categorias"></div>
     </div>
 
     <div class="explora-sidebar">
@@ -2421,6 +2430,43 @@ function construirSelector() {
   `).join('');
 }
 
+/* La rejilla se reconstruye entera al cambiar de morfologia a sintaxis, asi
+   que el tabindex movil se rehace DESPUES de que existan las tarjetas. Ponerlo
+   antes deja el grupo sin ninguna parada de tabulador: es un error que ya
+   cometimos dos veces en otras herramientas. */
+function sincronizaCategorias() {
+  const cards = Array.prototype.slice.call(document.querySelectorAll('.cat-card'));
+  if (!cards.length) return;
+  cards.forEach(c => c.setAttribute('aria-checked', c.classList.contains('activa') ? 'true' : 'false'));
+  const foco = cards.find(c => c.classList.contains('activa')) || cards[0];
+  cards.forEach(c => { c.tabIndex = (c === foco ? 0 : -1); });
+}
+
+/* Delegado, porque las tarjetas se destruyen y se vuelven a crear: un listener
+   por tarjeta se perderia en cada reconstruccion. */
+(function () {
+  const grid = document.getElementById('cat-grid');
+  if (!grid) return;
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.cat-card');
+    if (card) seleccionarCat(card.id.replace('cat-', ''));
+  });
+  grid.addEventListener('keydown', e => {
+    const cards = Array.prototype.slice.call(grid.querySelectorAll('.cat-card'));
+    const i = cards.indexOf(document.activeElement);
+    if (i < 0) return;
+    let j = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % cards.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + cards.length) % cards.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = cards.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    seleccionarCat(cards[j].id.replace('cat-', ''));
+    cards[j].focus();
+  });
+})();
+
 function cargarOracion(idx) {
   oracionActual = idx;
   pasoActual = 0;
@@ -2640,12 +2686,14 @@ function construirExplora() {
   const grid = document.getElementById('cat-grid');
 
   grid.innerHTML = datos.map(d => `
-    <div class="cat-card" id="cat-${d.id}" style="--c:${d.color}" onclick="seleccionarCat('${d.id}')">
+    <button type="button" class="cat-card" id="cat-${d.id}" style="--c:${d.color}"
+            role="radio" aria-checked="false" tabindex="-1">
       <div class="cat-nombre">${d.nombre}</div>
       <div class="cat-desc">${d.definicion.substring(0, 70)}…</div>
       ${d.ejemplos_ej ? `<div class="cat-ejemplos">${d.ejemplos_ej.slice(0,3).map(e => `<span class="cat-ej">${e}</span>`).join('')}</div>` : ''}
-    </div>
+    </button>
   `).join('');
+  sincronizaCategorias();
 }
 
 function seleccionarCat(id) {
@@ -2672,6 +2720,7 @@ function seleccionarCat(id) {
 
   // Renderizar relaciones
   renderRelaciones(d);
+  sincronizaCategorias();
 }
 
 function renderDetalle(d) {

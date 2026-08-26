@@ -86,9 +86,11 @@
 
   <!-- Info panel -->
   <div class="info-panel">
-    <div class="mode-tabs">
-      <div class="mode-tab active" id="tab-ficha" onclick="setMode('ficha')">Ficha</div>
-      <div class="mode-tab" id="tab-comparar" onclick="setMode('comparar')">Comparar</div>
+    <div class="mode-tabs" role="radiogroup" aria-label="Modo de exploracion">
+      <button type="button" class="mode-tab active" id="tab-ficha" role="radio"
+              aria-checked="true" tabindex="0">Ficha</button>
+      <button type="button" class="mode-tab" id="tab-comparar" role="radio"
+              aria-checked="false" tabindex="-1">Comparar</button>
     </div>
 
     <div class="panel-box" id="panel-main">
@@ -109,7 +111,6 @@
 <script>
 
 // -- Cabecera plegable -----------------------------------------------------
-// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // La eleccion se recuerda y es COMPARTIDA por el laboratorio: quien pliega
 // una vez no quiere volver a plegar en cada herramienta.
 (function () {
@@ -228,8 +229,41 @@ function setMode(m) {
   mode = m;
   document.getElementById('tab-ficha').classList.toggle('active', m === 'ficha');
   document.getElementById('tab-comparar').classList.toggle('active', m === 'comparar');
+  sincronizaModos();
   render();
 }
+
+/* Ficha y Comparar son excluyentes: grupo de radio. Eran <div> con onclick, o
+   sea invisibles para el tabulador y mudos para un lector. Una sola parada,
+   flechas para cambiar, y aria-checked diciendo cual esta puesto.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
+function sincronizaModos() {
+  const modos = [document.getElementById('tab-ficha'), document.getElementById('tab-comparar')];
+  modos.forEach(b => {
+    const on = b.classList.contains('active');
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+    b.tabIndex = on ? 0 : -1;
+  });
+}
+
+document.getElementById('tab-ficha').addEventListener('click', () => setMode('ficha'));
+document.getElementById('tab-comparar').addEventListener('click', () => setMode('comparar'));
+
+document.querySelector('.mode-tabs').addEventListener('keydown', e => {
+  const modos = [document.getElementById('tab-ficha'), document.getElementById('tab-comparar')];
+  const i = modos.indexOf(document.activeElement);
+  if (i < 0) return;
+  if (!/^(ArrowRight|ArrowDown|ArrowLeft|ArrowUp|Home|End)$/.test(e.key)) return;
+  e.preventDefault();
+  const j = (e.key === 'Home') ? 0
+          : (e.key === 'End') ? modos.length - 1
+          : (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? (i + 1) % modos.length
+          : (i - 1 + modos.length) % modos.length;
+  setMode(j === 0 ? 'ficha' : 'comparar');
+  modos[j].focus();
+});
+
+sincronizaModos();
 
 // ── VENN SVG ──
 const positions = {

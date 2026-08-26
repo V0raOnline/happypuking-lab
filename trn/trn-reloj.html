@@ -190,7 +190,15 @@
 
   .controls-row { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
 
+  /* Los dos conmutadores eran <div> con onclick: ni foco, ni Enter, ni nombre.
+     Como <button> el navegador impone su propia tipografia, y esta regla no
+     fijaba font-family -la heredaba del documento-, asi que hay que pedirla.
+     El resto -fondo, borde, relleno, color- ya lo pone la regla mas abajo.
+     V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
   .format-switch {
+    font-family: inherit;
+    margin: 0;
+    text-align: start;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -385,7 +393,6 @@
   }
 
 /* -- CABECERA PLEGABLE ----------------------------------------------------
-V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    En movil la cabecera se come pantalla antes de llegar a la herramienta.
    Plegada deja el topbar y el breadcrumb. La preferencia va en hpk-compacto,
    compartida por todo el laboratorio.
@@ -527,8 +534,8 @@ summary:focus-visible,
         <span id="dig-ampm" style="font-size:1.2rem;opacity:0.5;margin-left:0.3rem">AM</span>
       </span>
       <div class="controls-row">
-        <div class="format-switch" id="ampm-switch" onclick="toggleAMPM()"><span id="ampm-label">AM → PM</span></div>
-        <div class="format-switch" id="format-switch" onclick="toggleFormat()"><span id="format-label">12h → 24h</span></div>
+        <button type="button" class="format-switch" id="ampm-switch"><span id="ampm-label">AM → PM</span></button>
+        <button type="button" class="format-switch" id="format-switch"><span id="format-label">12h → 24h</span></button>
       </div>
     </div>
   </div>
@@ -579,7 +586,6 @@ summary:focus-visible,
 <script>
 
 // -- Cabecera plegable -----------------------------------------------------
-// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // La eleccion se recuerda y es COMPARTIDA por el laboratorio: quien pliega
 // una vez no quiere volver a plegar en cada herramienta.
 (function () {
@@ -794,7 +800,10 @@ function onPointerMove(e) {
 }
 
 function onPointerUp() { dragging = null; }
+// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 function toggleAMPM() { isAM = !isAM; render(); }
+document.getElementById('ampm-switch').addEventListener('click', toggleAMPM);
+document.getElementById('format-switch').addEventListener('click', toggleFormat);
 function toggleFormat() { format24 = !format24; document.getElementById('format-label').textContent = format24 ? '24h → 12h' : '12h → 24h'; render(); }
 function setLang(l) {
   lang = l;
