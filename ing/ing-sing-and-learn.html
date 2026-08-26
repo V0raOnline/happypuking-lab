@@ -11,7 +11,19 @@
 <meta name="author" content="V0ra (v0raonline)">
 <meta name="copyright" content="CC BY-NC-SA 4.0">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-<title>sing & learn — hAppYpUkIng Lab</title>
+<title>Aprender inglés cantando: generador de canciones</title>
+<meta name="description" content="Genera la letra de una canción con los verbos irregulares que estés estudiando: eliges familia, género musical y estribillo. Gratis y sin registro.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hAppYpUkIng Lab">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/ing/ing-sing-and-learn.html">
+<meta property="og:title" content="Aprender inglés cantando: generador de canciones">
+<meta property="og:description" content="Genera la letra de una canción con los verbos irregulares que estés estudiando: eliges familia, género musical y estribillo. Gratis y sin registro.">
+<meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/readme-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="484">
+<meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
+<meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -184,6 +196,11 @@ main {
 .step.open .step-locked-hint { display: none; }
 .step.open .step-chevron { transform: rotate(0deg); }
 
+/* La cabecera de cada paso abre y cierra su cuerpo: es un boton, no un div con
+   onclick. Antes no se podia llegar a ella con el tabulador, ni activarla con
+   Enter, ni saber si el paso estaba abierto o cerrado sin ver el chevron.
+   El reset toca SOLO lo que impone el navegador; el ancho completo hace falta
+   porque un boton no se estira solo dentro del .step. */
 .step-header {
   display: flex;
   align-items: center;
@@ -193,7 +210,17 @@ main {
   transition: background 0.15s;
   user-select: none;
   min-height: 44px;
+  width: 100%;
+  background: none;
+  border: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
 }
+/* Un paso bloqueado sigue anunciandose -para que se sepa que existe y por que
+   no se puede abrir todavia- pero no responde. */
+.step.locked .step-header { cursor: default; }
 .step-header:hover { background: rgba(255,255,255,0.02); }
 .step.locked .step-header:hover { background: none; }
 
@@ -324,7 +351,18 @@ main {
 .hook-mode-btn.active { background: rgba(34,211,238,0.1); border-color: #22D3EE; color: #22D3EE; }
 
 .hook-presets { display: flex; flex-direction: column; gap: 0.35rem; }
+/* Los estribillos predefinidos son opciones excluyentes: grupo de radio, una
+   sola parada de tabulador y flechas para recorrerlos. Eran <div> con onclick.
+   OJO con el orden: 'font: inherit' va ANTES que font-size, line-height y
+   color, para neutralizar lo que impone el navegador a un <button> sin
+   llevarse por delante el diseno que viene detras.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 .hook-preset {
+  font: inherit;
+  border: 0;
+  margin: 0;
+  text-align: left;
+  width: 100%;
   padding: 0.5rem 0.7rem;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -384,7 +422,18 @@ main {
 
 /* ── STRUCTURE ── */
 .structure-options { display: flex; flex-direction: column; gap: 0.4rem; }
+/* Las tres estructuras eran <label> con un punto de radio dibujado a mano: ni
+   input de verdad al que apuntar, ni foco, ni teclado. Ahora son un grupo de
+   radio real; el punto sigue siendo decoracion y lo pinta el CSS.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 .structure-opt {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
+  text-align: left;
+  width: 100%;
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
@@ -479,6 +528,40 @@ main {
 
 .tab-pane { display: none; flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--surface3) transparent; }
 .tab-pane.active { display: flex; flex-direction: column; }
+
+/* El panel es enfocable a proposito: lleva scroll propio, y una zona con
+   scroll que no se puede enfocar no se puede recorrer con el teclado. Pero el
+   recuadro completo del foco generico rodeaba media pantalla y parecia que
+   habias seleccionado un boton gigante.
+   Un filete arriba dice lo mismo mejor: la pestana marca CUAL, y esta linea
+   marca que la zona esta viva. Va con sombra interior y no con borde, para no
+   empujar el contenido ni un pixel al aparecer.
+   Y va a media intensidad a proposito: el subrayado de la pestana es el que
+   manda, porque la pestana es el control con el que se entra y por el que hay
+   que volver a salir. Este es su eco, no su hermano. Dos lineas cian del mismo
+   peso, pegadas, se leerian como una sola raya sin jerarquia. */
+/* Con el selector a secas esta regla PERDIA: el bloque generico de foco
+   visible lleva [tabindex]:focus-visible, que tiene la misma especificidad y
+   va mas abajo en el archivo, asi que ganaba y seguia pintando su recuadro.
+   Se veian dos indicadores a la vez: el borde superior del recuadro y este
+   filete. Un antepasado en el selector le da el peso que le faltaba. */
+.output-content .tab-pane:focus-visible {
+  outline: none;
+  background-color: rgba(34, 211, 238, 0.03);
+  /* El filete baja 5px en vez de pegarse al borde: sin ese aire, el subrayado
+     de la pestana activa y esta linea se funden en una sola raya y se pierde
+     cual manda. Con el hueco se lee la jerarquia -pestana arriba, zona
+     debajo-, que es el mismo camino que se recorre para entrar y para salir.
+     Va como degradado y no como sombra interior porque una sombra solo puede
+     nacer en el borde; el degradado se coloca donde haga falta. Y el fondo de
+     un elemento con scroll no se desplaza con su contenido, asi que la linea
+     se queda arriba aunque la letra sea larga. */
+  background-image: linear-gradient(to bottom,
+      transparent 0 5px,
+      rgba(34, 211, 238, 0.55) 5px 7px,
+      transparent 7px);
+  background-repeat: no-repeat;
+}
 
 /* ── PREVIEW TAB ── */
 .preview-area { padding: 1.4rem 1.8rem; display: flex; flex-direction: column; }
@@ -736,7 +819,6 @@ main {
 }
 
 /* -- CABECERA PLEGABLE ----------------------------------------------------
-V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    En movil la cabecera se come pantalla antes de llegar a la herramienta.
    Plegada deja el topbar y el breadcrumb. La preferencia va en hpk-compacto,
    compartida por todo el laboratorio.
@@ -831,65 +913,74 @@ summary:focus-visible,
     <!-- PASO 1: Familia -->
     <a class="btn-pill-action" href="ing-verbos-irregulares.html" style="text-decoration:none">← Volver a estudiar</a>
     <div class="step open" id="step-family">
-      <div class="step-header" onclick="toggleStep('family')">
+      <button type="button" class="step-header" data-step="family"
+              aria-expanded="false" aria-controls="body-family">
         <span class="step-num">1</span>
         <span class="step-title">Familia de verbos</span>
         <span class="step-summary" id="summary-family"></span>
         <span class="step-edit">cambiar</span>
         <span class="step-chevron">▼</span>
-      </div>
-      <div class="step-body">
+      </button>
+      <div class="step-body" id="body-family">
         <div class="pill-group" id="family-pills"></div>
       </div>
     </div>
 
     <!-- PASO 2: Género -->
     <div class="step locked" id="step-genre">
-      <div class="step-header" onclick="toggleStep('genre')">
+      <button type="button" class="step-header" data-step="genre"
+              aria-expanded="false" aria-controls="body-genre">
         <span class="step-num">2</span>
         <span class="step-title">Género musical</span>
         <span class="step-summary" id="summary-genre"></span>
         <span class="step-edit">cambiar</span>
         <span class="step-chevron">▼</span>
-      </div>
+      </button>
       <div class="step-locked-hint">← elige primero una familia</div>
-      <div class="step-body">
+      <div class="step-body" id="body-genre">
         <div class="pill-group" id="genre-pills"></div>
       </div>
     </div>
 
     <!-- PASO 3: Hook -->
     <div class="step locked" id="step-hook">
-      <div class="step-header" onclick="toggleStep('hook')">
+      <button type="button" class="step-header" data-step="hook"
+              aria-expanded="false" aria-controls="body-hook">
         <span class="step-num">3</span>
         <span class="step-title">Hook / Estribillo</span>
         <span class="step-summary" id="summary-hook"></span>
         <span class="step-edit">cambiar</span>
         <span class="step-chevron">▼</span>
-      </div>
+      </button>
       <div class="step-locked-hint">← elige primero un género</div>
-      <div class="step-body">
-        <div class="hook-modes">
-          <button class="hook-mode-btn active" id="hm-preset" onclick="setHookMode('preset')">Predefinido</button>
-          <button class="hook-mode-btn" id="hm-custom" onclick="setHookMode('custom')">Escribir</button>
+      <div class="step-body" id="body-hook">
+        <div class="hook-modes" role="radiogroup" aria-label="Como aportar el estribillo">
+          <button type="button" class="hook-mode-btn active" id="hm-preset" role="radio"
+                  aria-checked="true" tabindex="0" onclick="setHookMode('preset')">Predefinido</button>
+          <button type="button" class="hook-mode-btn" id="hm-custom" role="radio"
+                  aria-checked="false" tabindex="-1" onclick="setHookMode('custom')">Escribir</button>
         </div>
-        <div id="hook-preset-area" class="hook-presets">
-          <div class="hook-preset selected" data-hook="echo" onclick="selectPresetHook(this)">
+        <div id="hook-preset-area" class="hook-presets" role="radiogroup" aria-label="Estribillo predefinido">
+          <button type="button" class="hook-preset selected" data-hook="echo"
+                  role="radio" aria-checked="true" tabindex="0">
             <div class="hook-name">Echo</div>
             Oh-oh, yeah-yeah<br>oh-oh, the same...
-          </div>
-          <div class="hook-preset" data-hook="loop" onclick="selectPresetHook(this)">
+          </button>
+          <button type="button" class="hook-preset" data-hook="loop"
+                  role="radio" aria-checked="false" tabindex="-1">
             <div class="hook-name">Loop</div>
             Na-na-na, na-na-na<br>na-na, na-na-na...
-          </div>
-          <div class="hook-preset" data-hook="drop" onclick="selectPresetHook(this)">
+          </button>
+          <button type="button" class="hook-preset" data-hook="drop"
+                  role="radio" aria-checked="false" tabindex="-1">
             <div class="hook-name">Drop</div>
             Hey! · base · past · done<br>hey! · one-two-three...
-          </div>
-          <div class="hook-preset" data-hook="glitch" onclick="selectPresetHook(this)">
+          </button>
+          <button type="button" class="hook-preset" data-hook="glitch"
+                  role="radio" aria-checked="false" tabindex="-1">
             <div class="hook-name">Glitch</div>
             Uh-uh-uh... same same<br>uh-uh-uh... again...
-          </div>
+          </button>
         </div>
         <div id="hook-custom-area" class="hook-custom-area">
           <textarea id="hook-custom-text" placeholder="Escribe tu hook aquí...&#10;Ejemplo:&#10;Oh-oh, yeah-yeah&#10;oh-oh, the same..."></textarea>
@@ -902,37 +993,41 @@ summary:focus-visible,
 
     <!-- PASO 4: Estructura -->
     <div class="step locked" id="step-structure">
-      <div class="step-header" onclick="toggleStep('structure')">
+      <button type="button" class="step-header" data-step="structure"
+              aria-expanded="false" aria-controls="body-structure">
         <span class="step-num">4</span>
         <span class="step-title">Estructura</span>
         <span class="step-summary" id="summary-structure"></span>
         <span class="step-edit">cambiar</span>
         <span class="step-chevron">▼</span>
-      </div>
+      </button>
       <div class="step-locked-hint">← elige primero un hook</div>
-      <div class="step-body">
-        <div class="structure-options">
-          <label class="structure-opt selected" onclick="selectStructure(this, 'A')">
+      <div class="step-body" id="body-structure">
+        <div class="structure-options" role="radiogroup" aria-label="Estructura de la cancion">
+          <button type="button" class="structure-opt selected" data-val="A"
+                  role="radio" aria-checked="true" tabindex="0">
             <div class="structure-radio-dot"></div>
             <div>
               <div class="structure-opt-title">Mínima — 3 versos + chorus</div>
               <div class="structure-opt-desc">Intro · Verso × 3 verbos · Chorus · Verso × 3 verbos · Chorus · Outro</div>
             </div>
-          </label>
-          <label class="structure-opt" onclick="selectStructure(this, 'B')">
+          </button>
+          <button type="button" class="structure-opt" data-val="B"
+                  role="radio" aria-checked="false" tabindex="-1">
             <div class="structure-radio-dot"></div>
             <div>
               <div class="structure-opt-title">Estándar — todos los verbos</div>
               <div class="structure-opt-desc">Todos los verbos de la familia, 3 por verso, chorus entre cada bloque</div>
             </div>
-          </label>
-          <label class="structure-opt" onclick="selectStructure(this, 'C')">
+          </button>
+          <button type="button" class="structure-opt" data-val="C"
+                  role="radio" aria-checked="false" tabindex="-1">
             <div class="structure-radio-dot"></div>
             <div>
               <div class="structure-opt-title">Sencilla — solo intro + loop</div>
               <div class="structure-opt-desc">Para Suno Custom Mode: sin estructura, solo los verbos para loopear</div>
             </div>
-          </label>
+          </button>
         </div>
       </div>
     </div>
@@ -955,14 +1050,20 @@ summary:focus-visible,
     </div>
 
     <div class="output-content" id="output-content">
-      <div class="output-tabs">
-        <button class="output-tab active" onclick="switchTab('preview')">👁 Preview</button>
-        <button class="output-tab" onclick="switchTab('prompt')">📋 Prompt</button>
-        <button class="output-tab" onclick="switchTab('guide')">📖 Cómo usarlo</button>
+      <div class="output-tabs" role="tablist" aria-label="Resultado">
+        <button type="button" class="output-tab active" id="tabbtn-preview" role="tab"
+                aria-selected="true" aria-controls="tab-preview" tabindex="0"
+                onclick="switchTab('preview')">👁 Preview</button>
+        <button type="button" class="output-tab" id="tabbtn-prompt" role="tab"
+                aria-selected="false" aria-controls="tab-prompt" tabindex="-1"
+                onclick="switchTab('prompt')">📋 Prompt</button>
+        <button type="button" class="output-tab" id="tabbtn-guide" role="tab"
+                aria-selected="false" aria-controls="tab-guide" tabindex="-1"
+                onclick="switchTab('guide')">📖 Cómo usarlo</button>
       </div>
 
       <!-- Preview -->
-      <div class="tab-pane active" id="tab-preview">
+      <div class="tab-pane active" id="tab-preview" role="tabpanel" aria-labelledby="tabbtn-preview">
         <div class="preview-area">
           <div class="preview-meta" id="preview-meta"></div>
           <div class="preview-title" id="preview-title"></div>
@@ -971,7 +1072,7 @@ summary:focus-visible,
       </div>
 
       <!-- Prompt -->
-      <div class="tab-pane" id="tab-prompt">
+      <div class="tab-pane" id="tab-prompt" role="tabpanel" aria-labelledby="tabbtn-prompt">
         <div class="prompt-area">
           <div>
             <div class="prompt-section-title">📝 Letra (pega en "Lyrics")</div>
@@ -998,7 +1099,7 @@ summary:focus-visible,
       </div>
 
       <!-- Guía -->
-      <div class="tab-pane" id="tab-guide">
+      <div class="tab-pane" id="tab-guide" role="tabpanel" aria-labelledby="tabbtn-guide">
         <div class="guide-area">
 
           <div class="guide-title">Cómo usar el prompt</div>
@@ -1109,7 +1210,6 @@ summary:focus-visible,
 })();
 // ══════════════════════════════════════════════════════════════
 // URLS DE EJEMPLO — edita solo esta sección para añadir enlaces
-// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // Formato: 'id_genero': 'https://suno.com/song/...'
 // Deja el valor como '' si aún no tienes ejemplo para ese género
 // ══════════════════════════════════════════════════════════════
@@ -1257,18 +1357,31 @@ function openStep(stepId) {
   if (!el || el.classList.contains('locked')) return;
   el.classList.remove('collapsed');
   el.classList.add('open');
+  sincronizaAria();
 }
 function collapseStep(stepId) {
   const el = document.getElementById('step-' + stepId);
   if (!el) return;
   el.classList.remove('open');
   el.classList.add('collapsed');
+  sincronizaAria();
 }
+/* Desbloquea un paso pero lo deja plegado: sirve para los que YA tienen un
+   valor por defecto. Estan disponibles para cambiarlos, no reclamando atencion. */
+function unlockStepPlegado(stepId) {
+  const el = document.getElementById('step-' + stepId);
+  if (!el || !el.classList.contains('locked')) return;
+  el.classList.remove('locked');
+  el.classList.add('collapsed');
+  sincronizaAria();
+}
+
 function unlockStep(stepId) {
   const el = document.getElementById('step-' + stepId);
   if (!el) return;
   el.classList.remove('locked');
   el.classList.add('open');
+  sincronizaAria();
 }
 function toggleStep(stepId) {
   const el = document.getElementById('step-' + stepId);
@@ -1304,6 +1417,13 @@ function selectGenre(btn, id) {
   document.getElementById('summary-genre').innerHTML = genre ? `${genre.icon} ${genre.label}` : '';
   collapseStep('genre');
   unlockStep('hook');
+  /* Estructura sale del candado a la vez. Tenia un bloqueo artificial: exigia
+     pulsar un estribillo, cuando selectedPresetHook ya vale 'echo' y
+     selectedStructure ya vale 'A' desde el arranque. La interfaz mostraba los
+     dos pasos como elegidos y el asistente los trataba como vacios.
+     Con raton no se notaba porque uno pincha por reflejo; con teclado se lee
+     el estado, se ve que ya esta elegido, y se sale del paso sin tocarlo. */
+  unlockStepPlegado('structure');
   updateBuildBtn();
 }
 function setHookMode(mode) {
@@ -1314,15 +1434,25 @@ function setHookMode(mode) {
   document.getElementById('hook-preset-area').style.display = mode === 'preset' ? 'flex' : 'none';
   document.getElementById('hook-preset-area').style.flexDirection = 'column';
   document.getElementById('hook-custom-area').classList.toggle('visible', mode === 'custom');
+  sincronizaAria();
 }
-function selectPresetHook(el) {
+/* El tercer argumento decide si al elegir se pliega el paso. Pulsar pliega:
+   es el gesto de "ya esta, sigamos". Las flechas NO pliegan: recorrer opciones
+   con el teclado y que a la primera se cierre la caja impide comparar, que es
+   justo para lo que se recorren. */
+function selectPresetHook(el, plegar) {
   document.querySelectorAll('.hook-preset').forEach(h => h.classList.remove('selected'));
   el.classList.add('selected');
   selectedPresetHook = el.dataset.hook;
   document.getElementById('summary-hook').textContent = el.querySelector('.hook-name').textContent;
-  collapseStep('hook');
-  unlockStep('structure');
+  if (plegar !== false) collapseStep('hook');
+  unlockStepPlegado('structure');
   updateBuildBtn();
+  /* Explicito, y no de rebote. Antes la sincronizacion de ARIA viajaba dentro
+     de collapseStep; al dejar de plegar con las flechas dejo de ejecutarse, y
+     aria-checked se quedaba en la primera opcion mientras el resumen ya decia
+     otra. Quien cambia el estado es quien tiene que anunciarlo. */
+  sincronizaAria();
 }
 function confirmCustomHook() {
   const text = document.getElementById('hook-custom-text').value.trim();
@@ -1333,14 +1463,15 @@ function confirmCustomHook() {
   unlockStep('structure');
   updateBuildBtn();
 }
-function selectStructure(el, val) {
+function selectStructure(el, val, plegar) {
   document.querySelectorAll('.structure-opt').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   selectedStructure = val;
   const title = el.querySelector('.structure-opt-title').textContent.split('—')[0].trim();
   document.getElementById('summary-structure').textContent = title;
-  collapseStep('structure');
+  if (plegar !== false) collapseStep('structure');
   updateBuildBtn();
+  sincronizaAria();
 }
 function updateBuildBtn() {
   const ready = selectedFamily && selectedGenre;
@@ -1387,6 +1518,9 @@ function buildPrompt() {
   document.getElementById('output-empty').style.display = 'none';
   document.getElementById('output-content').classList.add('visible');
   switchTab('preview');
+  /* El contenido de los paneles acaba de cambiar, asi que hay que recalcular
+     cuales son enfocables: los que ganan botones dejan de serlo. */
+  sincronizaAria();
 }
 
 function renderPreview(fam, genre, structure) {
@@ -1442,6 +1576,113 @@ function switchTab(name) {
   document.querySelectorAll('.tab-pane').forEach((pane, i) => {
     pane.classList.toggle('active', TAB_IDS[i] === 'tab-' + name);
   });
+  sincronizaAria();
+}
+
+/* ── TECLADO Y ANUNCIOS ───────────────────────────────────────────────────
+   Un solo sitio pone al dia todo lo que un lector de pantalla necesita saber:
+   que paso esta abierto, que opcion esta elegida y que pestana se ve. Se llama
+   despues de cada cambio de estado, en vez de repartir setAttribute por las
+   ocho funciones que tocan el estado y olvidarse en la novena.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
+function sincronizaAria() {
+  document.querySelectorAll('.step').forEach(s => {
+    const cab = s.querySelector('.step-header');
+    if (!cab) return;
+    cab.setAttribute('aria-expanded', s.classList.contains('open') ? 'true' : 'false');
+    cab.setAttribute('aria-disabled', s.classList.contains('locked') ? 'true' : 'false');
+  });
+
+  // Grupos excluyentes: marcado + una sola parada de tabulador por grupo.
+  [['.hook-preset', null], ['.structure-opt', null], ['.hook-mode-btn', 'active']].forEach(([sel, clase]) => {
+    const marca = clase || 'selected';
+    const ops = Array.prototype.slice.call(document.querySelectorAll(sel));
+    if (!ops.length) return;
+    ops.forEach(o => o.setAttribute('aria-checked', o.classList.contains(marca) ? 'true' : 'false'));
+    const foco = ops.find(o => o.classList.contains(marca)) || ops[0];
+    ops.forEach(o => { o.tabIndex = (o === foco ? 0 : -1); });
+  });
+
+  const tabs = Array.prototype.slice.call(document.querySelectorAll('.output-tab'));
+  tabs.forEach(t => {
+    const act = t.classList.contains('active');
+    t.setAttribute('aria-selected', act ? 'true' : 'false');
+    t.tabIndex = act ? 0 : -1;
+  });
+
+  /* Un panel de pestana solo es enfocable si NO tiene nada enfocable dentro.
+     Con botones dentro -los de copiar- se llega al contenido tabulando a
+     ellos, y hacer enfocable ademas el contenedor solo anade una parada que no
+     lleva a ninguna parte. Se decide mirando el panel, porque su contenido
+     cambia al generar el prompt. */
+  document.querySelectorAll('.tab-pane').forEach(p => {
+    const tieneFoco = p.querySelector('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (tieneFoco) p.removeAttribute('tabindex');
+    else p.tabIndex = 0;
+  });
+}
+
+/* Recorrido por flechas dentro de un grupo. En los excluyentes -radios y
+   pestanas- moverse tambien selecciona, que es lo que se espera cuando solo
+   puede haber uno activo: si no, se puede acabar con el foco en una opcion y
+   otra distinta marcada. */
+function tecladoEnGrupo(contenedor, selector, alMover) {
+  if (!contenedor || contenedor.dataset.tecladoListo) return;
+  contenedor.dataset.tecladoListo = '1';
+  contenedor.addEventListener('keydown', e => {
+    const ops = Array.prototype.slice.call(contenedor.querySelectorAll(selector));
+    const i = ops.indexOf(document.activeElement);
+    if (i < 0) return;
+    let j = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % ops.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + ops.length) % ops.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = ops.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    ops[j].focus();
+    if (typeof alMover === 'function') alMover(ops[j]);
+    else if (alMover) ops[j].click();
+  });
+}
+
+function montaTeclado() {
+  document.querySelectorAll('.step-header').forEach(cab => {
+    cab.addEventListener('click', () => {
+      if (cab.closest('.step').classList.contains('locked')) return;
+      toggleStep(cab.dataset.step);
+    });
+  });
+  document.querySelectorAll('.hook-preset').forEach(h => {
+    h.addEventListener('click', () => selectPresetHook(h));
+  });
+  document.querySelectorAll('.structure-opt').forEach(o => {
+    o.addEventListener('click', () => selectStructure(o, o.dataset.val));
+  });
+
+  /* Los resumenes de los pasos con valor por defecto se rellenan al arrancar.
+     Antes solo los escribia la funcion de seleccionar, asi que un paso con
+     valor salia con el resumen en blanco: otra forma de decir "vacio" cuando
+     no lo estaba. */
+  const hookPorDefecto = document.querySelector('.hook-preset.selected');
+  if (hookPorDefecto) {
+    document.getElementById('summary-hook').textContent =
+      hookPorDefecto.querySelector('.hook-name').textContent;
+  }
+  const estrPorDefecto = document.querySelector('.structure-opt.selected');
+  if (estrPorDefecto) {
+    document.getElementById('summary-structure').textContent =
+      estrPorDefecto.querySelector('.structure-opt-title').textContent.split('—')[0].trim();
+  }
+
+  tecladoEnGrupo(document.getElementById('hook-preset-area'), '.hook-preset',
+                 el => selectPresetHook(el, false));
+  tecladoEnGrupo(document.querySelector('.structure-options'), '.structure-opt',
+                 el => selectStructure(el, el.dataset.val, false));
+  tecladoEnGrupo(document.querySelector('.hook-modes'), '.hook-mode-btn', true);
+  tecladoEnGrupo(document.querySelector('.output-tabs'), '.output-tab', true);
+
+  sincronizaAria();
 }
 
 function copySection(elId, btn) {
@@ -1472,6 +1713,7 @@ function copyAll() {
 }
 
 init();
+montaTeclado();
 </script>
 </body>
 </html>

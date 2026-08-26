@@ -11,7 +11,19 @@
 <meta name="author" content="V0ra (v0raonline)">
 <meta name="copyright" content="CC BY-NC-SA 4.0">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-<title>English Tenses — Mapa Temporal</title>
+<title>Tiempos verbales en inglés: mapa interactivo — hAppYpUkIng Lab</title>
+<meta name="description" content="Los catorce tiempos verbales ingleses como una línea de metro: pasado, presente, futuro y condicionales, con fórmula, uso y ejemplos de cada uno.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hAppYpUkIng Lab">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/ing/ing-timeline.html">
+<meta property="og:title" content="Tiempos verbales en inglés: mapa interactivo — hAppYpUkIng Lab">
+<meta property="og:description" content="Los catorce tiempos verbales ingleses como una línea de metro: pasado, presente, futuro y condicionales, con fórmula, uso y ejemplos de cada uno.">
+<meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/readme-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="484">
+<meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
+<meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -137,6 +149,15 @@ header {
   margin-bottom: 0.6rem;
 }
 
+/* Las teclas se anuncian donde hay teclado. En pantalla estrecha se retiran:
+   el texto va en versalitas con mucho espaciado, asi que partiria en tres
+   lineas y engordaria la barra pegada arriba, que es donde menos sitio sobra.
+   display:none tambien las saca del arbol de accesibilidad, y ahi es correcto:
+   quien navega un movil con lector no usa flechas ni Escape. */
+@media (max-width: 600px) {
+  .metro-teclas { display: none; }
+}
+
 .metro-track {
   position: relative;
   height: 48px;
@@ -177,6 +198,14 @@ header {
 }
 
 /* Station dots */
+/* Las estaciones son controles, no adornos: eligen cual de los 14 tiempos esta
+   activo, y solo uno puede estarlo a la vez. De ahi el patron de grupo de
+   radio: una sola parada de tabulador, flechas para recorrer la linea, Enter
+   para saltar a la tarjeta.
+   Eran <div> con onclick: ni foco, ni teclado, ni nombre para un lector.
+   El reset toca SOLO lo que impone el navegador; el color de cada zona lo
+   siguen poniendo .station.pasado y companeras, que ganan por especificidad.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 .station {
   position: absolute;
   top: 50%;
@@ -185,9 +214,29 @@ header {
   height: 10px;
   border-radius: 50%;
   border: 2px solid var(--bg);
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   z-index: 2;
+}
+
+/* El punto se dibuja de 10px porque la linea es fina y con mas se emborrona.
+   Pero un objetivo de 10px no lo acierta nadie con el dedo: este pseudoelemento
+   le da 24x24 transparentes de area util sin tocar el dibujo. Subir width y
+   height no vale: agrandaria el circulo visible. */
+.station::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
 }
 .station:hover { transform: translate(-50%, -50%) scale(1.4); }
 .station.active {
@@ -346,7 +395,6 @@ header {
   border-radius: 10px;
   padding: 1rem 1.25rem;
   margin-bottom: 0.65rem;
-  cursor: pointer;
   transition: transform 0.16s, border-color 0.16s, box-shadow 0.16s;
   position: relative;
   overflow: hidden;
@@ -361,6 +409,18 @@ header {
 }
 
 .tense-card:hover { transform: translateX(3px); }
+
+/* La linea de metro va pegada arriba (sticky), asi que cuando el navegador
+   lleva el scroll o el foco a una tarjeta la deja DEBAJO de ella: se veia
+   media cabecera y habia que rascar hacia arriba a mano. Pasaba en movil y
+   tambien en escritorio.
+   scroll-margin-top le dice al navegador donde parar, y lo respeta en todos
+   los caminos: click, Enter, enlace directo y el desplazamiento automatico al
+   enfocar. Mover la linea habria arreglado solo el camino del click.
+   El valor lo mide el JS porque la altura de la linea cambia con el ancho. */
+.tense-card {
+  scroll-margin-top: var(--tope-linea, 181px);
+}
 
 .zone-pasado .tense-card::before { background: var(--amber); }
 .zone-pasado .tense-card:hover { border-color: rgba(245,158,11,0.25); box-shadow: 0 4px 20px rgba(245,158,11,0.08); }
@@ -385,11 +445,29 @@ header {
 .zone-futuro .tense-card.open { border-color: rgba(34,211,238,0.3); }
 .zone-condicionales .tense-card.open { border-color: rgba(167,139,250,0.3); }
 
+/* La cabecera de la tarjeta es el disparador del acordeon, asi que es un
+   <button> de verdad. Se neutraliza SOLO lo que impone el navegador -fondo,
+   borde, relleno, tipografia, alineacion-; el diseno lo siguen poniendo las
+   reglas de los hijos.
+   El boton es la cabecera y no la tarjeta entera: el cuerpo lleva 562
+   caracteres de explicacion y frases de ejemplo, y eso dentro de un boton se
+   anuncia como un solo chorro ilegible. Ademas, con la tarjeta entera pulsable
+   no se podia seleccionar una frase para copiarla sin que se cerrase.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 .card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .card-meta { flex: 1; }
@@ -524,7 +602,6 @@ footer {
 .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
 
 /* -- CABECERA PLEGABLE ----------------------------------------------------
-V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
    En movil la cabecera se come pantalla antes de llegar a la herramienta.
    Plegada deja el topbar y el breadcrumb. La preferencia va en hpk-compacto,
    compartida por todo el laboratorio.
@@ -615,8 +692,12 @@ summary:focus-visible,
 
 <!-- METRO MAP -->
 <div class="metro-wrap">
-  <div class="metro-label">línea temporal — selecciona una estación</div>
-  <div class="metro-track" id="metroTrack">
+  <!-- Esta etiqueta hace dos trabajos: se lee en pantalla y es el nombre del
+     grupo de radio para un lector. Por eso lleva las teclas dentro: nadie
+     adivina que Escape devuelve a la linea, y decirlo aqui lo cuenta por los
+     dos canales a la vez. -->
+    <div class="metro-label" id="metroLabel">línea temporal<span class="metro-teclas"> — flechas para recorrer · Enter para entrar · Esc para volver</span></div>
+  <div class="metro-track" id="metroTrack" role="radiogroup" aria-labelledby="metroLabel">
     <div class="metro-line"></div>
     <div class="metro-cond-line"></div>
 
@@ -632,56 +713,84 @@ summary:focus-visible,
     </div>
 
     <!-- PASADO stations -->
-    <div class="station pasado" style="left:5%" data-pos="5" onclick="jumpTo('past-perf-cont')" title="Past Perfect Continuous">
-      <span class="station-tip">Past Perfect Continuous</span>
-    </div>
-    <div class="station pasado" style="left:13%" data-pos="13" onclick="jumpTo('past-perf')" title="Past Perfect">
-      <span class="station-tip">Past Perfect</span>
-    </div>
-    <div class="station pasado" style="left:21%" data-pos="21" onclick="jumpTo('past-cont')" title="Past Continuous">
-      <span class="station-tip">Past Continuous</span>
-    </div>
-    <div class="station pasado" style="left:29%" data-pos="29" onclick="jumpTo('past-simple')" title="Past Simple">
-      <span class="station-tip">Past Simple</span>
-    </div>
+    <button type="button" class="station pasado" style="left:5%" data-pos="5"
+            data-target="past-perf-cont" role="radio" aria-checked="false"
+            aria-controls="past-perf-cont" tabindex="-1" aria-label="Past Perfect Continuous">
+      <span class="station-tip" aria-hidden="true">Past Perfect Continuous</span>
+    </button>
+    <button type="button" class="station pasado" style="left:13%" data-pos="13"
+            data-target="past-perf" role="radio" aria-checked="false"
+            aria-controls="past-perf" tabindex="-1" aria-label="Past Perfect">
+      <span class="station-tip" aria-hidden="true">Past Perfect</span>
+    </button>
+    <button type="button" class="station pasado" style="left:21%" data-pos="21"
+            data-target="past-cont" role="radio" aria-checked="false"
+            aria-controls="past-cont" tabindex="-1" aria-label="Past Continuous">
+      <span class="station-tip" aria-hidden="true">Past Continuous</span>
+    </button>
+    <button type="button" class="station pasado" style="left:29%" data-pos="29"
+            data-target="past-simple" role="radio" aria-checked="false"
+            aria-controls="past-simple" tabindex="-1" aria-label="Past Simple">
+      <span class="station-tip" aria-hidden="true">Past Simple</span>
+    </button>
 
     <!-- PUENTE stations -->
-    <div class="station puente" style="left:38%" data-pos="38" onclick="jumpTo('pres-perf-cont')" title="Present Perfect Continuous">
-      <span class="station-tip">Present Perfect Continuous</span>
-    </div>
-    <div class="station puente" style="left:44%" data-pos="44" onclick="jumpTo('pres-perf')" title="Present Perfect">
-      <span class="station-tip">Present Perfect</span>
-    </div>
+    <button type="button" class="station puente" style="left:38%" data-pos="38"
+            data-target="pres-perf-cont" role="radio" aria-checked="false"
+            aria-controls="pres-perf-cont" tabindex="-1" aria-label="Present Perfect Continuous">
+      <span class="station-tip" aria-hidden="true">Present Perfect Continuous</span>
+    </button>
+    <button type="button" class="station puente" style="left:44%" data-pos="44"
+            data-target="pres-perf" role="radio" aria-checked="false"
+            aria-controls="pres-perf" tabindex="-1" aria-label="Present Perfect">
+      <span class="station-tip" aria-hidden="true">Present Perfect</span>
+    </button>
 
     <!-- PRESENTE stations -->
-    <div class="station presente" style="left:54%" data-pos="54" onclick="jumpTo('pres-simple')" title="Present Simple">
-      <span class="station-tip">Present Simple</span>
-    </div>
-    <div class="station presente" style="left:62%" data-pos="62" onclick="jumpTo('pres-cont')" title="Present Continuous">
-      <span class="station-tip">Present Continuous</span>
-    </div>
+    <button type="button" class="station presente" style="left:54%" data-pos="54"
+            data-target="pres-simple" role="radio" aria-checked="false"
+            aria-controls="pres-simple" tabindex="-1" aria-label="Present Simple">
+      <span class="station-tip" aria-hidden="true">Present Simple</span>
+    </button>
+    <button type="button" class="station presente" style="left:62%" data-pos="62"
+            data-target="pres-cont" role="radio" aria-checked="false"
+            aria-controls="pres-cont" tabindex="-1" aria-label="Present Continuous">
+      <span class="station-tip" aria-hidden="true">Present Continuous</span>
+    </button>
 
     <!-- FUTURO stations -->
-    <div class="station futuro" style="left:72%" data-pos="72" onclick="jumpTo('going-to')" title="Going to">
-      <span class="station-tip">Going to</span>
-    </div>
-    <div class="station futuro" style="left:82%" data-pos="82" onclick="jumpTo('pres-cont-fut')" title="Present Continuous → futuro">
-      <span class="station-tip">Pres. Continuous → futuro</span>
-    </div>
-    <div class="station futuro" style="left:91%" data-pos="91" onclick="jumpTo('will')" title="Will">
-      <span class="station-tip">Will</span>
-    </div>
+    <button type="button" class="station futuro" style="left:72%" data-pos="72"
+            data-target="going-to" role="radio" aria-checked="false"
+            aria-controls="going-to" tabindex="-1" aria-label="Going to">
+      <span class="station-tip" aria-hidden="true">Going to</span>
+    </button>
+    <button type="button" class="station futuro" style="left:82%" data-pos="82"
+            data-target="pres-cont-fut" role="radio" aria-checked="false"
+            aria-controls="pres-cont-fut" tabindex="-1" aria-label="Present Continuous → futuro">
+      <span class="station-tip" aria-hidden="true">Pres. Continuous → futuro</span>
+    </button>
+    <button type="button" class="station futuro" style="left:91%" data-pos="91"
+            data-target="will" role="radio" aria-checked="false"
+            aria-controls="will" tabindex="-1" aria-label="Will">
+      <span class="station-tip" aria-hidden="true">Will</span>
+    </button>
 
     <!-- CONDICIONALES stations (on lower line) -->
-    <div class="station condicional" style="left:25%" data-pos="25" onclick="jumpTo('zero-cond')" title="Zero Conditional">
-      <span class="station-tip">Zero Conditional</span>
-    </div>
-    <div class="station condicional" style="left:47%" data-pos="47" onclick="jumpTo('first-cond')" title="First Conditional">
-      <span class="station-tip">First Conditional</span>
-    </div>
-    <div class="station condicional" style="left:65%" data-pos="65" onclick="jumpTo('second-cond')" title="Second Conditional">
-      <span class="station-tip">Second Conditional</span>
-    </div>
+    <button type="button" class="station condicional" style="left:25%" data-pos="25"
+            data-target="zero-cond" role="radio" aria-checked="false"
+            aria-controls="zero-cond" tabindex="-1" aria-label="Zero Conditional">
+      <span class="station-tip" aria-hidden="true">Zero Conditional</span>
+    </button>
+    <button type="button" class="station condicional" style="left:47%" data-pos="47"
+            data-target="first-cond" role="radio" aria-checked="false"
+            aria-controls="first-cond" tabindex="-1" aria-label="First Conditional">
+      <span class="station-tip" aria-hidden="true">First Conditional</span>
+    </button>
+    <button type="button" class="station condicional" style="left:65%" data-pos="65"
+            data-target="second-cond" role="radio" aria-checked="false"
+            aria-controls="second-cond" tabindex="-1" aria-label="Second Conditional">
+      <span class="station-tip" aria-hidden="true">Second Conditional</span>
+    </button>
   </div>
 
   <div class="zone-labels">
@@ -702,16 +811,16 @@ summary:focus-visible,
       <div class="zone-rule"></div>
     </div>
 
-    <div class="tense-card" id="past-perf-cont" data-metro-pos="5" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="past-perf-cont" data-metro-pos="5">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="past-perf-cont-body">
         <div class="card-meta">
           <div class="tense-tag">past perfect continuous</div>
           <div class="tense-name">Past Perfect Continuous</div>
           <div class="tense-descriptor">Duración antes de otro pasado</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="past-perf-cont-body">
         <div class="tense-formula">had + been + verb-ing</div>
         <div class="tense-use">Acción continua que ocurrió durante un período antes de un momento pasado. Enfatiza la duración o explica un estado posterior.</div>
         <div class="examples">
@@ -732,16 +841,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="past-perf" data-metro-pos="13" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="past-perf" data-metro-pos="13">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="past-perf-body">
         <div class="card-meta">
           <div class="tense-tag">past perfect</div>
           <div class="tense-name">Past Perfect</div>
           <div class="tense-descriptor">El pasado del pasado</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="past-perf-body">
         <div class="tense-formula">had + past participle</div>
         <div class="tense-use">Acción que ocurrió antes de otra acción pasada. Establece qué fue primero cuando narras una secuencia de eventos.</div>
         <div class="examples">
@@ -761,16 +870,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="past-cont" data-metro-pos="21" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="past-cont" data-metro-pos="21">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="past-cont-body">
         <div class="card-meta">
           <div class="tense-tag">past continuous</div>
           <div class="tense-name">Past Continuous</div>
           <div class="tense-descriptor">Acción en progreso en el pasado</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="past-cont-body">
         <div class="tense-formula">was / were + verb-ing</div>
         <div class="tense-use">Acción en progreso en un momento del pasado. Con frecuencia aparece con Past Simple para mostrar una interrupción.</div>
         <div class="examples">
@@ -791,16 +900,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="past-simple" data-metro-pos="29" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="past-simple" data-metro-pos="29">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="past-simple-body">
         <div class="card-meta">
           <div class="tense-tag">past simple</div>
           <div class="tense-name">Past Simple</div>
           <div class="tense-descriptor">Acción completa en momento específico</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="past-simple-body">
         <div class="tense-formula">verb-ed (o forma irregular)</div>
         <div class="tense-use">Acciones completas en un momento específico del pasado. El momento está cerrado, ya no conecta con el presente.</div>
         <div class="examples">
@@ -832,16 +941,16 @@ summary:focus-visible,
       <strong>Zona de conexión.</strong> El Present Perfect no es pasado ni presente: es pasado con relevancia ahora. Por eso vive aquí, entre las dos zonas. El momento exacto no importa — importa el resultado o la experiencia en el presente.
     </div>
 
-    <div class="tense-card" id="pres-perf-cont" data-metro-pos="38" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="pres-perf-cont" data-metro-pos="38">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="pres-perf-cont-body">
         <div class="card-meta">
           <div class="tense-tag">present perfect continuous</div>
           <div class="tense-name">Present Perfect Continuous</div>
           <div class="tense-descriptor">Duración desde el pasado hasta ahora</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="pres-perf-cont-body">
         <div class="tense-formula">have / has + been + verb-ing</div>
         <div class="tense-use">Acción que empezó en el pasado y continúa ahora, o que acaba de terminar dejando evidencia visible.</div>
         <div class="examples">
@@ -862,16 +971,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="pres-perf" data-metro-pos="44" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="pres-perf" data-metro-pos="44">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="pres-perf-body">
         <div class="card-meta">
           <div class="tense-tag">present perfect</div>
           <div class="tense-name">Present Perfect</div>
           <div class="tense-descriptor">Pasado con relevancia ahora</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="pres-perf-body">
         <div class="tense-formula">have / has + past participle</div>
         <div class="tense-use">Experiencias de vida sin especificar cuándo, acciones pasadas con resultado visible ahora, acciones recientes relevantes para el presente.</div>
         <div class="examples">
@@ -900,16 +1009,16 @@ summary:focus-visible,
       <div class="zone-rule"></div>
     </div>
 
-    <div class="tense-card" id="pres-simple" data-metro-pos="54" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="pres-simple" data-metro-pos="54">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="pres-simple-body">
         <div class="card-meta">
           <div class="tense-tag">present simple</div>
           <div class="tense-name">Present Simple</div>
           <div class="tense-descriptor">Hábitos, verdades, estados permanentes</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="pres-simple-body">
         <div class="tense-formula">base verb (+ -s en 3ª persona)</div>
         <div class="tense-use">Hábitos, rutinas, verdades generales o científicas, estados permanentes. No describe lo que pasa ahora mismo.</div>
         <div class="examples">
@@ -930,16 +1039,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="pres-cont" data-metro-pos="62" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="pres-cont" data-metro-pos="62">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="pres-cont-body">
         <div class="card-meta">
           <div class="tense-tag">present continuous</div>
           <div class="tense-name">Present Continuous</div>
           <div class="tense-descriptor">Acción en progreso ahora</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="pres-cont-body">
         <div class="tense-formula">am / is / are + verb-ing</div>
         <div class="tense-use">Acciones en progreso en este momento, situaciones temporales (no permanentes), tendencias o cambios en curso.</div>
         <div class="examples">
@@ -968,16 +1077,16 @@ summary:focus-visible,
       <div class="zone-rule"></div>
     </div>
 
-    <div class="tense-card" id="going-to" data-metro-pos="72" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="going-to" data-metro-pos="72">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="going-to-body">
         <div class="card-meta">
           <div class="tense-tag">future intention</div>
           <div class="tense-name">Going to</div>
           <div class="tense-descriptor">Plan decidido o predicción con evidencia</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="going-to-body">
         <div class="tense-formula">am / is / are + going to + base verb</div>
         <div class="tense-use">Planes decididos de antemano, predicciones basadas en evidencia visible ahora mismo.</div>
         <div class="examples">
@@ -997,16 +1106,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="pres-cont-fut" data-metro-pos="82" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="pres-cont-fut" data-metro-pos="82">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="pres-cont-fut-body">
         <div class="card-meta">
           <div class="tense-tag">future arrangement</div>
           <div class="tense-name">Present Continuous → futuro</div>
           <div class="tense-descriptor">Cita o plan ya acordado</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="pres-cont-fut-body">
         <div class="tense-formula">am / is / are + verb-ing</div>
         <div class="tense-use">Eventos futuros ya acordados y organizados con otras personas. Existe un acuerdo concreto, no solo intención.</div>
         <div class="examples">
@@ -1022,16 +1131,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="will" data-metro-pos="91" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="will" data-metro-pos="91">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="will-body">
         <div class="card-meta">
           <div class="tense-tag">future simple</div>
           <div class="tense-name">Will</div>
           <div class="tense-descriptor">Predicción, decisión espontánea, promesa</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="will-body">
         <div class="tense-formula">will + base verb</div>
         <div class="tense-use">Predicciones sin evidencia visible, decisiones tomadas en el momento de hablar, promesas y ofrecimientos espontáneos.</div>
         <div class="examples">
@@ -1060,16 +1169,16 @@ summary:focus-visible,
       <div class="zone-rule"></div>
     </div>
 
-    <div class="tense-card" id="zero-cond" data-metro-pos="25" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="zero-cond" data-metro-pos="25">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="zero-cond-body">
         <div class="card-meta">
           <div class="tense-tag">zero conditional</div>
           <div class="tense-name">Zero Conditional</div>
           <div class="tense-descriptor">Verdad universal, causa-efecto fijo</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="zero-cond-body">
         <div class="tense-formula">if + present simple, present simple</div>
         <div class="tense-use">Verdades universales, hechos científicos, relaciones causa-efecto siempre ciertas. No hay hipótesis: es una ley.</div>
         <div class="examples">
@@ -1085,16 +1194,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="first-cond" data-metro-pos="47" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="first-cond" data-metro-pos="47">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="first-cond-body">
         <div class="card-meta">
           <div class="tense-tag">first conditional</div>
           <div class="tense-name">First Conditional</div>
           <div class="tense-descriptor">Situación real y posible en el futuro</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="first-cond-body">
         <div class="tense-formula">if + present simple, will + base verb</div>
         <div class="tense-use">Situaciones reales o posibles en el futuro. El hablante cree que la condición puede cumplirse.</div>
         <div class="examples">
@@ -1110,16 +1219,16 @@ summary:focus-visible,
       </div>
     </div>
 
-    <div class="tense-card" id="second-cond" data-metro-pos="65" onclick="openCard(this)">
-      <div class="card-head">
+    <div class="tense-card" id="second-cond" data-metro-pos="65">
+      <button type="button" class="card-head" aria-expanded="false" aria-controls="second-cond-body">
         <div class="card-meta">
           <div class="tense-tag">second conditional</div>
           <div class="tense-name">Second Conditional</div>
           <div class="tense-descriptor">Hipotético, contrario a la realidad</div>
         </div>
         <div class="card-chevron">▾</div>
-      </div>
-      <div class="card-body">
+      </button>
+      <div class="card-body" id="second-cond-body">
         <div class="tense-formula">if + past simple, would + base verb</div>
         <div class="tense-use">Situaciones hipotéticas en el presente o futuro, improbables o contrarias a la realidad actual.</div>
         <div class="examples">
@@ -1142,7 +1251,6 @@ summary:focus-visible,
 <script>
 
 // -- Cabecera plegable -----------------------------------------------------
-// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // La eleccion se recuerda y es COMPARTIDA por el laboratorio: quien pliega
 // una vez no quiere volver a plegar en cada herramienta.
 (function () {
@@ -1167,74 +1275,172 @@ summary:focus-visible,
   const youHere = document.getElementById('youHere');
   let currentCard = null;
 
-  function openCard(card) {
-    const isOpen = card.classList.contains('open');
+  const estaciones = Array.prototype.slice.call(document.querySelectorAll('.station'));
+  /* Quien pide menos movimiento en su sistema no deberia recibir desplazamiento
+     suave: en este laboratorio esa preferencia se respeta. */
+  const desplazamiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  const metroTrack = document.getElementById('metroTrack');
 
-    // Close all
-    document.querySelectorAll('.tense-card.open').forEach(c => c.classList.remove('open'));
-    document.querySelectorAll('.station.active').forEach(s => s.classList.remove('active'));
+  /* Un solo sitio decide que estacion esta activa. Antes esto se resolvia
+     leyendo el atributo onclick de cada estacion y buscando el id dentro del
+     texto; al pasar a botones ya no hay onclick que leer, y data-target dice lo
+     mismo sin tener que interpretar codigo como si fuera texto. */
+  function sincronizaEstaciones(id) {
+    estaciones.forEach(s => {
+      const activa = s.dataset.target === id;
+      s.classList.toggle('active', activa);
+      s.setAttribute('aria-checked', activa ? 'true' : 'false');
+    });
+    // Una sola parada de tabulador: la estacion elegida, o la primera si no hay.
+    const foco = estaciones.find(s => s.getAttribute('aria-checked') === 'true') || estaciones[0];
+    estaciones.forEach(s => { s.tabIndex = (s === foco ? 0 : -1); });
 
-    if (!isOpen) {
-      card.classList.add('open');
-      currentCard = card;
-
-      // Move YOU ARE HERE
-      const pos = card.dataset.metroPos;
-      if (pos) {
-        youHere.style.left = pos + '%';
-        youHere.style.opacity = '1';
-      }
-
-      // Highlight matching station
-      const id = card.id;
-      const stations = document.querySelectorAll('.station');
-      stations.forEach(s => {
-        if (s.getAttribute('onclick') && s.getAttribute('onclick').includes(id)) {
-          s.classList.add('active');
-        }
-      });
-
-      // Scroll card into view smoothly
-      setTimeout(() => {
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 60);
-
-    } else {
-      currentCard = null;
-      youHere.style.opacity = '0';
-    }
+    const activa = estaciones.find(s => s.classList.contains('active'));
+    if (activa) ajustaRotulo(activa);
   }
 
-  function jumpTo(id) {
+  /* El rotulo va centrado sobre su estacion, asi que en las de los extremos se
+     salia de la pantalla: 35px fuera por la izquierda en un movil de 375. Antes
+     apenas se notaba porque solo aparecia al pasar el raton por encima; ahora
+     las flechas activan estaciones todo el rato y se veia siempre.
+     Se mide y se empuja hacia dentro lo justo, que funciona a cualquier ancho
+     sin tener que adivinar cuantas estaciones estan cerca del borde.
+     V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
+  function ajustaRotulo(st) {
+    const tip = st.querySelector('.station-tip');
+    if (!tip) return;
+    tip.style.transform = 'translateX(-50%)';
+    const r = tip.getBoundingClientRect();
+    const margen = 6;
+    let d = 0;
+    if (r.left < margen) d = margen - r.left;
+    else if (r.right > window.innerWidth - margen) d = (window.innerWidth - margen) - r.right;
+    if (d) tip.style.transform = 'translateX(calc(-50% + ' + Math.round(d) + 'px))';
+  }
+
+  /* El estado abierto/cerrado se anuncia con aria-expanded, no solo con la
+     clase .open y el giro del chevron: un lector de pantalla no ve ninguno. */
+  function sincronizaTarjetas() {
+    document.querySelectorAll('.tense-card').forEach(c => {
+      const b = c.querySelector('.card-head');
+      if (b) b.setAttribute('aria-expanded', c.classList.contains('open') ? 'true' : 'false');
+    });
+  }
+
+  /* Activar un tiempo: abrir su tarjeta y poner al dia linea y marcador.
+     Separado del salto a proposito, porque recorrer la linea con las flechas
+     activa cada estacion por la que pasas, y desplazar la pagina en cada
+     pulsacion marearia. */
+  function activaTiempo(id) {
     const card = document.getElementById(id);
-    if (!card) return;
+    if (!card) return null;
 
-    // Close all, open target
     document.querySelectorAll('.tense-card.open').forEach(c => c.classList.remove('open'));
-    document.querySelectorAll('.station.active').forEach(s => s.classList.remove('active'));
-
     card.classList.add('open');
+    currentCard = card;
 
-    // Move YOU ARE HERE
     const pos = card.dataset.metroPos;
     if (pos) {
       youHere.style.left = pos + '%';
       youHere.style.opacity = '1';
     }
 
-    // Highlight station
-    const stations = document.querySelectorAll('.station');
-    stations.forEach(s => {
-      if (s.getAttribute('onclick') && s.getAttribute('onclick').includes(id)) {
-        s.classList.add('active');
-      }
-    });
-
-    // Scroll to card
-    setTimeout(() => {
-      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 60);
+    sincronizaEstaciones(id);
+    sincronizaTarjetas();
+    return card;
   }
+
+  function cierraTodo() {
+    document.querySelectorAll('.tense-card.open').forEach(c => c.classList.remove('open'));
+    currentCard = null;
+    youHere.style.opacity = '0';
+    sincronizaEstaciones(null);
+    sincronizaTarjetas();
+  }
+
+  // Pulsar la cabecera abre o cierra su tarjeta.
+  function openCard(card) {
+    if (card.classList.contains('open')) { cierraTodo(); return; }
+    activaTiempo(card.id);
+    setTimeout(() => { card.scrollIntoView({ behavior: desplazamiento, block: 'nearest' }); }, 60);
+  }
+
+  // Saltar desde la linea: activa y ademas lleva alli.
+  function jumpTo(id) {
+    const card = activaTiempo(id);
+    if (!card) return;
+    setTimeout(() => { card.scrollIntoView({ behavior: desplazamiento, block: 'start' }); }, 60);
+  }
+
+  document.querySelectorAll('.card-head').forEach(b => {
+    b.addEventListener('click', () => openCard(b.closest('.tense-card')));
+  });
+
+  /* Pulsar una estacion (raton, Enter o Espacio) activa el tiempo Y lleva el
+     foco a la cabecera de su tarjeta: quien navega con teclado aterriza donde
+     esta el contenido, y de paso oye el nombre del tiempo y que se ha abierto.
+     Las flechas NO hacen esto: se quedan en la linea. */
+  estaciones.forEach(s => {
+    s.addEventListener('click', () => {
+      jumpTo(s.dataset.target);
+      const cab = document.getElementById(s.dataset.target).querySelector('.card-head');
+      if (cab) cab.focus();
+    });
+  });
+
+  /* Grupo de radio: las flechas mueven Y seleccionan, que es lo que se espera
+     cuando las opciones son excluyentes. Home y End van a los extremos de la
+     linea temporal. */
+  metroTrack.addEventListener('keydown', e => {
+    const i = estaciones.indexOf(document.activeElement);
+    if (i < 0) return;
+    let j = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % estaciones.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + estaciones.length) % estaciones.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = estaciones.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    const card = activaTiempo(estaciones[j].dataset.target);
+    estaciones[j].focus();
+    /* Las flechas TAMBIEN llevan la vista a la tarjeta. Al principio no lo
+       hacian, para que la pagina no diera saltos al recorrer la linea; el
+       efecto real fue que parecia que las flechas no hacian nada, porque la
+       tarjeta que se abria quedaba fuera de pantalla. Sin desplazamiento
+       instantaneo -no suave- porque al encadenar flechas el suave va siempre
+       por detras de donde estas. */
+    if (card) card.scrollIntoView({ behavior: 'auto', block: 'start' });
+  });
+
+  /* Escape devuelve el foco de la tarjeta a su estacion. Sin esto, entrar con
+     Enter era un viaje de ida: para volver a la linea habia que recorrer con
+     el tabulador las catorce tarjetas. */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const card = e.target.closest && e.target.closest('.tense-card');
+    if (!card) return;
+    const st = estaciones.find(s => s.dataset.target === card.id);
+    if (!st) return;
+    e.preventDefault();
+    st.focus();
+  });
+
+  /* Cuanto ocupa la linea pegada arriba, para que las tarjetas no se metan
+     debajo al desplazarse. Se mide en vez de fijarse: en movil la linea no
+     ocupa lo mismo que en escritorio. */
+  function midoTopeLinea() {
+    const mw = document.querySelector('.metro-wrap');
+    if (!mw) return;
+    const arriba = parseFloat(getComputedStyle(mw).top) || 0;
+    const alto = mw.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--tope-linea', Math.round(arriba + alto + 10) + 'px');
+  }
+  midoTopeLinea();
+  window.addEventListener('resize', midoTopeLinea);
+
+  sincronizaEstaciones(null);
+  sincronizaTarjetas();
+
 </script>
 
 
