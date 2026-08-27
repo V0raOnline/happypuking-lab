@@ -321,7 +321,17 @@ footer {
   margin-bottom: 1.2rem;
 }
 
+/* Las palabras de la oracion son controles: se marcan y se desmarcan, varias a
+   la vez, antes de confirmar. Al ser multiples y NO excluyentes, el patron es
+   barra de herramientas -flechas para recorrer, Espacio o Enter para marcar-,
+   no grupo de radio.
+   El reset toca solo lo que impone el navegador a un <button>: fondo, color y
+   centrado. La tipografia y el borde ya los pone esta regla. */
 .token {
+  background: none;
+  color: inherit;
+  text-align: start;
+  margin: 0;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.3rem;
   padding: 0.3rem 0.5rem;
@@ -862,6 +872,8 @@ footer {
 }
 
 .rel-tag {
+  margin: 0;
+  text-align: start;
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
   padding: 0.25rem 0.6rem;
@@ -1426,7 +1438,8 @@ summary:focus-visible,
 
       <div class="oracion-box" id="oracion-box">
         <div class="oracion-nota" id="oracion-nota"></div>
-        <div class="tokens-container" id="tokens-container"></div>
+        <div class="tokens-container" id="tokens-container" role="toolbar"
+             aria-label="Palabras de la oración"></div>
         <div class="paso-box" id="paso-box">
           <div class="paso-numero" id="paso-numero"></div>
           <div class="paso-contenido">
@@ -2533,15 +2546,82 @@ function renderTokens() {
 
     const labelText = esCorrecto ? (t.funcion || t.categoria) : '';
 
-    return `<span class="token ${clases}" 
+    /* Sin title. Lo llevaban TODAS las palabras, resueltas o no, con la
+       categoria dentro: poner el raton encima chivaba la respuesta que el
+       alumno tiene que decidir, y un lector de pantalla la leia igual. En las
+       resueltas es ademas redundante, porque .token-label ya la muestra.
+       El nombre accesible sale del contenido: la palabra sola mientras no esta
+       resuelta, y palabra + categoria cuando ya lo esta. */
+    return `<button type="button" class="token ${clases}"
       style="${esCorrecto ? `color:${fnColor};border-color:${fnColor};background:color-mix(in srgb,${fnColor} 12%,var(--surface2))` : ''}"
-      onclick="toggleToken(${i})"
-      title="${t.categoria}${t.funcion ? ' · ' + t.funcion : ''}">
+      aria-pressed="${esCorrecto || esSel}"${esCorrecto ? ' aria-disabled="true"' : ''}
+      tabindex="-1">
       ${t.palabra}
       <span class="token-label" style="background:color-mix(in srgb,${fnColor} 20%,var(--surface2));color:${fnColor}">${labelText}</span>
-    </span>`;
+    </button>`;
   }).join('');
+  sincronizaTokens();
 }
+
+/* renderTokens reconstruye las siete palabras con innerHTML, o sea que destruye
+   el elemento que tenia el foco: al marcar una palabra con el teclado, el foco
+   se caia al principio y habia que volver a tabular para marcar la siguiente
+   del mismo sintagma. Y marcar varias es justo lo que hace esta herramienta.
+   Se recuerda la posicion -no el elemento, que deja de existir- y se vuelve a
+   ella. Solo si el foco estaba dentro: si estabas en otra parte de la pagina,
+   nadie te lo mueve. */
+function conFocoEnLaMismaPalabra(fn) {
+  const cont = document.getElementById('tokens-container');
+  const activo = document.activeElement;
+  const dentro = cont && activo && cont.contains(activo);
+  const i = dentro ? Array.prototype.indexOf.call(cont.children, activo.closest('.token')) : -1;
+  fn();
+  if (i < 0) return;
+  const vuelta = cont.children[i];
+  if (!vuelta) return;
+  Array.prototype.forEach.call(cont.children, x => { x.tabIndex = -1; });
+  vuelta.tabIndex = 0;
+  vuelta.focus();
+}
+
+/* Una sola parada de tabulador en toda la oracion. Se rehace DESPUES de
+   repintar, porque renderTokens destruye y recrea las palabras enteras. */
+function sincronizaTokens() {
+  const tks = Array.prototype.slice.call(document.querySelectorAll('.token'));
+  if (!tks.length) return;
+  const libre = tks.find(x => !x.hasAttribute('aria-disabled'));
+  const foco = tks.find(x => x.getAttribute('aria-pressed') === 'true' && !x.hasAttribute('aria-disabled'))
+            || libre || tks[0];
+  tks.forEach(x => { x.tabIndex = (x === foco ? 0 : -1); });
+}
+
+(function () {
+  const cont = document.getElementById('tokens-container');
+  if (!cont) return;
+  /* Delegado: las palabras se destruyen en cada repintado, asi que un listener
+     por palabra se perderia. */
+  cont.addEventListener('click', e => {
+    const b = e.target.closest('.token');
+    if (b) toggleToken(Array.prototype.indexOf.call(cont.children, b));
+  });
+  cont.addEventListener('keydown', e => {
+    const tks = Array.prototype.slice.call(cont.querySelectorAll('.token'));
+    const i = tks.indexOf(document.activeElement);
+    if (i < 0) return;
+    let j = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % tks.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + tks.length) % tks.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = tks.length - 1;
+    if (j === null) return;
+    /* En una barra de herramientas las flechas SOLO mueven: marcar es un gesto
+       aparte, porque aqui se eligen varias palabras y moverse no debe marcar. */
+    e.preventDefault();
+    tks.forEach(x => { x.tabIndex = -1; });
+    tks[j].tabIndex = 0;
+    tks[j].focus();
+  });
+})();
 
 function toggleToken(idx) {
   const correctosHastaAhora = Object.values(resumenAnalisis).flat();
@@ -2556,7 +2636,7 @@ function toggleToken(idx) {
     seleccionados.push(idx);
   }
 
-  renderTokens();
+  conFocoEnLaMismaPalabra(renderTokens);
   document.getElementById('btn-confirmar').disabled = seleccionados.length === 0;
 
   // Limpiar feedback al cambiar selección
@@ -2776,13 +2856,23 @@ function renderRelaciones(d) {
     // Buscar en ambos conjuntos de datos
     const rel = [...DATOS_MORFOLOGIA, ...DATOS_SINTAXIS].find(x => x.id === rid);
     if (!rel) return '';
-    return `<span class="rel-tag" 
+    /* Saltan a otra categoria: son navegacion, no interruptores. Cada una es
+       un destino distinto, asi que van con su propia parada de tabulador, como
+       una fila de enlaces, y no con tabindex movil. */
+    return `<button type="button" class="rel-tag"
       style="border-color:${rel.color};color:${rel.color};background:color-mix(in srgb,${rel.color} 8%,var(--surface2))"
-      onclick="saltarA('${rid}', '${rel.tipo}')">
+      data-rid="${rid}" data-tipo="${rel.tipo}">
       ${rel.nombre}
-    </span>`;
+    </button>`;
   }).join('');
 }
+
+/* Delegado en el documento porque la lista de relacionadas se repinta cada vez
+   que cambia la categoria activa. */
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.rel-tag');
+  if (b && b.dataset.rid) saltarA(b.dataset.rid, b.dataset.tipo);
+});
 
 function saltarA(id, tipo) {
   // Cambiar modo si es necesario (sin pasar por setExploraMode para evitar resetDetalle)
