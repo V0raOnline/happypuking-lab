@@ -275,6 +275,12 @@ header p {
   margin-bottom: 10px;
 }
 .pattern-item {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
+  text-align: start;
   display: flex;
   align-items: flex-start;
   gap: 7px;
@@ -390,7 +396,15 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
   margin-bottom: 9px;
 }
 .id5-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 5px; }
+/* Estas tarjetas y los patrones eran <div> con onclick. Al pasar a <button>
+   hay que neutralizar SOLO lo que impone el navegador -tipografia, color,
+   fondo, borde y margen-; el resto ya lo pone cada regla. */
 .id5-item {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
   display: flex; flex-direction: column; align-items: center;
   justify-content: space-between;
   cursor: pointer; padding: 5px 3px; border-radius: 3px; text-align: center;
@@ -422,8 +436,17 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.4,0.2,0.2,1);
   z-index: 100; display: flex; flex-direction: column; overflow: hidden;
+  /* Cerrado, el panel no se ocultaba: se empujaba fuera de la pantalla con un
+     transform. Seguia existiendo, asi que sus botones seguian en el tabulador
+     y se podia recorrer por dentro de algo invisible.
+     visibility lo saca del recorrido y del arbol de accesibilidad, y se retrasa
+     lo que dura el deslizamiento para que no desaparezca de golpe al cerrar. */
+  visibility: hidden;
+  transition: transform 0.3s ease, visibility 0s linear 0.3s;
 }
-.detail-panel.open { transform: translateX(0); }
+.detail-panel.open {
+  visibility: visible;
+  transition: transform 0.3s ease, visibility 0s; transform: translateX(0); }
 .dp-band { height: 5px; flex-shrink: 0; }
 .dp-header {
   padding: 14px 16px 11px;
@@ -610,7 +633,8 @@ summary:focus-visible,
   <aside class="side-panel">
     <div class="side-title">Patrones secretos</div>
 
-    <div class="pattern-item" data-pattern="simetria_radial" onclick="highlightPattern('simetria_radial',['cnidarios','equinodermos'])">
+    <button type="button" class="pattern-item" data-pattern="simetria_radial"
+         data-grupos="cnidarios,equinodermos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">⭐</span>
       <div>
         <div class="pat-name">Simetría radial</div>
@@ -619,9 +643,10 @@ summary:focus-visible,
           <span class="pat-badge" style="background:var(--c-equinodermos)">6</span>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="pattern-item" data-pattern="cuerpo_blando" onclick="highlightPattern('cuerpo_blando',['gusanos','moluscos'])">
+    <button type="button" class="pattern-item" data-pattern="cuerpo_blando"
+         data-grupos="gusanos,moluscos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">🐛</span>
       <div>
         <div class="pat-name">Cuerpo blando</div>
@@ -630,9 +655,10 @@ summary:focus-visible,
           <span class="pat-badge" style="background:var(--c-moluscos)">4</span>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="pattern-item" data-pattern="vida_acuatica" onclick="highlightPattern('vida_acuatica',['poriferos','cnidarios','equinodermos'])">
+    <button type="button" class="pattern-item" data-pattern="vida_acuatica"
+         data-grupos="poriferos,cnidarios,equinodermos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">💧</span>
       <div>
         <div class="pat-name">Vida acuática</div>
@@ -642,9 +668,10 @@ summary:focus-visible,
           <span class="pat-badge" style="background:var(--c-equinodermos)">6</span>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="pattern-item" data-pattern="regeneracion" onclick="highlightPattern('regeneracion',['equinodermos','gusanos'])">
+    <button type="button" class="pattern-item" data-pattern="regeneracion"
+         data-grupos="equinodermos,gusanos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">🔄</span>
       <div>
         <div class="pat-name">Regeneración</div>
@@ -653,9 +680,10 @@ summary:focus-visible,
           <span class="pat-badge" style="background:var(--c-gusanos)">3</span>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="pattern-item" data-pattern="exoesqueleto" onclick="highlightPattern('exoesqueleto',['artropodos'])">
+    <button type="button" class="pattern-item" data-pattern="exoesqueleto"
+         data-grupos="artropodos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">🛡️</span>
       <div>
         <div class="pat-name">Exoesqueleto</div>
@@ -663,9 +691,10 @@ summary:focus-visible,
           <span class="pat-badge" style="background:var(--c-artropodos)">5</span>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="pattern-item" data-pattern="filtradores" onclick="highlightPattern('filtradores',['poriferos'])">
+    <button type="button" class="pattern-item" data-pattern="filtradores"
+         data-grupos="poriferos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">🌊</span>
       <div>
         <div class="pat-name">Filtradores</div>
@@ -673,9 +702,10 @@ summary:focus-visible,
           <span class="pat-badge" style="background:var(--c-poriferos)">1</span>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="pattern-item" data-pattern="mudan" onclick="highlightPattern('mudan',['artropodos'])">
+    <button type="button" class="pattern-item" data-pattern="mudan"
+         data-grupos="artropodos" aria-pressed="false" tabindex="-1">
       <span class="pat-icon">🦋</span>
       <div>
         <div class="pat-name">Mudan</div>
@@ -758,7 +788,7 @@ summary:focus-visible,
           ════════════════════════════════════ -->
 
           <!-- 1. Poríferos -->
-          <g class="group-node" id="node-poriferos" onclick="openGroup('poriferos')">
+          <g class="group-node" id="node-poriferos" data-grupo="poriferos">
             <circle class="node-circle" cx="310" cy="110" r="52" fill="url(#nodeGrad-poriferos)" stroke="#E8B84B" stroke-width="2.5"/>
             <text x="310" y="88" text-anchor="middle" font-size="28" dominant-baseline="middle">🧽</text>
             <text x="310" y="108" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E8B84B" letter-spacing="1">01</text>
@@ -766,7 +796,7 @@ summary:focus-visible,
           </g>
 
           <!-- 2. Cnidarios -->
-          <g class="group-node" id="node-cnidarios" onclick="openGroup('cnidarios')">
+          <g class="group-node" id="node-cnidarios" data-grupo="cnidarios">
             <circle class="node-circle" cx="483" cy="210" r="52" fill="url(#nodeGrad-cnidarios)" stroke="#7BAFD4" stroke-width="2.5"/>
             <text x="483" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪼</text>
             <text x="483" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#7BAFD4" letter-spacing="1">02</text>
@@ -774,7 +804,7 @@ summary:focus-visible,
           </g>
 
           <!-- 3. Gusanos -->
-          <g class="group-node" id="node-gusanos" onclick="openGroup('gusanos')">
+          <g class="group-node" id="node-gusanos" data-grupo="gusanos">
             <circle class="node-circle" cx="137" cy="210" r="52" fill="url(#nodeGrad-gusanos)" stroke="#8B6B3D" stroke-width="2.5"/>
             <text x="137" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪱</text>
             <text x="137" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#A08060" letter-spacing="1">03</text>
@@ -782,7 +812,7 @@ summary:focus-visible,
           </g>
 
           <!-- 4. Moluscos -->
-          <g class="group-node" id="node-moluscos" onclick="openGroup('moluscos')">
+          <g class="group-node" id="node-moluscos" data-grupo="moluscos">
             <circle class="node-circle" cx="483" cy="410" r="52" fill="url(#nodeGrad-moluscos)" stroke="#C17E5A" stroke-width="2.5"/>
             <text x="483" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🐚</text>
             <text x="483" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#C17E5A" letter-spacing="1">04</text>
@@ -790,7 +820,7 @@ summary:focus-visible,
           </g>
 
           <!-- 5. Artrópodos -->
-          <g class="group-node" id="node-artropodos" onclick="openGroup('artropodos')">
+          <g class="group-node" id="node-artropodos" data-grupo="artropodos">
             <circle class="node-circle" cx="137" cy="410" r="52" fill="url(#nodeGrad-artropodos)" stroke="#E05C3A" stroke-width="2.5"/>
             <text x="137" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🦋</text>
             <text x="137" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E05C3A" letter-spacing="1">05</text>
@@ -798,7 +828,7 @@ summary:focus-visible,
           </g>
 
           <!-- 6. Equinodermos — texto largo: dos líneas -->
-          <g class="group-node" id="node-equinodermos" onclick="openGroup('equinodermos')">
+          <g class="group-node" id="node-equinodermos" data-grupo="equinodermos">
             <circle class="node-circle" cx="310" cy="510" r="52" fill="url(#nodeGrad-equinodermos)" stroke="#9B4F9E" stroke-width="2.5"/>
             <text x="310" y="488" text-anchor="middle" font-size="28" dominant-baseline="middle">⭐</text>
             <text x="310" y="508" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#9B4F9E" letter-spacing="1">06</text>
@@ -814,38 +844,38 @@ summary:focus-visible,
     <div class="id5-strip">
       <div class="id5-title">→ ¿Cómo identificarlos en 5 segundos?</div>
       <div class="id5-grid">
-        <div class="id5-item" onclick="openGroup('poriferos')">
+        <button type="button" class="id5-item" data-grupo="poriferos" tabindex="-1">
           <span class="id5-emoji">🧽</span>
           <span class="id5-pista">¿Esponja llena de agujeros?</span>
           <span class="id5-nombre" style="background:var(--c-poriferos)">Porífero</span>
-        </div>
-        <div class="id5-item" onclick="openGroup('cnidarios')">
+        </button>
+        <button type="button" class="id5-item" data-grupo="cnidarios" tabindex="-1">
           <span class="id5-emoji">🪼</span>
           <span class="id5-pista">¿Tentáculos que pican?</span>
           <span class="id5-nombre" style="background:var(--c-cnidarios)">Cnidario</span>
-        </div>
-        <div class="id5-item" onclick="openGroup('gusanos')">
+        </button>
+        <button type="button" class="id5-item" data-grupo="gusanos" tabindex="-1">
           <span class="id5-emoji">🪱</span>
           <span class="id5-pista">¿Alargado y sin patas?</span>
           <span class="id5-nombre" style="background:var(--c-gusanos)">Gusano</span>
-        </div>
-        <div class="id5-item" onclick="openGroup('moluscos')">
+        </button>
+        <button type="button" class="id5-item" data-grupo="moluscos" tabindex="-1">
           <span class="id5-emoji">🐚</span>
           <span class="id5-pista">¿Cuerpo blando, con concha?</span>
           <span class="id5-nombre" style="background:var(--c-moluscos)">Molusco</span>
-        </div>
-        <div class="id5-item" onclick="openGroup('artropodos')">
+        </button>
+        <button type="button" class="id5-item" data-grupo="artropodos" tabindex="-1">
           <span class="id5-emoji">🦋</span>
           <span class="id5-pista">¿Patas articuladas?</span>
           <span class="id5-nombre" style="background:var(--c-artropodos)">Artrópodo</span>
-        </div>
-        <div class="id5-item" onclick="openGroup('equinodermos')">
+        </button>
+        <button type="button" class="id5-item" data-grupo="equinodermos" tabindex="-1">
           <span class="id5-emoji">⭐</span>
           <span class="id5-pista">¿Parece estrella o erizo?</span>
           <span class="id5-nombre" style="background:var(--c-equinodermos)">Equino.</span>
-        </div>
+        </button>
       </div>
-    </div>
+    </button>
 
   </div><!-- /map-center -->
 
@@ -916,7 +946,9 @@ summary:focus-visible,
 </div><!-- /main-layout -->
 
 <!-- OVERLAY + PANEL -->
-<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<!-- El fondo oscuro cierra al pulsarlo, pero no es un control: no entra en el
+     tabulador ni se anuncia. Para teclado estan Escape y el boton de cerrar. -->
+<div class="overlay" id="overlay" aria-hidden="true" onclick="closePanel()"></div>
 <div class="detail-panel" id="detailPanel">
   <div class="dp-band" id="dpBand"></div>
   <div class="dp-header">
@@ -1013,7 +1045,110 @@ const CONN_MAP = {
 
 let activeNode = null, activePattern = null;
 
-function openGroup(id) {
+/* ── TECLADO ──────────────────────────────────────────────────────────────
+   Tres grupos y un panel.
+
+   Los nodos del mapa son <g> de SVG: no pueden ser <button>, asi que llevan
+   role="button" y tabindex, y hay que atender Enter y Espacio a mano porque un
+   <g> no los convierte en click como haria un boton de verdad.
+
+   Los tres grupos usan tabindex movil: seis nodos, seis tarjetas y siete
+   patrones son diecinueve paradas si cada uno lleva la suya. Con una parada
+   por grupo y flechas para recorrerlo, son tres. */
+function itemsDe(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+
+/* Pulsar un patron lo enciende, y volver a pulsarlo lo apaga: puede no haber
+   ninguno. Por eso aria-pressed y no aria-checked, que exigiria que siempre
+   hubiera uno elegido. */
+function sincronizaPatrones() {
+  itemsDe('.pattern-item').forEach(el => {
+    el.setAttribute('aria-pressed', el.classList.contains('active') ? 'true' : 'false');
+  });
+}
+
+function rovingEn(sel, activoSel) {
+  const it = itemsDe(sel);
+  if (!it.length) return;
+  const foco = (activoSel && it.find(x => x.matches(activoSel))) || it[0];
+  it.forEach(x => { x.tabIndex = (x === foco ? 0 : -1); });
+}
+
+function tecladoDeGrupo(contenedor, sel, alActivar) {
+  if (!contenedor || contenedor.dataset.tecladoListo) return;
+  contenedor.dataset.tecladoListo = '1';
+  contenedor.addEventListener('keydown', e => {
+    const it = itemsDe(sel);
+    const i = it.indexOf(document.activeElement);
+    if (i < 0) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      if (alActivar) { e.preventDefault(); alActivar(it[i]); }
+      return;
+    }
+    let j = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % it.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + it.length) % it.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = it.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    it.forEach(x => { x.tabIndex = -1; });
+    it[j].tabIndex = 0;
+    it[j].focus();
+  });
+}
+
+let disparadorDelPanel = null;
+
+function montaMapa() {
+  // Los nodos del SVG se convierten en controles con el nombre que ya sabe el JS.
+  itemsDe('.group-node').forEach(n => {
+    const id = n.dataset.grupo;
+    const g = GRUPOS[id];
+    n.setAttribute('role', 'button');
+    n.setAttribute('tabindex', '-1');
+    if (g) n.setAttribute('aria-label', g.nombre);
+    n.addEventListener('click', () => openGroup(id, n));
+  });
+  const svg = document.querySelector('svg');
+  if (svg) {
+    if (!svg.hasAttribute('role')) svg.setAttribute('role', 'toolbar');
+    if (!svg.hasAttribute('aria-label')) svg.setAttribute('aria-label', 'Mapa de grupos de invertebrados');
+    tecladoDeGrupo(svg, '.group-node', n => openGroup(n.dataset.grupo, n));
+  }
+  rovingEn('.group-node');
+
+  itemsDe('.id5-item').forEach(b => b.addEventListener('click', () => openGroup(b.dataset.grupo, b)));
+  const rejilla = document.querySelector('.id5-grid');
+  if (rejilla) {
+    rejilla.setAttribute('role', 'toolbar');
+    rejilla.setAttribute('aria-label', 'Identificar en cinco segundos');
+    tecladoDeGrupo(rejilla, '.id5-item', b => b.click());
+  }
+  rovingEn('.id5-item');
+
+  itemsDe('.pattern-item').forEach(b => b.addEventListener('click', () => {
+    highlightPattern(b.dataset.pattern, (b.dataset.grupos || '').split(',').filter(Boolean));
+  }));
+  const listaPat = document.querySelector('.pattern-item') && document.querySelector('.pattern-item').parentElement;
+  if (listaPat) {
+    listaPat.setAttribute('role', 'toolbar');
+    listaPat.setAttribute('aria-label', 'Patrones compartidos');
+    tecladoDeGrupo(listaPat, '.pattern-item', b => b.click());
+  }
+  rovingEn('.pattern-item', '.active');
+
+  /* Escape cierra el panel, que es lo que se espera de algo que tapa la
+     pagina con un fondo oscuro. */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('detailPanel').classList.contains('open')) {
+      e.preventDefault();
+      closePanel();
+    }
+  });
+}
+
+function openGroup(id, disparador) {
   const g = GRUPOS[id];
   if (!g) return;
   document.getElementById('dpBand').style.background = g.color;
@@ -1047,12 +1182,26 @@ function openGroup(id) {
   document.getElementById('node-'+id)?.classList.add('lit');
   document.getElementById('detailPanel').classList.add('open');
   document.getElementById('overlay').classList.add('visible');
+
+  /* El panel tapa la pagina con un fondo oscuro, asi que se comporta como un
+     modal: el foco entra dentro. Sin esto, abrir un grupo con el teclado te
+     dejaba fuera, tabulando por debajo de algo que no puedes leer. */
+  disparadorDelPanel = disparador || document.activeElement;
+  const cerrar = document.querySelector('.dp-close');
+  if (cerrar) cerrar.focus();
 }
 
 function closePanel() {
   document.getElementById('detailPanel').classList.remove('open');
   document.getElementById('overlay').classList.remove('visible');
   if (activeNode) { document.getElementById('node-'+activeNode)?.classList.remove('lit'); activeNode = null; }
+
+  /* Y al cerrar, el foco vuelve de donde vino. Si no, se cae al principio de
+     la pagina y hay que rehacer todo el camino hasta donde estabas. */
+  if (disparadorDelPanel && document.contains(disparadorDelPanel)) {
+    disparadorDelPanel.focus();
+  }
+  disparadorDelPanel = null;
 }
 
 function highlightPattern(pid, grupos) {
@@ -1060,6 +1209,7 @@ function highlightPattern(pid, grupos) {
   clearPattern();
   activePattern = pid;
   document.querySelectorAll('.pattern-item').forEach(el => el.classList.toggle('active', el.dataset.pattern === pid));
+  sincronizaPatrones();
   Object.keys(GRUPOS).forEach(id => {
     const n = document.getElementById('node-'+id);
     if (!n) return;
@@ -1072,12 +1222,16 @@ function highlightPattern(pid, grupos) {
 function clearPattern() {
   activePattern = null;
   document.querySelectorAll('.pattern-item').forEach(el => el.classList.remove('active'));
+  sincronizaPatrones();
   Object.keys(GRUPOS).forEach(id => {
     const n = document.getElementById('node-'+id);
     if (n) { n.classList.remove('lit','dimmed'); n.style.opacity=''; }
   });
   document.querySelectorAll('.conn-line').forEach(el => el.classList.remove('visible'));
 }
+
+montaMapa();
+
 </script>
 <footer>
   <div class="footer-left">

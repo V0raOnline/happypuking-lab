@@ -280,7 +280,37 @@ body::before {
   }
 
   /* ── TARJETA BASE ── */
+  /* El boton de voltear se apoya en la tarjeta, asi que la tarjeta tiene que
+     ser el origen de coordenadas. */
+  .card-flip-btn {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    margin: 0;
+    color: rgba(248,250,255,0.65);
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .card-flip-btn svg { width: 15px; height: 15px; display: block; }
+  .card-flip-btn:hover {
+    color: #F8FAFF;
+    background: rgba(0,0,0,0.72);
+    border-color: rgba(255,255,255,0.4);
+  }
+  /* De vuelta, la flecha apunta al otro lado. */
+  .card-wrap.flipped .card-flip-btn svg { transform: scaleX(-1); }
+
   .card-wrap {
+    position: relative;
     perspective: 1200px;
     width: var(--card-w);
     height: var(--card-h);
@@ -451,6 +481,9 @@ body::before {
     text-align: right;
     margin-top: auto;
     padding-top: 8px;
+    /* Hueco para el icono de voltear, que se apoya en esa misma esquina. Sin
+       esto la frase le pasa por debajo. */
+    padding-right: 36px;
   }
 
   /* ── CARA TRASERA — FUNCIONES VITALES ── */
@@ -1114,8 +1147,12 @@ function makeDetectiveCards(g) {
   const color = g.color;
   return g.tarjetas_detective.map(t => `
     <div class="card-face detective-face">
-      <div class="card-band" style="background:${color}"></div>
-      <div class="det-header">🔍 Modo Detective · ${g.nombre}</div>
+      <!-- Ni el nombre del grupo ni su color en la cara de delante: la pregunta
+           es "a que grupo pertenezco" y la cabecera lo estaba respondiendo, con
+           la banda de color repitiendolo por si acaso. La banda va en gris y el
+           color reaparece al voltear, que es cuando se revela. -->
+      <div class="card-band" style="background:#4B5563"></div>
+      <div class="det-header">🔍 Modo Detective</div>
       <div class="det-pista">"${t.pista}"</div>
       <div class="det-pregunta">¿A qué grupo pertenezco? → voltea para ver</div>
     </div>
@@ -1193,16 +1230,24 @@ function makePoderCard(g) {
         <div class="pr-text">${p.rareza}</div>
       </div>
     </div>
+    <!-- Esta cara va sobre FONDO BLANCO. Dos de sus textos llevaban el color
+         crema del frente oscuro, o sea que eran invisibles: la cita se leia a
+         duras penas y el pie no se veia en absoluto. Se conserva la jerarquia
+         -cita al 78%, pie al 55%- pero en oscuro, que es lo que pide el fondo. -->
     <div class="card-face card-back poder-face" style="background:#F8FAFF; color:#111318;">
       <div class="card-band" style="background:${color}"></div>
       <div class="poder-title-row">
         <span class="poder-emoji">${g.emoji}</span>
-        <span class="poder-nombre" style="color:${color}">${g.nombre}</span>
+        <!-- El color del grupo funciona sobre el frente oscuro, pero esta cara es
+           blanca: el ambar de Poriferos daba 1.77 de contraste, o sea ilegible.
+           Se oscurece conservando el tono, para que la carta siga diciendo de
+           que grupo es de un vistazo. -->
+      <span class="poder-nombre" style="color:color-mix(in srgb, ${color} 55%, #111318)">${g.nombre}</span>
       </div>
-      <div style="font-family:'DM Serif Display',serif; font-style:italic; font-size:0.95rem; line-height:1.7; flex:1; display:flex; align-items:center; color:rgba(245,240,232,0.8); padding: 8px 0;">
+      <div style="font-family:'DM Serif Display',serif; font-style:italic; font-size:0.95rem; line-height:1.7; flex:1; display:flex; align-items:center; color:rgba(17,19,24,0.78); padding: 8px 0;">
         ${p.rareza}
       </div>
-      <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,240,232,0.25); text-align:center;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(17,19,24,0.55); text-align:center;">
         happypuking — lab
       </div>
     </div>`;
@@ -1244,7 +1289,55 @@ function buildCards() {
     inner.innerHTML = html;
     wrap.appendChild(inner);
     if (flippable) {
-      wrap.addEventListener('click', () => wrap.classList.toggle('flipped'));
+      /* Voltear era solo un click sobre el div: sin teclado y sin anunciarse.
+         El boton va aparte y no envuelve la tarjeta a proposito: role="button"
+         convierte en decorativo todo lo que lleva dentro, y aqui dentro esta
+         justamente el contenido que hay que leer. */
+      const caras = inner.querySelectorAll('.card-face');
+      const frente = caras[0], dorso = caras[1];
+
+      /* Si la tarjeta ya trae su propia frase de "voltear", esa frase pasa a
+         ser la etiqueta del boton y el texto original se retira: si no, los dos
+         se pintan en el mismo sitio y se montan uno encima del otro.
+         El boton vive en la tarjeta y NO dentro de una cara: las caras se
+         marcan como inexistentes al voltear, y con el boton dentro se quedaria
+         sin forma de volver. */
+      /* Icono en la esquina y no un boton con texto: las tarjetas van llenas
+         y un boton de texto se montaba encima del contenido en varias. Sacarlo
+         fuera de la tarjeta habria alargado catorce tarjetas para ganar una
+         linea; el icono no ocupa contenido.
+         La frase que ya traia la tarjeta -"voltear para funciones vitales"-
+         vuelve a su sitio como texto: informa de QUE hay detras, que es mas de
+         lo que dice un icono. Y se convierte en el nombre accesible del boton,
+         asi que quien no ve el icono oye la frase entera. */
+      const pista = inner.querySelector('.card-flip-hint');
+      const etiquetaFrente = pista ? pista.textContent.trim().replace(/^[←→]\s*/, '') : 'Voltear la tarjeta';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'card-flip-btn';
+      btn.setAttribute('aria-label', etiquetaFrente);
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"'
+        + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        + '<path d="M9 14 4 9l5-5"/>'
+        + '<path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/></svg>';
+      wrap.appendChild(btn);
+
+      /* backface-visibility esconde la cara de atras a la VISTA, pero las dos
+         siguen en el arbol de accesibilidad: en modo Detective eso significa
+         leer la pregunta y la respuesta a la vez. Se marca cual existe. */
+      const sincroniza = () => {
+        const vuelta = wrap.classList.contains('flipped');
+        btn.setAttribute('aria-expanded', vuelta ? 'true' : 'false');
+        btn.setAttribute('aria-label', vuelta ? 'Volver al frente de la tarjeta' : etiquetaFrente);
+        if (frente) frente.setAttribute('aria-hidden', vuelta ? 'true' : 'false');
+        if (dorso) dorso.setAttribute('aria-hidden', vuelta ? 'false' : 'true');
+      };
+      sincroniza();
+
+      const voltea = () => { wrap.classList.toggle('flipped'); sincroniza(); };
+      btn.addEventListener('click', e => { e.stopPropagation(); voltea(); });
+      wrap.addEventListener('click', voltea);
     }
     grid.appendChild(wrap);
   });
