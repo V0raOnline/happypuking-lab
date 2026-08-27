@@ -1,0 +1,134 @@
+# ─────────────────────────────────────────────────────────────
+# BANCO DE FRASES — hAppYpUkIng · Quiz de verbos irregulares
+# ─────────────────────────────────────────────────────────────
+# Este fichero es la PLANTILLA de ejemplo para crear bancos de
+# frases propios. NO es la fuente de verdad: las frases por
+# defecto van embebidas en ing-verbos-quiz.html.
+#
+# USO: copia este fichero, edita o añade frases, y pegalo en la
+# herramienta con "Cargar mis frases".
+#
+# CAMPOS POR ENTRADA:
+#   family       → familia fonologica del verbo (aaa, eeshort, endent, ew, iau, indound, iuu, iveove, ought, special)
+#   verb         → el verbo en infinitivo
+#   level        → A1, A2 o B1
+#   tense        → past_simple, past_participle o both
+#   sentence     → la frase con ___ donde va el hueco
+#   answer       → la forma correcta que rellena el hueco
+#                  (en tense: both, las dos separadas por " / ")
+#   translation  → la frase traducida al español
+#   hint         → OPCIONAL. Solo donde el error tipico del
+#                  hispanohablante lo justifique ("nunca 'thinked'")
+#
+# ─────────────────────────────────────────────────────────────
+# PROMPT PARA GENERAR FRASES NUEVAS CON UN CHATBOT
+# ─────────────────────────────────────────────────────────────
+# Copia el bloque de abajo y pegalo en cualquier chatbot. Deja
+# DEBAJO dos o tres entradas de este fichero como ejemplo: los
+# modelos imitan estructuras, y con un ejemplo bueno delante el
+# YAML sale utilizable casi siempre. Sin ejemplo, inventan campos.
+#
+# ─── copia desde aqui ────────────────────────────────────────
+#
+#   Genera 20 frases nuevas para un banco YAML de practica de
+#   verbos irregulares en ingles, nivel ESO.
+#
+#   Requisitos:
+#   - Una frase por verbo, natural y de uso cotidiano.
+#   - El hueco va marcado con ___ y answer es EXACTAMENTE la
+#     forma que lo rellena.
+#   - translation es la frase entera en español, no el verbo suelto.
+#   - level entre A1, A2 y B1, mezclados.
+#   - tense: past_simple, past_participle o both. Usa "both" solo
+#     cuando la frase pida las dos formas, y entonces answer lleva
+#     las dos separadas por " / ".
+#   - hint SOLO si hay un error tipico de hispanohablante que
+#     merezca avisarse. Si no lo hay, omite el campo.
+#   - Manten exactamente esta estructura de una linea por entrada.
+#
+#   Familias disponibles: aaa, eeshort, endent, ew, iau, indound, iuu, iveove, ought, special
+#
+#   Devuelve SOLO YAML valido, listo para pegar.
+#
+#   Ejemplo de estructura:
+#   [pega aqui dos entradas de este fichero]
+#
+# ─── hasta aqui ──────────────────────────────────────────────
+#
+# CONSEJO: pide 20 o 30 de golpe y descarta las que salgan mal.
+# Es mas rapido que ir de una en una.
+#
+# Y REVISALAS. Un modelo se inventa cosas con aplomo, y aqui lo
+# que se inventa son formas verbales. Lo que genera es un
+# borrador, no una respuesta.
+# ─────────────────────────────────────────────────────────────
+
+verbs:
+  - {family: aaa, verb: cut, level: A1, tense: past_simple, sentence: "She ___ her finger while cooking dinner yesterday.", answer: cut, translation: "Ella se cortó el dedo mientras cocinaba la cena ayer.", hint: "Nunca 'cutted'. Esta familia no cambia nunca."}
+  - {family: aaa, verb: put, level: A1, tense: past_simple, sentence: "He ___ his keys on the table when he arrived.", answer: put, translation: "Él puso sus llaves en la mesa cuando llegó.", hint: "Nunca 'putted'. Igual en las tres formas."}
+  - {family: aaa, verb: cost, level: A1, tense: past_simple, sentence: "The ticket ___ twenty euros last summer.", answer: cost, translation: "La entrada costó veinte euros el verano pasado.", hint: "Nunca 'costed'."}
+  - {family: aaa, verb: hit, level: A1, tense: past_simple, sentence: "The ball ___ the window and broke it.", answer: hit, translation: "La pelota golpeó la ventana y la rompió."}
+  - {family: aaa, verb: read, level: A2, tense: both, sentence: "I ___ that book last year and I've ___ it twice since then.", answer: "read / read", translation: "Leí ese libro el año pasado y lo he leído dos veces desde entonces.", hint: "Misma grafía, distinta pronunciación: infinitivo /riːd/, pasado /rɛd/."}
+  - {family: aaa, verb: hurt, level: A1, tense: past_simple, sentence: "She fell off her bike and ___ her knee badly.", answer: hurt, translation: "Ella se cayó de su bici y se hizo daño en la rodilla."}
+  - {family: aaa, verb: let, level: A2, tense: past_simple, sentence: "His parents ___ him stay up late on Friday night.", answer: let, translation: "Sus padres le dejaron quedarse despierto hasta tarde el viernes."}
+  - {family: aaa, verb: set, level: A2, tense: past_simple, sentence: "The teacher ___ a very difficult exam last week.", answer: set, translation: "El profesor puso un examen muy difícil la semana pasada."}
+  - {family: endent, verb: send, level: A1, tense: past_simple, sentence: "She ___ me a message yesterday but I didn't see it.", answer: sent, translation: "Ella me mandó un mensaje ayer pero no lo vi.", hint: "Nunca 'sended'. La -d cambia a -t."}
+  - {family: endent, verb: spend, level: A2, tense: past_simple, sentence: "We ___ three hours in the museum last Saturday.", answer: spent, translation: "Pasamos tres horas en el museo el sábado pasado."}
+  - {family: endent, verb: lend, level: A2, tense: past_simple, sentence: "He ___ me his bike for the whole weekend.", answer: lent, translation: "Él me prestó su bici durante todo el fin de semana.", hint: "LEND = prestar (tú das). No confundir con BORROW (tú coges)."}
+  - {family: endent, verb: bend, level: A2, tense: past_simple, sentence: "The storm ___ several trees in the park last night.", answer: bent, translation: "La tormenta dobló varios árboles en el parque anoche.", hint: "El que más se olvida de esta familia. Nunca 'bended'."}
+  - {family: indound, verb: find, level: A1, tense: past_simple, sentence: "She ___ her keys under the sofa this morning.", answer: found, translation: "Ella encontró sus llaves debajo del sofá esta mañana.", hint: "FIND/FOUND = hallar. No confundir con FOUND/FOUNDED = fundar (regular)."}
+  - {family: indound, verb: wind, level: A2, tense: past_simple, sentence: "She ___ up the old clock before going to bed.", answer: wound, translation: "Ella le dio cuerda al viejo reloj antes de irse a la cama."}
+  - {family: indound, verb: bind, level: B1, tense: past_simple, sentence: "The agreement ___ both companies to the same conditions.", answer: bound, translation: "El acuerdo vinculó a ambas empresas a las mismas condiciones."}
+  - {family: ought, verb: think, level: A1, tense: past_simple, sentence: "I ___ about you all day yesterday.", answer: thought, translation: "Pensé en ti todo el día ayer.", hint: "Nunca 'thinked'. La terminación -ought suena /ɔːt/."}
+  - {family: ought, verb: buy, level: A1, tense: past_simple, sentence: "He ___ a new phone last month.", answer: bought, translation: "Él compró un teléfono nuevo el mes pasado.", hint: "Nunca 'buyed'. Terminación -ought/-aught."}
+  - {family: ought, verb: teach, level: A2, tense: past_simple, sentence: "She ___ English at that school for ten years.", answer: taught, translation: "Ella enseñó inglés en ese colegio durante diez años.", hint: "Nunca 'teached'."}
+  - {family: ought, verb: catch, level: A1, tense: past_simple, sentence: "The goalkeeper ___ the ball at the last second.", answer: caught, translation: "El portero atrapó el balón en el último segundo.", hint: "Nunca 'catched'. Mismo patrón que teach/taught."}
+  - {family: ought, verb: bring, level: A1, tense: past_simple, sentence: "She ___ homemade cake to the party last Friday.", answer: brought, translation: "Ella trajo tarta casera a la fiesta el viernes pasado."}
+  - {family: ought, verb: fight, level: A2, tense: past_simple, sentence: "The team ___ hard but lost in the final minute.", answer: fought, translation: "El equipo luchó duro pero perdió en el último minuto."}
+  - {family: iuu, verb: win, level: A1, tense: past_simple, sentence: "Our team ___ the championship last year.", answer: won, translation: "Nuestro equipo ganó el campeonato el año pasado.", hint: "WIN = ganar competición. EARN = ganar dinero."}
+  - {family: iuu, verb: dig, level: A2, tense: past_simple, sentence: "The dog ___ a hole in the garden this morning.", answer: dug, translation: "El perro cavó un agujero en el jardín esta mañana."}
+  - {family: iuu, verb: stick, level: A2, tense: both, sentence: "The label ___ to the bottle and has ___ there for years.", answer: "stuck / stuck", translation: "La etiqueta se pegó a la botella y ha estado pegada allí durante años."}
+  - {family: iuu, verb: win, level: A2, tense: past_participle, sentence: "She has never ___ a prize in her life.", answer: won, translation: "Ella nunca ha ganado un premio en su vida."}
+  - {family: iuu, verb: strike, level: B1, tense: past_simple, sentence: "Lightning ___ the old tower during the storm.", answer: struck, translation: "Un rayo golpeó la vieja torre durante la tormenta."}
+  - {family: iuu, verb: spin, level: A2, tense: past_simple, sentence: "The dancer ___ around three times and stopped.", answer: spun, translation: "La bailarina giró tres veces y se paró."}
+  - {family: eeshort, verb: feel, level: A1, tense: past_simple, sentence: "I ___ really tired after the exam yesterday.", answer: felt, translation: "Me sentí muy cansado después del examen ayer.", hint: "Nunca 'feeled'. La vocal /iː/ se acorta a /ɛ/."}
+  - {family: eeshort, verb: keep, level: A2, tense: past_simple, sentence: "She ___ all her old letters in a box under the bed.", answer: kept, translation: "Ella guardó todas sus viejas cartas en una caja debajo de la cama."}
+  - {family: eeshort, verb: leave, level: A1, tense: past_simple, sentence: "He ___ his phone on the bus this morning.", answer: left, translation: "Él se dejó el teléfono en el autobús esta mañana.", hint: "Nunca 'leaved'. LEAVE ≠ LIVE (vivir)."}
+  - {family: eeshort, verb: mean, level: A2, tense: past_simple, sentence: "I ___ to call you, but I forgot. Sorry!", answer: meant, translation: "Tenía intención de llamarte, pero se me olvidó.", hint: "Nunca 'meaned'. MEAN = significar / querer decir / tener intención."}
+  - {family: eeshort, verb: meet, level: A1, tense: past_simple, sentence: "We ___ at the airport three years ago.", answer: met, translation: "Nos conocimos en el aeropuerto hace tres años.", hint: "MEET = conocer (primera vez). KNOW = conocer (ya hay relación)."}
+  - {family: eeshort, verb: sleep, level: A1, tense: past_simple, sentence: "She ___ for twelve hours after the trip.", answer: slept, translation: "Ella durmió doce horas después del viaje."}
+  - {family: eeshort, verb: lead, level: A2, tense: past_simple, sentence: "She ___ the team to victory last season.", answer: led, translation: "Ella llevó al equipo a la victoria la temporada pasada.", hint: "LEAD /liːd/ (guiar) → LED. No confundir con LEAD /lɛd/ (el metal plomo)."}
+  - {family: eeshort, verb: feed, level: A1, tense: past_simple, sentence: "They ___ the ducks at the park every Sunday last winter.", answer: fed, translation: "Daban de comer a los patos en el parque todos los domingos."}
+  - {family: ew, verb: know, level: A1, tense: past_simple, sentence: "She ___ the answer straight away.", answer: knew, translation: "Ella supo la respuesta de inmediato.", hint: "Nunca 'knowed'. KNOW → KNEW → KNOWN."}
+  - {family: ew, verb: grow, level: A1, tense: past_simple, sentence: "He ___ up in a small village near Barcelona.", answer: grew, translation: "Él creció en un pequeño pueblo cerca de Barcelona."}
+  - {family: ew, verb: throw, level: A1, tense: past_simple, sentence: "She ___ the ball to her friend across the street.", answer: threw, translation: "Ella lanzó la pelota a su amiga al otro lado de la calle."}
+  - {family: ew, verb: fly, level: A1, tense: past_simple, sentence: "We ___ to London last Easter for the first time.", answer: flew, translation: "Volamos a Londres la Semana Santa pasada por primera vez.", hint: "Nunca 'flied'. FLY pertenece a esta familia: flew / flown."}
+  - {family: ew, verb: grow, level: A2, tense: past_participle, sentence: "Prices have ___ a lot since last year.", answer: grown, translation: "Los precios han subido mucho desde el año pasado."}
+  - {family: ew, verb: draw, level: A2, tense: past_simple, sentence: "The artist ___ a beautiful portrait of the city.", answer: drew, translation: "El artista dibujó un precioso retrato de la ciudad."}
+  - {family: iau, verb: sing, level: A1, tense: past_simple, sentence: "She ___ a beautiful song at the concert last night.", answer: sang, translation: "Ella cantó una canción preciosa en el concierto anoche.", hint: "Pasado = SANG. Participio = SUNG. Nunca al revés."}
+  - {family: iau, verb: drink, level: A1, tense: past_simple, sentence: "He ___ three glasses of water after the race.", answer: drank, translation: "Él bebió tres vasos de agua después de la carrera.", hint: "Pasado = DRANK. Participio = DRUNK. DRUNK como adjetivo = borracho."}
+  - {family: iau, verb: swim, level: A1, tense: past_simple, sentence: "We ___ in the sea every morning last summer.", answer: swam, translation: "Nadamos en el mar todas las mañanas el verano pasado."}
+  - {family: iau, verb: begin, level: A2, tense: past_simple, sentence: "The film ___ late and everyone was annoyed.", answer: began, translation: "La película empezó tarde y todo el mundo estaba molesto."}
+  - {family: iau, verb: sing, level: A2, tense: past_participle, sentence: "She has ___ in that choir for five years.", answer: sung, translation: "Ella ha cantado en ese coro durante cinco años.", hint: "Con HAVE/HAS siempre participio: SUNG, nunca SANG."}
+  - {family: iau, verb: drink, level: A2, tense: past_participle, sentence: "Have you ever ___ mate? It's a traditional drink from Argentina.", answer: drunk, translation: "¿Has probado alguna vez el mate?", hint: "DRUNK = participio de DRINK. No confundir con DRUNK el adjetivo (borracho)."}
+  - {family: iau, verb: ring, level: A2, tense: past_simple, sentence: "The phone ___ three times but nobody answered.", answer: rang, translation: "El teléfono sonó tres veces pero nadie contestó."}
+  - {family: iveove, verb: write, level: A1, tense: past_simple, sentence: "She ___ a long letter to her grandmother last Sunday.", answer: wrote, translation: "Ella escribió una larga carta a su abuela el domingo pasado.", hint: "Pasado = WROTE. Participio = WRITTEN. Nunca 'I have wrote'."}
+  - {family: iveove, verb: drive, level: A2, tense: past_simple, sentence: "He ___ for six hours without stopping to reach the coast.", answer: drove, translation: "Condujo durante seis horas sin parar para llegar a la costa."}
+  - {family: iveove, verb: rise, level: B1, tense: past_simple, sentence: "The temperature ___ by ten degrees in just two days.", answer: rose, translation: "La temperatura subió diez grados en solo dos días.", hint: "RISE (subir, intransitivo) ≠ RAISE (subir algo, regular: raised)."}
+  - {family: iveove, verb: write, level: A2, tense: past_participle, sentence: "She has ___ three novels since she retired.", answer: written, translation: "Ella ha escrito tres novelas desde que se jubiló.", hint: "Con HAVE/HAS siempre participio: WRITTEN, nunca WROTE."}
+  - {family: iveove, verb: drive, level: A2, tense: past_participle, sentence: "Have you ever ___ on the left side of the road?", answer: driven, translation: "¿Has conducido alguna vez por el lado izquierdo de la carretera?"}
+  - {family: iveove, verb: ride, level: A2, tense: past_simple, sentence: "She ___ her bike to school every day last year.", answer: rode, translation: "Ella fue en bici al colegio todos los días el año pasado."}
+  - {family: special, verb: go, level: A1, tense: past_simple, sentence: "She ___ to Paris last summer for the first time.", answer: went, translation: "Ella fue a París el verano pasado por primera vez.", hint: "WENT era el pasado de otro verbo (WEND). No hay relación fonológica."}
+  - {family: special, verb: be, level: A1, tense: past_simple, sentence: "They ___ really happy when they heard the news.", answer: were, translation: "Ellos estaban muy contentos cuando escucharon la noticia.", hint: "BE: was (singular) / were (plural)."}
+  - {family: special, verb: see, level: A1, tense: past_simple, sentence: "I ___ that film three times last month.", answer: saw, translation: "Vi esa película tres veces el mes pasado.", hint: "Nunca 'I have saw'. Participio = SEEN."}
+  - {family: special, verb: do, level: A1, tense: past_simple, sentence: "She ___ all her homework before dinner yesterday.", answer: did, translation: "Ella hizo todos sus deberes antes de cenar ayer.", hint: "DO = hacer tareas. MAKE = crear/producir. No son intercambiables."}
+  - {family: special, verb: get, level: A1, tense: past_simple, sentence: "He ___ a great mark in his maths exam last week.", answer: got, translation: "Él sacó una nota muy buena en su examen de mates."}
+  - {family: special, verb: make, level: A1, tense: past_simple, sentence: "She ___ a delicious cake for her mum's birthday.", answer: made, translation: "Ella hizo una tarta deliciosa para el cumpleaños de su madre.", hint: "MAKE = crear. DO = hacer ('do homework', no 'make homework')."}
+  - {family: special, verb: see, level: A2, tense: past_participle, sentence: "Have you ___ that new series on Netflix yet?", answer: seen, translation: "¿Has visto ya esa nueva serie de Netflix?", hint: "Nunca 'have saw'. Con HAVE/HAS siempre participio: SEEN."}
+  - {family: special, verb: go, level: A2, tense: past_participle, sentence: "She has ___ to that restaurant before and loved it.", answer: gone, translation: "Ella ha ido a ese restaurante antes y le encantó.", hint: "Nunca 'have went'. Con HAVE/HAS siempre participio: GONE."}
+  - {family: special, verb: give, level: A1, tense: past_simple, sentence: "My teacher ___ us a lot of homework last Friday.", answer: gave, translation: "Mi profesora nos dio mucho trabajo el viernes pasado."}
+  - {family: special, verb: take, level: A1, tense: past_simple, sentence: "She ___ her umbrella because it looked like rain.", answer: took, translation: "Ella cogió su paraguas porque parecía que iba a llover."}
+  - {family: special, verb: eat, level: A1, tense: past_simple, sentence: "We ___ paella at a restaurant by the sea last Sunday.", answer: ate, translation: "Comimos paella en un restaurante junto al mar el domingo pasado."}
+  - {family: special, verb: have, level: A1, tense: past_simple, sentence: "She ___ a really good time at the party last night.", answer: had, translation: "Ella lo pasó muy bien en la fiesta anoche."}
+  - {family: special, verb: say, level: A1, tense: past_simple, sentence: "The teacher ___ the exam was cancelled. We were so happy!", answer: said, translation: "La profesora dijo que el examen estaba cancelado."}
+  - {family: special, verb: come, level: A1, tense: past_simple, sentence: "All my friends ___ to my party last Saturday.", answer: came, translation: "Todos mis amigos vinieron a mi fiesta el sábado pasado."}

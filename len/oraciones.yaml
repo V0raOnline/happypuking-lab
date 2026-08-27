@@ -19,6 +19,48 @@
 #   nota     → descripción pedagógica (aparece en cursiva)
 #   trampa   → error frecuente asociado (aparece en amarillo)
 # ─────────────────────────────────────────────────────────────
+# PROMPT PARA GENERAR ORACIONES NUEVAS CON UN CHATBOT
+# ─────────────────────────────────────────────────────────────
+# Copia el bloque de abajo, pegalo en cualquier chatbot, y añade
+# DEBAJO una de las oraciones de este fichero como ejemplo.
+#
+# Ese ejemplo es lo que hace que funcione: los modelos imitan
+# estructuras, y con uno bueno delante el YAML sale utilizable
+# casi siempre. Sin ejemplo, se inventan campos.
+#
+# ─── copia desde aqui ────────────────────────────────────────
+#
+#   Genera 20 oraciones nuevas para un banco YAML de analisis
+#   morfosintactico de ESO.
+#
+#   Requisitos:
+#   - Frases naturales en español, totalmente distintas entre si.
+#   - Longitud variable (3-12 palabras).
+#   - Niveles mezclados del 1 al 4:
+#       1 = muy simple
+#       2 = simple con complemento directo o circunstancial
+#       3 = estructuras algo mas complejas
+#       4 = subordinadas
+#   - Cada palabra del texto debe aparecer en tokens.
+#   - Todos los tokens deben aparecer en al menos un paso.
+#   - tokens_correctos debe coincidir EXACTAMENTE con palabras del texto.
+#   - Rellena siempre feedback_ok y feedback_error.
+#   - Manten exactamente esta estructura.
+#
+#   Devuelve SOLO YAML valido, listo para pegar.
+#
+#   Ejemplo de estructura:
+#   [pega aqui una oracion completa de este fichero]
+#
+# ─── hasta aqui ──────────────────────────────────────────────
+#
+# CONSEJO: pide 20 o 30 de golpe y descarta las dos o tres que
+# salgan mal. Es mas rapido que ir de una en una.
+#
+# Y REVISALAS. Un modelo se inventa cosas con total aplomo: aqui
+# lo que se inventa son analisis sintacticos, y un crio se los
+# aprende. Lo que genera es un borrador, no una respuesta.
+# ─────────────────────────────────────────────────────────────
 
 oraciones:
 
