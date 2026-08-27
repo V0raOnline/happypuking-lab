@@ -524,8 +524,12 @@ summary:focus-visible,
       <line id="min-hand" x1="150" y1="150" x2="150" y2="50" stroke="#4ADE80" stroke-width="4" stroke-linecap="round"/>
       <circle cx="150" cy="150" r="7" fill="#F0F2FF"/>
       <circle cx="150" cy="150" r="3.5" fill="#4ADE80"/>
-      <circle id="min-drag-zone" cx="150" cy="50" r="18" fill="transparent" style="cursor:grab"/>
-      <circle id="hour-drag-zone" cx="150" cy="80" r="16" fill="transparent" style="cursor:grab"/>
+      <circle id="min-drag-zone" cx="150" cy="50" r="18" fill="transparent" style="cursor:grab"
+                role="slider" tabindex="0" aria-label="Manecilla de los minutos"
+                aria-valuemin="0" aria-valuemax="45" aria-valuenow="0"/>
+      <circle id="hour-drag-zone" cx="150" cy="80" r="16" fill="transparent" style="cursor:grab"
+                role="slider" tabindex="0" aria-label="Manecilla de las horas"
+                aria-valuemin="1" aria-valuemax="12" aria-valuenow="12"/>
     </svg>
 
     <div class="digital-block">
@@ -767,7 +771,42 @@ function updateSumStrip() {
   strip.innerHTML = html;
 }
 
-function render() { updateHands(); updateArc(); updateFracDisplay(); updateVerbal(); updateDigital(); updateLegend(); updateSumStrip(); }
+function render() { updateHands(); updateArc(); updateFracDisplay(); updateVerbal(); updateDigital(); updateLegend(); updateSumStrip(); sincronizaManecillas(); }
+
+/* Las dos manecillas son deslizadores: se arrastran con el raton y se mueven
+   con las flechas. El reloj es DISCRETO -doce horas y cuatro cuartos-, asi que
+   no hay que inventar nada raro para el teclado.
+   Lo que de verdad importa aqui es aria-valuetext: un lector diciendo "valor 3,
+   valor 2" no ensena a leer la hora; diciendo "las tres y media" si. El texto
+   se toma del que ya esta pintado en pantalla, para que nunca se separen. */
+function sincronizaManecillas() {
+  const frase = document.getElementById('verbal-es').textContent.trim();
+  const h = document.getElementById('hour-drag-zone');
+  const m = document.getElementById('min-drag-zone');
+  if (h) { h.setAttribute('aria-valuenow', hour12); h.setAttribute('aria-valuetext', frase); }
+  if (m) { m.setAttribute('aria-valuenow', [0,15,30,45][minSnap]); m.setAttribute('aria-valuetext', frase); }
+}
+
+function tecladoManecilla(e) {
+  const esHora = e.currentTarget.id === 'hour-drag-zone';
+  let d = 0;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowUp') d = 1;
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') d = -1;
+  else if (e.key === 'Home') d = 'ini';
+  else if (e.key === 'End') d = 'fin';
+  else return;
+  e.preventDefault();
+  if (esHora) {
+    if (d === 'ini') hour12 = 12;
+    else if (d === 'fin') hour12 = 11;
+    else hour12 = ((hour12 - 1 + d + 12) % 12) + 1;   // 12 -> 1 -> 2 ... y vuelta
+  } else {
+    if (d === 'ini') minSnap = 0;
+    else if (d === 'fin') minSnap = 3;
+    else minSnap = (minSnap + d + 4) % 4;
+  }
+  render();
+}
 
 function getAngle(cx, cy) {
   const svg = document.getElementById('clock-svg'), rect = svg.getBoundingClientRect(), sc = 300/rect.width;
@@ -794,7 +833,12 @@ function onPointerMove(e) {
     const n = diffs.sort((a,b)=>a.d-b.d)[0].i;
     if (n !== minSnap) { minSnap = n; render(); }
   } else {
-    const n = Math.round(a/30) % 12 || 12;
+    /* La manecilla se DIBUJA con el desfase de los minutos -a y media esta a
+       medio camino de la hora siguiente, como en un reloj de verdad- pero se
+       leia sin restarlo. Agarrarla sin moverla adelantaba la hora, en 24 de
+       las 48 posiciones: todas las de "y media" y todas las de "menos cuarto".
+       Hay que leer en el mismo sistema en el que se dibuja. */
+    const n = ((Math.round((a - minSnap * 7.5) / 30) % 12) + 12) % 12 || 12;
     if (n !== hour12) { hour12 = n; render(); }
   }
 }
@@ -802,6 +846,8 @@ function onPointerMove(e) {
 function onPointerUp() { dragging = null; }
 // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 function toggleAMPM() { isAM = !isAM; render(); }
+document.getElementById('hour-drag-zone').addEventListener('keydown', tecladoManecilla);
+document.getElementById('min-drag-zone').addEventListener('keydown', tecladoManecilla);
 document.getElementById('ampm-switch').addEventListener('click', toggleAMPM);
 document.getElementById('format-switch').addEventListener('click', toggleFormat);
 function toggleFormat() { format24 = !format24; document.getElementById('format-label').textContent = format24 ? '24h → 12h' : '12h → 24h'; render(); }
