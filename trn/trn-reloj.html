@@ -47,6 +47,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --green-lab: #4ADE80;
     --cian: #22D3EE;
     --ambar: #FCD34D;
+    --ambar-fig: #FCD34D;
     /* La esfera del reloj. Vive en atributos de presentacion del SVG, no en
        CSS, pero var() funciona igual ahi. */
     --esfera: #1A1D27;
@@ -90,6 +91,9 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --green-lab: #0f6b3f;
     --cian: #0a6d7c;
     --ambar: #7b5f02;
+    --ambar-fig: #FCD34D;
+    --sol-borde-op: 1;
+    --sol-rayos-op: 1;
     --esfera: #f4ede3;
     --esfera-borde: rgba(58,33,52,0.16);
     --esfera-aro: rgba(58,33,52,0.09);
@@ -283,6 +287,10 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     transition: all 0.2s;
     user-select: none;
   }
+
+  .aguja-punta { cursor: grab; }
+  .aguja-punta:active { cursor: grabbing; }
+  svg:has(.aguja-punta:hover) .aguja-punta:hover { filter: brightness(1.15); }
 
   .format-switch:hover { border-color: color-mix(in srgb, var(--text) 15%, transparent); color: var(--text); }
 
@@ -570,16 +578,16 @@ summary:focus-visible,
       <text x="62" y="150" text-anchor="middle" dominant-baseline="central" font-family="DM Mono, monospace" font-size="9" fill="var(--cuarto)" font-weight="500">:45</text>
       <g id="daynight-indicator" opacity="1">
         <g id="sun-icon" transform="translate(150, 196)" opacity="1">
-          <circle r="8" fill="var(--ambar)" fill-opacity="0.9"/>
-          <circle r="8" fill="none" stroke="var(--ambar)" stroke-width="1" stroke-opacity="0.3"/>
-          <line x1="0" y1="-13" x2="0" y2="-11" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="0" y1="11" x2="0" y2="13" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="-13" y1="0" x2="-11" y2="0" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="11" y1="0" x2="13" y2="0" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="-9.2" y1="-9.2" x2="-7.8" y2="-7.8" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="7.8" y1="7.8" x2="9.2" y2="9.2" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="7.8" y1="-7.8" x2="9.2" y2="-9.2" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
-          <line x1="-7.8" y1="7.8" x2="-9.2" y2="9.2" stroke="var(--ambar)" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7"/>
+          <circle r="8" fill="var(--ambar-fig)" fill-opacity="1"/>
+          <circle r="8" fill="none" stroke="var(--ambar)" stroke-width="1.4" stroke-opacity="var(--sol-borde-op)"/>
+          <line x1="0" y1="-13" x2="0" y2="-11" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="0" y1="11" x2="0" y2="13" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="-13" y1="0" x2="-11" y2="0" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="11" y1="0" x2="13" y2="0" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="-9.2" y1="-9.2" x2="-7.8" y2="-7.8" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="7.8" y1="7.8" x2="9.2" y2="9.2" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="7.8" y1="-7.8" x2="9.2" y2="-9.2" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
+          <line x1="-7.8" y1="7.8" x2="-9.2" y2="9.2" stroke="var(--ambar)" stroke-width="1.7" stroke-linecap="round" stroke-opacity="var(--sol-rayos-op)"/>
         </g>
         <g id="moon-icon" transform="translate(150, 196)" opacity="0">
           <path d="M2,-8 C-6,-8 -9,-2 -9,0 C-9,2 -6,8 2,8 C-2,5 -4,2 -4,0 C-4,-2 -2,-5 2,-8 Z" fill="var(--luna)" fill-opacity="0.95"/>
@@ -590,6 +598,12 @@ summary:focus-visible,
       </g>
       <line id="hour-hand" x1="150" y1="150" x2="150" y2="80" stroke="var(--aguja-hora)" stroke-width="6" stroke-linecap="round"/>
       <line id="min-hand" x1="150" y1="150" x2="150" y2="50" stroke="var(--green-lab)" stroke-width="4" stroke-linecap="round"/>
+      <!-- Las puntas: hacen VISIBLE donde se agarra. Antes el punto de
+           arrastre era un circulo invisible de radio 28 sobre el extremo, y
+           no habia manera de localizarlo — se intentaba coger la manecilla
+           por el medio, que es lo natural, y ahi no hay nada. -->
+      <polygon id="hour-tip" class="aguja-punta" points="0,-2 7,15 -7,15" fill="var(--aguja-hora)"/>
+      <polygon id="min-tip" class="aguja-punta" points="0,-2 6,14 -6,14" fill="var(--green-lab)"/>
       <circle cx="150" cy="150" r="7" fill="var(--aguja-hora)"/>
       <circle cx="150" cy="150" r="3.5" fill="var(--green-lab)"/>
       <circle id="min-drag-zone" cx="150" cy="50" r="18" fill="transparent" style="cursor:grab"
@@ -626,19 +640,19 @@ summary:focus-visible,
   <div class="sum-strip" id="sum-strip"></div>
 
   <div class="legend">
-    <div class="legend-item" id="leg-0" style="--item-color: #4ADE80">
+    <div class="legend-item" id="leg-0" style="--item-color: var(--green-lab)">
       <div class="legend-dot"></div>
       <div class="legend-labels"><div class="legend-es">En punto</div><div class="legend-en">o'clock</div></div>
     </div>
-    <div class="legend-item" id="leg-1" style="--item-color: #3B82F6">
+    <div class="legend-item" id="leg-1" style="--item-color: var(--cuadrante-b)">
       <div class="legend-dot"></div>
       <div class="legend-labels"><div class="legend-es">Y cuarto</div><div class="legend-en">quarter past</div></div>
     </div>
-    <div class="legend-item" id="leg-2" style="--item-color: #F59E0B">
+    <div class="legend-item" id="leg-2" style="--item-color: var(--cuadrante-c)">
       <div class="legend-dot"></div>
       <div class="legend-labels"><div class="legend-es">Y media</div><div class="legend-en">half past</div></div>
     </div>
-    <div class="legend-item" id="leg-3" style="--item-color: #EF4444">
+    <div class="legend-item" id="leg-3" style="--item-color: var(--cuadrante-d)">
       <div class="legend-dot"></div>
       <div class="legend-labels"><div class="legend-es">Menos cuarto</div><div class="legend-en">quarter to</div></div>
     </div>
@@ -682,7 +696,7 @@ summary:focus-visible,
 let minSnap = 0, hour12 = 12, isAM = true, format24 = false, lang = 'es', dragging = null;
 const CX = 150, CY = 150, MIN_R = 100, HOUR_R = 70;
 const SNAP_ANGLES = [0, 90, 180, 270];
-const SNAP_COLORS = ['#4ADE80','#3B82F6','#F59E0B','#EF4444'];
+const SNAP_COLORS = ['var(--green-lab)','var(--cuadrante-b)','var(--cuadrante-c)','var(--cuadrante-d)'];
 
 function buildFace() {
   const ticks = document.getElementById('hour-ticks');
@@ -758,7 +772,7 @@ function updateVerbal() {
   ];
   document.getElementById('verbal-es').textContent = texts[minSnap][0];
   document.getElementById('verbal-en').textContent = texts[minSnap][1];
-  document.getElementById('info-panel').style.borderColor = color + '40';
+  document.getElementById('info-panel').style.borderColor = 'color-mix(in srgb, ' + color + ' 25%, transparent)';
   const tb = document.getElementById('text-block');
   tb.className = 'text-block';
   if (lang === 'es') tb.classList.add('single-lang');
@@ -791,6 +805,8 @@ function updateHands() {
   const mt = polarToXY(ma, MIN_R), ht = polarToXY(ha, HOUR_R);
   document.getElementById('min-hand').setAttribute('x2', mt.x); document.getElementById('min-hand').setAttribute('y2', mt.y);
   document.getElementById('hour-hand').setAttribute('x2', ht.x); document.getElementById('hour-hand').setAttribute('y2', ht.y);
+  document.getElementById('min-tip').setAttribute('transform', `translate(${mt.x} ${mt.y}) rotate(${ma})`);
+  document.getElementById('hour-tip').setAttribute('transform', `translate(${ht.x} ${ht.y}) rotate(${ha})`);
   document.getElementById('min-drag-zone').setAttribute('cx', mt.x); document.getElementById('min-drag-zone').setAttribute('cy', mt.y);
   document.getElementById('hour-drag-zone').setAttribute('cx', ht.x); document.getElementById('hour-drag-zone').setAttribute('cy', ht.y);
 }
@@ -800,12 +816,12 @@ function updateLegend() {
 }
 
 function quarterSVG(idx, active, S) {
-  const colors = ['#3B82F6','#F59E0B','#EF4444','#4ADE80'];
+  const colors = ['var(--cuadrante-b)','var(--cuadrante-c)','var(--cuadrante-d)','var(--green-lab)'];
   const color = colors[idx], cx = S/2, cy = S/2, r = S/2-1;
   const sd = idx * 90, ed = sd + 90;
   const toXY = d => { const rad = (d-90)*Math.PI/180; return { x: cx+r*Math.cos(rad), y: cy+r*Math.sin(rad) }; };
   const s = toXY(sd), e = toXY(ed);
-  const fo = active ? '0.45' : '0.07', so = active ? '0.7' : '0.2', sc = active ? color : '#4B5563';
+  const fo = active ? '0.45' : '0.07', so = active ? '0.7' : '0.2', sc = active ? color : 'var(--muted2)';
   return `<svg viewBox="0 0 ${S} ${S}" width="${S}" height="${S}" style="display:block;flex-shrink:0">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="${active?color:'var(--segmento-off)'}" fill-opacity="${active?'0.12':'0.06'}"/>
     <path d="M ${cx} ${cy} L ${s.x} ${s.y} A ${r} ${r} 0 0 1 ${e.x} ${e.y} Z" fill="${color}" fill-opacity="${fo}"/>
@@ -816,14 +832,14 @@ function quarterSVG(idx, active, S) {
 
 function updateSumStrip() {
   const strip = document.getElementById('sum-strip');
-  const colors = ['#3B82F6','#F59E0B','#EF4444','#4ADE80'], S = 56;
+  const colors = ['var(--cuadrante-b)','var(--cuadrante-c)','var(--cuadrante-d)','var(--green-lab)'], S = 56;
   let html = '';
   if (minSnap === 0) {
     html = `<div class="sum-piece">
       <svg viewBox="0 0 ${S} ${S}" width="${S}" height="${S}" style="display:block">
-        <circle cx="${S/2}" cy="${S/2}" r="${S/2-1}" fill="var(--ambar)" fill-opacity="0.2"/>
+        <circle cx="${S/2}" cy="${S/2}" r="${S/2-1}" fill="var(--ambar-fig)" fill-opacity="0.35"/>
         <circle cx="${S/2}" cy="${S/2}" r="${S/2-1}" fill="none" stroke="var(--ambar)" stroke-width="1.5" stroke-opacity="0.8"/>
-        <circle cx="${S/2}" cy="${S/2}" r="${S/2-5}" fill="var(--ambar)" fill-opacity="0.35"/>
+        <circle cx="${S/2}" cy="${S/2}" r="${S/2-5}" fill="var(--ambar-fig)" fill-opacity="0.6"/>
       </svg>
       <div class="sum-val active" style="--s-color:var(--ambar)">4×15</div>
     </div>
