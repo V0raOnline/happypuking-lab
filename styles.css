@@ -18,7 +18,61 @@
     --amber: #F59E0B;
     --red: #EF4444;
     --purple: #8B5CF6;
+    /* Enlace generico. Separado de --green a proposito: ese es el
+       acento de Biologia y el color no puede significar dos cosas. */
+    --enlace: #3fd3e0;
+    --focus: #22D3EE;
+    --sombra-fuerte: rgba(0,0,0,0.55);
+    /* El grano se disena para fondo oscuro. Sobre papel pesa el doble. */
+    /* El halo va con position:fixed, o sea pegado al viewport: no es un
+       adorno de la cabecera, te sigue toda la pagina. Sobre negro lee como
+       brillo ambiental; sobre papel se queda como una mancha que persigue
+       al ojo. En claro se apaga. */
+    --halo-op: 1;
+    --grano-op: 1;
   }
+
+  /* ── MODO CLARO ────────────────────────────────────────────────────────
+     Papel calido (#e7e0d6), no blanco. Un blanco puro sobre una pantalla
+     brillante es exactamente la fuente de carga sensorial que este
+     laboratorio documenta en nd/. La referencia sale de la paleta que ya
+     se probo en nd-carga-sensorial.html.
+
+     No es una inversion: el magenta de marca pasa de #e0007a a #9e1b5f
+     porque el neon sobre papel no llega a contraste legible. El mismo
+     criterio con los siete acentos de materia — se reeligen los tonos,
+     los tintes se derivan solos por color-mix.
+  ─────────────────────────────────────────────────────────────────────── */
+  :root[data-theme="light"] {
+    --bg: #e7e0d6;
+    --surface: #f4ede3;
+    --surface2: #e8ddd0;
+    --magenta: #9e1b5f;
+    --magenta-glow: rgba(158,27,95,0.16);
+    --magenta-soft: rgba(158,27,95,0.08);
+    --text: #211825;
+    --muted: #695e6c;
+    --border: rgba(58,33,52,0.14);
+    --green: #117143;
+    --blue: #275fb7;
+    --amber: #90540e;
+    --red: #ad3b41;
+    --purple: #7656b8;
+    --enlace: #106679;
+    --focus: #0d6b84;
+    --sombra-fuerte: rgba(76,47,63,0.22);
+    --halo-op: 0;
+    --grano-op: 0.45;
+  }
+
+  /* Los acentos de materia, reelegidos para el papel. */
+  :root[data-theme="light"] [data-color="green"]  { --accent: #117143; }
+  :root[data-theme="light"] [data-color="blue"]   { --accent: #275fb7; }
+  :root[data-theme="light"] [data-color="amber"]  { --accent: #90540e; }
+  :root[data-theme="light"] [data-color="purple"] { --accent: #6b48ad; }
+  :root[data-theme="light"] [data-color="pink"]   { --accent: #9f2bb3; }
+  :root[data-theme="light"] [data-color="red"]    { --accent: #ad3b41; }
+  :root[data-theme="light"] [data-color="orange"] { --accent: #a3470c; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -38,6 +92,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 0;
+    opacity: var(--grano-op);
   }
 
   /* magenta ambient glow top */
@@ -49,7 +104,8 @@
     transform: translateX(-50%);
     width: 600px;
     height: 400px;
-    background: radial-gradient(ellipse, rgba(212,0,106,0.15) 0%, transparent 70%);
+    opacity: var(--halo-op);
+    background: radial-gradient(ellipse, color-mix(in srgb, var(--magenta) 15%, transparent) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
   }
@@ -97,7 +153,7 @@
   .cab-titulo span {
     font-weight: 900;
     color: var(--magenta);
-    text-shadow: 0 0 24px rgba(224,0,122,0.45);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--magenta) 45%, transparent);
   }
   .cab-sub {
     font-family: 'DM Mono', monospace;
@@ -122,7 +178,7 @@
     color: var(--magenta);
     letter-spacing: 0.02em;
     margin-top: 0.6rem;
-    text-shadow: 0 0 20px rgba(224,0,122,0.5);
+    text-shadow: 0 0 20px color-mix(in srgb, var(--magenta) 50%, transparent);
   }
 
   @media (max-width: 780px) {
@@ -145,9 +201,9 @@
     justify-content: center;
     gap: 0.8rem;
     padding: 0.65rem 2rem;
-    background: rgba(212,0,106,0.07);
-    border-top: 1px solid rgba(212,0,106,0.15);
-    border-bottom: 1px solid rgba(212,0,106,0.15);
+    background: color-mix(in srgb, var(--magenta) 7%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--magenta) 15%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--magenta) 15%, transparent);
     text-decoration: none;
     transition: background 0.2s;
     position: relative;
@@ -155,7 +211,7 @@
   }
 
   .about-banner:hover {
-    background: rgba(212,0,106,0.13);
+    background: color-mix(in srgb, var(--magenta) 13%, transparent);
   }
 
   .about-banner-text {
@@ -189,7 +245,7 @@
 
   .divider-line {
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(212,0,106,0.4), transparent);
+    background: linear-gradient(to right, transparent, color-mix(in srgb, var(--magenta) 40%, transparent), transparent);
   }
 
   .section-label {
@@ -250,7 +306,7 @@
     position: absolute;
     top: -60px; right: -60px;
     width: 180px; height: 180px;
-    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 70%);
     pointer-events: none;
     transition: opacity 0.3s;
     opacity: 0.6;
@@ -258,8 +314,8 @@
 
   .card:hover {
     transform: translateY(-4px);
-    border-color: var(--accent-border);
-    box-shadow: 0 8px 32px var(--accent-shadow);
+    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--accent) 12%, transparent);
   }
 
   .card:hover::before { opacity: 1; }
@@ -268,51 +324,27 @@
   /* accent variants */
   [data-color="green"] {
     --accent: #39ff6a;
-    --accent-glow: rgba(57,255,106,0.12);
-    --accent-border: rgba(57,255,106,0.35);
-    --accent-shadow: rgba(57,255,106,0.12);
   }
   [data-color="blue"] {
     --accent: #3B82F6;
-    --accent-glow: rgba(59,130,246,0.12);
-    --accent-border: rgba(59,130,246,0.35);
-    --accent-shadow: rgba(59,130,246,0.12);
   }
   [data-color="amber"] {
     --accent: #F59E0B;
-    --accent-glow: rgba(245,158,11,0.12);
-    --accent-border: rgba(245,158,11,0.35);
-    --accent-shadow: rgba(245,158,11,0.12);
   }
   [data-color="purple"] {
     --accent: #8B5CF6;
-    --accent-glow: rgba(139,92,246,0.12);
-    --accent-border: rgba(139,92,246,0.35);
-    --accent-shadow: rgba(139,92,246,0.12);
   }
   [data-color="pink"] {
     --accent: #D946EF;
-    --accent-glow: rgba(217,70,239,0.12);
-    --accent-border: rgba(217,70,239,0.35);
-    --accent-shadow: rgba(217,70,239,0.12);
   }
   [data-color="red"] {
     --accent: #F87171;
-    --accent-glow: rgba(248,113,113,0.12);
-    --accent-border: rgba(248,113,113,0.35);
-    --accent-shadow: rgba(248,113,113,0.12);
   }
   [data-color="orange"] {
     --accent: #F97316;
-    --accent-glow: rgba(249,115,22,0.12);
-    --accent-border: rgba(249,115,22,0.35);
-    --accent-shadow: rgba(249,115,22,0.12);
   }
   [data-color="nd"] {
-    --accent: #d4006a;
-    --accent-glow: rgba(212,0,106,0.12);
-    --accent-border: rgba(212,0,106,0.35);
-    --accent-shadow: rgba(212,0,106,0.14);
+    --accent: var(--magenta);
   }
 
   .card-top {
@@ -481,7 +513,7 @@
 
   .wip-card {
     background: var(--surface);
-    border: 1px dashed rgba(255,255,255,0.1);
+    border: 1px dashed color-mix(in srgb, var(--text) 12%, transparent);
     border-radius: 12px;
     padding: 1rem 1.2rem;
     display: flex;
@@ -623,15 +655,15 @@
   text-decoration: none;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--accent-border, rgba(224, 0, 122, 0.35));
+  border-left: 3px solid color-mix(in srgb, var(--accent, var(--magenta)) 35%, transparent);
   border-radius: 10px;
   padding: 0.85rem 1rem;
   transition: all 0.2s ease;
 }
 .nec-item:hover {
-  border-color: var(--accent-border, rgba(224, 0, 122, 0.35));
+  border-color: color-mix(in srgb, var(--accent, var(--magenta)) 35%, transparent);
   border-left-color: var(--accent, var(--magenta));
-  background: var(--accent-glow, var(--magenta-soft));
+  background: color-mix(in srgb, var(--accent, var(--magenta)) 12%, transparent);
   transform: translateX(2px);
 }
 .nec-problema {
@@ -690,10 +722,10 @@
   gap: 1.7rem;
   align-items: center;
   background: linear-gradient(135deg,
-              rgba(224,0,122,0.07) 0%,
-              rgba(224,0,122,0.02) 55%,
+              color-mix(in srgb, var(--magenta) 7%, transparent) 0%,
+              color-mix(in srgb, var(--magenta) 2%, transparent) 55%,
               transparent 100%), var(--surface);
-  border: 1px solid rgba(224,0,122,0.18);
+  border: 1px solid color-mix(in srgb, var(--magenta) 18%, transparent);
   border-radius: 14px;
   position: relative;
   z-index: 1;
@@ -701,7 +733,7 @@
 .mascota-retrato { display: flex; justify-content: center; }
 .mascota-retrato img {
   width: 100%; max-width: 260px; height: auto;
-  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.55));
+  filter: drop-shadow(0 8px 24px var(--sombra-fuerte));
 }
 .mascota-kicker {
   display: block;
@@ -844,7 +876,7 @@
   border: 1px solid color-mix(in srgb, var(--magenta) 22%, transparent);
   border-radius: 16px;
   background-image: linear-gradient(135deg,
-    rgba(224,0,122,0.06) 0%, rgba(224,0,122,0.02) 55%, transparent 100%);
+    color-mix(in srgb, var(--magenta) 6%, transparent) 0%, color-mix(in srgb, var(--magenta) 2%, transparent) 55%, transparent 100%);
 }
 /* Los parrafos van juntos en su propia caja: si son hijos directos del flex,
    el gap del contenedor se suma a su separacion y quedan 34px entre lineas. */
@@ -873,14 +905,14 @@
   background: color-mix(in srgb, var(--magenta) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--magenta) 45%, transparent);
   border-radius: 12px;
-  box-shadow: 0 0 22px rgba(224,0,122,0.16);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--magenta) 16%, transparent);
   transition: background 0.2s, box-shadow 0.2s;
 }
 .cafe-boton:hover {
   background: color-mix(in srgb, var(--magenta) 20%, transparent);
-  box-shadow: 0 0 30px rgba(224,0,122,0.28);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--magenta) 28%, transparent);
 }
-.cafe-boton:focus-visible { outline: 2px solid #22D3EE; outline-offset: 3px; }
+.cafe-boton:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 @media (max-width: 640px) {
   /* Sin padding horizontal: vive dentro de <main>, que ya lo pone. Y con
