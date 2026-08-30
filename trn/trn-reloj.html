@@ -104,7 +104,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --marca: rgba(33,24,37,0.55);
     --numero: rgba(33,24,37,0.78);
     --cuarto: rgba(33,24,37,0.42);
-    --aguja-hora: #211825;
+    --aguja-hora: #514659;
     --luna: #6b48ad;
     --segmento-off: #d6c9ba;
     --cuadrante-b: #275fb7;
@@ -267,6 +267,22 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   }
 
   .digital-time .colon { opacity: 0.5; }
+
+  /* Fuera del flujo a proposito: dentro empujaba los numeros a la
+     izquierda y la hora parecia descentrada. Asi tambien da igual que el
+     modo 24h lo oculte — no mueve nada al desaparecer. */
+  .digital-time { position: relative; }
+  #dig-ampm {
+    position: absolute;
+    left: calc(100% + 0.35rem);
+    bottom: 0.3rem;
+    font-size: 1.2rem;
+    color: var(--muted);
+  }
+  /* En movil no cabe colgando: vuelve al flujo, centrando el conjunto. */
+  @media (max-width: 420px) {
+    #dig-ampm { position: static; margin-left: 0.35rem; }
+  }
 
   .controls-row { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
 
@@ -624,8 +640,7 @@ summary:focus-visible,
 
     <div class="digital-block">
       <span class="digital-time">
-        <span id="dig-h">12</span><span class="colon">:</span><span id="dig-m">00</span>
-        <span id="dig-ampm" style="font-size:1.2rem;opacity:0.5;margin-left:0.3rem">AM</span>
+        <span id="dig-h">12</span><span class="colon">:</span><span id="dig-m">00</span><span id="dig-ampm">AM</span>
       </span>
       <div class="controls-row">
         <button type="button" class="format-switch" id="ampm-switch"><span id="ampm-label">AM → PM</span></button>
