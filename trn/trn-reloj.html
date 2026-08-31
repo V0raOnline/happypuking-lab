@@ -48,6 +48,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --cian: #22D3EE;
     --ambar: #FCD34D;
     --ambar-fig: #FCD34D;
+    --sol-borde-op: 0.3;
+    --sol-rayos-op: 0.7;
+    --numero-cardinal: rgba(240,242,255,0.85);
+    --marca-menor: rgba(255,255,255,0.2);
+    --cuadrante-op: 0.13;
     /* La esfera del reloj. Vive en atributos de presentacion del SVG, no en
        CSS, pero var() funciona igual ahi. */
     --esfera: #1A1D27;
@@ -96,6 +101,9 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --cian: #0a6d7c;
     --ambar: #7b5f02;
     --ambar-fig: #FCD34D;
+    --numero-cardinal: rgba(33,24,37,0.92);
+    --marca-menor: rgba(33,24,37,0.3);
+    --cuadrante-op: 0.20;
     --sol-borde-op: 1;
     --sol-rayos-op: 1;
     --esfera: #f4ede3;
@@ -583,12 +591,14 @@ summary:focus-visible,
   <div class="clock-wrap">
     <svg id="clock-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
       <path id="arc-fill" d="" fill="none" opacity="0"/>
-      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--green-lab)" stroke-width="18" stroke-opacity="0.04" stroke-dasharray="169.6 508.7" stroke-dashoffset="0" transform="rotate(-90 150 150)"/>
-      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--cuadrante-b)" stroke-width="18" stroke-opacity="0.04" stroke-dasharray="169.6 508.7" stroke-dashoffset="-169.6" transform="rotate(-90 150 150)"/>
-      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--cuadrante-c)" stroke-width="18" stroke-opacity="0.04" stroke-dasharray="169.6 508.7" stroke-dashoffset="-339.3" transform="rotate(-90 150 150)"/>
-      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--cuadrante-d)" stroke-width="18" stroke-opacity="0.04" stroke-dasharray="169.6 508.7" stroke-dashoffset="-509" transform="rotate(-90 150 150)"/>
       <path id="arc-stroke" d="" fill="none" stroke-width="18" stroke-linecap="butt" opacity="0"/>
       <circle cx="150" cy="150" r="126" fill="var(--esfera)" stroke="var(--esfera-borde)" stroke-width="1.5"/>
+      <!-- Los cuartos de hora. Van DESPUES de la esfera: dibujados antes,
+           la esfera opaca los tapaba y no se han visto nunca, en ningun tema. -->
+      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--green-lab)" stroke-width="18" stroke-opacity="var(--cuadrante-op)" stroke-dasharray="169.6 508.7" stroke-dashoffset="0" transform="rotate(-90 150 150)"/>
+      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--cuadrante-b)" stroke-width="18" stroke-opacity="var(--cuadrante-op)" stroke-dasharray="169.6 508.7" stroke-dashoffset="-169.6" transform="rotate(-90 150 150)"/>
+      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--cuadrante-c)" stroke-width="18" stroke-opacity="var(--cuadrante-op)" stroke-dasharray="169.6 508.7" stroke-dashoffset="-339.3" transform="rotate(-90 150 150)"/>
+      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--cuadrante-d)" stroke-width="18" stroke-opacity="var(--cuadrante-op)" stroke-dasharray="169.6 508.7" stroke-dashoffset="-509" transform="rotate(-90 150 150)"/>
       <circle cx="150" cy="150" r="88" fill="none" stroke="var(--esfera-aro)" stroke-width="1"/>
       <line x1="150" y1="24" x2="150" y2="44" stroke="var(--marca)" stroke-width="3" stroke-linecap="round"/>
       <line x1="276" y1="150" x2="256" y2="150" stroke="var(--marca)" stroke-width="3" stroke-linecap="round"/>
@@ -732,13 +742,13 @@ function buildFace() {
       const line = document.createElementNS('http://www.w3.org/2000/svg','line');
       line.setAttribute('x1', CX + Math.sin(angle) * 118); line.setAttribute('y1', CY - Math.cos(angle) * 118);
       line.setAttribute('x2', CX + Math.sin(angle) * 128); line.setAttribute('y2', CY - Math.cos(angle) * 128);
-      line.setAttribute('stroke','rgba(255,255,255,0.2)'); line.setAttribute('stroke-width','1.5'); line.setAttribute('stroke-linecap','round');
+      line.setAttribute('stroke','var(--marca-menor)'); line.setAttribute('stroke-width','1.5'); line.setAttribute('stroke-linecap','round');
       ticks.appendChild(line);
     }
     const text = document.createElementNS('http://www.w3.org/2000/svg','text');
     text.setAttribute('x', CX + Math.sin(angle) * 106); text.setAttribute('y', CY - Math.cos(angle) * 106);
     text.textContent = i === 0 ? 12 : i;
-    if (i % 3 === 0) { text.setAttribute('font-size','16'); text.setAttribute('fill','rgba(240,242,255,0.85)'); }
+    if (i % 3 === 0) { text.setAttribute('font-size','16'); text.setAttribute('fill','var(--numero-cardinal)'); }
     nums.appendChild(text);
   }
 }
