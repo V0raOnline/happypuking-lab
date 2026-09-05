@@ -24,6 +24,19 @@
   --gas-noble: #8B5CF6;
   --lantanido: #06B6D4;
   --actinido: #84CC16;
+
+  /* Valencias. Estaban escritas a mano dentro del JS, igual que las
+     categorias, que si tenian token y nadie usaba. */
+  --val-1: #EF4444;
+  --val-2: #F97316;
+  --val-3: #FBBF24;
+  --val-4: #4ADE80;
+  --val-5: #2DD4BF;
+  --val-6: #3B82F6;
+  --val-7: #A78BFA;
+  --val-completa: #E2E8F0;
+  --cat-defecto: #888;
+  --en-bar-fondo: #1A1D27;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -176,6 +189,19 @@ header {
   padding: 2px;
 }
 
+/* ── EL COLOR NO PUEDE HACER DOS TRABAJOS ────────────────────────────────
+   --cat-color y --accent pintaban a la vez figura (fondos, bordes, halos) y
+   texto (el simbolo del elemento, la valencia, la electronegatividad, los
+   rotulos de la ficha). Sobre negro un mismo tono vale para las dos cosas;
+   sobre papel no, porque lo que hace reconocible una categoria no es lo que
+   la hace legible.
+
+   Aqui solo se abre el hueco: los dos lados valen lo mismo y la pagina no
+   cambia. Los valores claros llegan despues.
+   ──────────────────────────────────────────────────────────────────────── */
+.el { --cat-color-texto: var(--cat-color, var(--text)); }
+.card-header, .card, .info-panel { --accent-texto: var(--accent, var(--magenta)); }
+
 .el::before {
   content:'';
   position:absolute; inset:0;
@@ -200,7 +226,7 @@ header {
 .el-symbol {
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(0.9rem, 1.5vw, 1.15rem);
-  color: var(--cat-color, #fff);
+  color: var(--cat-color-texto, var(--text));
   line-height: 1;
   font-weight: 400;
 }
@@ -277,7 +303,7 @@ header {
 .card-number {
   font-family: 'DM Mono', monospace;
   font-size: 0.75rem;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   opacity: 0.8;
   position: relative;
   margin-bottom: 0.3rem;
@@ -294,7 +320,7 @@ header {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 4.5rem;
   line-height: 1;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   text-shadow: 0 0 40px color-mix(in srgb, var(--accent, #3B82F6) 40%, transparent);
 }
 
@@ -309,7 +335,7 @@ header {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   margin-top: 0.2rem;
 }
 
@@ -358,7 +384,7 @@ header {
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   font-weight: 900;
 }
 
@@ -381,7 +407,7 @@ header {
   border-radius: 100px;
   background: color-mix(in srgb, var(--accent, #3B82F6) 14%, var(--surface2));
   border: 1px solid color-mix(in srgb, var(--accent, #3B82F6) 35%, transparent);
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
 }
 
 .card-empty {
@@ -599,7 +625,7 @@ header {
   display: none;
   font-family: 'DM Mono', monospace;
   font-size: 0.44rem;
-  color: var(--cat-color, #fff);
+  color: var(--cat-color-texto, var(--text));
   opacity: 0.85;
   line-height: 1;
 }
@@ -716,7 +742,7 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   font-family: 'DM Mono', monospace;
   font-size: 0.44rem;
   font-weight: 600;
-  color: var(--cat-color, #fff);
+  color: var(--cat-color-texto, var(--text));
   opacity: 0.85;
   line-height: 1;
 }
