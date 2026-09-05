@@ -326,11 +326,14 @@
   .card:hover {
     transform: translateY(-4px);
     border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-    box-shadow: 0 8px 32px color-mix(in srgb, var(--accent) 12%, transparent);
+    /* Tine la tarjeta entera, igual que las entradas de "que necesitas hoy".
+       Antes esto era un halo de acento en la sombra: mas discreto y menos
+       legible. La sombra que queda es neutra, solo para sostener el salto. */
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    box-shadow: 0 6px 20px var(--sombra-fuerte);
   }
 
   .card:hover::before { opacity: 1; }
-  .card:hover::after { opacity: 1; }
 
 
   /* Version legible del acento, para cuando pinta texto en vez de figura.
@@ -687,7 +690,7 @@
 .nec-item:hover {
   border-color: color-mix(in srgb, var(--accent, var(--magenta)) 35%, transparent);
   border-left-color: var(--accent, var(--magenta));
-  background: color-mix(in srgb, var(--accent, var(--magenta)) 12%, transparent);
+  background: color-mix(in srgb, var(--accent, var(--magenta)) 12%, var(--surface));
   transform: translateX(2px);
 }
 .nec-problema {
