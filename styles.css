@@ -297,11 +297,16 @@
     cursor: pointer;
   }
 
+  /* El acento va en el costado, no arriba. Arriba eran 2px pegados al borde
+     de 1px, asi que leia como "borde mas gordo" y no como acento — y con
+     border-radius 16px y overflow hidden se difuminaba justo en los dos
+     extremos. En el costado son 3px, los mismos que gastan las entradas de
+     "que necesitas hoy", y las dos familias de tarjeta hablan igual. */
   .card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+    top: 0; bottom: 0; left: 0;
+    width: 3px;
     background: var(--accent);
     opacity: 0.7;
     transition: opacity 0.25s;
