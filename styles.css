@@ -65,14 +65,20 @@
     --grano-op: 0.45;
   }
 
-  /* Los acentos de materia, reelegidos para el papel. */
-  :root[data-theme="light"] [data-color="green"]  { --accent: #117143; }
-  :root[data-theme="light"] [data-color="blue"]   { --accent: #275fb7; }
-  :root[data-theme="light"] [data-color="amber"]  { --accent: #90540e; }
-  :root[data-theme="light"] [data-color="purple"] { --accent: #6b48ad; }
-  :root[data-theme="light"] [data-color="pink"]   { --accent: #9f2bb3; }
-  :root[data-theme="light"] [data-color="red"]    { --accent: #ad3b41; }
-  :root[data-theme="light"] [data-color="orange"] { --accent: #a3470c; }
+  /* Los acentos de materia, con escalera de luminancia deliberada.
+     Oscurecer cada uno solo HASTA pasar AA los dejaba a todos con la misma
+     luminancia (rango x1,1, cuando en oscuro es x3,7), y sobre papel
+     dejaban de distinguirse entre si: Ingles y Quimica quedaban a 9 grados
+     de tono y 0,000 de luminancia, o sea el mismo color. Ahora el rango es
+     x2,8, y el orden va al reves que en oscuro — alli destacar es aclarar,
+     sobre papel es oscurecer. */
+  :root[data-theme="light"] [data-color="green"]  { --accent: #0b4529; }
+  :root[data-theme="light"] [data-color="blue"]   { --accent: #265db5; }
+  :root[data-theme="light"] [data-color="amber"]  { --accent: #59440a; }
+  :root[data-theme="light"] [data-color="purple"] { --accent: #744dbc; }
+  :root[data-theme="light"] [data-color="pink"]   { --accent: #9327a6; }
+  :root[data-theme="light"] [data-color="red"]    { --accent: #97232f; }
+  :root[data-theme="light"] [data-color="orange"] { --accent: #8c3d10; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -321,6 +327,16 @@
   .card:hover::before { opacity: 1; }
   .card:hover::after { opacity: 1; }
 
+
+  /* Version legible del acento, para cuando pinta texto en vez de figura.
+     Sobre papel el extremo claro de la escalera no llegaba a AA: el badge de
+     Matematicas se quedaba en 4,01:1. Tirando un 25% hacia la tinta, el peor
+     caso pasa a 5,32 y la flecha a 5,0, sin tocar la escalera de la figura. */
+  [data-color] { --accent-texto: var(--accent); }
+  :root[data-theme="light"] [data-color] {
+    --accent-texto: color-mix(in srgb, var(--accent) 75%, var(--text));
+  }
+
   /* accent variants */
   [data-color="green"] {
     --accent: #39ff6a;
@@ -381,7 +397,7 @@
   /* El color codifica la materia: se ilumina el pill de materia, no el de
      nivel. El de nivel se queda con el gris neutro de .badge. */
   .badge.materia {
-    color: var(--accent);
+    color: var(--accent-texto);
     border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
   }
@@ -430,7 +446,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--accent);
+    color: var(--accent-texto);
     font-size: 0.75rem;
     transition: all 0.2s;
     flex-shrink: 0;
@@ -675,7 +691,7 @@
   line-height: 1.35;
   margin-bottom: 0.3rem;
 }
-.nec-item:hover .nec-problema { color: var(--accent, var(--magenta)); }
+.nec-item:hover .nec-problema { color: var(--accent-texto, var(--magenta)); }
 .nec-como {
   display: block;
   font-family: 'DM Sans', sans-serif;
