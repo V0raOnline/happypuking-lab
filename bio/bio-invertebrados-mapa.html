@@ -25,6 +25,14 @@
 <meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
 :root {
   --paper:      #181511;
@@ -40,6 +48,78 @@
   --c-moluscos:     #C17E5A;
   --c-artropodos:   #E05C3A;
   --c-equinodermos: #9B4F9E;
+  --cyan: #22D3EE;
+  --magenta: #E040FB;
+  --sobre-vivo: #181511;
+  --sombra-base: #000;
+  --grano-op: 1;
+  --vs-nutricion: #c0533a;
+  --vs-relacion: #3a7ac0;
+  --vs-reproduccion: #3a9c5a;
+  --halo-a: rgba(70,55,30,0.45);
+  --halo-b: rgba(45,90,61,0.12);
+  --acento-calido: #b8a878;
+  --nodo-poriferos-a: #2a2210;
+  --nodo-poriferos-b: #1a1508;
+  --nodo-cnidarios-a: #0e1c28;
+  --nodo-cnidarios-b: #081218;
+  --nodo-gusanos-a: #1e1508;
+  --nodo-gusanos-b: #130e04;
+  --nodo-moluscos-a: #221408;
+  --nodo-moluscos-b: #160d04;
+  --nodo-artropodos-a: #220e08;
+  --nodo-artropodos-b: #160804;
+  --nodo-equinodermos-a: #1a0e22;
+  --nodo-equinodermos-b: #100816;
+  --c-poriferos-texto: var(--c-poriferos);
+  --c-cnidarios-texto: var(--c-cnidarios);
+  --c-gusanos-texto: var(--c-gusanos);
+  --c-moluscos-texto: var(--c-moluscos);
+  --c-artropodos-texto: var(--c-artropodos);
+  --c-equinodermos-texto: var(--c-equinodermos);
+  --magenta-texto: var(--magenta);
+}
+
+/* ── MODO CLARO ──────────────────────────────────────────────────────────
+   Nombrado semantico ya de origen: papel y tinta se intercambian y poco
+   mas. Los seis colores de grupo conservan su tono terroso, que es la
+   paleta que mejor aguanta el papel de todo el lab. */
+:root[data-theme="light"] {
+  --paper: #efe7db;
+  --paper-dark: #e4dbcd;
+  --paper-mid: #ece4d6;
+  --bg: #e7e0d6;
+  --ink: #211825;
+  --ink-soft: #5c5060;
+  --ink-faint: #695e6c;
+  --magenta: #9c22b0;
+  --cyan: #0a6d7c;
+  --grano-op: 0.45;
+  --vs-nutricion: #96351f;
+  --vs-relacion: #2a5c96;
+  --vs-reproduccion: #2b7745;
+  --halo-a: rgba(160,140,90,0.16);
+  --halo-b: rgba(120,160,130,0.12);
+  --acento-calido: #6b5a33;
+  --nodo-poriferos-a: color-mix(in srgb, var(--c-poriferos) 16%, var(--paper));
+  --nodo-poriferos-b: color-mix(in srgb, var(--c-poriferos) 6%, var(--paper));
+  --nodo-cnidarios-a: color-mix(in srgb, var(--c-cnidarios) 16%, var(--paper));
+  --nodo-cnidarios-b: color-mix(in srgb, var(--c-cnidarios) 6%, var(--paper));
+  --nodo-gusanos-a: color-mix(in srgb, var(--c-gusanos) 16%, var(--paper));
+  --nodo-gusanos-b: color-mix(in srgb, var(--c-gusanos) 6%, var(--paper));
+  --nodo-moluscos-a: color-mix(in srgb, var(--c-moluscos) 16%, var(--paper));
+  --nodo-moluscos-b: color-mix(in srgb, var(--c-moluscos) 6%, var(--paper));
+  --nodo-artropodos-a: color-mix(in srgb, var(--c-artropodos) 16%, var(--paper));
+  --nodo-artropodos-b: color-mix(in srgb, var(--c-artropodos) 6%, var(--paper));
+  --nodo-equinodermos-a: color-mix(in srgb, var(--c-equinodermos) 16%, var(--paper));
+  --nodo-equinodermos-b: color-mix(in srgb, var(--c-equinodermos) 6%, var(--paper));
+  --c-poriferos-texto: color-mix(in srgb, var(--c-poriferos) 45%, var(--ink));
+  --c-cnidarios-texto: color-mix(in srgb, var(--c-cnidarios) 45%, var(--ink));
+  --c-gusanos-texto: color-mix(in srgb, var(--c-gusanos) 45%, var(--ink));
+  --c-moluscos-texto: color-mix(in srgb, var(--c-moluscos) 45%, var(--ink));
+  --c-artropodos-texto: color-mix(in srgb, var(--c-artropodos) 45%, var(--ink));
+  --c-equinodermos-texto: color-mix(in srgb, var(--c-equinodermos) 45%, var(--ink));
+  --magenta-texto: color-mix(in srgb, var(--magenta) 45%, var(--ink));
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -57,8 +137,8 @@ html {
 body {
   background: var(--bg);
   background-image:
-    radial-gradient(ellipse at 15% 15%, rgba(70,55,30,0.45) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 85%, rgba(45,90,61,0.12) 0%, transparent 45%);
+    radial-gradient(ellipse at 15% 15%, var(--halo-a) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, var(--halo-b) 0%, transparent 45%);
   min-height: 100vh;
   font-family: 'Nunito', sans-serif;
   color: var(--ink);
@@ -78,7 +158,7 @@ body::before {
 /* ── HEADER ── */
 header {
   padding: 1.4rem 2rem 0;
-  border-bottom: 1px solid rgba(245,240,232,0.08);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
   text-align: center;
   position: relative;
   z-index: 1;
@@ -90,7 +170,7 @@ header {
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.4);
+  color: color-mix(in srgb, var(--ink) 40%, transparent);
   margin-bottom: 1.2rem;
   display: flex;
   align-items: center;
@@ -100,12 +180,12 @@ header {
 }
 
 .header-topbar a {
-  color: rgba(245,240,232,0.8);
+  color: var(--ink);
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.header-topbar a:hover { color: #D946EF; }
+.header-topbar a:hover { color:var(--magenta-texto); }
 
 .header-topbar .sep {
   opacity: 0.3;
@@ -127,7 +207,7 @@ header {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.35);
+  color: var(--ink-faint);
   margin-right: 0.4rem;
   white-space: nowrap;
 }
@@ -140,28 +220,28 @@ header {
   border-radius: 100px;
   border: 1px solid transparent;
   text-decoration: none;
-  color: rgba(245,240,232,0.4);
+  color: color-mix(in srgb, var(--ink) 40%, transparent);
   background: transparent;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .nav-tool:hover {
-  color: rgba(245,240,232,0.8);
-  border-color: rgba(245,240,232,0.15);
-  background: rgba(245,240,232,0.05);
+  color: var(--ink);
+  border-color: var(--ink-faint);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
 }
 
 .nav-tool.active {
-  color: #D946EF;
-  border-color: rgba(217,70,239,0.35);
-  background: rgba(217,70,239,0.08);
+  color:var(--magenta-texto);
+  border-color: color-mix(in srgb, var(--magenta) 35%, transparent);
+  background: color-mix(in srgb, var(--magenta) 8%, transparent);
   cursor: default;
   pointer-events: none;
 }
 
 .nav-sep {
-  color: rgba(245,240,232,0.2);
+  color: var(--ink-faint);
   font-size: 0.7rem;
   user-select: none;
 }
@@ -178,7 +258,7 @@ header {
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
   letter-spacing: -0.02em;
-  color: rgba(245,240,232,0.95);
+  color: color-mix(in srgb, var(--ink) 95%, transparent);
   margin-bottom: 0.4rem;
   line-height: 1.1;
 }
@@ -187,7 +267,7 @@ header {
     font-family: 'Nunito', sans-serif;
     font-size: 0.88rem;
     font-weight: 600;
-    color: rgba(245,240,232,0.45);
+    color: var(--ink-soft);
     margin-bottom: 1.1rem;
   }
 
@@ -206,24 +286,24 @@ header {
   text-transform: uppercase;
   padding: 0.5rem 1.4rem;
   border-radius: 100px;
-  border: 2px solid rgba(245,240,232,0.15);
+  border: 2px solid color-mix(in srgb, var(--ink) 15%, transparent);
   background: transparent;
-  color: rgba(245,240,232,0.4);
+  color: color-mix(in srgb, var(--ink) 40%, transparent);
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s;
 }
 
 .header-nav-btn:hover {
-  border-color: rgba(245,240,232,0.4);
-  color: rgba(245,240,232,0.8);
+  border-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  color: var(--ink);
 }
 
 .header-nav-btn.active {
-  border-color: #D946EF;
-  color: #D946EF;
-  background: rgba(217,70,239,0.08);
-  box-shadow: 0 0 16px rgba(217,70,239,0.2);
+  border-color: var(--magenta);
+  color:var(--magenta-texto);
+  background: color-mix(in srgb, var(--magenta) 8%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--magenta) 20%, transparent);
 }
 
 
@@ -233,12 +313,12 @@ header h1 {
   color: var(--paper);
   line-height: 1.1;
 }
-header h1 em { font-style: italic; color: #b8a878; }
+header h1 em { font-style: italic; color: var(--acento-calido); }
 header p {
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
   letter-spacing: 0.15em;
-  color: rgba(245,240,232,0.28);
+  color: color-mix(in srgb, var(--ink) 28%, transparent);
   text-transform: uppercase;
   margin-top: 0.25rem;
 }
@@ -259,7 +339,7 @@ header p {
   background: var(--paper);
   border-radius: 4px;
   padding: 13px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--sombra-base) 25%, transparent);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -307,7 +387,7 @@ header p {
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-family: 'DM Mono', monospace;
-  font-size: 0.68rem; font-weight: 700; color: white;
+  font-size: 0.68rem; font-weight: 700; color: var(--sobre-vivo);
 }
 .skill-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 9px; }
 .skill-emoji { font-size: 1rem; flex-shrink: 0; }
@@ -324,13 +404,13 @@ header p {
 
 /* Marco contenedor del mapa */
 .map-frame {
-  background: rgba(245,240,232,0.04);
-  border: 1px solid rgba(245,240,232,0.1);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
   border-radius: 8px;
   padding: 12px;
   box-shadow:
-    inset 0 1px 0 rgba(245,240,232,0.06),
-    0 4px 24px rgba(0,0,0,0.3);
+    inset 0 1px 0 color-mix(in srgb, var(--ink) 6%, transparent),
+    0 4px 24px color-mix(in srgb, var(--sombra-base) 30%, transparent);
   position: relative;
 }
 .map-frame::before {
@@ -338,7 +418,7 @@ header p {
   position: absolute;
   inset: 4px;
   border-radius: 6px;
-  border: 1px dashed rgba(245,240,232,0.06);
+  border: 1px dashed color-mix(in srgb, var(--ink) 6%, transparent);
   pointer-events: none;
 }
 
@@ -352,7 +432,7 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
 
 /* Nodos SVG */
 .group-node { cursor: pointer; transition: filter 0.22s; }
-.group-node:hover  { filter: brightness(1.1) drop-shadow(0 0 10px rgba(255,255,255,0.15)); }
+.group-node:hover  { filter: brightness(1.1) drop-shadow(0 0 10px color-mix(in srgb, var(--ink) 15%, transparent)); }
 .group-node.dimmed { opacity: 0.2; transition: opacity 0.3s; }
 .group-node.lit    { filter: brightness(1.15) drop-shadow(0 0 14px currentColor); }
 
@@ -384,7 +464,7 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
   background: var(--paper);
   border-radius: 4px;
   padding: 11px 13px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--sombra-base) 20%, transparent);
 }
 .id5-title {
   font-family: 'DM Mono', monospace;
@@ -417,13 +497,13 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
 .id5-nombre {
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 2px 5px; border-radius: 8px; color: white; margin-top: 2px;
+  padding: 2px 5px; border-radius: 8px; color: var(--sobre-vivo); margin-top: 2px;
 }
 
 /* ── PANEL DE DETALLE ── */
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.28);
+  background: color-mix(in srgb, var(--sombra-base) 28%, transparent);
   opacity: 0; pointer-events: none;
   transition: opacity 0.3s; z-index: 99;
 }
@@ -432,7 +512,7 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
 .detail-panel {
   position: fixed; right: 0; top: 0; bottom: 0; width: 330px;
   background: var(--paper);
-  box-shadow: -4px 0 32px rgba(0,0,0,0.45);
+  box-shadow: -4px 0 32px color-mix(in srgb, var(--sombra-base) 45%, transparent);
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.4,0.2,0.2,1);
   z-index: 100; display: flex; flex-direction: column; overflow: hidden;
@@ -483,14 +563,14 @@ svg#mapsvg { width: 100%; height: 100%; overflow: visible; }
   display: block; width: 100%; padding: 9px;
   border: none; border-radius: 3px;
   font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
-  cursor: pointer; color: white; transition: filter 0.2s;
+  cursor: pointer; color: var(--sobre-vivo); transition: filter 0.2s;
   text-decoration: none; text-align: center;
 }
 .dp-cta:hover { filter: brightness(1.12); }
 .vs-pill {
   font-family: 'DM Mono', monospace; font-size: 0.68rem;
   letter-spacing: 0.16em; text-transform: uppercase;
-  color: white; padding: 1px 5px; border-radius: 2px;
+  color: var(--sobre-vivo); padding: 1px 5px; border-radius: 2px;
   display: inline-block; margin-bottom: 3px;
 }
 
@@ -499,7 +579,7 @@ footer {
   z-index: 1;
   max-width: 1100px;
   margin: 2rem auto 0;
-  border-top: 1px solid rgba(245,240,232,0.07);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 7%, transparent);
   padding: 1.2rem 2rem 2.5rem;
   display: flex;
   align-items: center;
@@ -511,12 +591,12 @@ footer {
 .footer-left {
   font-family: 'DM Mono', monospace;
   font-size: 0.67rem;
-  color: rgba(245,240,232,0.3);
+  color: var(--ink-faint);
   letter-spacing: 0.04em;
 }
 
 .footer-left a {
-  color: #D946EF;
+  color:var(--magenta-texto);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -526,7 +606,7 @@ footer {
 .footer-right {
   font-family: 'DM Mono', monospace;
   font-size: 0.67rem;
-  color: rgba(245,240,232,0.3);
+  color: var(--ink-faint);
   letter-spacing: 0.04em;
 }
 
@@ -554,14 +634,14 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   background: none; border: none; cursor: pointer;
   font-family: 'DM Mono', monospace; font-size: 0.62rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: var(--ink-soft);
   transition: color 0.2s;
 }
-.plegar:hover { color: #22D3EE; }
-.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar:hover { color: var(--cyan); }
+.plegar:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
 .plegar-chevron {
   display: inline-block; font-size: 1.05rem; line-height: 1;
-  color: #D946EF; transition: transform 0.25s ease;
+  color:var(--magenta-texto); transition: transform 0.25s ease;
 }
 .plegar:hover .plegar-chevron { filter: brightness(1.25); }
 body.compacto .plegar-chevron { transform: rotate(180deg); }
@@ -589,7 +669,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cyan);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -724,58 +804,58 @@ summary:focus-visible,
         <svg id="mapsvg" viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="nodeGrad-poriferos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#2a2210"/>
-              <stop offset="100%" stop-color="#1a1508"/>
+              <stop offset="0%" stop-color="var(--nodo-poriferos-a)"/>
+              <stop offset="100%" stop-color="var(--nodo-poriferos-b)"/>
             </radialGradient>
             <radialGradient id="nodeGrad-cnidarios" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#0e1c28"/>
-              <stop offset="100%" stop-color="#081218"/>
+              <stop offset="0%" stop-color="var(--nodo-cnidarios-a)"/>
+              <stop offset="100%" stop-color="var(--nodo-cnidarios-b)"/>
             </radialGradient>
             <radialGradient id="nodeGrad-gusanos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#1e1508"/>
-              <stop offset="100%" stop-color="#130e04"/>
+              <stop offset="0%" stop-color="var(--nodo-gusanos-a)"/>
+              <stop offset="100%" stop-color="var(--nodo-gusanos-b)"/>
             </radialGradient>
             <radialGradient id="nodeGrad-moluscos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#221408"/>
-              <stop offset="100%" stop-color="#160d04"/>
+              <stop offset="0%" stop-color="var(--nodo-moluscos-a)"/>
+              <stop offset="100%" stop-color="var(--nodo-moluscos-b)"/>
             </radialGradient>
             <radialGradient id="nodeGrad-artropodos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#220e08"/>
-              <stop offset="100%" stop-color="#160804"/>
+              <stop offset="0%" stop-color="var(--nodo-artropodos-a)"/>
+              <stop offset="100%" stop-color="var(--nodo-artropodos-b)"/>
             </radialGradient>
             <radialGradient id="nodeGrad-equinodermos" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#1a0e22"/>
-              <stop offset="100%" stop-color="#100816"/>
+              <stop offset="0%" stop-color="var(--nodo-equinodermos-a)"/>
+              <stop offset="100%" stop-color="var(--nodo-equinodermos-b)"/>
             </radialGradient>
           </defs>
 
           <!-- Líneas radiales del centro a cada nodo (decorativas) -->
-          <line x1="310" y1="258" x2="310" y2="162" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
-          <line x1="353" y1="285" x2="431" y2="240" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
-          <line x1="267" y1="285" x2="189" y2="240" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
-          <line x1="353" y1="335" x2="431" y2="380" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
-          <line x1="267" y1="335" x2="189" y2="380" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
-          <line x1="310" y1="362" x2="310" y2="458" stroke="rgba(245,240,232,0.09)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="310" y1="258" x2="310" y2="162" stroke="color-mix(in srgb, var(--ink) 9%, transparent)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="353" y1="285" x2="431" y2="240" stroke="color-mix(in srgb, var(--ink) 9%, transparent)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="267" y1="285" x2="189" y2="240" stroke="color-mix(in srgb, var(--ink) 9%, transparent)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="353" y1="335" x2="431" y2="380" stroke="color-mix(in srgb, var(--ink) 9%, transparent)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="267" y1="335" x2="189" y2="380" stroke="color-mix(in srgb, var(--ink) 9%, transparent)" stroke-width="1.5" pointer-events="none"/>
+          <line x1="310" y1="362" x2="310" y2="458" stroke="color-mix(in srgb, var(--ink) 9%, transparent)" stroke-width="1.5" pointer-events="none"/>
 
           <!-- Líneas de conexión de patrones (ocultas por defecto) -->
           <!-- simetría radial: cnidarios(483,210) ↔ equinodermos(310,510) -->
-          <line id="conn-sim-1" class="conn-line" x1="483" y1="210" x2="310" y2="510" stroke="#9B4F9E" stroke-width="2" stroke-dasharray="6 4"/>
+          <line id="conn-sim-1" class="conn-line" x1="483" y1="210" x2="310" y2="510" stroke="var(--c-equinodermos)" stroke-width="2" stroke-dasharray="6 4"/>
           <!-- cuerpo blando: gusanos(137,210) ↔ moluscos(483,410) -->
-          <line id="conn-blando-1" class="conn-line" x1="137" y1="210" x2="483" y2="410" stroke="#8B6B3D" stroke-width="2" stroke-dasharray="6 4"/>
+          <line id="conn-blando-1" class="conn-line" x1="137" y1="210" x2="483" y2="410" stroke="var(--c-gusanos)" stroke-width="2" stroke-dasharray="6 4"/>
           <!-- vida acuática: porif(310,110) → cnid(483,210) → equino(310,510) -->
-          <polyline id="conn-acua-1" class="conn-line" points="310,110 483,210 310,510" fill="none" stroke="#7BAFD4" stroke-width="2" stroke-dasharray="5 4"/>
+          <polyline id="conn-acua-1" class="conn-line" points="310,110 483,210 310,510" fill="none" stroke="var(--c-cnidarios)" stroke-width="2" stroke-dasharray="5 4"/>
           <!-- regeneración: equino(310,510) ↔ gusanos(137,210) -->
-          <line id="conn-regen-1" class="conn-line" x1="310" y1="510" x2="137" y2="210" stroke="#9B4F9E" stroke-width="2" stroke-dasharray="8 4"/>
+          <line id="conn-regen-1" class="conn-line" x1="310" y1="510" x2="137" y2="210" stroke="var(--c-equinodermos)" stroke-width="2" stroke-dasharray="8 4"/>
 
           <!-- Anillos decorativos centrales -->
-          <circle class="center-ring" cx="310" cy="310" r="90" stroke="rgba(245,240,232,0.07)" stroke-width="1"/>
-          <circle cx="310" cy="310" r="70" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-          <circle cx="310" cy="310" r="48" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <circle class="center-ring" cx="310" cy="310" r="90" stroke="color-mix(in srgb, var(--ink) 7%, transparent)" stroke-width="1"/>
+          <circle cx="310" cy="310" r="70" fill="color-mix(in srgb, var(--ink) 2%, transparent)" stroke="color-mix(in srgb, var(--ink) 6%, transparent)" stroke-width="1"/>
+          <circle cx="310" cy="310" r="48" fill="color-mix(in srgb, var(--ink) 3%, transparent)" stroke="color-mix(in srgb, var(--ink) 5%, transparent)" stroke-width="0.5"/>
 
           <!-- Texto central -->
-          <text x="310" y="295" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="rgba(248,250,255,0.92)">6 grupos</text>
-          <text x="310" y="315" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" letter-spacing="3" fill="rgba(248,250,255,0.6)">INCREÍBLES</text>
-          <text x="310" y="333" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="10" fill="rgba(248,250,255,0.38)" font-style="italic">miles de formas</text>
+          <text x="310" y="295" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="color-mix(in srgb, var(--ink) 92%, transparent)">6 grupos</text>
+          <text x="310" y="315" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" letter-spacing="3" fill="color-mix(in srgb, var(--ink) 60%, transparent)">INCREÍBLES</text>
+          <text x="310" y="333" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="10" fill="color-mix(in srgb, var(--ink) 38%, transparent)" font-style="italic">miles de formas</text>
 
           <!-- ══════════════════════════════════
                NODOS — r=52, posiciones calculadas
@@ -789,51 +869,51 @@ summary:focus-visible,
 
           <!-- 1. Poríferos -->
           <g class="group-node" id="node-poriferos" data-grupo="poriferos">
-            <circle class="node-circle" cx="310" cy="110" r="52" fill="url(#nodeGrad-poriferos)" stroke="#E8B84B" stroke-width="2.5"/>
+            <circle class="node-circle" cx="310" cy="110" r="52" fill="url(#nodeGrad-poriferos)" stroke="var(--c-poriferos)" stroke-width="2.5"/>
             <text x="310" y="88" text-anchor="middle" font-size="28" dominant-baseline="middle">🧽</text>
-            <text x="310" y="108" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E8B84B" letter-spacing="1">01</text>
-            <text x="310" y="123" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Poríferos</text>
+            <text x="310" y="108" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="var(--c-poriferos)" letter-spacing="1">01</text>
+            <text x="310" y="123" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Poríferos</text>
           </g>
 
           <!-- 2. Cnidarios -->
           <g class="group-node" id="node-cnidarios" data-grupo="cnidarios">
-            <circle class="node-circle" cx="483" cy="210" r="52" fill="url(#nodeGrad-cnidarios)" stroke="#7BAFD4" stroke-width="2.5"/>
+            <circle class="node-circle" cx="483" cy="210" r="52" fill="url(#nodeGrad-cnidarios)" stroke="var(--c-cnidarios)" stroke-width="2.5"/>
             <text x="483" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪼</text>
-            <text x="483" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#7BAFD4" letter-spacing="1">02</text>
-            <text x="483" y="223" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Cnidarios</text>
+            <text x="483" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="var(--c-cnidarios)" letter-spacing="1">02</text>
+            <text x="483" y="223" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Cnidarios</text>
           </g>
 
           <!-- 3. Gusanos -->
           <g class="group-node" id="node-gusanos" data-grupo="gusanos">
-            <circle class="node-circle" cx="137" cy="210" r="52" fill="url(#nodeGrad-gusanos)" stroke="#8B6B3D" stroke-width="2.5"/>
+            <circle class="node-circle" cx="137" cy="210" r="52" fill="url(#nodeGrad-gusanos)" stroke="var(--c-gusanos)" stroke-width="2.5"/>
             <text x="137" y="188" text-anchor="middle" font-size="28" dominant-baseline="middle">🪱</text>
-            <text x="137" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#A08060" letter-spacing="1">03</text>
-            <text x="137" y="223" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Gusanos</text>
+            <text x="137" y="208" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="var(--c-gusanos)" letter-spacing="1">03</text>
+            <text x="137" y="223" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Gusanos</text>
           </g>
 
           <!-- 4. Moluscos -->
           <g class="group-node" id="node-moluscos" data-grupo="moluscos">
-            <circle class="node-circle" cx="483" cy="410" r="52" fill="url(#nodeGrad-moluscos)" stroke="#C17E5A" stroke-width="2.5"/>
+            <circle class="node-circle" cx="483" cy="410" r="52" fill="url(#nodeGrad-moluscos)" stroke="var(--c-moluscos)" stroke-width="2.5"/>
             <text x="483" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🐚</text>
-            <text x="483" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#C17E5A" letter-spacing="1">04</text>
-            <text x="483" y="423" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Moluscos</text>
+            <text x="483" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="var(--c-moluscos)" letter-spacing="1">04</text>
+            <text x="483" y="423" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Moluscos</text>
           </g>
 
           <!-- 5. Artrópodos -->
           <g class="group-node" id="node-artropodos" data-grupo="artropodos">
-            <circle class="node-circle" cx="137" cy="410" r="52" fill="url(#nodeGrad-artropodos)" stroke="#E05C3A" stroke-width="2.5"/>
+            <circle class="node-circle" cx="137" cy="410" r="52" fill="url(#nodeGrad-artropodos)" stroke="var(--c-artropodos)" stroke-width="2.5"/>
             <text x="137" y="388" text-anchor="middle" font-size="28" dominant-baseline="middle">🦋</text>
-            <text x="137" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#E05C3A" letter-spacing="1">05</text>
-            <text x="137" y="423" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="#F8FAFF">Artrópodos</text>
+            <text x="137" y="408" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="var(--c-artropodos)" letter-spacing="1">05</text>
+            <text x="137" y="423" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Artrópodos</text>
           </g>
 
           <!-- 6. Equinodermos — texto largo: dos líneas -->
           <g class="group-node" id="node-equinodermos" data-grupo="equinodermos">
-            <circle class="node-circle" cx="310" cy="510" r="52" fill="url(#nodeGrad-equinodermos)" stroke="#9B4F9E" stroke-width="2.5"/>
+            <circle class="node-circle" cx="310" cy="510" r="52" fill="url(#nodeGrad-equinodermos)" stroke="var(--c-equinodermos)" stroke-width="2.5"/>
             <text x="310" y="488" text-anchor="middle" font-size="28" dominant-baseline="middle">⭐</text>
-            <text x="310" y="508" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="#9B4F9E" letter-spacing="1">06</text>
-            <text x="310" y="522" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#F8FAFF">Equino-</text>
-            <text x="310" y="535" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="#F8FAFF">dermos</text>
+            <text x="310" y="508" text-anchor="middle" font-family="DM Mono,monospace" font-size="7.5" fill="var(--c-equinodermos)" letter-spacing="1">06</text>
+            <text x="310" y="522" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="var(--ink)">Equino-</text>
+            <text x="310" y="535" text-anchor="middle" font-family="DM Serif Display,serif" font-size="11" font-weight="700" fill="var(--ink)">dermos</text>
           </g>
 
         </svg>
@@ -989,42 +1069,42 @@ summary:focus-visible,
   pinta();
 })();
 const GRUPOS = {
-  poriferos:    { nombre:"Poríferos",    emoji:"🧽", color:"#E8B84B",
+  poriferos:    { nombre:"Poríferos",    emoji:"🧽", color:"var(--c-poriferos)",
     rasgos:["Filtran agua por los poros","Viven fijos, no se desplazan","Sin tejidos ni órganos verdaderos","Sin simetría"],
     superpoder:"Filtración: procesan enormes cantidades de agua para comer",
     dato_raro:"No tienen cerebro, pero llevan filtrando océanos desde hace 600 millones de años.",
     ejemplos:["esponja de mar","esponja barril","verónica"],
     funciones:{ nutricion:"Filtran agua por los poros. Coanocitos atrapan partículas. Respiran por difusión.", relacion:"Sin sistema nervioso ni órganos de los sentidos.", reproduccion:"Asexual por gemación. Sexual con fecundación interna." }
   },
-  cnidarios:    { nombre:"Cnidarios",    emoji:"🪼", color:"#7BAFD4",
+  cnidarios:    { nombre:"Cnidarios",    emoji:"🪼", color:"var(--c-cnidarios)",
     rasgos:["Tentáculos con cnidocitos urticantes","Simetría radial","Formas pólipo y medusa","Todos acuáticos"],
     superpoder:"Cnidocitos: células que disparan un aguijón urticante al mínimo roce",
     dato_raro:"El coral no es una roca: son colonias de pólipos que construyen arrecifes durante miles de años.",
     ejemplos:["medusa común","anémona","coral rojo"],
     funciones:{ nutricion:"Carnívoros. Cazan con tentáculos urticantes. Cavidad digestiva con una sola abertura.", relacion:"Red nerviosa no centralizada. Órganos sencillos.", reproduccion:"Asexual (gemación) o sexual. Reproducción alternante." }
   },
-  gusanos:      { nombre:"Gusanos",      emoji:"🪱", color:"#8B6B3D",
+  gusanos:      { nombre:"Gusanos",      emoji:"🪱", color:"var(--c-gusanos)",
     rasgos:["Cuerpo blando, largo, sin extremidades articuladas","Simetría bilateral","Respiran por la piel","Algunos regeneran partes"],
     superpoder:"Adaptación extrema: viven en suelo, mar, agua dulce y dentro de otros animales",
     dato_raro:"La lombriz de tierra tiene cinco pares de vasos que funcionan como corazones.",
     ejemplos:["lombriz de tierra","sanguijuela","tenia","anisakis"],
     funciones:{ nutricion:"Tubo digestivo completo. Los hay detritívoros, carnívoros y parásitos.", relacion:"Cerebro simple y cordón nervioso.", reproduccion:"Muchos hermafroditas. Algunos con reproducción por fragmentación." }
   },
-  moluscos:     { nombre:"Moluscos",     emoji:"🐚", color:"#C17E5A",
+  moluscos:     { nombre:"Moluscos",     emoji:"🐚", color:"var(--c-moluscos)",
     rasgos:["Cuerpo blando","Pie muscular para moverse","Muchos tienen concha","Simetría bilateral"],
     superpoder:"Diversidad extrema: desde la lapa fija hasta el pulpo que abre frascos",
     dato_raro:"Los pulpos tienen tres corazones, sangre azul y son los invertebrados más inteligentes.",
     ejemplos:["caracol","pulpo","calamar","mejillón"],
     funciones:{ nutricion:"Carnívoros, herbívoros o filtradores. Branquias o pulmones. Circulación abierta.", relacion:"Órganos para olfato, tacto, gusto. Cefalópodos con ojos avanzados.", reproduccion:"Siempre sexual. Ovíparos. Muchos sexos separados." }
   },
-  artropodos:   { nombre:"Artrópodos",   emoji:"🦋", color:"#E05C3A",
+  artropodos:   { nombre:"Artrópodos",   emoji:"🦋", color:"var(--c-artropodos)",
     rasgos:["Exoesqueleto de quitina","Patas articuladas","Cuerpo segmentado","Hacen muda para crecer"],
     superpoder:"Metamorfosis completa: se transforman radicalmente durante su desarrollo",
     dato_raro:"Hay más especies de insectos que de todos los demás animales juntos.",
     ejemplos:["mariposa","araña","hormiga","cangrejo"],
     funciones:{ nutricion:"Muy variada. Tráqueas (insectos) o branquias (acuáticos).", relacion:"Sistema nervioso complejo. Ojos simples o compuestos.", reproduccion:"Sexual, ovíparos. Metamorfosis incompleta o completa." }
   },
-  equinodermos: { nombre:"Equinodermos", emoji:"⭐", color:"#9B4F9E",
+  equinodermos: { nombre:"Equinodermos", emoji:"⭐", color:"var(--c-equinodermos)",
     rasgos:["Pies ambulacrales hidráulicos","Simetría radial en adultos","Esqueleto interno de placas","Regeneran brazos perdidos"],
     superpoder:"Regeneración: pueden perder un brazo entero y reconstruirlo",
     dato_raro:"Algunas estrellas de mar sacan el estómago fuera del cuerpo para digerir sus presas.",
@@ -1164,9 +1244,9 @@ function openGroup(id, disparador) {
     </div>
     <div><div class="dp-section-label">Funciones vitales</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      <div><span class="vs-pill" style="background:#c0533a">Nutrición</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.nutricion}</div></div>
-      <div><span class="vs-pill" style="background:#3a7ac0">Relación</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.relacion}</div></div>
-      <div><span class="vs-pill" style="background:#3a9c5a">Reproducción</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.reproduccion}</div></div>
+      <div><span class="vs-pill" style="background:var(--vs-nutricion)">Nutrición</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.nutricion}</div></div>
+      <div><span class="vs-pill" style="background:var(--vs-relacion)">Relación</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.relacion}</div></div>
+      <div><span class="vs-pill" style="background:var(--vs-reproduccion)">Reproducción</span><div style="font-size:0.88rem;line-height:1.45;color:var(--ink-soft);margin-top:2px">${g.funciones.reproduccion}</div></div>
     </div></div>
     <div class="dp-dato-raro">💡 ${g.dato_raro}</div>
     <div><div class="dp-section-label">Ejemplos</div>
@@ -1242,5 +1322,9 @@ montaMapa();
   <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
 </footer>
 
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>
