@@ -25,6 +25,14 @@
 <meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
   :root {
     --paper: #181511;
@@ -46,15 +54,73 @@
     --card-h: 520px;
     --radius: 6px;
     --shadow: 0 4px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.2);
+    --cyan: #22D3EE;
+    --sobre-vivo: #181511;
+    --vs-nutricion: #c0533a;
+    --magenta: #E040FB;
+    --sombra-base: #000;
+    --grano-op: 1;
+    --vs-relacion: #3a7ac0;
+    --vs-reproduccion: #3a9c5a;
+    --veredicto-error: #c0392b;
+    --veredicto-ok: #27ae60;
+    --banda-neutra: #4B5563;
+    --halo-a: rgba(70,55,30,0.4);
+    --halo-b: rgba(45,90,61,0.15);
+    --sobre-vivo-suave: rgba(17,19,24,0.55);
+    --c-poriferos-texto: var(--c-poriferos);
+    --c-cnidarios-texto: var(--c-cnidarios);
+    --c-gusanos-texto: var(--c-gusanos);
+    --c-moluscos-texto: var(--c-moluscos);
+    --c-artropodos-texto: var(--c-artropodos);
+    --c-equinodermos-texto: var(--c-equinodermos);
+    --accent-global-texto: var(--accent-global);
+    --magenta-texto: var(--magenta);
+  }
+
+  /* ── MODO CLARO ────────────────────────────────────────────────────────
+     El nombrado ya era semantico — papel y tinta — asi que aqui se
+     intercambian los dos extremos y poco mas. Los seis colores de grupo
+     conservan su tono: son terrosos, no neon, y aguantan el papel mejor
+     que cualquier otra paleta del lab. Se reeligen en la pasada de tonos.
+
+     --sobre-vivo es la tinta que va ENCIMA de una pastilla de grupo. Esa
+     pastilla sigue viva en los dos temas, asi que su texto no se invierte. */
+  :root[data-theme="light"] {
+    --paper: #efe7db;
+    --paper-dark: #e4dbcd;
+    --bg: #e7e0d6;
+    --ink: #211825;
+    --ink-soft: #5c5060;
+    --ink-faint: #695e6c;
+    --magenta: #9c22b0;
+    --cyan: #0a6d7c;
+    --grano-op: 0.45;
+    --vs-relacion: #2a5c96;
+    --vs-reproduccion: #2b7745;
+    --veredicto-error: #96271c;
+    --veredicto-ok: #1c7a44;
+    --banda-neutra: #8b8b93;
+    --halo-a: rgba(160,140,90,0.16);
+    --halo-b: rgba(120,160,130,0.12);
+    --sobre-vivo-suave: rgba(24,21,17,0.7);
+    --c-poriferos-texto: color-mix(in srgb, var(--c-poriferos) 45%, var(--ink));
+    --c-cnidarios-texto: color-mix(in srgb, var(--c-cnidarios) 45%, var(--ink));
+    --c-gusanos-texto: color-mix(in srgb, var(--c-gusanos) 45%, var(--ink));
+    --c-moluscos-texto: color-mix(in srgb, var(--c-moluscos) 45%, var(--ink));
+    --c-artropodos-texto: color-mix(in srgb, var(--c-artropodos) 45%, var(--ink));
+    --c-equinodermos-texto: color-mix(in srgb, var(--c-equinodermos) 45%, var(--ink));
+    --accent-global-texto: color-mix(in srgb, var(--accent-global) 45%, var(--ink));
+    --magenta-texto: color-mix(in srgb, var(--magenta) 45%, var(--ink));
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background-color: #080A0F;
+    background-color: var(--bg);
     background-image:
-      radial-gradient(ellipse at 20% 20%, rgba(70,55,30,0.4) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 80%, rgba(45,90,61,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 20%, var(--halo-a) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, var(--halo-b) 0%, transparent 50%),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     min-height: 100vh;
     font-family: 'Nunito', sans-serif;
@@ -75,7 +141,7 @@ body::before {
   /* ── CABECERA ── */
   header {
     padding: 1.4rem 1.4rem 0.6rem;
-    border-bottom: 1px solid rgba(245,240,232,0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
     text-align: center;
     position: relative;
     z-index: 1;
@@ -87,7 +153,7 @@ body::before {
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(248,250,255,0.80);
+    color: var(--ink);
     margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
@@ -95,8 +161,8 @@ body::before {
     flex-wrap: wrap;
     gap: 0.3rem;
   }
-  .header-topbar a { color: rgba(245,240,232,0.8); text-decoration: none; transition: color 0.2s; }
-  .header-topbar a:hover { color: #D946EF; }
+  .header-topbar a { color: var(--ink); text-decoration: none; transition: color 0.2s; }
+  .header-topbar a:hover { color:var(--magenta-texto); }
   .header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
 
   .header-nav {
@@ -113,7 +179,7 @@ body::before {
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(245,240,232,0.35);
+    color: color-mix(in srgb, var(--ink) 35%, transparent);
     margin-right: 0.4rem;
     white-space: nowrap;
   }
@@ -125,14 +191,14 @@ body::before {
     border-radius: 100px;
     border: 1px solid transparent;
     text-decoration: none;
-    color: rgba(248,250,255,0.80);
+    color: var(--ink);
     background: transparent;
     transition: all 0.2s ease;
     white-space: nowrap;
   }
-  .nav-tool:hover { color: rgba(245,240,232,0.8); border-color: rgba(245,240,232,0.15); background: rgba(245,240,232,0.05); }
-  .nav-tool.active { color: #D946EF; border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
-  .nav-sep { color: rgba(245,240,232,0.2); font-size: 0.7rem; user-select: none; }
+  .nav-tool:hover { color: var(--ink); border-color: var(--ink-faint); background: color-mix(in srgb, var(--ink) 5%, transparent); }
+  .nav-tool.active { color:var(--magenta-texto); border-color: color-mix(in srgb, var(--magenta) 35%, transparent); background: color-mix(in srgb, var(--magenta) 8%, transparent); cursor: default; pointer-events: none; }
+  .nav-sep { color: var(--ink-faint); font-size: 0.7rem; user-select: none; }
   .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding-bottom: 1rem; }
 
   .header-title {
@@ -140,7 +206,7 @@ body::before {
     font-size: clamp(1.6rem, 3.5vw, 2.4rem);
     font-weight: 400;
     letter-spacing: -0.02em;
-    color: rgba(245,240,232,0.95);
+    color: color-mix(in srgb, var(--ink) 95%, transparent);
     margin-bottom: 0.3rem;
     line-height: 1.15;
   }
@@ -149,7 +215,7 @@ body::before {
     font-family: 'Nunito', sans-serif;
     font-size: 0.88rem;
     font-weight: 600;
-    color: rgba(245,240,232,0.45);
+    color: var(--ink-soft);
     margin-bottom: 1.1rem;
   }
 
@@ -168,31 +234,31 @@ body::before {
     text-transform: uppercase;
     padding: 0.5rem 1.4rem;
     border-radius: 100px;
-    border: 2px solid rgba(245,240,232,0.15);
+    border: 2px solid color-mix(in srgb, var(--ink) 15%, transparent);
     background: transparent;
-    color: rgba(248,250,255,0.80);
+    color: var(--ink);
     cursor: pointer;
     text-decoration: none;
     transition: all 0.2s;
   }
 
   .header-nav-btn:hover {
-    border-color: rgba(248,250,255,0.80);
-    color: rgba(245,240,232,0.8);
+    border-color: var(--ink);
+    color: var(--ink);
   }
 
   .header-nav-btn.active {
-    border-color: #D946EF;
-    color: #D946EF;
-    background: rgba(217,70,239,0.08);
-    box-shadow: 0 0 16px rgba(217,70,239,0.2);
+    border-color: var(--magenta);
+    color:var(--magenta-texto);
+    background: color-mix(in srgb, var(--magenta) 8%, transparent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--magenta) 20%, transparent);
   }
 
   footer {
     position: relative; z-index: 1;
     max-width: 1100px;
     margin: 2rem auto 0;
-    border-top: 1px solid rgba(245,240,232,0.07);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 7%, transparent);
     padding: 1.2rem 2rem 2.5rem;
     display: flex;
     align-items: center;
@@ -200,10 +266,10 @@ body::before {
     flex-wrap: wrap;
     gap: 0.6rem;
   }
-  .footer-left { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: rgba(245,240,232,0.3); letter-spacing: 0.04em; }
-  .footer-left a { color: #D946EF; text-decoration: none; transition: opacity 0.2s; }
+  .footer-left { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--ink-faint); letter-spacing: 0.04em; }
+  .footer-left a { color:var(--magenta-texto); text-decoration: none; transition: opacity 0.2s; }
   .footer-left a:hover { opacity: 0.75; }
-  .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: rgba(245,240,232,0.3); letter-spacing: 0.04em; }
+  .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--ink-faint); letter-spacing: 0.04em; }
 
   /* ── FILTROS ── */
   .filters {
@@ -220,18 +286,18 @@ body::before {
     text-transform: uppercase;
     padding: 0.35rem 0.9rem;
     border-radius: 2rem;
-    border: 1px solid rgba(245,240,232,0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     background: transparent;
-    color: rgba(245,240,232,0.5);
+    color: var(--ink-soft);
     cursor: pointer;
     transition: all 0.2s;
   }
   .filter-btn:hover {
-    border-color: rgba(245,240,232,0.5);
-    color: rgba(245,240,232,0.85);
+    border-color: var(--ink-soft);
+    color: color-mix(in srgb, var(--ink) 85%, transparent);
   }
   .filter-btn.active {
-    background: #0e0c0a;
+    background: var(--bg);
     color: var(--ink);
     border-color: var(--paper);
   }
@@ -255,18 +321,18 @@ body::before {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     padding: 0.4rem 1rem;
-    border: 1px solid rgba(248,250,255,0.18);
-    background: rgba(248,250,255,0.04);
-    color: rgba(248,250,255,0.80);
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    color: var(--ink);
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 2px;
   }
-  .mode-btn:hover { color: rgba(248,250,255,0.9); border-color: rgba(248,250,255,0.3); }
+  .mode-btn:hover { color: color-mix(in srgb, var(--ink) 90%, transparent); border-color: color-mix(in srgb, var(--ink) 30%, transparent); }
   .mode-btn.active {
-    background: rgba(248,250,255,0.06);
-    color: #c8c4bc;
-    border-color: rgba(248,250,255,0.45);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    color: var(--ink-soft);
+    border-color: color-mix(in srgb, var(--ink) 45%, transparent);
   }
 
   /* ── GRID DE TARJETAS ── */
@@ -293,18 +359,18 @@ body::before {
     place-items: center;
     padding: 0;
     margin: 0;
-    color: rgba(248,250,255,0.65);
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.16);
+    color: color-mix(in srgb, var(--ink) 65%, transparent);
+    background: color-mix(in srgb, var(--sombra-base) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s;
   }
   .card-flip-btn svg { width: 15px; height: 15px; display: block; }
   .card-flip-btn:hover {
-    color: #F8FAFF;
-    background: rgba(0,0,0,0.72);
-    border-color: rgba(255,255,255,0.4);
+    color: var(--ink);
+    background: color-mix(in srgb, var(--sombra-base) 72%, transparent);
+    border-color: color-mix(in srgb, var(--ink) 42%, transparent);
   }
   /* De vuelta, la flecha apunta al otro lado. */
   .card-wrap.flipped .card-flip-btn svg { transform: scaleX(-1); }
@@ -338,7 +404,7 @@ body::before {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     border-radius: var(--radius);
-    background: #0e0c0a;
+    background: var(--bg);
     box-shadow: var(--shadow);
     overflow: hidden;
     display: flex;
@@ -522,11 +588,11 @@ body::before {
     padding: 2px 6px;
     display: inline-block;
     border-radius: 2px;
-    color: var(--paper);
+    color: var(--sobre-vivo);
   }
-  .vs-label.nutricion  { background: #c0533a; }
-  .vs-label.relacion   { background: #3a7ac0; }
-  .vs-label.reproduccion { background: #3a9c5a; }
+  .vs-label.nutricion  { background: var(--vs-nutricion); }
+  .vs-label.relacion   { background: var(--vs-relacion); }
+  .vs-label.reproduccion { background: var(--vs-reproduccion); }
   .vs-text {
     font-size: 0.88rem;
     line-height: 1.5;
@@ -644,7 +710,7 @@ body::before {
     letter-spacing: 0.15em;
     text-transform: uppercase;
     background: var(--ink);
-    color: var(--paper);
+    color: var(--sobre-vivo);
     padding: 3px 8px;
     border-radius: 2px;
   }
@@ -682,8 +748,8 @@ body::before {
     font-size: 1.3rem;
     font-weight: 700;
   }
-  .intruso-veredicto.es-error { color: #c0392b; }
-  .intruso-veredicto.no-error { color: #27ae60; }
+  .intruso-veredicto.es-error { color: var(--veredicto-error); }
+  .intruso-veredicto.no-error { color: var(--veredicto-ok); }
   .intruso-error-text {
     font-size: 0.88rem;
     line-height: 1.55;
@@ -779,7 +845,7 @@ body::before {
   /* ── ESTADO VACÍO ── */
   .empty-state {
     text-align: center;
-    color: rgba(245,240,232,0.25);
+    color: var(--ink-faint);
     font-family: 'DM Mono', monospace;
     font-size: 0.88rem;
     letter-spacing: 0.1em;
@@ -814,14 +880,14 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   background: none; border: none; cursor: pointer;
   font-family: 'DM Mono', monospace; font-size: 0.62rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: var(--ink-soft);
   transition: color 0.2s;
 }
-.plegar:hover { color: #22D3EE; }
-.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar:hover { color: var(--cyan); }
+.plegar:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
 .plegar-chevron {
   display: inline-block; font-size: 1.05rem; line-height: 1;
-  color: #D946EF; transition: transform 0.25s ease;
+  color:var(--magenta-texto); transition: transform 0.25s ease;
 }
 .plegar:hover .plegar-chevron { filter: brightness(1.25); }
 body.compacto .plegar-chevron { transform: rotate(180deg); }
@@ -849,7 +915,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cyan);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -932,7 +998,7 @@ summary:focus-visible,
 const DATA = {
   grupos: [
     {
-      id: "poriferos", numero: 1, nombre: "Poríferos", emoji: "🧽", color: "#E8B84B",
+      id: "poriferos", numero: 1, nombre: "Poríferos", emoji: "🧽", color: "var(--c-poriferos)",
       firma: {
         rasgos_clave: ["Filtran agua por los poros","Viven fijos, no se desplazan","Sin tejidos ni órganos verdaderos","Sin simetría"],
         identificacion_rapida: "¿Parece una esponja llena de agujeros?",
@@ -955,7 +1021,7 @@ const DATA = {
       ]
     },
     {
-      id: "cnidarios", numero: 2, nombre: "Cnidarios", emoji: "🪼", color: "#7BAFD4",
+      id: "cnidarios", numero: 2, nombre: "Cnidarios", emoji: "🪼", color: "var(--c-cnidarios)",
       firma: {
         rasgos_clave: ["Tentáculos con cnidocitos (células urticantes)","Simetría radial","Dos formas: pólipo (fijo) y medusa (libre)","Todos acuáticos"],
         identificacion_rapida: "¿Tiene tentáculos que pican?",
@@ -978,7 +1044,7 @@ const DATA = {
       ]
     },
     {
-      id: "gusanos", numero: 3, nombre: "Gusanos", emoji: "🪱", color: "#8B6B3D",
+      id: "gusanos", numero: 3, nombre: "Gusanos", emoji: "🪱", color: "var(--c-gusanos)",
       firma: {
         rasgos_clave: ["Cuerpo blando, largo, sin extremidades articuladas","Simetría bilateral","Muchos respiran por la piel","Algunos regeneran partes del cuerpo"],
         identificacion_rapida: "¿Es alargado, blando y sin patas?",
@@ -1001,7 +1067,7 @@ const DATA = {
       ]
     },
     {
-      id: "moluscos", numero: 4, nombre: "Moluscos", emoji: "🐚", color: "#C17E5A",
+      id: "moluscos", numero: 4, nombre: "Moluscos", emoji: "🐚", color: "var(--c-moluscos)",
       firma: {
         rasgos_clave: ["Cuerpo blando","Pie muscular para moverse","Muchos tienen concha (una o dos valvas)","Simetría bilateral"],
         identificacion_rapida: "¿Cuerpo blando con concha (a veces)?",
@@ -1025,7 +1091,7 @@ const DATA = {
       ]
     },
     {
-      id: "artropodos", numero: 5, nombre: "Artrópodos", emoji: "🦋", color: "#E05C3A",
+      id: "artropodos", numero: 5, nombre: "Artrópodos", emoji: "🦋", color: "var(--c-artropodos)",
       firma: {
         rasgos_clave: ["Exoesqueleto de quitina (armadura externa)","Patas articuladas","Cuerpo segmentado (cabeza, tórax, abdomen)","Hacen muda para crecer"],
         identificacion_rapida: "¿Patas articuladas y cuerpo con segmentos?",
@@ -1049,7 +1115,7 @@ const DATA = {
       ]
     },
     {
-      id: "equinodermos", numero: 6, nombre: "Equinodermos", emoji: "⭐", color: "#9B4F9E",
+      id: "equinodermos", numero: 6, nombre: "Equinodermos", emoji: "⭐", color: "var(--c-equinodermos)",
       firma: {
         rasgos_clave: ["Pies ambulacrales (sistema hidráulico para moverse)","Simetría radial en adultos","Esqueleto interno de placas rígidas","Regeneración: reconstruyen brazos perdidos"],
         identificacion_rapida: "¿Parece estrella o erizo de mar?",
@@ -1079,10 +1145,10 @@ let currentMode = 'firma';
 
 function getColor(id) {
   const map = {
-    poriferos: '#E8B84B', cnidarios: '#7BAFD4', gusanos: '#8B6B3D',
-    moluscos: '#C17E5A', artropodos: '#E05C3A', equinodermos: '#9B4F9E'
+    poriferos: 'var(--c-poriferos)', cnidarios: 'var(--c-cnidarios)', gusanos: 'var(--c-gusanos)',
+    moluscos: 'var(--c-moluscos)', artropodos: 'var(--c-artropodos)', equinodermos: 'var(--c-equinodermos)'
   };
-  return map[id] || '#888';
+  return map[id] || 'var(--ink-faint)';
 }
 
 function makeFirmaCard(g) {
@@ -1151,7 +1217,7 @@ function makeDetectiveCards(g) {
            es "a que grupo pertenezco" y la cabecera lo estaba respondiendo, con
            la banda de color repitiendolo por si acaso. La banda va en gris y el
            color reaparece al voltear, que es cuando se revela. -->
-      <div class="card-band" style="background:#4B5563"></div>
+      <div class="card-band" style="background:var(--banda-neutra)"></div>
       <div class="det-header">🔍 Modo Detective</div>
       <div class="det-pista">"${t.pista}"</div>
       <div class="det-pregunta">¿A qué grupo pertenezco? → voltea para ver</div>
@@ -1234,7 +1300,7 @@ function makePoderCard(g) {
          crema del frente oscuro, o sea que eran invisibles: la cita se leia a
          duras penas y el pie no se veia en absoluto. Se conserva la jerarquia
          -cita al 78%, pie al 55%- pero en oscuro, que es lo que pide el fondo. -->
-    <div class="card-face card-back poder-face" style="background:#F8FAFF; color:#111318;">
+    <div class="card-face card-back poder-face" style="background:var(--ink); color:var(--paper);">
       <div class="card-band" style="background:${color}"></div>
       <div class="poder-title-row">
         <span class="poder-emoji">${g.emoji}</span>
@@ -1242,12 +1308,12 @@ function makePoderCard(g) {
            blanca: el ambar de Poriferos daba 1.77 de contraste, o sea ilegible.
            Se oscurece conservando el tono, para que la carta siga diciendo de
            que grupo es de un vistazo. -->
-      <span class="poder-nombre" style="color:color-mix(in srgb, ${color} 55%, #111318)">${g.nombre}</span>
+      <span class="poder-nombre" style="color:color-mix(in srgb, ${color} 55%, var(--paper))">${g.nombre}</span>
       </div>
-      <div style="font-family:'DM Serif Display',serif; font-style:italic; font-size:0.95rem; line-height:1.7; flex:1; display:flex; align-items:center; color:rgba(17,19,24,0.78); padding: 8px 0;">
+      <div style="font-family:'DM Serif Display',serif; font-style:italic; font-size:0.95rem; line-height:1.7; flex:1; display:flex; align-items:center; color:var(--sobre-vivo); padding: 8px 0;">
         ${p.rareza}
       </div>
-      <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(17,19,24,0.55); text-align:center;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--sobre-vivo-suave); text-align:center;">
         happypuking — lab
       </div>
     </div>`;
@@ -1385,5 +1451,9 @@ buildCards();
   <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
 </footer>
 
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>
