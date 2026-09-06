@@ -26,6 +26,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
 </head>
 <body>
 
@@ -223,17 +232,17 @@
         <div class="stat-fila">
           <span class="dot" style="background:var(--comm-a)"></span>
           <span class="stat-etiqueta">Únicas (triángulo superior)</span>
-          <span class="count" style="color:#93c5fd">45</span>
+          <span class="count" style="color:var(--comm-a-texto)">45</span>
         </div>
         <div class="stat-fila">
           <span class="dot" style="background:var(--square-color)"></span>
           <span class="stat-etiqueta">Cuadrados perfectos</span>
-          <span class="count" style="color:var(--square-color)">10</span>
+          <span class="count" style="color:var(--square-color-texto)">10</span>
         </div>
         <div class="stat-fila">
           <span class="dot" style="background:var(--same-result)"></span>
           <span class="stat-etiqueta">Resultados con varias combinaciones</span>
-          <span class="count" style="color:#f9a8d4" id="dup-count">—</span>
+          <span class="count" style="color:var(--same-result-texto)" id="dup-count">—</span>
         </div>
       </div>
 
@@ -363,7 +372,7 @@ function buildTable() {
   const headRow = document.createElement('tr');
   const corner = document.createElement('th');
   corner.className = 'th-corner';
-  corner.innerHTML = '<span style="color:rgba(255,255,255,0.15);font-size:0.8em">×</span>';
+  corner.innerHTML = '<span style="color:var(--mas-tenue);font-size:0.8em">×</span>';
   headRow.appendChild(corner);
 
   for (let c = 1; c <= N; c++) {
@@ -683,7 +692,7 @@ function renderDetail(r, c) {
       <div style="margin-bottom:0.3rem;color:var(--muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:.06em">Todas las celdas resaltadas (${allPairs.length}):</div>
       ${allPairs.map(([pr,pc]) => {
         const isThis = pr===r && pc===c;
-        return `<span style="${isThis ? 'border-color:rgba(236,72,153,0.6);background:rgba(236,72,153,0.2)' : ''}">${pr}×${pc}</span>`;
+        return `<span style="${isThis ? 'border-color:color-mix(in srgb, var(--same-result) 60%, transparent);background:color-mix(in srgb, var(--same-result) 20%, transparent)' : ''}">${pr}×${pc}</span>`;
       }).join(' ')}
     </div>`;
   }
@@ -706,11 +715,11 @@ function renderDetail(r, c) {
       const isThis = pr === r && pc === c;
       return `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem">
         <span style="font-family:'DM Mono',monospace;font-size:0.85rem;
-          ${isThis ? 'color:#f9a8d4;font-weight:700' : 'color:rgba(240,242,255,0.55)'}">
+          ${isThis ? 'color:var(--same-result-texto);font-weight:700' : 'color:var(--mas-tenue)'}">
           ${pr} × ${pc}
         </span>
         <span style="color:var(--muted);font-size:0.75rem">= ${pr*pc}</span>
-        ${isThis ? '<span style="background:rgba(236,72,153,0.2);color:#f9a8d4;border:1px solid rgba(236,72,153,0.4);border-radius:4px;font-size:0.65rem;padding:0.1rem 0.4rem;font-weight:700">esta</span>' : ''}
+        ${isThis ? '<span style="background:color-mix(in srgb, var(--same-result) 20%, transparent);color:var(--same-result-texto);border:1px solid color-mix(in srgb, var(--same-result) 40%, transparent);border-radius:4px;font-size:0.65rem;padding:0.1rem 0.4rem;font-weight:700">esta</span>' : ''}
       </div>`;
     }).join('');
     rightPanel.style.display = 'block';
@@ -724,8 +733,8 @@ function renderDetail(r, c) {
 
 // Row palette — cycles through soft colours for each row stripe
 const ROW_COLORS = [
-  '#818cf8','#34d399','#f472b6','#fb923c','#38bdf8',
-  '#a3e635','#e879f9','#facc15','#2dd4bf','#f87171'
+  'var(--fila-1)','var(--fila-2)','var(--fila-3)','var(--fila-4)','var(--fila-5)',
+  'var(--fila-6)','var(--fila-7)','var(--fila-8)','var(--fila-9)','var(--fila-10)'
 ];
 
 function renderSumaVisual(r, c) {
@@ -1524,5 +1533,9 @@ paintConquered();
 updateConqStats();
 aplicarModoDeURL();
 </script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>

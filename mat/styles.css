@@ -11,7 +11,45 @@
     --muted: #8892A4;
     --muted2: #5A6478;
     --magenta: #E040FB;
-    --border: rgba(255,255,255,0.08);
+    --border: color-mix(in srgb, var(--text) 8%, transparent);
+
+    /* Identidad que faltaba por nombrar */
+    --cian: #22D3EE;
+    --green-lab: #4ADE80;
+    --red: #F87171;
+    --violet: #8B5CF6;
+    --indigo: #6366F1;
+
+    /* Version legible de cada identidad: lo que va ENCIMA de su pastilla.
+       En oscuro son los tonos palidos que ya estaban escritos a mano. */
+    --comm-a-texto: #93c5fd;
+    --comm-b-texto: #6ee7b7;
+    --same-result-texto: #f9a8d4;
+    --same-result-fuerte: #fce7f3;
+    --violet-texto: #a5b4fc;
+    --square-color-texto: #FFD700;
+    --highlight-texto: #F59E0B;
+
+    /* Texto con alfa. Sobre negro son jerarquia; sobre papel, ilegibilidad. */
+    --tenue: color-mix(in srgb, var(--text) 72%, transparent);
+    --mas-tenue: color-mix(in srgb, var(--text) 50%, transparent);
+
+    --panel-alto: #2e324d;
+    --sombra-fuerte: rgba(0,0,0,0.5);
+    --grano-op: 1;
+
+    /* Paleta de fila: cicla por franja y pinta TEXTO, asi que sobre
+       papel los diez tienen que bajar o no se leen. */
+    --fila-1: #818cf8;
+    --fila-2: #34d399;
+    --fila-3: #f472b6;
+    --fila-4: #fb923c;
+    --fila-5: #38bdf8;
+    --fila-6: #a3e635;
+    --fila-7: #e879f9;
+    --fila-8: #facc15;
+    --fila-9: #2dd4bf;
+    --fila-10: #f87171;
 
     --square-color: #FFD700;
     --comm-a: #3B82F6;
@@ -21,6 +59,48 @@
     --cell-size: clamp(32px, 5vw, 46px);
     padding: 1.5rem;
     gap: 1.8rem;
+  }
+
+  /* ── MODO CLARO ─────────────────────────────────────────────────────────
+     Chasis calibrado. Los cinco colores con significado — cuadrados,
+     conmutativa A y B, resaltado y mismo-resultado — conservan su valor
+     oscuro: son didacticos y se reeligen en la pasada de tonos. Lo que si
+     cambia es su version -texto, porque esa tiene que leerse ya. */
+  :root[data-theme="light"] {
+    --bg: #e7e0d6;
+    --surface: #f4ede3;
+    --surface2: #ede4d8;
+    --text: #211825;
+    --muted: #695e6c;
+    --muted2: #5c5060;
+    --magenta: #9c22b0;
+    --border: rgba(58,33,52,0.14);
+    --cian: #0a6d7c;
+    --panel-alto: #ded3c5;
+    --sombra-fuerte: rgba(76,47,63,0.22);
+    --grano-op: 0.45;
+
+    --fila-1: color-mix(in srgb, #818cf8 42%, var(--text));
+    --fila-2: color-mix(in srgb, #34d399 42%, var(--text));
+    --fila-3: color-mix(in srgb, #f472b6 42%, var(--text));
+    --fila-4: color-mix(in srgb, #fb923c 42%, var(--text));
+    --fila-5: color-mix(in srgb, #38bdf8 42%, var(--text));
+    --fila-6: color-mix(in srgb, #a3e635 42%, var(--text));
+    --fila-7: color-mix(in srgb, #e879f9 42%, var(--text));
+    --fila-8: color-mix(in srgb, #facc15 42%, var(--text));
+    --fila-9: color-mix(in srgb, #2dd4bf 42%, var(--text));
+    --fila-10: color-mix(in srgb, #f87171 42%, var(--text));
+
+    --tenue: #4f4553;
+    --mas-tenue: #695e6c;
+
+    --comm-a-texto: color-mix(in srgb, var(--comm-a) 45%, var(--text));
+    --comm-b-texto: color-mix(in srgb, var(--comm-b) 40%, var(--text));
+    --same-result-texto: color-mix(in srgb, var(--same-result) 50%, var(--text));
+    --same-result-fuerte: color-mix(in srgb, var(--same-result) 40%, var(--text));
+    --violet-texto: color-mix(in srgb, var(--violet) 55%, var(--text));
+    --square-color-texto: color-mix(in srgb, var(--square-color) 32%, var(--text));
+    --highlight-texto: color-mix(in srgb, var(--highlight) 40%, var(--text));
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -39,6 +119,7 @@
     inset:0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events:none; z-index:0;
+    opacity: var(--grano-op);
   }
 
   .page-wrap {
@@ -80,7 +161,7 @@
   .nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
   .nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
   .nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
-  .nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+  .nav-tool.active { color: var(--magenta); border-color: color-mix(in srgb, var(--magenta) 35%, transparent); background: color-mix(in srgb, var(--magenta) 8%, transparent); cursor: default; pointer-events: none; }
   .nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
   .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
@@ -123,9 +204,9 @@
   .legend-btn.active {
     color: var(--text);
   }
-  .legend-btn[data-mode="squares"].active    { border-color: var(--square-color); color: var(--square-color); background: rgba(255,215,0,0.08); }
-  .legend-btn[data-mode="commutative"].active{ border-color: var(--comm-a); color: var(--comm-a); background: rgba(59,130,246,0.08); }
-  .legend-btn[data-mode="sameresult"].active { border-color: var(--same-result); color: var(--same-result); background: rgba(236,72,153,0.08); }
+  .legend-btn[data-mode="squares"].active    { border-color: var(--square-color); color: var(--square-color-texto); background: color-mix(in srgb, var(--square-color) 8%, transparent); }
+  .legend-btn[data-mode="commutative"].active{ border-color: var(--comm-a); color: var(--comm-a); background: color-mix(in srgb, var(--comm-a) 8%, transparent); }
+  .legend-btn[data-mode="sameresult"].active { border-color: var(--same-result); color: var(--same-result); background: color-mix(in srgb, var(--same-result) 8%, transparent); }
 
   /* ── LAYOUT ── */
   .outer-layout {
@@ -194,7 +275,7 @@
     font-family: 'DM Mono', monospace;
     font-size: clamp(10px, 1.4vw, 14px);
     font-weight: 500;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid color-mix(in srgb, var(--text) 5%, transparent);
     border-radius: 5px;
     transition: all 0.18s ease;
     cursor: pointer;
@@ -221,45 +302,45 @@
   /* Data cells base */
   .cell {
     background: var(--surface2);
-    color: rgba(240,242,255,0.75);
+    color: var(--tenue);
   }
 
   .cell:hover {
     transform: scale(1.12);
     z-index: 10;
-    color: #fff;
-    border-color: rgba(255,255,255,0.25);
-    background: #2e324d;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--text) 25%, transparent);
+    background: var(--panel-alto);
+    box-shadow: 0 4px 16px var(--sombra-fuerte);
   }
 
   /* SQUARE */
   .cell.is-square {
-    background: rgba(255,215,0,0.15);
-    color: var(--square-color);
+    background: color-mix(in srgb, var(--square-color) 15%, transparent);
+    color: var(--square-color-texto);
     font-weight: 700;
-    border-color: rgba(255,215,0,0.3);
+    border-color: color-mix(in srgb, var(--square-color) 30%, transparent);
   }
 
   /* COMMUTATIVE PAIR — upper triangle */
   .cell.comm-upper {
-    background: rgba(59,130,246,0.12);
-    color: #93c5fd;
-    border-color: rgba(59,130,246,0.25);
+    background: color-mix(in srgb, var(--comm-a) 12%, transparent);
+    color: var(--comm-a-texto);
+    border-color: color-mix(in srgb, var(--comm-a) 25%, transparent);
   }
 
   /* COMMUTATIVE PAIR — lower triangle (the "redundant" ones) */
   .cell.comm-lower {
-    background: rgba(16,185,129,0.08);
-    color: #6ee7b7;
-    border-color: rgba(16,185,129,0.2);
+    background: color-mix(in srgb, var(--comm-b) 8%, transparent);
+    color: var(--comm-b-texto);
+    border-color: color-mix(in srgb, var(--comm-b) 20%, transparent);
   }
 
   /* SAME RESULT highlight */
   .cell.same-result-hl {
-    background: rgba(236,72,153,0.18) !important;
-    color: #f9a8d4 !important;
-    border-color: rgba(236,72,153,0.45) !important;
+    background: color-mix(in srgb, var(--same-result) 18%, transparent) !important;
+    color: var(--same-result-texto) !important;
+    border-color: color-mix(in srgb, var(--same-result) 45%, transparent) !important;
     transform: scale(1.06);
     z-index: 5;
   }
@@ -267,12 +348,12 @@
   /* HOVER row/col header highlight */
   .th-row.row-active, .th-col.col-active {
     color: var(--text);
-    background: rgba(255,255,255,0.12);
+    background: color-mix(in srgb, var(--text) 12%, transparent);
   }
 
   /* SELECTED CELL ring */
   .cell.selected {
-    outline: 2px solid rgba(255,255,255,0.7);
+    outline: 2px solid color-mix(in srgb, var(--text) 70%, transparent);
     outline-offset: 1px;
     z-index: 20;
     transform: scale(1.15);
@@ -280,16 +361,16 @@
 
   /* CLICKED same-result family highlight */
   .cell.family-hl {
-    background: rgba(236,72,153,0.28) !important;
-    color: #fce7f3 !important;
-    border-color: rgba(236,72,153,0.6) !important;
-    box-shadow: 0 0 10px rgba(236,72,153,0.35);
+    background: color-mix(in srgb, var(--same-result) 28%, transparent) !important;
+    color: var(--same-result-fuerte) !important;
+    border-color: color-mix(in srgb, var(--same-result) 60%, transparent) !important;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--same-result) 35%, transparent);
     transform: scale(1.07);
     z-index: 6;
   }
 
   .cell.family-hl.selected {
-    outline: 2px solid #f9a8d4;
+    outline: 2px solid var(--same-result-texto);
     transform: scale(1.15);
     z-index: 20;
   }
@@ -307,10 +388,10 @@
 
   /* FAMILY row/col header highlight */
   .th-row.family-header, .th-col.family-header {
-    background: rgba(236,72,153,0.22) !important;
-    color: #f9a8d4 !important;
-    border: 1px solid rgba(236,72,153,0.5) !important;
-    box-shadow: 0 0 8px rgba(236,72,153,0.2);
+    background: color-mix(in srgb, var(--same-result) 22%, transparent) !important;
+    color: var(--same-result-texto) !important;
+    border: 1px solid color-mix(in srgb, var(--same-result) 50%, transparent) !important;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--same-result) 20%, transparent);
     opacity: 1 !important;
   }
 
@@ -378,9 +459,9 @@
     font-weight: 600;
   }
 
-  .badge-square { background: rgba(255,215,0,0.15); color: var(--square-color); border: 1px solid rgba(255,215,0,0.3); }
-  .badge-comm   { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-  .badge-same   { background: rgba(236,72,153,0.15); color: #f9a8d4; border: 1px solid rgba(236,72,153,0.3); }
+  .badge-square { background: color-mix(in srgb, var(--square-color) 15%, transparent); color: var(--square-color-texto); border: 1px solid color-mix(in srgb, var(--square-color) 30%, transparent); }
+  .badge-comm   { background: color-mix(in srgb, var(--comm-a) 15%, transparent); color: var(--comm-a-texto); border: 1px solid color-mix(in srgb, var(--comm-a) 30%, transparent); }
+  .badge-same   { background: color-mix(in srgb, var(--same-result) 15%, transparent); color: var(--same-result-texto); border: 1px solid color-mix(in srgb, var(--same-result) 30%, transparent); }
 
   .same-list {
     margin-top: 0.6rem;
@@ -397,13 +478,13 @@
     padding: 0.15rem 0.45rem;
     margin: 0.1rem;
     border: 1px solid var(--border);
-    color: #f9a8d4;
+    color: var(--same-result-texto);
   }
 
   /* ── INSIGHT BOX ── */
   .insight-box {
-    background: linear-gradient(135deg, rgba(59,130,246,0.06), rgba(139,92,246,0.06));
-    border: 1px solid rgba(99,102,241,0.2);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--comm-a) 6%, transparent), color-mix(in srgb, var(--violet) 6%, transparent));
+    border: 1px solid color-mix(in srgb, var(--indigo) 20%, transparent);
     border-radius: 14px;
     padding: 1rem 1.1rem;
   }
@@ -413,13 +494,13 @@
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #a5b4fc;
+    color: var(--violet-texto);
     margin-bottom: 0.6rem;
   }
 
   .insight-box p {
     font-size: 0.82rem;
-    color: rgba(240,242,255,0.7);
+    color: var(--tenue);
     line-height: 1.6;
     margin-bottom: 0.5rem;
   }
@@ -448,9 +529,9 @@
     flex-shrink: 0;
   }
 
-  .red-total { background: rgba(255,255,255,0.08); color: var(--muted); width: 72px; }
-  .red-unique { background: rgba(59,130,246,0.25); color: #93c5fd; }
-  .red-diag { background: rgba(255,215,0,0.2); color: var(--square-color); }
+  .red-total { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--muted2); width: 72px; }
+  .red-unique { background: color-mix(in srgb, var(--comm-a) 25%, transparent); color: var(--comm-a-texto); }
+  .red-diag { background: color-mix(in srgb, var(--square-color) 20%, transparent); color: var(--square-color-texto); }
 
 
   /* ── SUMA VISUAL ── */
@@ -497,14 +578,14 @@
     min-width: 3ch;
     text-align: right;
     font-variant-numeric: tabular-nums;
-    color: #a78bfa;
+    color: var(--violet-texto);
     font-weight: 700;
   }
 
   .suma-equation {
     font-family: "DM Mono", monospace;
     font-size: 0.8rem;
-    color: rgba(240,242,255,0.5);
+    color: var(--mas-tenue);
     margin-top: 0.6rem;
     padding-top: 0.5rem;
     border-top: 1px solid var(--border);
@@ -512,7 +593,7 @@
   }
 
   .suma-equation .eq-result {
-    color: #a78bfa;
+    color: var(--violet-texto);
     font-weight: 700;
     font-size: 1rem;
   }
@@ -547,9 +628,9 @@
   }
   .mode-btn:hover { color: var(--text); }
   .mode-btn.active {
-    color: #22D3EE;
-    border-color: rgba(34,211,238,0.35);
-    background: rgba(34,211,238,0.08);
+    color: var(--cian);
+    border-color: color-mix(in srgb, var(--cian) 35%, transparent);
+    background: color-mix(in srgb, var(--cian) 8%, transparent);
     cursor: default;
   }
   .mode-intro {
@@ -604,10 +685,10 @@
     padding: 0.28rem 0.7rem; cursor: pointer;
     transition: all 0.2s; user-select: none; min-width: 2rem; text-align: center;
   }
-  .conq-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .conq-chip:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 20%, transparent); }
   .conq-chip.active {
-    color: #22D3EE; border-color: rgba(34,211,238,0.4);
-    background: rgba(34,211,238,0.1);
+    color: var(--cian); border-color: color-mix(in srgb, var(--cian) 40%, transparent);
+    background: color-mix(in srgb, var(--cian) 10%, transparent);
   }
   .conq-progress-head, .conq-progress-foot {
     display: flex; justify-content: space-between; align-items: center;
@@ -630,7 +711,7 @@
     border: 1px solid var(--border); border-radius: 100px;
     padding: 0.2rem 0.6rem; cursor: pointer; transition: all 0.2s;
   }
-  .conq-reset:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+  .conq-reset:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 25%, transparent); }
 
   /* ── PANEL DE PREGUNTA ── */
   .conq-q-eq {
@@ -648,35 +729,35 @@
     border-radius: 10px; padding: 0.6rem 0.5rem; outline: none;
     transition: border-color 0.2s;
   }
-  .conq-input:focus { border-color: #22D3EE; }
+  .conq-input:focus { border-color: var(--cian); }
   .conq-input:disabled { opacity: 0.6; }
   .conq-check {
     font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700;
-    color: #4ADE80; background: rgba(74,222,128,0.12);
-    border: 2px solid #4ADE80; border-radius: 10px; padding: 0.6rem 1rem;
+    color: var(--green-lab); background: color-mix(in srgb, var(--green-lab) 12%, transparent);
+    border: 2px solid var(--green-lab); border-radius: 10px; padding: 0.6rem 1rem;
     cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
   }
-  .conq-check:hover { background: rgba(74,222,128,0.22); box-shadow: 0 0 24px rgba(74,222,128,0.18); }
+  .conq-check:hover { background: color-mix(in srgb, var(--green-lab) 22%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--green-lab) 18%, transparent); }
   /* Reiniciar no valida nada: accion secundaria, sin color de rol */
   #conq-again, #caza-again {
     color: var(--muted); background: transparent;
     border-color: var(--border);
   }
   #conq-again:hover, #caza-again:hover {
-    color: var(--text); border-color: rgba(255,255,255,0.25);
+    color: var(--text); border-color: color-mix(in srgb, var(--text) 25%, transparent);
     background: transparent; box-shadow: none;
   }
   .conq-feedback {
     min-height: 2.4rem; margin-top: 0.7rem;
     font-size: 0.8rem; line-height: 1.5; text-align: center;
   }
-  .conq-feedback.ok { color: #4ADE80; }
-  .conq-feedback.ko { color: #F87171; }
+  .conq-feedback.ok { color: var(--green-lab); }
+  .conq-feedback.ko { color: var(--red); }
   .conq-feedback strong { font-weight: 700; }
   .conq-done { display: none; text-align: center; }
   .conq-done-big {
     font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem;
-    font-weight: 700; color: var(--square-color); margin-bottom: 0.5rem;
+    font-weight: 700; color: var(--square-color-texto); margin-bottom: 0.5rem;
   }
   .conq-done p {
     font-size: 0.8rem; color: var(--muted);
@@ -686,38 +767,38 @@
   /* ── LA REJILLA COMO TABLERO: niebla y conquista ── */
   body.mode-tablero .cell {
     color: transparent;
-    background: rgba(255,255,255,0.02);
-    border-color: rgba(255,255,255,0.05);
+    background: color-mix(in srgb, var(--text) 2%, transparent);
+    border-color: color-mix(in srgb, var(--text) 5%, transparent);
     cursor: default;
   }
   body.mode-tablero .cell::after {
     content: '';
     position: absolute; top: 50%; left: 50%;
     width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px;
-    border-radius: 50%; background: rgba(255,255,255,0.12);
+    border-radius: 50%; background: color-mix(in srgb, var(--text) 12%, transparent);
   }
   body.mode-tablero .cell:hover { transform: none; }
   body.mode-conquista .cell.conquered {
     color: var(--text);
-    background: rgba(59,130,246,0.14);
-    border-color: rgba(59,130,246,0.3);
+    background: color-mix(in srgb, var(--comm-a) 14%, transparent);
+    border-color: color-mix(in srgb, var(--comm-a) 30%, transparent);
   }
   body.mode-conquista .cell.conquered::after { display: none; }
   /* Los cuadrados de la diagonal, como hitos */
   body.mode-conquista .cell.conquered.is-diag {
-    background: rgba(255,215,0,0.16);
-    border-color: rgba(255,215,0,0.4);
-    color: var(--square-color);
+    background: color-mix(in srgb, var(--square-color) 16%, transparent);
+    border-color: color-mix(in srgb, var(--square-color) 40%, transparent);
+    color: var(--square-color-texto);
   }
   @keyframes conqWin {
-    0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
-    40%  { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(74,222,128,0); }
-    100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    0%   { transform: scale(1);    box-shadow: 0 0 0 0 color-mix(in srgb, var(--green-lab) 60%, transparent); }
+    40%  { transform: scale(1.18); box-shadow: 0 0 0 6px color-mix(in srgb, var(--green-lab) 0%, transparent); }
+    100% { transform: scale(1);    box-shadow: 0 0 0 0 color-mix(in srgb, var(--green-lab) 0%, transparent); }
   }
   @keyframes conqTwin {
-    0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(224,64,251,0.6); }
-    40%  { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(224,64,251,0); }
-    100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(224,64,251,0); }
+    0%   { transform: scale(1);    box-shadow: 0 0 0 0 color-mix(in srgb, var(--magenta) 60%, transparent); }
+    40%  { transform: scale(1.18); box-shadow: 0 0 0 6px color-mix(in srgb, var(--magenta) 0%, transparent); }
+    100% { transform: scale(1);    box-shadow: 0 0 0 0 color-mix(in srgb, var(--magenta) 0%, transparent); }
   }
   body.mode-tablero .cell.just-won { animation: conqWin 0.75s ease; z-index: 5; }
   body.mode-tablero .cell.twin-won { animation: conqTwin 0.75s ease 0.18s; z-index: 5; }
@@ -759,20 +840,20 @@
   /* Topo cazado: el hueco se abre y ensena el numero */
   body.mode-caza .cell.topo-found {
     color: var(--text);
-    background: rgba(236,72,153,0.18);
-    border-color: rgba(236,72,153,0.45);
+    background: color-mix(in srgb, var(--same-result) 18%, transparent);
+    border-color: color-mix(in srgb, var(--same-result) 45%, transparent);
     font-weight: 700;
   }
   body.mode-caza .cell.topo-found::after { display: none; }
   @keyframes topoMiss {
-    0%   { transform: translateX(0);    box-shadow: 0 0 0 0 rgba(248,113,113,0.6); }
-    25%  { transform: translateX(-3px); box-shadow: 0 0 0 5px rgba(248,113,113,0); }
+    0%   { transform: translateX(0);    box-shadow: 0 0 0 0 color-mix(in srgb, var(--red) 60%, transparent); }
+    25%  { transform: translateX(-3px); box-shadow: 0 0 0 5px color-mix(in srgb, var(--red) 0%, transparent); }
     75%  { transform: translateX(3px); }
-    100% { transform: translateX(0);    box-shadow: 0 0 0 0 rgba(248,113,113,0); }
+    100% { transform: translateX(0);    box-shadow: 0 0 0 0 color-mix(in srgb, var(--red) 0%, transparent); }
   }
   body.mode-tablero .cell.topo-miss {
     animation: topoMiss 0.4s ease;
-    border-color: rgba(248,113,113,0.5);
+    border-color: color-mix(in srgb, var(--red) 50%, transparent);
     z-index: 5;
   }
 
@@ -794,15 +875,15 @@
   }
   .caza-timer-fill {
     height: 100%; width: 100%;
-    background: #F59E0B; border-radius: 100px;
+    background: var(--highlight); border-radius: 100px;
     transition: width 0.1s linear, background 0.3s;
   }
   .caza-timer-secs {
     font-family: 'DM Mono', monospace; font-size: 0.66rem;
     color: var(--muted); min-width: 2.2rem; text-align: right;
   }
-  .caza-timer.apurado .caza-timer-fill { background: #F87171; }
-  .caza-timer.apurado .caza-timer-secs { color: #F87171; }
+  .caza-timer.apurado .caza-timer-fill { background: var(--red); }
+  .caza-timer.apurado .caza-timer-secs { color: var(--red); }
 
   /* ── "ESTOY PENSANDO": pausa sin penalizacion ── */
   /* Es el boton al que se echa mano cuando aprieta el agobio: grande y a mano */
@@ -812,22 +893,22 @@
     margin-top: 0.9rem;
     font-family: 'Nunito', sans-serif;
     font-size: 0.9rem; font-weight: 800;
-    color: #F59E0B;
-    background: rgba(245,158,11,0.08);
-    border: 2px solid rgba(245,158,11,0.35);
+    color: var(--highlight-texto);
+    background: color-mix(in srgb, var(--highlight) 8%, transparent);
+    border: 2px solid color-mix(in srgb, var(--highlight) 35%, transparent);
     border-radius: 12px;
     padding: 0.7rem 1rem; cursor: pointer;
     transition: all 0.2s;
   }
   body.ritmo-reloj .caza-pause { display: block; }
   .caza-pause:hover {
-    background: rgba(245,158,11,0.16);
-    border-color: rgba(245,158,11,0.6);
+    background: color-mix(in srgb, var(--highlight) 16%, transparent);
+    border-color: color-mix(in srgb, var(--highlight) 60%, transparent);
   }
   body.caza-pausa .caza-pause {
     color: var(--bg);
-    background: #F59E0B;
-    border-color: #F59E0B;
+    background: var(--highlight);
+    border-color: var(--highlight);
   }
   body.caza-pausa .caza-timer-fill { background: var(--muted2); }
 
@@ -839,7 +920,7 @@
   .pausa-overlay {
     display: none;
     position: absolute; inset: 0;
-    background: rgba(8,10,15,0.92);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     border-radius: 16px;
     align-items: center; justify-content: center;
     z-index: 30;
@@ -855,15 +936,15 @@
     text-align: center;
     padding: 1.2rem 1.4rem;
     max-width: min(420px, 88vw);
-    background: rgba(8,10,15,0.96);
-    border: 1px solid rgba(245,158,11,0.3);
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    border: 1px solid color-mix(in srgb, var(--highlight) 30%, transparent);
     border-radius: 16px;
   }
   .pausa-title {
     display: block;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.5rem; font-weight: 700;
-    color: #F59E0B; line-height: 1.2;
+    color: var(--highlight-texto); line-height: 1.2;
   }
   .pausa-sub {
     display: block; margin-top: 0.5rem;
@@ -874,7 +955,7 @@
     margin-top: 1.1rem;
     font-family: 'Nunito', sans-serif;
     font-size: 0.85rem; font-weight: 800;
-    color: var(--bg); background: #F59E0B;
+    color: var(--bg); background: var(--highlight);
     border: none; border-radius: 10px;
     padding: 0.6rem 1.8rem; cursor: pointer;
     transition: opacity 0.2s;
@@ -888,15 +969,15 @@
     margin-top: 0.5rem;
     font-family: 'DM Mono', monospace;
     font-size: 0.68rem;
-    color: rgba(245,158,11,0.55);
+    color: color-mix(in srgb, var(--highlight) 55%, transparent);
     background: transparent;
-    border: 1px solid rgba(245,158,11,0.2);
+    border: 1px solid color-mix(in srgb, var(--highlight) 20%, transparent);
     border-radius: 10px;
     padding: 0.45rem 1rem;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .btn-aburro:hover { color: #F59E0B; border-color: rgba(245,158,11,0.45); }
+  .btn-aburro:hover { color: var(--highlight-texto); border-color: color-mix(in srgb, var(--highlight) 45%, transparent); }
 
   .pausa-acciones {
     display: none;
@@ -917,7 +998,7 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .pausa-ir:hover { border-color: #22D3EE; color: #22D3EE; }
+  .pausa-ir:hover { border-color: var(--cian); color: var(--cian); }
   /* al abandonar, "seguir" deja de ser la accion principal */
   .pausa-acciones.visible ~ .pausa-seguir {
     background: transparent;
@@ -934,9 +1015,9 @@
      un destello ambar y punteado, para que nunca se confunda con territorio
      ganado. Y se va sola: la casilla vuelve a la niebla. */
   body.mode-conquista .cell.pista {
-    color: var(--highlight);
-    background: rgba(245,158,11,0.12);
-    border-color: rgba(245,158,11,0.5);
+    color: var(--highlight-texto);
+    background: color-mix(in srgb, var(--highlight) 12%, transparent);
+    border-color: color-mix(in srgb, var(--highlight) 50%, transparent);
     border-style: dashed;
     animation: pistaFade 1.6s ease forwards;
   }
@@ -948,7 +1029,7 @@
     100% { opacity: 0.25; }
   }
   body.mode-conquista .cell:not(.conquered):hover {
-    border-color: rgba(245,158,11,0.35);
+    border-color: color-mix(in srgb, var(--highlight) 35%, transparent);
     cursor: help;
   }
 
@@ -958,17 +1039,17 @@
      diagonal, pero el tablero no se llena de respuestas que no tocan ahora. */
   body.mode-conquista .cell.conquered.solo-geometria {
     color: transparent;
-    background: rgba(59,130,246,0.06);
-    border-color: rgba(59,130,246,0.22);
+    background: color-mix(in srgb, var(--comm-a) 6%, transparent);
+    border-color: color-mix(in srgb, var(--comm-a) 22%, transparent);
     border-style: dashed;
   }
   body.mode-conquista .cell.conquered.solo-geometria::after {
     display: block;
-    background: rgba(96,165,250,0.6);
+    background: color-mix(in srgb, var(--comm-a) 60%, transparent);
     width: 4px; height: 4px; margin: -2px 0 0 -2px;
   }
   /* el ámbar de la pista manda sobre la geometría */
-  body.mode-conquista .cell.pista.solo-geometria { color: var(--highlight); }
+  body.mode-conquista .cell.pista.solo-geometria { color: var(--highlight-texto); }
 
 /* ── GLITCH ────────────────────────────────────────────────────────────────
    La mascota vive donde hay reloj, y solo en momentos raros y centrales: la
@@ -982,7 +1063,7 @@
 .mascota-res {
   display: block; height: 140px; width: auto;
   margin: 0 auto 0.6rem;
-  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 6px 18px var(--sombra-fuerte));
 }
 body.sin-mascota .pausa-glitch,
 body.sin-mascota .mascota-res { display: none; }
@@ -1025,9 +1106,9 @@ body.sin-mascota .mascota-res { display: none; }
   color: var(--muted2, #8880a0);
   transition: color 0.2s;
 }
-.plegar:hover { color: var(--cyan, #22D3EE); }
+.plegar:hover { color: var(--cyan, var(--cian)); }
 .plegar:focus-visible {
-  outline: 2px solid var(--cyan, #22D3EE);
+  outline: 2px solid var(--cyan, var(--cian));
   outline-offset: 2px; border-radius: 6px;
 }
 .plegar-chevron {
@@ -1038,7 +1119,7 @@ body.sin-mascota .mascota-res { display: none; }
      jerarquia. */
   font-size: 1.05rem;
   line-height: 1;
-  color: var(--magenta, #E040FB);
+  color: var(--magenta, var(--magenta));
   transition: transform 0.25s ease;
 }
 .plegar:hover .plegar-chevron { filter: brightness(1.25); }
@@ -1113,7 +1194,7 @@ body.compacto header { padding-bottom: 0.4rem; }
 
 /* El foco tiene que verse SOBRE el tablero, tape lo que tape. */
 .cell:focus-visible {
-  outline: 3px solid #22D3EE;
+  outline: 3px solid var(--cian);
   outline-offset: -3px;
   position: relative;
   z-index: 5;
@@ -1122,7 +1203,7 @@ body.compacto header { padding-bottom: 0.4rem; }
 /* El foco tiene que verse en los chips, que son la unica forma de elegir
    tabla y ritmo con teclado. */
 .conq-chip:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cian);
   outline-offset: 2px;
 }
 
@@ -1137,16 +1218,16 @@ body.esperando-salida .btn-vamos {
   padding: 0.75rem 1rem;
   font-family: 'Nunito', sans-serif;
   font-size: 1.05rem; font-weight: 800; letter-spacing: 0.02em;
-  color: #4ADE80;
-  background: rgba(74,222,128,0.12);
-  border: 1px solid rgba(74,222,128,0.45);
+  color: var(--green-lab);
+  background: color-mix(in srgb, var(--green-lab) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--green-lab) 45%, transparent);
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(74,222,128,0.18);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--green-lab) 18%, transparent);
   cursor: pointer;
   min-height: 44px;
 }
-body.esperando-salida .btn-vamos:hover { background: rgba(74,222,128,0.2); }
-.btn-vamos:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; }
+body.esperando-salida .btn-vamos:hover { background: color-mix(in srgb, var(--green-lab) 20%, transparent); }
+.btn-vamos:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
 
 /* Con la salida pendiente no se responde todavia. */
 body.esperando-salida #conq-input,
