@@ -25,6 +25,14 @@
 <meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
 :root {
   --bg: #080A0F;
@@ -47,6 +55,41 @@
   --text-dim: #3a3d4e;
   --muted: #7a7d8e;
   --muted2: #5A6478;
+  --magenta-texto: var(--magenta);
+  --cyan-texto: var(--cyan);
+  --amber-texto: var(--amber);
+  --green-texto: var(--green);
+  --violet-texto: var(--violet);
+  --grano-op: 1;
+}
+
+/* ── MODO CLARO ──────────────────────────────────────────────────────────
+   Los cinco tiempos verbales conservan su tono: el color ES el tiempo, y
+   reelegirlos es la pasada de tonos. Lo que cambia es el papel, la tinta y
+   las variantes -texto, que se derivan del color del tema y por eso ya se
+   leen sin haber decidido nada.
+
+   --text-dim rotula secciones en versalitas de 0,58rem. En oscuro es un
+   gris casi invisible a proposito; sobre papel ese mismo gesto se hace con
+   un tono medio, no con uno palido, o deja de leerse. */
+:root[data-theme="light"] {
+  --bg: #e7e0d6;
+  --surface: #f4ede3;
+  --surface2: #ede4d8;
+  --border: rgba(58,33,52,0.14);
+  --text: #211825;
+  --text-muted: #695e6c;
+  --text-dim: #6f6472;
+  --muted: #695e6c;
+  --muted2: #5c5060;
+  --now-color: #211825;
+  --grano-op: 0.45;
+
+  --magenta-texto: color-mix(in srgb, var(--magenta) 55%, var(--text));
+  --cyan-texto:    color-mix(in srgb, var(--cyan) 38%, var(--text));
+  --amber-texto:   color-mix(in srgb, var(--amber) 42%, var(--text));
+  --green-texto:   color-mix(in srgb, var(--green) 35%, var(--text));
+  --violet-texto:  color-mix(in srgb, var(--violet) 50%, var(--text));
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -93,7 +136,7 @@ header {
   gap: 0.3rem;
 }
 .header-topbar a { color: var(--text); text-decoration: none; transition: color 0.2s; }
-.header-topbar a:hover { color: var(--magenta); }
+.header-topbar a:hover { color: var(--magenta-texto); }
 .header-topbar .sep { opacity: 0.3; margin: 0 0.4rem; }
 
 .header-title {
@@ -125,7 +168,7 @@ header {
 .nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
 .nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
 .nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
-.nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+.nav-tool.active { color: var(--magenta-texto); border-color: color-mix(in srgb, var(--magenta) 35%, transparent); background: color-mix(in srgb, var(--magenta) 8%, transparent); cursor: default; pointer-events: none; }
 .nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
 .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
@@ -134,7 +177,7 @@ header {
   position: sticky;
   top: 52px;
   z-index: 100;
-  background: rgba(15,17,23,0.97);
+  background: color-mix(in srgb, var(--bg) 97%, transparent);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 1rem 1.25rem 0.85rem;
@@ -244,11 +287,11 @@ header {
   box-shadow: 0 0 10px currentColor;
 }
 
-.station.pasado { background: var(--amber); color: var(--amber); }
-.station.puente { background: var(--magenta); color: var(--magenta); }
-.station.presente { background: var(--green); color: var(--green); }
-.station.futuro { background: var(--cyan); color: var(--cyan); }
-.station.condicional { background: var(--violet); color: var(--violet); top: calc(50% + 10px); }
+.station.pasado { background: var(--amber); color: var(--amber-texto); }
+.station.puente { background: var(--magenta); color: var(--magenta-texto); }
+.station.presente { background: var(--green); color: var(--green-texto); }
+.station.futuro { background: var(--cyan); color: var(--cyan-texto); }
+.station.condicional { background: var(--violet); color: var(--violet-texto); top: calc(50% + 10px); }
 
 /* Station tooltip on hover */
 .station-tip {
@@ -287,19 +330,19 @@ header {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: white;
+  background: var(--now-color);
   border: 3px solid var(--bg);
-  box-shadow: 0 0 0 2px white, 0 0 16px rgba(255,255,255,0.6);
+  box-shadow: 0 0 0 2px white, 0 0 16px color-mix(in srgb, var(--text) 60%, transparent);
 }
 .you-here-label {
   position: absolute;
   top: calc(100% + 4px);
   font-family: 'DM Mono', monospace;
   font-size: 0.55rem;
-  color: white;
+  color: var(--now-color);
   white-space: nowrap;
   letter-spacing: 0.08em;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 /* NOW marker */
@@ -308,7 +351,7 @@ header {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(255,255,255,0.15);
+  background: color-mix(in srgb, var(--text) 15%, transparent);
   pointer-events: none;
 }
 .now-label {
@@ -318,7 +361,7 @@ header {
   transform: translateX(-50%);
   font-family: 'DM Mono', monospace;
   font-size: 0.5rem;
-  color: rgba(255,255,255,0.3);
+  color: var(--muted);
   letter-spacing: 0.1em;
 }
 
@@ -336,10 +379,10 @@ header {
   text-transform: uppercase;
   opacity: 0.5;
 }
-.zlabel.pasado { color: var(--amber); }
-.zlabel.puente { color: var(--magenta); }
-.zlabel.presente { color: var(--green); }
-.zlabel.futuro { color: var(--cyan); }
+.zlabel.pasado { color: var(--amber-texto); }
+.zlabel.puente { color: var(--magenta-texto); }
+.zlabel.presente { color: var(--green-texto); }
+.zlabel.futuro { color: var(--cyan-texto); }
 
 /* ── CONTENT AREA ── */
 .main {
@@ -369,11 +412,11 @@ header {
 }
 .zone-rule { flex: 1; height: 1px; background: var(--border); }
 
-.zone-pasado .zone-pill { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
-.zone-puente .zone-pill { background: var(--magenta-dim); color: var(--magenta); border: 1px solid rgba(217,70,239,0.25); }
-.zone-presente .zone-pill { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
-.zone-futuro .zone-pill { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(34,211,238,0.2); }
-.zone-condicionales .zone-pill { background: var(--violet-dim); color: var(--violet); border: 1px solid rgba(167,139,250,0.2); }
+.zone-pasado .zone-pill { background: var(--amber-dim); color: var(--amber-texto); border: 1px solid color-mix(in srgb, var(--amber) 20%, transparent); }
+.zone-puente .zone-pill { background: var(--magenta-dim); color: var(--magenta-texto); border: 1px solid color-mix(in srgb, var(--magenta) 25%, transparent); }
+.zone-presente .zone-pill { background: var(--green-dim); color: var(--green-texto); border: 1px solid color-mix(in srgb, var(--green) 20%, transparent); }
+.zone-futuro .zone-pill { background: var(--cyan-dim); color: var(--cyan-texto); border: 1px solid color-mix(in srgb, var(--cyan) 20%, transparent); }
+.zone-condicionales .zone-pill { background: var(--violet-dim); color: var(--violet-texto); border: 1px solid color-mix(in srgb, var(--violet) 20%, transparent); }
 
 /* Puente note */
 .puente-note {
@@ -381,12 +424,12 @@ header {
   color: var(--text-muted);
   padding: 0.65rem 0.9rem;
   background: var(--magenta-dim);
-  border: 1px solid rgba(217,70,239,0.15);
+  border: 1px solid color-mix(in srgb, var(--magenta) 15%, transparent);
   border-radius: 7px;
   margin-bottom: 1rem;
   line-height: 1.55;
 }
-.puente-note strong { color: var(--magenta); }
+.puente-note strong { color: var(--magenta-texto); }
 
 /* ── TENSE CARDS ── */
 .tense-card {
@@ -423,27 +466,27 @@ header {
 }
 
 .zone-pasado .tense-card::before { background: var(--amber); }
-.zone-pasado .tense-card:hover { border-color: rgba(245,158,11,0.25); box-shadow: 0 4px 20px rgba(245,158,11,0.08); }
+.zone-pasado .tense-card:hover { border-color: color-mix(in srgb, var(--amber) 25%, transparent); box-shadow: 0 4px 20px color-mix(in srgb, var(--amber) 8%, transparent); }
 
 .zone-puente .tense-card::before { background: var(--magenta); }
-.zone-puente .tense-card:hover { border-color: rgba(217,70,239,0.25); box-shadow: 0 4px 20px rgba(217,70,239,0.08); }
+.zone-puente .tense-card:hover { border-color: color-mix(in srgb, var(--magenta) 25%, transparent); box-shadow: 0 4px 20px color-mix(in srgb, var(--magenta) 8%, transparent); }
 
 .zone-presente .tense-card::before { background: var(--green); }
-.zone-presente .tense-card:hover { border-color: rgba(74,222,128,0.25); box-shadow: 0 4px 20px rgba(74,222,128,0.08); }
+.zone-presente .tense-card:hover { border-color: color-mix(in srgb, var(--green) 25%, transparent); box-shadow: 0 4px 20px color-mix(in srgb, var(--green) 8%, transparent); }
 
 .zone-futuro .tense-card::before { background: var(--cyan); }
-.zone-futuro .tense-card:hover { border-color: rgba(34,211,238,0.25); box-shadow: 0 4px 20px rgba(34,211,238,0.08); }
+.zone-futuro .tense-card:hover { border-color: color-mix(in srgb, var(--cyan) 25%, transparent); box-shadow: 0 4px 20px color-mix(in srgb, var(--cyan) 8%, transparent); }
 
 .zone-condicionales .tense-card::before { background: var(--violet); }
-.zone-condicionales .tense-card:hover { border-color: rgba(167,139,250,0.25); box-shadow: 0 4px 20px rgba(167,139,250,0.08); }
+.zone-condicionales .tense-card:hover { border-color: color-mix(in srgb, var(--violet) 25%, transparent); box-shadow: 0 4px 20px color-mix(in srgb, var(--violet) 8%, transparent); }
 
 /* Active card (open) */
 .tense-card.open { transform: translateX(3px); }
-.zone-pasado .tense-card.open { border-color: rgba(245,158,11,0.3); }
-.zone-puente .tense-card.open { border-color: rgba(217,70,239,0.3); }
-.zone-presente .tense-card.open { border-color: rgba(74,222,128,0.3); }
-.zone-futuro .tense-card.open { border-color: rgba(34,211,238,0.3); }
-.zone-condicionales .tense-card.open { border-color: rgba(167,139,250,0.3); }
+.zone-pasado .tense-card.open { border-color: color-mix(in srgb, var(--amber) 30%, transparent); }
+.zone-puente .tense-card.open { border-color: color-mix(in srgb, var(--magenta) 30%, transparent); }
+.zone-presente .tense-card.open { border-color: color-mix(in srgb, var(--green) 30%, transparent); }
+.zone-futuro .tense-card.open { border-color: color-mix(in srgb, var(--cyan) 30%, transparent); }
+.zone-condicionales .tense-card.open { border-color: color-mix(in srgb, var(--violet) 30%, transparent); }
 
 /* La cabecera de la tarjeta es el disparador del acordeon, asi que es un
    <button> de verdad. Se neutraliza SOLO lo que impone el navegador -fondo,
@@ -522,7 +565,7 @@ header {
   font-family: 'DM Mono', monospace;
   font-size: 0.72rem;
   color: var(--text-muted);
-  background: rgba(255,255,255,0.04);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
   padding: 0.35rem 0.65rem;
   border-radius: 5px;
   display: inline-block;
@@ -541,7 +584,7 @@ header {
 .example {
   padding: 0.55rem 0.75rem;
   border-radius: 6px;
-  background: rgba(255,255,255,0.025);
+  background: color-mix(in srgb, var(--text) 2.5%, transparent);
   border-left: 2px solid;
 }
 .zone-pasado .example { border-color: var(--amber); }
@@ -576,11 +619,11 @@ header {
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.zone-pasado .utag { background: var(--amber-dim); color: var(--amber); }
-.zone-puente .utag { background: var(--magenta-dim); color: var(--magenta); }
-.zone-presente .utag { background: var(--green-dim); color: var(--green); }
-.zone-futuro .utag { background: var(--cyan-dim); color: var(--cyan); }
-.zone-condicionales .utag { background: var(--violet-dim); color: var(--violet); }
+.zone-pasado .utag { background: var(--amber-dim); color: var(--amber-texto); }
+.zone-puente .utag { background: var(--magenta-dim); color: var(--magenta-texto); }
+.zone-presente .utag { background: var(--green-dim); color: var(--green-texto); }
+.zone-futuro .utag { background: var(--cyan-dim); color: var(--cyan-texto); }
+.zone-condicionales .utag { background: var(--violet-dim); color: var(--violet-texto); }
 
 
 footer {
@@ -597,7 +640,7 @@ footer {
   gap: 0.6rem;
 }
 .footer-left { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
-.footer-left a { color: var(--magenta); text-decoration: none; transition: opacity 0.2s; }
+.footer-left a { color: var(--magenta-texto); text-decoration: none; transition: opacity 0.2s; }
 .footer-left a:hover { opacity: 0.75; }
 .footer-right { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
 
@@ -618,14 +661,14 @@ footer {
   background: none; border: none; cursor: pointer;
   font-family: 'DM Mono', monospace; font-size: 0.62rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: var(--muted);
   transition: color 0.2s;
 }
-.plegar:hover { color: #22D3EE; }
-.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar:hover { color: var(--cyan-texto); }
+.plegar:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
 .plegar-chevron {
   display: inline-block; font-size: 1.05rem; line-height: 1;
-  color: #D946EF; transition: transform 0.25s ease;
+  color: var(--magenta-texto); transition: transform 0.25s ease;
 }
 .plegar:hover .plegar-chevron { filter: brightness(1.25); }
 body.compacto .plegar-chevron { transform: rotate(180deg); }
@@ -653,7 +696,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cyan);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -1452,5 +1495,9 @@ summary:focus-visible,
   </div>
   <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
 </footer>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>
