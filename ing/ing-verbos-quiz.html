@@ -1055,7 +1055,12 @@ button.level-pill {
 /* ── RITMO, RELOJ Y PAUSA ── */
 .ritmo-block { margin: 1.2rem 0 0.4rem; text-align: left; }
 .ritmo-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
-.ritmo-hint { font-size: 0.68rem; color: var(--muted2, var(--muted2)); margin-top: 0.5rem; line-height: 1.5; }
+.ritmo-hint {
+  font-size: 0.68rem; color: var(--muted2); margin-top: 0.5rem; line-height: 1.5;
+  /* Hueco reservado para dos lineas: el texto de "contra reloj" ocupa dos
+     y el de "no me estreses" una, y la pagina saltaba 21px al cambiar. */
+  min-height: 2.65rem;
+}
 
 .q-timer { display: flex; align-items: center; gap: 0.6rem; margin: 0.5rem 0 0.2rem; }
 .q-timer.modo-calma .q-timer-track { display: none; }
