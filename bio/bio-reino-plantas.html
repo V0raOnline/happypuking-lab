@@ -26,6 +26,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles-reinoplantas.css">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
 </head>
 <body>
 
@@ -83,7 +92,7 @@
       <div class="card-grid">
         <div class="card">
           <div class="card-title">🔬 Tipo de organismo</div>
-          <p>Pluricelulares. Formadas por muchas células eucariotas con <strong style="color:var(--glow)">pared celular</strong> y <strong style="color:var(--glow)">cloroplastos</strong>.</p>
+          <p>Pluricelulares. Formadas por muchas células eucariotas con <strong style="color:var(--glow-texto)">pared celular</strong> y <strong style="color:var(--glow-texto)">cloroplastos</strong>.</p>
           <div class="tag-row">
             <span class="tag">Eucariota</span>
             <span class="tag">Pluricelular</span>
@@ -91,7 +100,7 @@
         </div>
         <div class="card">
           <div class="card-title">🍽️ Nutrición</div>
-          <p><strong style="color:var(--glow)">Autótrofas</strong>. Fabrican su propio alimento a partir de sustancias inorgánicas. No necesitan comer.</p>
+          <p><strong style="color:var(--glow-texto)">Autótrofas</strong>. Fabrican su propio alimento a partir de sustancias inorgánicas. No necesitan comer.</p>
           <div class="tag-row">
             <span class="tag">Fotosíntesis</span>
             <span class="tag">Autótrofa</span>
@@ -99,7 +108,7 @@
         </div>
         <div class="card">
           <div class="card-title">📌 Movilidad</div>
-          <p>Incapaces de desplazarse. Viven <strong style="color:var(--glow)">fijas al suelo</strong>. Pero responden a estímulos (tropismos y nastias).</p>
+          <p>Incapaces de desplazarse. Viven <strong style="color:var(--glow-texto)">fijas al suelo</strong>. Pero responden a estímulos (tropismos y nastias).</p>
           <div class="tag-row">
             <span class="tag">Inmóvil</span>
             <span class="tag">Sésil</span>
@@ -110,7 +119,7 @@
           <ul>
             <li>Producen la mayor parte del O₂</li>
             <li>Absorben CO₂ atmosférico</li>
-            <li>Son los <strong style="color:var(--glow)">productores</strong> de los ecosistemas</li>
+            <li>Son los <strong style="color:var(--glow-texto)">productores</strong> de los ecosistemas</li>
             <li>Evitan la erosión del suelo</li>
           </ul>
         </div>
@@ -130,14 +139,14 @@
 
       <div style="margin-bottom:1rem">
         <div class="card" style="margin-bottom:0.8rem">
-          <div class="card-title" style="color:var(--amber)">🌊 Sin semillas — reproducción por esporas</div>
+          <div class="card-title" style="color:var(--amber-texto)">🌊 Sin semillas — reproducción por esporas</div>
           <div class="card-grid cols-2" style="margin-top:0.6rem">
             <div>
-              <p><strong style="color:var(--glow)">Musgos y hepáticas</strong> — las más sencillas. Sin vasos conductores, sin raíz/tallo/hojas verdaderos. Absorben agua por todo el cuerpo. Viven en lugares húmedos y sombríos.</p>
+              <p><strong style="color:var(--glow-texto)">Musgos y hepáticas</strong> — las más sencillas. Sin vasos conductores, sin raíz/tallo/hojas verdaderos. Absorben agua por todo el cuerpo. Viven en lugares húmedos y sombríos.</p>
               <div class="tag-row"><span class="tag amber">Sin vasos</span><span class="tag amber">Húmedo</span><span class="tag amber">Esporas</span></div>
             </div>
             <div>
-              <p><strong style="color:var(--glow)">Helechos</strong> — más grandes. Tienen vasos conductores. Presentan rizoma (tallo subterráneo), frondes (hojas) y raíces a lo largo del rizoma.</p>
+              <p><strong style="color:var(--glow-texto)">Helechos</strong> — más grandes. Tienen vasos conductores. Presentan rizoma (tallo subterráneo), frondes (hojas) y raíces a lo largo del rizoma.</p>
               <div class="tag-row"><span class="tag amber">Con vasos</span><span class="tag amber">Rizoma</span><span class="tag amber">Frondes</span></div>
             </div>
           </div>
@@ -145,7 +154,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title" style="color:var(--blue)">🌱 Con semillas — Espermatófitas</div>
+        <div class="card-title" style="color:var(--blue-texto)">🌱 Con semillas — Espermatófitas</div>
         <table class="compare-table" style="margin-top:0.8rem">
           <thead>
             <tr>
@@ -207,7 +216,7 @@
           <div class="diagram-box">
           <img src="./imagenes/tallo.png" alt="Partes del tallo">
           </div>
-          <p>Partes clave: <strong style="color:var(--glow)">nudos</strong> (donde nacen hojas y ramas), <strong style="color:var(--glow)">yemas axilares</strong> (crecimiento lateral), <strong style="color:var(--glow)">yema terminal</strong> (crecimiento en longitud).</p>
+          <p>Partes clave: <strong style="color:var(--glow-texto)">nudos</strong> (donde nacen hojas y ramas), <strong style="color:var(--glow-texto)">yemas axilares</strong> (crecimiento lateral), <strong style="color:var(--glow-texto)">yema terminal</strong> (crecimiento en longitud).</p>
           <ul>
             <li>Transporta savia bruta y elaborada</li>
             <li>Sostiene la planta</li>
@@ -222,7 +231,7 @@
           <div class="diagram-box">
           <img src="./imagenes/hoja-partes.png" alt="Partes de la hoja">
           </div>
-          <p>Expansiones en forma de lámina, verdes por la <strong style="color:var(--glow)">clorofila</strong>. El lugar donde ocurre todo lo importante.</p>
+          <p>Expansiones en forma de lámina, verdes por la <strong style="color:var(--glow-texto)">clorofila</strong>. El lugar donde ocurre todo lo importante.</p>
           <ul>
             <li>Fotosíntesis</li>
             <li>Intercambio gaseoso (por los estomas)</li>
@@ -250,14 +259,14 @@
           <div class="step-num">1</div>
           <div class="step-content">
             <h4>💧 Absorción</h4>
-            <p>Los <strong style="color:var(--glow)">pelos absorbentes</strong> de la raíz toman agua y sales minerales del suelo. Se mezclan y forman la <strong style="color:var(--glow)">savia bruta</strong>.</p>
+            <p>Los <strong style="color:var(--glow-texto)">pelos absorbentes</strong> de la raíz toman agua y sales minerales del suelo. Se mezclan y forman la <strong style="color:var(--glow-texto)">savia bruta</strong>.</p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">2</div>
           <div class="step-content">
             <h4>🔼 Transporte</h4>
-            <p>La savia bruta sube por el <strong style="color:var(--glow)">xilema</strong> hasta las hojas. En las hojas, la fotosíntesis la transforma en <strong style="color:var(--glow)">savia elaborada</strong>, que baja por el <strong style="color:var(--glow)">floema</strong> al resto de la planta.</p>
+            <p>La savia bruta sube por el <strong style="color:var(--glow-texto)">xilema</strong> hasta las hojas. En las hojas, la fotosíntesis la transforma en <strong style="color:var(--glow-texto)">savia elaborada</strong>, que baja por el <strong style="color:var(--glow-texto)">floema</strong> al resto de la planta.</p>
           </div>
         </div>
         <div class="process-step">
@@ -265,21 +274,21 @@
           <div class="step-content">
             <h4>🌞 Fotosíntesis</h4>
             <div class="equation">H₂O + CO₂ + luz solar → O₂ + materia orgánica</div>
-            <p>Se realiza en los <strong style="color:var(--glow)">cloroplastos</strong>. La <strong style="color:var(--glow)">clorofila</strong> capta la luz. Parte del O₂ la usa la planta; el resto se libera al exterior.</p>
+            <p>Se realiza en los <strong style="color:var(--glow-texto)">cloroplastos</strong>. La <strong style="color:var(--glow-texto)">clorofila</strong> capta la luz. Parte del O₂ la usa la planta; el resto se libera al exterior.</p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">4</div>
           <div class="step-content">
             <h4>🔋 Respiración celular</h4>
-            <p>En las <strong style="color:var(--glow)">mitocondrias</strong> de todas las células. La planta obtiene energía a partir de materia orgánica + O₂. Produce agua y CO₂. <strong style="color:var(--amber)">Las plantas respiran todo el rato, igual que tú.</strong></p>
+            <p>En las <strong style="color:var(--glow-texto)">mitocondrias</strong> de todas las células. La planta obtiene energía a partir de materia orgánica + O₂. Produce agua y CO₂. <strong style="color:var(--amber-texto)">Las plantas respiran todo el rato, igual que tú.</strong></p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">5</div>
           <div class="step-content">
             <h4>💨 Intercambio gaseoso</h4>
-            <p>A través de los <strong style="color:var(--glow)">estomas</strong> — orificios en las hojas. Intercambian O₂, CO₂ y vapor de agua con el exterior.</p>
+            <p>A través de los <strong style="color:var(--glow-texto)">estomas</strong> — orificios en las hojas. Intercambian O₂, CO₂ y vapor de agua con el exterior.</p>
             <div class="diagram-box">
               <img src="./imagenes/estomas.png" alt="Estomas de la hoja">
             </div>
@@ -302,8 +311,8 @@
     <div class="diagram-box">
       <img src="./imagenes/tropismos.png" alt="Tropismos">
     </div>
-      <h3 style="font-family:'Unbounded',sans-serif;font-size:0.8rem;color:var(--glow);letter-spacing:0.08em;margin-bottom:0.8rem">TROPISMOS — respuestas permanentes</h3>
-      <p style="font-size:0.8rem;opacity:0.75;margin-bottom:0.8rem">Cambios permanentes en el crecimiento. <strong style="color:var(--glow)">Positivo</strong>: hacia el estímulo. <strong style="color:var(--glow)">Negativo</strong>: en dirección contraria.</p>
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:0.8rem;color:var(--glow-texto);letter-spacing:0.08em;margin-bottom:0.8rem">TROPISMOS — respuestas permanentes</h3>
+      <p style="font-size:0.8rem;opacity:0.75;margin-bottom:0.8rem">Cambios permanentes en el crecimiento. <strong style="color:var(--glow-texto)">Positivo</strong>: hacia el estímulo. <strong style="color:var(--glow-texto)">Negativo</strong>: en dirección contraria.</p>
 
       <div class="tropism-grid">
         <div class="tropism-card">
@@ -330,7 +339,7 @@
     <div class="diagram-box">
       <img src="./imagenes/nastias.png" alt="Nastias">
     </div>
-      <h3 style="font-family:'Unbounded',sans-serif;font-size:0.8rem;color:var(--pink);letter-spacing:0.08em;margin-bottom:0.8rem;margin-top:1.2rem">NASTIAS — respuestas temporales</h3>
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:0.8rem;color:var(--pink-texto);letter-spacing:0.08em;margin-bottom:0.8rem;margin-top:1.2rem">NASTIAS — respuestas temporales</h3>
       <p style="font-size:0.8rem;opacity:0.75;margin-bottom:0.8rem">Cuando desaparece el estímulo, la planta vuelve a su estado anterior.</p>
 
       <div class="tropism-grid">
@@ -366,17 +375,17 @@
         </div>
         <div class="card-grid cols-2" style="margin-top:0.6rem">
           <div>
-            <p><strong style="color:var(--glow)">Envoltura floral:</strong> cubre y protege.</p>
+            <p><strong style="color:var(--glow-texto)">Envoltura floral:</strong> cubre y protege.</p>
             <ul>
-              <li><strong style="color:var(--glow)">Corola</strong> → conjunto de pétalos</li>
-              <li><strong style="color:var(--glow)">Cáliz</strong> → conjunto de sépalos</li>
+              <li><strong style="color:var(--glow-texto)">Corola</strong> → conjunto de pétalos</li>
+              <li><strong style="color:var(--glow-texto)">Cáliz</strong> → conjunto de sépalos</li>
             </ul>
           </div>
           <div>
-            <p><strong style="color:var(--glow)">Órganos reproductores:</strong></p>
+            <p><strong style="color:var(--glow-texto)">Órganos reproductores:</strong></p>
             <ul>
-              <li><strong style="color:var(--glow)">Estambres</strong> → producen polen (♂)</li>
-              <li><strong style="color:var(--glow)">Pistilo</strong> → contiene el ovario con óvulos (♀)</li>
+              <li><strong style="color:var(--glow-texto)">Estambres</strong> → producen polen (♂)</li>
+              <li><strong style="color:var(--glow-texto)">Pistilo</strong> → contiene el ovario con óvulos (♀)</li>
             </ul>
           </div>
         </div>
@@ -387,35 +396,35 @@
           <div class="step-num">1</div>
           <div class="step-content">
             <h4>🐝 Polinización</h4>
-            <p>El polen viaja desde los estambres de una flor hasta el estigma de otra. Transportado por <strong style="color:var(--glow)">viento</strong> o por <strong style="color:var(--glow)">animales</strong> (abejas, mariposas, pájaros...).</p>
+            <p>El polen viaja desde los estambres de una flor hasta el estigma de otra. Transportado por <strong style="color:var(--glow-texto)">viento</strong> o por <strong style="color:var(--glow-texto)">animales</strong> (abejas, mariposas, pájaros...).</p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">2</div>
           <div class="step-content">
             <h4>🔗 Fecundación</h4>
-            <p>El grano de polen forma un <strong style="color:var(--glow)">tubo polínico</strong> que recorre el pistilo hasta el óvulo. El gameto ♂ se une al óvulo ♀. Fecundación lograda.</p>
+            <p>El grano de polen forma un <strong style="color:var(--glow-texto)">tubo polínico</strong> que recorre el pistilo hasta el óvulo. El gameto ♂ se une al óvulo ♀. Fecundación lograda.</p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">3</div>
           <div class="step-content">
             <h4>🌰 Formación de la semilla</h4>
-            <p>El óvulo fecundado se convierte en <strong style="color:var(--glow)">semilla</strong>. Contiene el embrión y cubiertas protectoras.</p>
+            <p>El óvulo fecundado se convierte en <strong style="color:var(--glow-texto)">semilla</strong>. Contiene el embrión y cubiertas protectoras.</p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">4</div>
           <div class="step-content">
             <h4>🍎 Formación del fruto</h4>
-            <p>El ovario se transforma en <strong style="color:var(--glow)">fruto</strong>. Protege las semillas y colabora en su dispersión.</p>
+            <p>El ovario se transforma en <strong style="color:var(--glow-texto)">fruto</strong>. Protege las semillas y colabora en su dispersión.</p>
           </div>
         </div>
         <div class="process-step">
           <div class="step-num">5</div>
           <div class="step-content">
             <h4>🌱 Germinación</h4>
-            <p>La semilla cae al suelo. Si hay suficiente humedad, absorbe agua y se hincha hasta romper la cubierta. Aparece la <strong style="color:var(--glow)">radícula</strong> (primera raíz) y luego los <strong style="color:var(--glow)">cotiledones</strong> (primeras hojas). Comienza la nueva planta.</p>
+            <p>La semilla cae al suelo. Si hay suficiente humedad, absorbe agua y se hincha hasta romper la cubierta. Aparece la <strong style="color:var(--glow-texto)">radícula</strong> (primera raíz) y luego los <strong style="color:var(--glow-texto)">cotiledones</strong> (primeras hojas). Comienza la nueva planta.</p>
           </div>
         </div>
       </div>
@@ -636,5 +645,9 @@ function storyNav(dir) {
   if (next >= 0 && next < totalSteps) goToStep(next);
 }
 </script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>

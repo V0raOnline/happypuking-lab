@@ -24,6 +24,75 @@
   --gas-noble: #8B5CF6;
   --lantanido: #06B6D4;
   --actinido: #84CC16;
+
+  /* Valencias. Estaban escritas a mano dentro del JS, igual que las
+     categorias, que si tenian token y nadie usaba. */
+  --val-1: #EF4444;
+  --val-2: #F97316;
+  --val-3: #FBBF24;
+  --val-4: #4ADE80;
+  --val-5: #2DD4BF;
+  --val-6: #3B82F6;
+  --val-7: #A78BFA;
+  --val-completa: #E2E8F0;
+  --cat-defecto: #888;
+  --en-bar-fondo: #1A1D27;
+  --cyan: #22D3EE;
+  --violeta: #A78BFA;
+  --acierto: #4ADE80;
+  --error: #F87171;
+  --pista: #FBBF24;
+  --sombra-base: #000;
+  --grano-op: 1;
+  --masa: color-mix(in srgb, var(--text) 25%, transparent);
+  --lantanido-texto: var(--lantanido);
+  --actinido-texto: var(--actinido);
+  --acierto-texto: var(--acierto);
+  --error-texto: var(--error);
+  --no-metal-texto: var(--no-metal);
+  --pista-texto: var(--pista);
+  --cyan-texto: var(--cyan);
+  --magenta-texto: var(--magenta);
+  --tenue: rgba(255,255,255,0.78);
+  --mas-tenue: rgba(240,242,255,0.55);
+}
+
+/* ── MODO CLARO ──────────────────────────────────────────────────────────
+   Las cuatro paletas didacticas de quimica — diez categorias de elemento,
+   siete valencias, la capa completa y el degradado de electronegatividad —
+   conservan su tono: van en la pasada de tonos. Lo que cambia aqui es el
+   chasis y las versiones legibles, que ya se derivan del color del tema.
+
+   --val-completa era #E2E8F0, casi blanco: los gases nobles. Sobre papel
+   desaparecia, asi que en claro se invierte a un gris de papel.
+   --en-bar-fondo igual: era el pozo oscuro de la barra. */
+:root[data-theme="light"] {
+  --bg: #e7e0d6;
+  --surface: #f4ede3;
+  --surface2: #ede4d8;
+  --surface3: #ded3c5;
+  --border: rgba(58,33,52,0.14);
+  --text: #211825;
+  --muted: #695e6c;
+  --muted2: #5c5060;
+  --magenta: #9c22b0;
+  --cyan: #0a6d7c;
+  --violeta: #6b48ad;
+  --tenue: #4f4553;
+  --mas-tenue: #695e6c;
+  --val-completa: #b9b3a8;
+  --en-bar-fondo: #ded3c5;
+  --cat-defecto: #6f6472;
+  --grano-op: 0.45;
+  --masa: #675c6c;
+  --lantanido-texto: color-mix(in srgb, var(--lantanido) 40%, var(--text));
+  --actinido-texto: color-mix(in srgb, var(--actinido) 40%, var(--text));
+  --acierto-texto: color-mix(in srgb, var(--acierto) 40%, var(--text));
+  --error-texto: color-mix(in srgb, var(--error) 40%, var(--text));
+  --no-metal-texto: color-mix(in srgb, var(--no-metal) 40%, var(--text));
+  --pista-texto: color-mix(in srgb, var(--pista) 40%, var(--text));
+  --cyan-texto: color-mix(in srgb, var(--cyan) 40%, var(--text));
+  --magenta-texto: color-mix(in srgb, var(--magenta) 40%, var(--text));
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -98,7 +167,7 @@ header {
 .nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
 .nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
 .nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
-.nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+.nav-tool.active { color: var(--magenta); border-color: color-mix(in srgb, var(--magenta) 35%, transparent); background: color-mix(in srgb, var(--magenta) 8%, transparent); cursor: default; pointer-events: none; }
 .nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
 .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
@@ -176,17 +245,45 @@ header {
   padding: 2px;
 }
 
+/* ── EL COLOR NO PUEDE HACER DOS TRABAJOS ────────────────────────────────
+   --cat-color y --accent pintaban a la vez figura (fondos, bordes, halos) y
+   texto (el simbolo del elemento, la valencia, la electronegatividad, los
+   rotulos de la ficha). Sobre negro un mismo tono vale para las dos cosas;
+   sobre papel no, porque lo que hace reconocible una categoria no es lo que
+   la hace legible.
+
+   Aqui solo se abre el hueco: los dos lados valen lo mismo y la pagina no
+   cambia. Los valores claros llegan despues.
+   ──────────────────────────────────────────────────────────────────────── */
+.el { --cat-color-texto: var(--cat-color, var(--text)); }
+.card-header, .card, .info-panel { --accent-texto: var(--accent, var(--magenta)); }
+
+/* La derivacion clara faltaba: el hueco se abrio en el paso 2 y nunca se
+   relleno, asi que sobre papel los 118 simbolos de elemento salian con el
+   color crudo de su categoria — #F59E0B sobre #f4ede3 son 2:1.
+
+   Van aqui y no en :root porque --cat-color y --accent los pone el JS por
+   elemento: en :root no existen y el color-mix quedaria invalido. */
+:root[data-theme="light"] .el {
+  --cat-color-texto: color-mix(in srgb, var(--cat-color, var(--text)) 42%, var(--text));
+}
+:root[data-theme="light"] .card-header,
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .info-panel {
+  --accent-texto: color-mix(in srgb, var(--accent, var(--magenta)) 45%, var(--text));
+}
+
 .el::before {
   content:'';
   position:absolute; inset:0;
-  background: var(--cat-color, #3B82F6);
+  background: var(--cat-color, var(--metal-transicion));
   opacity: 0.08;
   transition: opacity 0.18s;
 }
 
 .el:hover { transform: scale(1.12); z-index: 10; }
 .el:hover::before { opacity: 0.28; }
-.el.active { border-color: var(--cat-color, #3B82F6); }
+.el.active { border-color: var(--cat-color, var(--metal-transicion)); }
 .el.active::before { opacity: 0.22; }
 
 .el-number {
@@ -200,7 +297,7 @@ header {
 .el-symbol {
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(0.9rem, 1.5vw, 1.15rem);
-  color: var(--cat-color, #fff);
+  color: var(--cat-color-texto, var(--text));
   line-height: 1;
   font-weight: 400;
 }
@@ -220,7 +317,7 @@ header {
 .el-mass {
   font-family: 'DM Mono', monospace;
   font-size: 0.4rem;
-  color: rgba(255,255,255,0.25);
+  color: var(--masa);
   line-height: 1;
 }
 
@@ -232,7 +329,7 @@ header {
 .period-label, .group-label {
   font-family: 'DM Mono', monospace;
   font-size: 0.6rem;
-  color: rgba(255,255,255,0.15);
+  color: color-mix(in srgb, var(--text) 15%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -270,14 +367,14 @@ header {
 .card-header::before {
   content:'';
   position:absolute; inset:0;
-  background: var(--accent, #3B82F6);
+  background: var(--accent, var(--metal-transicion));
   opacity: 0.08;
 }
 
 .card-number {
   font-family: 'DM Mono', monospace;
   font-size: 0.75rem;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   opacity: 0.8;
   position: relative;
   margin-bottom: 0.3rem;
@@ -294,8 +391,8 @@ header {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 4.5rem;
   line-height: 1;
-  color: var(--accent, #3B82F6);
-  text-shadow: 0 0 40px color-mix(in srgb, var(--accent, #3B82F6) 40%, transparent);
+  color: var(--accent-texto, var(--magenta));
+  text-shadow: 0 0 40px color-mix(in srgb, var(--accent, var(--metal-transicion)) 40%, transparent);
 }
 
 .card-name {
@@ -309,7 +406,7 @@ header {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   margin-top: 0.2rem;
 }
 
@@ -330,7 +427,7 @@ header {
   background: var(--surface2);
   border-radius: 10px;
   padding: 0.6rem 0.8rem;
-  border-left: 2px solid var(--accent, #3B82F6);
+  border-left: 2px solid var(--accent, var(--metal-transicion));
 }
 
 .stat-label {
@@ -358,14 +455,14 @@ header {
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--accent, #3B82F6);
+  color: var(--accent-texto, var(--magenta));
   font-weight: 900;
 }
 
 .section-text {
   font-size: 0.82rem;
   line-height: 1.55;
-  color: rgba(240,242,255,0.8);
+  color: color-mix(in srgb, var(--text) 80%, transparent);
 }
 
 .app-tags {
@@ -379,9 +476,9 @@ header {
   font-weight: 700;
   padding: 0.3rem 0.7rem;
   border-radius: 100px;
-  background: color-mix(in srgb, var(--accent, #3B82F6) 14%, var(--surface2));
-  border: 1px solid color-mix(in srgb, var(--accent, #3B82F6) 35%, transparent);
-  color: var(--accent, #3B82F6);
+  background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 14%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent, var(--metal-transicion)) 35%, transparent);
+  color: var(--accent-texto, var(--magenta));
 }
 
 .card-empty {
@@ -480,7 +577,7 @@ header {
   width: 14px; height: 14px;
   border-radius: 50%;
   border: 2px solid var(--bg);
-  box-shadow: 0 0 8px var(--accent-col, #3B82F6);
+  box-shadow: 0 0 8px var(--accent-col, var(--metal-transicion));
 }
 
 .en-labels {
@@ -588,9 +685,9 @@ header {
 }
 .mode-btn:hover { color: var(--text); }
 .mode-btn.active {
-  color: #22D3EE;
-  border-color: rgba(34,211,238,0.35);
-  background: rgba(34,211,238,0.08);
+  color: var(--cyan);
+  border-color: color-mix(in srgb, var(--cyan) 35%, transparent);
+  background: color-mix(in srgb, var(--cyan) 8%, transparent);
   cursor: default;
 }
 
@@ -599,7 +696,7 @@ header {
   display: none;
   font-family: 'DM Mono', monospace;
   font-size: 0.44rem;
-  color: var(--cat-color, #fff);
+  color: var(--cat-color-texto, var(--text));
   opacity: 0.85;
   line-height: 1;
 }
@@ -626,7 +723,7 @@ header {
   width: calc(100% - 300px - 1.5rem);
   height: 10px;
   border-radius: 100px;
-  background: linear-gradient(90deg, #3B82F6, #A78BFA, #EF4444);
+  background: linear-gradient(90deg, var(--metal-transicion), var(--violeta), var(--metal-alcalino));
   position: relative;
   margin-top: 1.3rem; /* hueco para la etiqueta del pin */
 }
@@ -639,7 +736,7 @@ header {
   width: 14px; height: 14px;
   border-radius: 50%;
   border: 2px solid var(--bg);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.35);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text) 35%, transparent);
   display: none;
   transition: left 0.3s ease, background 0.3s ease;
 }
@@ -683,8 +780,8 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 .legend-item.selected,
 .val-chip.selected {
   color: var(--text);
-  border-color: var(--pill-color, rgba(255,255,255,0.3));
-  background: color-mix(in srgb, var(--pill-color, #fff) 14%, transparent);
+  border-color: var(--pill-color, color-mix(in srgb, var(--text) 30%, transparent));
+  background: color-mix(in srgb, var(--pill-color, var(--text)) 14%, transparent);
 }
 .pill-badge:not(:empty) {
   font-family: 'DM Mono', monospace;
@@ -693,7 +790,7 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   color: var(--pill-color, var(--text));
   margin-left: 0.4rem;
   padding-left: 0.4rem;
-  border-left: 1px solid rgba(255,255,255,0.18);
+  border-left: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
   white-space: nowrap;
 }
 
@@ -716,7 +813,7 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   font-family: 'DM Mono', monospace;
   font-size: 0.44rem;
   font-weight: 600;
-  color: var(--cat-color, #fff);
+  color: var(--cat-color-texto, var(--text));
   opacity: 0.85;
   line-height: 1;
 }
@@ -756,11 +853,11 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   transition: all 0.2s;
   user-select: none;
 }
-.val-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.val-chip:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 20%, transparent); }
 .val-chip.active {
   color: var(--text);
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.3);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text) 30%, transparent);
 }
 /* con un grupo iluminado, los "va por libre" se apagan del todo */
 .mode-val .el.val-nodata.dimmed { opacity: 0.1; }
@@ -798,9 +895,9 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   color: var(--muted, #8880a0);
   transition: color 0.2s;
 }
-.plegar:hover { color: var(--cyan, #22D3EE); }
+.plegar:hover { color: var(--cyan, var(--cyan)); }
 .plegar:focus-visible {
-  outline: 2px solid var(--cyan, #22D3EE);
+  outline: 2px solid var(--cyan, var(--cyan));
   outline-offset: 2px; border-radius: 6px;
 }
 .plegar-chevron {
@@ -848,9 +945,9 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
     gap: 0.6rem;
     margin: 0 0 1rem;
     padding: 0.7rem 0.9rem;
-    border: 1px solid rgba(245,158,11,0.35);
+    border: 1px solid color-mix(in srgb, var(--no-metal) 35%, transparent);
     border-radius: 12px;
-    background: rgba(245,158,11,0.08);
+    background: color-mix(in srgb, var(--no-metal) 8%, transparent);
     color: var(--text, #f8f6ff);
     font-family: 'DM Sans', sans-serif;
     font-size: 0.82rem;
@@ -869,7 +966,7 @@ button.el {
 }
 /* El foco tiene que verse sobre la tabla, tape lo que tape. */
 .el:focus-visible {
-  outline: 3px solid #22D3EE;
+  outline: 3px solid var(--cyan);
   outline-offset: 1px;
   z-index: 6;
 }
@@ -887,6 +984,6 @@ button.legend-item, button.val-chip {
   text-align: left;
 }
 .legend-item:focus-visible, .val-chip:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }

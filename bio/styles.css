@@ -17,6 +17,33 @@
     --muted2: #5A6478;
     --magenta: #E040FB;
     --border: rgba(255,255,255,0.08);
+    --cian: #22D3EE;
+    --dorado: #FFD700;
+    --grano-op: 1;
+    /* Rotulo "nivel N" del explorador. En oscuro eran velos blancos al
+       50% y al 20%; sobre papel el segundo se queda en 1,5:1. */
+    --nivel-on: color-mix(in srgb, var(--text) 55%, transparent);
+    --nivel-off: color-mix(in srgb, var(--text) 22%, transparent);
+  }
+
+  /* ── MODO CLARO ───────────────────────────────────────────────────
+     Chasis calibrado. Los cinco reinos conservan su valor oscuro: son
+     color didactico y se reeligen en la pasada de tonos. Aqui solo
+     pintan figura, asi que no comprometen ninguna lectura. */
+  :root[data-theme="light"] {
+    --bg: #e7e0d6;
+    --surface: #f4ede3;
+    --surface2: #ede4d8;
+    --text: #211825;
+    --muted: #695e6c;
+    --muted2: #5c5060;
+    --magenta: #9c22b0;
+    --border: rgba(58,33,52,0.14);
+    --cian: #0a6d7c;
+    --dorado: #7b5f02;
+    --nivel-on: var(--text);
+    --nivel-off: var(--muted);
+    --grano-op: 0.45;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,6 +64,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 0;
+    opacity: var(--grano-op);
   }
 
   header {
@@ -94,7 +122,7 @@
   .nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
   .nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
   .nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
-  .nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+  .nav-tool.active { color: var(--magenta); border-color: color-mix(in srgb, var(--magenta) 35%, transparent); background: color-mix(in srgb, var(--magenta) 8%, transparent); cursor: default; pointer-events: none; }
   .nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
   .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
@@ -165,7 +193,7 @@
 
   .btn-reino:hover:not(.active) {
     border-color: color-mix(in srgb, var(--c) 50%, transparent);
-    color: color-mix(in srgb, var(--c) 80%, white);
+    color: color-mix(in srgb, var(--c) 80%, var(--text));
   }
 
   .interaction-hint {
@@ -250,9 +278,9 @@
   }
 
   .tag.shared {
-    background: color-mix(in srgb, #FFD700 15%, var(--surface2));
-    border-color: color-mix(in srgb, #FFD700 40%, transparent);
-    color: #FFD700;
+    background: color-mix(in srgb, var(--dorado) 15%, var(--surface2));
+    border-color: color-mix(in srgb, var(--dorado) 40%, transparent);
+    color: var(--dorado);
   }
 
   .tag.unique {
@@ -318,9 +346,9 @@
   }
 
   .mode-tab.active {
-    background: rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text) 12%, transparent);
     color: var(--text);
-    border-color: rgba(255,255,255,0.2);
+    border-color: color-mix(in srgb, var(--text) 22%, transparent);
   }
 
   /* ── SVG styles ── */
@@ -388,14 +416,14 @@
   background: none; border: none; cursor: pointer;
   font-family: 'DM Mono', monospace; font-size: 0.62rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: var(--muted);
   transition: color 0.2s;
 }
-.plegar:hover { color: #22D3EE; }
-.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar:hover { color: var(--cian); }
+.plegar:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; border-radius: 6px; }
 .plegar-chevron {
   display: inline-block; font-size: 1.05rem; line-height: 1;
-  color: #D946EF; transition: transform 0.25s ease;
+  color: var(--magenta); transition: transform 0.25s ease;
 }
 .plegar:hover .plegar-chevron { filter: brightness(1.25); }
 body.compacto .plegar-chevron { transform: rotate(180deg); }
@@ -423,7 +451,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cian);
   outline-offset: 2px;
   border-radius: 4px;
 }

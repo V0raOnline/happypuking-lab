@@ -25,6 +25,14 @@
 <meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
 :root {
   --bg: #080A0F;
@@ -35,6 +43,40 @@
   --text: #F8FAFF;
   --muted: #8892A4;
   --muted2: #5A6478;
+  --cyan: #22D3EE;
+  --acierto: #4ADE80;
+  --acierto-texto: var(--acierto);
+  --green-lab-texto: var(--green-lab);
+  --error: #F87171;
+  --pista: #FBBF24;
+  --pista-texto: #FBBF24;
+  --scrim-base: #000000;
+  --scrim: rgba(0,0,0,0.7);
+  --tenue: rgba(255,255,255,0.78);
+  --mas-tenue: rgba(255,255,255,0.7);
+  --grano-op: 1;
+  /* Version legible de cada categoria y funcion: la abreviatura del
+     panel de convenciones va en su color, y sobre papel el tono vivo
+     se queda entre 1,3 y 2,2:1. */
+  --sustantivo-texto: var(--sustantivo);
+  --verbo-texto: var(--verbo);
+  --adjetivo-texto: var(--adjetivo);
+  --determinante-texto: var(--determinante);
+  --pronombre-texto: var(--pronombre);
+  --adverbio-texto: var(--adverbio);
+  --preposicion-texto: var(--preposicion);
+  --conjuncion-texto: var(--conjuncion);
+  --interjeccion-texto: var(--interjeccion);
+  --sujeto-texto: var(--sujeto);
+  --predicado-texto: var(--predicado);
+  --cd-texto: var(--cd);
+  --ci-texto: var(--ci);
+  --cc-texto: var(--cc);
+  --atributo-texto: var(--atributo);
+  --cpred-texto: var(--cpred);
+  --creg-texto: var(--creg);
+  --cag-texto: var(--cag);
+  --cn-texto: var(--cn);
 
   /* Categorías morfológicas — colores consistentes en toda la herramienta */
   --sustantivo: #60A5FA;
@@ -61,6 +103,55 @@
 
   --magenta: #E040FB;
   --green-lab: #4ADE80;
+}
+
+/* ── MODO CLARO ──────────────────────────────────────────────────────────
+   Los diecinueve colores de categoria y funcion conservan su tono: aqui el
+   color ES la funcion sintactica, y reelegirlos es la pasada de tonos. Se
+   pueden dejar sin tocar sin romper nada porque en este fichero solo pintan
+   figura — fondos y bordes de pastilla — y el texto que va encima usa la
+   tinta, no el color de la categoria.
+
+   --tenue y --mas-tenue si cambian de lado: eran velos blancos sobre negro
+   y sobre papel tienen que ser grises calibrados, no transparencias. */
+:root[data-theme="light"] {
+  --bg: #e7e0d6;
+  --surface: #f4ede3;
+  --surface2: #ede4d8;
+  --surface3: #ded3c5;
+  --border: rgba(58,33,52,0.14);
+  --text: #211825;
+  --muted: #695e6c;
+  --muted2: #5c5060;
+  --magenta: #9c22b0;
+  --cyan: #0a6d7c;
+  --scrim: rgba(76,47,63,0.55);
+  --pista-texto: color-mix(in srgb, var(--pista) 40%, var(--text));
+  --acierto-texto: color-mix(in srgb, var(--acierto) 40%, var(--text));
+  --green-lab-texto: color-mix(in srgb, var(--green-lab) 40%, var(--text));
+  --tenue: #4f4553;
+  --mas-tenue: #695e6c;
+  --grano-op: 0.45;
+
+  --sustantivo-texto: color-mix(in srgb, var(--sustantivo) 40%, var(--text));
+  --verbo-texto: color-mix(in srgb, var(--verbo) 40%, var(--text));
+  --adjetivo-texto: color-mix(in srgb, var(--adjetivo) 40%, var(--text));
+  --determinante-texto: color-mix(in srgb, var(--determinante) 40%, var(--text));
+  --pronombre-texto: color-mix(in srgb, var(--pronombre) 40%, var(--text));
+  --adverbio-texto: color-mix(in srgb, var(--adverbio) 40%, var(--text));
+  --preposicion-texto: color-mix(in srgb, var(--preposicion) 40%, var(--text));
+  --conjuncion-texto: color-mix(in srgb, var(--conjuncion) 40%, var(--text));
+  --interjeccion-texto: color-mix(in srgb, var(--interjeccion) 40%, var(--text));
+  --sujeto-texto: color-mix(in srgb, var(--sujeto) 40%, var(--text));
+  --predicado-texto: color-mix(in srgb, var(--predicado) 40%, var(--text));
+  --cd-texto: color-mix(in srgb, var(--cd) 40%, var(--text));
+  --ci-texto: color-mix(in srgb, var(--ci) 40%, var(--text));
+  --cc-texto: color-mix(in srgb, var(--cc) 40%, var(--text));
+  --atributo-texto: color-mix(in srgb, var(--atributo) 40%, var(--text));
+  --cpred-texto: color-mix(in srgb, var(--cpred) 40%, var(--text));
+  --creg-texto: color-mix(in srgb, var(--creg) 40%, var(--text));
+  --cag-texto: color-mix(in srgb, var(--cag) 40%, var(--text));
+  --cn-texto: color-mix(in srgb, var(--cn) 40%, var(--text));
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -138,7 +229,7 @@ header {
 .nav-domain { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 0.4rem; white-space: nowrap; }
 .nav-tool { font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; border: 1px solid transparent; text-decoration: none; color: var(--muted); background: transparent; transition: all 0.2s ease; white-space: nowrap; }
 .nav-tool:hover { color: var(--text); border-color: var(--border); background: var(--surface2); }
-.nav-tool.active { color: var(--magenta); border-color: rgba(217,70,239,0.35); background: rgba(217,70,239,0.08); cursor: default; pointer-events: none; }
+.nav-tool.active { color: var(--magenta); border-color: color-mix(in srgb, var(--magenta) 35%, transparent); background: color-mix(in srgb, var(--magenta) 8%, transparent); cursor: default; pointer-events: none; }
 .nav-sep { color: var(--muted); opacity: 0.3; font-size: 0.7rem; user-select: none; }
 .header-actions { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-bottom: 1rem; }
 
@@ -197,7 +288,7 @@ footer {
 
 .btn-yaml:hover {
   border-color: var(--green-lab);
-  color: var(--green-lab);
+  color: var(--green-lab-texto);
 }
 
 /* ── TABS — píldoras estilo lab ── */
@@ -226,15 +317,15 @@ footer {
 }
 
 .main-tab.active {
-  border-color: #22D3EE;
-  color: #22D3EE;
-  background: color-mix(in srgb, #22D3EE 12%, var(--surface2));
-  box-shadow: 0 0 16px color-mix(in srgb, #22D3EE 28%, transparent);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 12%, var(--surface2));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--cyan) 28%, transparent);
 }
 
 .main-tab:hover:not(.active) {
-  border-color: color-mix(in srgb, #22D3EE 40%, transparent);
-  color: color-mix(in srgb, #22D3EE 70%, white);
+  border-color: color-mix(in srgb, var(--cyan) 40%, transparent);
+  color: color-mix(in srgb, var(--cyan) 70%, white);
 }
 
 /* ── LAYOUT ── */
@@ -276,15 +367,15 @@ footer {
 }
 
 .btn-oracion.active {
-  border-color: #22D3EE;
-  color: #22D3EE;
-  background: rgba(34,211,238,0.08);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--adverbio) 8%, transparent);
 }
 
 .btn-oracion.completada {
-  border-color: #22D3EE;
-  color: #22D3EE;
-  background: rgba(34,211,238,0.06);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--adverbio) 6%, transparent);
 }
 
 .nivel-badge {
@@ -345,15 +436,15 @@ footer {
 }
 
 .token:hover {
-  border-color: rgba(255,255,255,0.2);
+  border-color: color-mix(in srgb, var(--text) 20%, transparent);
   background: var(--surface2);
 }
 
 .token.seleccionado {
   border-color: var(--magenta);
-  background: rgba(217,70,239,0.12);
+  background: color-mix(in srgb, var(--magenta) 12%, transparent);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(217,70,239,0.2);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--magenta) 20%, transparent);
 }
 
 .token.correcto {
@@ -400,8 +491,8 @@ footer {
   font-size: 0.65rem;
   font-weight: 500;
   color: var(--magenta);
-  background: rgba(217,70,239,0.1);
-  border: 1px solid rgba(217,70,239,0.25);
+  background: color-mix(in srgb, var(--magenta) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--magenta) 25%, transparent);
   border-radius: 6px;
   padding: 0.2rem 0.5rem;
   flex-shrink: 0;
@@ -435,22 +526,25 @@ footer {
   font-size: 0.78rem;
   padding: 0.5rem 1.1rem;
   border-radius: 8px;
-  border: 2px solid #4ADE80;
-  background: rgba(74,222,128,0.12);
-  color: #4ADE80;
+  border: 2px solid var(--acierto);
+  background: color-mix(in srgb, var(--acierto) 12%, transparent);
+  color: var(--acierto-texto);
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 0.04em;
 }
 
 .btn-confirmar:hover {
-  background: rgba(74,222,128,0.22);
-  box-shadow: 0 0 24px rgba(74,222,128,0.18);
+  background: color-mix(in srgb, var(--acierto) 22%, transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--acierto) 18%, transparent);
   transform: translateY(-1px);
 }
 
 .btn-confirmar:disabled {
-  opacity: 0.4;
+  opacity: 0.75;
+  color: var(--muted);
+  border-color: var(--border);
+  background: var(--surface2);
   cursor: not-allowed;
   transform: none;
 }
@@ -467,16 +561,16 @@ footer {
 }
 
 .feedback-box.ok {
-  background: rgba(74,222,128,0.08);
-  border: 1px solid rgba(74,222,128,0.25);
-  color: var(--green-lab);
+  background: color-mix(in srgb, var(--acierto) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acierto) 25%, transparent);
+  color: var(--green-lab-texto);
   display: block;
 }
 
 .feedback-box.error {
-  background: rgba(248,113,113,0.08);
-  border: 1px solid rgba(248,113,113,0.25);
-  color: #F87171;
+  background: color-mix(in srgb, var(--error) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--error) 25%, transparent);
+  color: var(--error);
   display: block;
 }
 
@@ -554,12 +648,12 @@ footer {
 
 /* Trampa box */
 .trampa-box {
-  background: rgba(251,191,36,0.06);
-  border: 1px solid rgba(251,191,36,0.2);
+  background: color-mix(in srgb, var(--pista) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pista) 20%, transparent);
   border-radius: 10px;
   padding: 0.7rem 0.9rem;
   font-size: 0.75rem;
-  color: rgba(251,191,36,0.9);
+  color: var(--pista-texto);
   line-height: 1.5;
 }
 
@@ -570,13 +664,13 @@ footer {
   text-transform: uppercase;
   display: block;
   margin-bottom: 0.3rem;
-  color: #FBBF24;
+  color: var(--pista-texto);
 }
 
 /* Completado */
 .completado-banner {
-  background: rgba(74,222,128,0.06);
-  border: 1px solid rgba(74,222,128,0.2);
+  background: color-mix(in srgb, var(--acierto) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acierto) 20%, transparent);
   border-radius: 12px;
   padding: 1rem;
   text-align: center;
@@ -587,7 +681,7 @@ footer {
 
 .completado-banner h3 {
   font-family: 'Space Grotesk', sans-serif;
-  color: var(--green-lab);
+  color: var(--green-lab-texto);
   margin-bottom: 0.3rem;
 }
 
@@ -603,14 +697,14 @@ footer {
   padding: 0.5rem 1.2rem;
   border-radius: 8px;
   border: 1px solid var(--green-lab);
-  background: rgba(74,222,128,0.1);
-  color: var(--green-lab);
+  background: color-mix(in srgb, var(--acierto) 10%, transparent);
+  color: var(--green-lab-texto);
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 0.7rem;
 }
 
-.btn-siguiente:hover { background: rgba(74,222,128,0.2); }
+.btn-siguiente:hover { background: color-mix(in srgb, var(--acierto) 20%, transparent); }
 
 /* ── PESTAÑA EXPLORA ── */
 .explora-layout {
@@ -655,7 +749,7 @@ footer {
 .toggle-btn.active {
   background: var(--surface);
   color: var(--text);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--scrim-base) 30%, transparent);
 }
 
 /* Grid de categorías */
@@ -824,7 +918,7 @@ footer {
 
 .detalle-def {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.75);
+  color: var(--tenue);
   line-height: 1.6;
 }
 
@@ -835,18 +929,18 @@ footer {
   font-family: 'Space Grotesk', sans-serif;
   font-style: italic;
   font-size: 0.88rem;
-  color: rgba(255,255,255,0.85);
+  color: var(--tenue);
   line-height: 1.5;
   margin-bottom: 0.4rem;
 }
 
 .detalle-error {
-  background: rgba(251,191,36,0.06);
-  border: 1px solid rgba(251,191,36,0.2);
+  background: color-mix(in srgb, var(--pista) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pista) 20%, transparent);
   border-radius: 8px;
   padding: 0.5rem 0.7rem;
   font-size: 0.75rem;
-  color: rgba(251,191,36,0.85);
+  color: var(--pista-texto);
   line-height: 1.5;
 }
 
@@ -893,7 +987,7 @@ footer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: var(--scrim);
   z-index: 100;
   align-items: center;
   justify-content: center;
@@ -986,14 +1080,14 @@ footer {
 }
 
 .yaml-status.ok {
-  background: rgba(74,222,128,0.08);
-  color: var(--green-lab);
+  background: color-mix(in srgb, var(--acierto) 8%, transparent);
+  color: var(--green-lab-texto);
   display: block;
 }
 
 .yaml-status.error {
-  background: rgba(248,113,113,0.08);
-  color: #F87171;
+  background: color-mix(in srgb, var(--error) 8%, transparent);
+  color: var(--error);
   display: block;
 }
 
@@ -1058,8 +1152,8 @@ footer {
 }
 
 .btn-saltar:hover {
-  border-color: rgba(251,191,36,0.4);
-  color: rgba(251,191,36,0.8);
+  border-color: color-mix(in srgb, var(--pista) 40%, transparent);
+  color: color-mix(in srgb, var(--pista) 80%, transparent);
 }
 
 /* Tabla de convenciones */
@@ -1144,7 +1238,7 @@ footer {
 .btn-about:hover {
   border-color: var(--magenta);
   color: var(--magenta);
-  background: rgba(217,70,239,0.08);
+  background: color-mix(in srgb, var(--magenta) 8%, transparent);
 }
 
 /* ── MODAL ABOUT ── */
@@ -1152,7 +1246,7 @@ footer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: var(--scrim);
   z-index: 100;
   align-items: flex-start;
   justify-content: center;
@@ -1220,7 +1314,7 @@ footer {
 
 .about-section p {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.7);
+  color: var(--mas-tenue);
   line-height: 1.7;
   margin-bottom: 0.6rem;
 }
@@ -1234,7 +1328,7 @@ footer {
 
 .about-section ul li {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.7);
+  color: var(--mas-tenue);
   line-height: 1.6;
   padding-left: 1rem;
   position: relative;
@@ -1255,15 +1349,15 @@ footer {
   padding: 1rem 1.2rem;
   font-family: 'DM Mono', monospace;
   font-size: 0.72rem;
-  color: rgba(255,255,255,0.75);
+  color: var(--tenue);
   line-height: 1.8;
   overflow-x: auto;
   white-space: pre;
   margin-top: 0.6rem;
 }
 
-.about-code .yaml-key { color: var(--adverbio); }
-.about-code .yaml-val { color: var(--green-lab); }
+.about-code .yaml-key { color:var(--adverbio-texto); }
+.about-code .yaml-val { color: var(--green-lab-texto); }
 .about-code .yaml-comment { color: var(--muted); font-style: italic; }
 
 /* Modal solución */
@@ -1271,7 +1365,7 @@ footer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.65);
+  background: color-mix(in srgb, var(--scrim-base) 65%, transparent);
   z-index: 100;
   align-items: center;
   justify-content: center;
@@ -1282,7 +1376,7 @@ footer {
 
 .solucion-modal-inner {
   background: var(--surface);
-  border: 1px solid rgba(251,191,36,0.25);
+  border: 1px solid color-mix(in srgb, var(--pista) 25%, transparent);
   border-radius: 20px;
   padding: 1.5rem;
   width: 90%;
@@ -1293,7 +1387,7 @@ footer {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.1rem;
   margin-bottom: 0.3rem;
-  color: rgba(251,191,36,0.9);
+  color: var(--pista-texto);
 }
 
 .solucion-modal-inner .solucion-aviso {
@@ -1304,20 +1398,20 @@ footer {
 }
 
 .solucion-respuesta {
-  background: rgba(251,191,36,0.07);
-  border: 1px solid rgba(251,191,36,0.2);
+  background: color-mix(in srgb, var(--pista) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pista) 20%, transparent);
   border-radius: 10px;
   padding: 0.8rem 1rem;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1rem;
-  color: rgba(251,191,36,0.95);
+  color: color-mix(in srgb, var(--pista) 95%, transparent);
   margin-bottom: 0.8rem;
   line-height: 1.5;
 }
 
 .solucion-explicacion {
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.7);
+  color: var(--mas-tenue);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
@@ -1355,14 +1449,14 @@ footer {
   background: none; border: none; cursor: pointer;
   font-family: 'DM Mono', monospace; font-size: 0.62rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: color-mix(in srgb, var(--text) 45%, transparent);
   transition: color 0.2s;
 }
-.plegar:hover { color: #22D3EE; }
-.plegar:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; border-radius: 6px; }
+.plegar:hover { color: var(--cyan); }
+.plegar:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
 .plegar-chevron {
   display: inline-block; font-size: 1.05rem; line-height: 1;
-  color: #D946EF; transition: transform 0.25s ease;
+  color: var(--magenta); transition: transform 0.25s ease;
 }
 .plegar:hover .plegar-chevron { filter: brightness(1.25); }
 body.compacto .plegar-chevron { transform: rotate(180deg); }
@@ -1390,7 +1484,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--cyan);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -1491,26 +1585,26 @@ summary:focus-visible,
         <h4>Convenciones</h4>
         <table class="conv-table">
           <tr><td colspan="2" class="conv-group">Sintagmas</td></tr>
-          <tr><td style="color:var(--sustantivo)">SN</td><td>Sintagma Nominal</td></tr>
-          <tr><td style="color:var(--verbo)">SV</td><td>Sintagma Verbal</td></tr>
-          <tr><td style="color:var(--adjetivo)">SAdj</td><td>Sintagma Adjetival</td></tr>
-          <tr><td style="color:var(--adverbio)">SAdv</td><td>Sintagma Adverbial</td></tr>
-          <tr><td style="color:var(--preposicion)">SPrep</td><td>Sintagma Preposicional</td></tr>
+          <tr><td style="color:var(--sustantivo-texto)">SN</td><td>Sintagma Nominal</td></tr>
+          <tr><td style="color:var(--verbo-texto)">SV</td><td>Sintagma Verbal</td></tr>
+          <tr><td style="color:var(--adjetivo-texto)">SAdj</td><td>Sintagma Adjetival</td></tr>
+          <tr><td style="color:var(--adverbio-texto)">SAdv</td><td>Sintagma Adverbial</td></tr>
+          <tr><td style="color:var(--preposicion-texto)">SPrep</td><td>Sintagma Preposicional</td></tr>
           <tr><td colspan="2" class="conv-group">Funciones del predicado</td></tr>
-          <tr><td style="color:var(--cd)">CD</td><td>Complemento Directo</td></tr>
-          <tr><td style="color:var(--ci)">CI</td><td>Complemento Indirecto</td></tr>
-          <tr><td style="color:var(--cc)">CC</td><td>Complemento Circunstancial</td></tr>
-          <tr><td style="color:var(--cc)">CCT/CCL/CCM</td><td>Tiempo / Lugar / Modo</td></tr>
-          <tr><td style="color:var(--creg)">CRég</td><td>Complemento de Régimen</td></tr>
-          <tr><td style="color:var(--cpred)">CPred</td><td>Complemento Predicativo</td></tr>
-          <tr><td style="color:var(--cag)">CAg</td><td>Complemento Agente</td></tr>
-          <tr><td style="color:var(--atributo)">Atr</td><td>Atributo</td></tr>
+          <tr><td style="color:var(--cd-texto)">CD</td><td>Complemento Directo</td></tr>
+          <tr><td style="color:var(--ci-texto)">CI</td><td>Complemento Indirecto</td></tr>
+          <tr><td style="color:var(--cc-texto)">CC</td><td>Complemento Circunstancial</td></tr>
+          <tr><td style="color:var(--cc-texto)">CCT/CCL/CCM</td><td>Tiempo / Lugar / Modo</td></tr>
+          <tr><td style="color:var(--creg-texto)">CRég</td><td>Complemento de Régimen</td></tr>
+          <tr><td style="color:var(--cpred-texto)">CPred</td><td>Complemento Predicativo</td></tr>
+          <tr><td style="color:var(--cag-texto)">CAg</td><td>Complemento Agente</td></tr>
+          <tr><td style="color:var(--atributo-texto)">Atr</td><td>Atributo</td></tr>
           <tr><td colspan="2" class="conv-group">Complementos del nombre</td></tr>
-          <tr><td style="color:var(--cn)">CN</td><td>Complemento del Nombre</td></tr>
+          <tr><td style="color:var(--cn-texto)">CN</td><td>Complemento del Nombre</td></tr>
           <tr><td colspan="2" class="conv-group">Oraciones subordinadas</td></tr>
-          <tr><td style="color:var(--conjuncion)">Sub. Sust.</td><td>Subordinada Sustantiva</td></tr>
-          <tr><td style="color:var(--pronombre)">Sub. Adj.</td><td>Subordinada Adjetiva</td></tr>
-          <tr><td style="color:var(--adverbio)">Sub. Adv.</td><td>Subordinada Adverbial</td></tr>
+          <tr><td style="color:var(--conjuncion-texto)">Sub. Sust.</td><td>Subordinada Sustantiva</td></tr>
+          <tr><td style="color:var(--pronombre-texto)">Sub. Adj.</td><td>Subordinada Adjetiva</td></tr>
+          <tr><td style="color:var(--adverbio-texto)">Sub. Adv.</td><td>Subordinada Adverbial</td></tr>
         </table>
       </div>
 
@@ -1594,7 +1688,7 @@ summary:focus-visible,
 
     <div class="about-section">
       <h3>Formato YAML para oraciones propias</h3>
-      <p style="margin-bottom:0.8rem;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:0.7rem 0.9rem">💡 <strong>Tip:</strong> El formato YAML es ideal para generarlo con un chatbot. Usa este prompt:</p>
+      <p style="margin-bottom:0.8rem;background:color-mix(in srgb, var(--acierto) 6%, transparent);border:1px solid color-mix(in srgb, var(--acierto) 20%, transparent);border-radius:8px;padding:0.7rem 0.9rem">💡 <strong>Tip:</strong> El formato YAML es ideal para generarlo con un chatbot. Usa este prompt:</p>
       <div class="about-code" style="margin-bottom:1rem"><span class="yaml-comment">Genera X oraciones nuevas para este formato YAML de análisis morfosintáctico.</span>
 <span class="yaml-comment">Reglas:</span>
 <span class="yaml-comment">- Usa frases totalmente distintas entre sí.</span>
@@ -1609,7 +1703,7 @@ summary:focus-visible,
 <span class="yaml-comment">3 = estructuras un poco más complejas</span>
 <span class="yaml-comment">4 = subordinadas o estructuras complejas</span>
 <span class="yaml-comment">Devuelve solo YAML listo para pegar.</span></div>
-      <p>Puedes personalizar la guía de resolución con tus propias frases. Descarga el YAML plantilla desde <a href="https://github.com/V0raOnline/happypuking-lab" target="_blank" style="color:var(--green-lab);text-decoration:none;font-weight:700">github.com/V0raOnline/happypuking-lab</a> y edítalo siguiendo esta estructura:</p>
+      <p>Puedes personalizar la guía de resolución con tus propias frases. Descarga el YAML plantilla desde <a href="https://github.com/V0raOnline/happypuking-lab" target="_blank" style="color: var(--green-lab-texto);text-decoration:none;font-weight:700">github.com/V0raOnline/happypuking-lab</a> y edítalo siguiendo esta estructura:</p>
       <div class="about-code"><span class="yaml-key">oraciones</span>:
   - <span class="yaml-key">id</span>: <span class="yaml-val">1</span>              <span class="yaml-comment"># un id único por frase</span>
     <span class="yaml-key">nivel</span>: <span class="yaml-val">1</span>           <span class="yaml-comment"># nivel de dificultad (1–4)</span>
@@ -2428,7 +2522,7 @@ function construirLeyenda() {
     const nombre = cat.charAt(0).toUpperCase() + cat.slice(1);
     return `<div class="leyenda-item">
       <div class="leyenda-dot" style="background:${color}"></div>
-      <span style="color:rgba(255,255,255,0.75)">${nombre}</span>
+      <span style="color: var(--tenue)">${nombre}</span>
     </div>`;
   }).join('');
 }
@@ -3035,5 +3129,9 @@ init();
   <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
 </footer>
 
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>

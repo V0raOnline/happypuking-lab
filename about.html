@@ -41,6 +41,38 @@
   --muted: #8880a0;
   --border: rgba(255,255,255,0.07);
   --green: #39ff6a;
+  /* El enlace tiene token propio: --green es el acento de Biologia en
+     el catalogo, y usarlo tambien para enlaces hacia creer que el color
+     significaba materia cuando no significaba nada. */
+  --enlace: #3fd3e0;
+  --focus: #22D3EE;
+  /* El halo va con position:fixed, o sea pegado al viewport: no es un
+     adorno de la cabecera, te sigue toda la pagina. Sobre negro lee como
+     brillo ambiental; sobre papel se queda como una mancha que persigue
+     al ojo. En claro se apaga. */
+  --halo-op: 1;
+  --grano-op: 1;
+}
+
+/* Modo claro. Misma paleta de referencia que styles.css y que nd/: papel
+   calido, no blanco, y el magenta oscurecido para que llegue a contraste.
+   Esta pagina define diez tokens y los diez estaban ya en la referencia,
+   asi que aqui no hubo nada que reelegir — se pega y funciona. */
+:root[data-theme="light"] {
+  --bg: #e7e0d6;
+  --surface: #f4ede3;
+  --surface2: #e8ddd0;
+  --magenta: #9e1b5f;
+  --magenta-glow: rgba(158,27,95,0.16);
+  --magenta-soft: rgba(158,27,95,0.08);
+  --text: #211825;
+  --muted: #695e6c;
+  --border: rgba(58,33,52,0.14);
+  --green: #117143;
+  --enlace: #106679;
+  --focus: #0d6b84;
+  --halo-op: 0;
+  --grano-op: 0.45;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -60,6 +92,7 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 0;
+  opacity: var(--grano-op);
 }
 
 body::after {
@@ -70,7 +103,8 @@ body::after {
   transform: translateX(-50%);
   width: 600px;
   height: 400px;
-  background: radial-gradient(ellipse, rgba(212,0,106,0.15) 0%, transparent 70%);
+  opacity: var(--halo-op);
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--magenta) 15%, transparent) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -125,7 +159,7 @@ body::after {
   font-size: 4rem;
   margin-bottom: 1rem;
   display: block;
-  filter: drop-shadow(0 0 24px rgba(212,0,106,0.4));
+  filter: drop-shadow(0 0 24px color-mix(in srgb, var(--magenta) 40%, transparent));
 }
 
 .hero-title {
@@ -185,7 +219,7 @@ body::after {
 .section p {
   font-size: 1rem;
   line-height: 1.8;
-  color: rgba(240,238,255,0.8);
+  color: color-mix(in srgb, var(--text) 80%, transparent);
   margin-bottom: 1rem;
 }
 
@@ -255,7 +289,7 @@ body::after {
 }
 
 .collab-card a {
-  color: var(--green);
+  color: var(--enlace);
   text-decoration: none;
   font-weight: 600;
 }
@@ -272,7 +306,7 @@ footer {
   color: var(--muted);
 }
 
-footer strong { color: rgba(240,238,255,0.6); }
+footer strong { color: color-mix(in srgb, var(--text) 60%, transparent); }
 
 @media (max-width: 600px) {
   .nav-brand { display: none; }
@@ -292,11 +326,21 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #22D3EE;
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
   border-radius: 4px;
 }
 </style>
+<!-- Tema antes de pintar. Va inline y sin dependencias a proposito: si de
+     esto se encargara lab.js habria un parpadeo oscuro en cada carga, y una
+     copia suelta de este fichero perderia el tema guardado. Son seis lineas
+     que se quedan aqui para que el chasis pueda irse fuera. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
 </head>
 <body>
 <div class="wrap">
@@ -308,7 +352,7 @@ summary:focus-visible,
 
   <!-- HERO -->
   <div class="hero">
-    <img src="./assets/HappyPuking.jpeg" alt="hAppYpUkIng logo" style="width:180px;height:180px;object-fit:cover;border-radius:50%;margin-bottom:1.5rem;filter:drop-shadow(0 0 24px rgba(212,0,106,0.4))">
+    <img src="./assets/HappyPuking.jpeg" alt="hAppYpUkIng logo" style="width:180px;height:180px;object-fit:cover;border-radius:50%;margin-bottom:1.5rem;filter:drop-shadow(0 0 24px color-mix(in srgb, var(--magenta) 40%, transparent))">
     <h1 class="hero-title">
       h<span class="accent">A</span>pp<span class="accent">Y</span>p<span class="accent">U</span>k<span class="accent">I</span>ng
     </h1>
@@ -395,7 +439,7 @@ summary:focus-visible,
       El conocimiento que atiende a quien el sistema ya dejó atrás no puede estar detrás de un muro de pago. Si algo de lo que hay aquí le sirve a un alumno, a un docente o a una familia — eso ya justifica todo el tiempo invertido.
     </p>
     <p>
-      El código es abierto en <a href="https://github.com/V0raOnline/happypuking-lab" style="color:var(--green);font-weight:600;text-decoration:none">GitHub</a> con licencia CC BY-NC-SA 4.0. Úsalo, adáptalo, mejóralo. Cita la fuente.
+      El código es abierto en <a href="https://github.com/V0raOnline/happypuking-lab" style="color:var(--enlace);font-weight:600;text-decoration:none">GitHub</a> con licencia CC BY-NC-SA 4.0. Úsalo, adáptalo, mejóralo. Cita la fuente.
     </p>
   </div>
 
@@ -450,7 +494,7 @@ summary:focus-visible,
     </div>
 
     <p style="margin-top:1.5rem">
-      Contacto directo: <a href="mailto:h4ppypuk1ng@gmail.com" style="color:var(--green);font-weight:600;text-decoration:none">h4ppypuk1ng@gmail.com</a>
+      Contacto directo: <a href="mailto:h4ppypuk1ng@gmail.com" style="color:var(--enlace);font-weight:600;text-decoration:none">h4ppypuk1ng@gmail.com</a>
     </p>
   </div>
 
@@ -460,5 +504,9 @@ summary:focus-visible,
   </footer>
 
 </div>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="lab.js"></script>
 </body>
 </html>

@@ -26,6 +26,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
 </head>
 <body>
 
@@ -74,7 +83,7 @@
     <!-- Bottom row: shared + diff side by side -->
     <div class="bottom-row">
       <div class="panel-box" id="panel-shared" style="display:none">
-        <h3><span class="dot" style="background:#FFD700"></span> En común</h3>
+        <h3><span class="dot" style="background:var(--dorado)"></span> En común</h3>
         <div class="tag-list" id="shared-tags"></div>
       </div>
       <div class="panel-box" id="panel-diff" style="display:none">
@@ -136,7 +145,7 @@ const DATA = {
   moneras: {
     label: 'Moneras',
     emoji: '🦠',
-    color: '#3B82F6',
+    color: 'var(--moneras)',
     celula: 'Procariota',
     ncelulas: 'Unicelular',
     nutricion: 'Autótrofa / Heterótrofa',
@@ -151,7 +160,7 @@ const DATA = {
   protistas: {
     label: 'Protistas',
     emoji: '🔬',
-    color: '#10B981',
+    color: 'var(--protistas)',
     celula: 'Eucariota',
     ncelulas: 'Principalmente unicelular',
     nutricion: 'Autótrofa / Heterótrofa',
@@ -166,7 +175,7 @@ const DATA = {
   hongos: {
     label: 'Hongos',
     emoji: '🍄',
-    color: '#F59E0B',
+    color: 'var(--hongos)',
     celula: 'Eucariota',
     ncelulas: 'Uni / Pluricelular',
     nutricion: 'Heterótrofa (absorción)',
@@ -181,7 +190,7 @@ const DATA = {
   animales: {
     label: 'Animales',
     emoji: '🐾',
-    color: '#EF4444',
+    color: 'var(--animales)',
     celula: 'Eucariota',
     ncelulas: 'Pluricelular',
     nutricion: 'Heterótrofa (ingestión)',
@@ -196,7 +205,7 @@ const DATA = {
   plantas: {
     label: 'Plantas',
     emoji: '🌿',
-    color: '#8B5CF6',
+    color: 'var(--plantas)',
     celula: 'Eucariota',
     ncelulas: 'Pluricelular',
     nutricion: 'Autótrofa (fotosíntesis)',
@@ -305,7 +314,7 @@ function drawVenn() {
     text.setAttribute('x', p.cx);
     text.setAttribute('y', p.cy - 8);
     text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('fill', isSelected ? d.color : '#6B7280');
+    text.setAttribute('fill', isSelected ? d.color : 'var(--muted2)');
     text.setAttribute('font-family', 'Nunito, sans-serif');
     text.setAttribute('font-weight', '900');
     text.setAttribute('font-size', '13');
@@ -316,7 +325,7 @@ function drawVenn() {
     text2.setAttribute('x', p.cx);
     text2.setAttribute('y', p.cy + 10);
     text2.setAttribute('text-anchor', 'middle');
-    text2.setAttribute('fill', isSelected ? d.color : '#6B7280');
+    text2.setAttribute('fill', isSelected ? d.color : 'var(--muted2)');
     text2.setAttribute('font-family', 'Nunito, sans-serif');
     text2.setAttribute('font-weight', '900');
     text2.setAttribute('font-size', '11');
@@ -327,7 +336,7 @@ function drawVenn() {
     compTxt.setAttribute('x', p.cx);
     compTxt.setAttribute('y', p.cy + 26);
     compTxt.setAttribute('text-anchor', 'middle');
-    compTxt.setAttribute('fill', isSelected ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)');
+    compTxt.setAttribute('fill', isSelected ? 'var(--nivel-on)' : 'var(--nivel-off)');
     compTxt.setAttribute('font-family', 'DM Mono, monospace');
     compTxt.setAttribute('font-size', '9');
     compTxt.textContent = `nivel ${d.complejidad}`;
@@ -353,7 +362,7 @@ function drawVenn() {
       const line = document.createElementNS('http://www.w3.org/2000/svg','line');
       line.setAttribute('x1', p.cx); line.setAttribute('y1', p.cy + p.r + 4);
       line.setAttribute('x2', mx);   line.setAttribute('y2', iy - 14);
-      line.setAttribute('stroke', '#FFD700');
+      line.setAttribute('stroke', 'var(--dorado)');
       line.setAttribute('stroke-width', '1');
       line.setAttribute('stroke-opacity', '0.3');
       line.setAttribute('stroke-dasharray', '3 3');
@@ -366,9 +375,9 @@ function drawVenn() {
     pill.setAttribute('x', mx - pillW/2); pill.setAttribute('y', iy - pillH/2);
     pill.setAttribute('width', pillW); pill.setAttribute('height', pillH);
     pill.setAttribute('rx', '13');
-    pill.setAttribute('fill', '#FFD700');
+    pill.setAttribute('fill', 'var(--dorado)');
     pill.setAttribute('fill-opacity', shared.length ? '0.15' : '0.06');
-    pill.setAttribute('stroke', '#FFD700');
+    pill.setAttribute('stroke', 'var(--dorado)');
     pill.setAttribute('stroke-width', '1');
     pill.setAttribute('stroke-opacity', shared.length ? '0.55' : '0.2');
     svg.appendChild(pill);
@@ -378,7 +387,7 @@ function drawVenn() {
     cnt.setAttribute('x', mx); cnt.setAttribute('y', iy);
     cnt.setAttribute('text-anchor','middle');
     cnt.setAttribute('dominant-baseline','central');
-    cnt.setAttribute('fill', '#FFD700');
+    cnt.setAttribute('fill', 'var(--dorado)');
     cnt.setAttribute('font-family','DM Mono, monospace');
     cnt.setAttribute('font-size','12');
     cnt.setAttribute('font-weight','700');
@@ -516,5 +525,9 @@ document.querySelectorAll('.btn-reino').forEach(b => {
 
 drawVenn();
 </script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>

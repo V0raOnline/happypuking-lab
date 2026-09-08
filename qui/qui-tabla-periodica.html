@@ -26,6 +26,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
 </head>
 <body>
 
@@ -143,16 +152,16 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   pinta();
 })();
 const CATS = {
-  'metal-alcalino':       { label: 'Metal alcalino',        color: '#EF4444' },
-  'metal-alcalinoterreo': { label: 'Metal alcalinotérreo',  color: '#F97316' },
-  'metal-transicion':     { label: 'Metal de transición',   color: '#3B82F6' },
-  'metal-postransicion':  { label: 'Metal pos-transición',  color: '#6366F1' },
-  'metaloide':            { label: 'Metaloide',             color: '#10B981' },
-  'no-metal':             { label: 'No metal',              color: '#F59E0B' },
-  'halogeno':             { label: 'Halógeno',              color: '#EC4899' },
-  'gas-noble':            { label: 'Gas noble',             color: '#8B5CF6' },
-  'lantanido':            { label: 'Lantánido',             color: '#06B6D4' },
-  'actinido':             { label: 'Actínido',              color: '#84CC16' },
+  'metal-alcalino':       { label: 'Metal alcalino',        color: 'var(--metal-alcalino)' },
+  'metal-alcalinoterreo': { label: 'Metal alcalinotérreo',  color: 'var(--metal-alcalinoterreo)' },
+  'metal-transicion':     { label: 'Metal de transición',   color: 'var(--metal-transicion)' },
+  'metal-postransicion':  { label: 'Metal pos-transición',  color: 'var(--metal-postransicion)' },
+  'metaloide':            { label: 'Metaloide',             color: 'var(--metaloide)' },
+  'no-metal':             { label: 'No metal',              color: 'var(--no-metal)' },
+  'halogeno':             { label: 'Halógeno',              color: 'var(--halogeno)' },
+  'gas-noble':            { label: 'Gas noble',             color: 'var(--gas-noble)' },
+  'lantanido':            { label: 'Lantánido',             color: 'var(--lantanido)' },
+  'actinido':             { label: 'Actínido',              color: 'var(--actinido)' },
 };
 
 // Full periodic table data
@@ -480,7 +489,7 @@ ELEMENTS.forEach(e => {
   div.tabIndex = -1;                        // rejilla: se entra una vez
   hueco.replaceWith(div);
   cells[key] = div;
-  const color = CATS[cat]?.color || '#888';
+  const color = CATS[cat]?.color || 'var(--cat-defecto)';
   div.className = 'el';
   div.dataset.num = num;
   div.dataset.row = pos.row;
@@ -644,8 +653,8 @@ function addIndicator(row, col, text, color) {
   }
 });
 
-addIndicator(6, 3, '57-71 ↓', '#06B6D4');
-addIndicator(7, 3, '89-103 ↓', '#84CC16');
+addIndicator(6, 3, '57-71 ↓', 'var(--lantanido-texto)');
+addIndicator(7, 3, '89-103 ↓', 'var(--actinido-texto)');
 
 // Select element
 let activeNum = null;
@@ -664,13 +673,45 @@ function selectElement(num) {
   updateModePills(num);
 }
 
+// La ficha arranca vacia, asi que soltar el elemento tiene estado al que
+// volver. Debe seguir igual que el markup de #card en el HTML.
+const CARD_VACIA = `
+      <div class="card-empty">
+        <div class="big-symbol">⚛</div>
+        <p>Selecciona un elemento<br>para ver su ficha</p>
+      </div>`;
+
+// Deshace selectElement.
+function deselectElement() {
+  if (atomAnimId) { cancelAnimationFrame(atomAnimId); atomAnimId = null; }
+  const prev = document.querySelector(`.el[data-num="${activeNum}"]`);
+  if (prev) prev.classList.remove('active');
+  activeNum = null;
+  document.getElementById('card').innerHTML = CARD_VACIA;
+  updateEnPin(null);
+  updateModePills(null);
+}
+
+// Dos cosas distintas encienden una pastilla y se parecen demasiado:
+//   .selected  lectura — "el elemento que has elegido vive en este grupo"
+//   .active    accion  — "he filtrado por este grupo"
+// Si el elemento seleccionado NO pertenece al grupo recien iluminado se queda
+// atenuado y aun asi sigue encendiendo su pastilla: dos encendidas a la vez y
+// ninguna forma de saber cual es cual. Ahi se suelta.
+// Si SI pertenece se conserva: las dos marcas caen en la misma pastilla y ese
+// es justo el momento que interesa ensenar.
+function soltarSiQuedaFuera(grupoDe, filtro) {
+  if (!filtro || activeNum == null) return;
+  if (grupoDe(activeNum) !== filtro) deselectElement();
+}
+
 const SHELL_NAMES = ['K','L','M','N','O','P','Q'];
 
 function renderCard(num) {
   const e = elMap[num];
   if (!e) return;
   const [n, sym, name, mass, cat, group, period, origin, apps] = e;
-  const color = CATS[cat]?.color || '#888';
+  const color = CATS[cat]?.color || 'var(--cat-defecto)';
   const catLabel = CATS[cat]?.label || cat;
   const extra = EXTRA[n] || [[],null];
   const [shells, en] = extra;
@@ -684,7 +725,7 @@ function renderCard(num) {
         <span class="en-scale-label">escala Pauling (0 – 4)</span>
       </div>
       <div class="en-bar-track">
-        <div class="en-bar-fill" id="en-fill" style="width:${enPct}%;background:linear-gradient(90deg,color-mix(in srgb,${color} 40%,#1A1D27),${color})">
+        <div class="en-bar-fill" id="en-fill" style="width:${enPct}%;background:linear-gradient(90deg,color-mix(in srgb,${color} 40%,var(--en-bar-fondo)),${color})">
           <div class="en-bar-thumb" style="background:${color};--accent-col:${color}"></div>
         </div>
       </div>
@@ -821,15 +862,35 @@ function drawAtom(atomicNum, shells, color) {
   const startTime = performance.now();
 
   // Hex to RGB helper
-  function hexToRgb(hex) {
-    const r = parseInt(hex.slice(1,3),16);
-    const g = parseInt(hex.slice(3,5),16);
-    const b = parseInt(hex.slice(5,7),16);
-    return `${r},${g},${b}`;
+  /* El canvas es el unico sitio del lab donde var() no llega: el contexto 2D
+     quiere un color de verdad, no una referencia. Se resuelve pintandolo en
+     un elemento sonda y leyendo lo que calcula el navegador — asi vale para
+     var(), para color-mix() y para un hex pelado, sin saber cual es cual.
+     Antes esto era un hexToRgb que troceaba la cadena, y dejo de funcionar en
+     cuanto los colores pasaron a ser tokens. */
+  function rgbDe(valor) {
+    const sonda = document.createElement('span');
+    sonda.style.cssText = 'display:none';
+    sonda.style.color = valor;
+    document.body.appendChild(sonda);
+    const m = getComputedStyle(sonda).color.match(/[\d.]+/g);
+    sonda.remove();
+    return m ? `${Math.round(m[0])},${Math.round(m[1])},${Math.round(m[2])}` : '136,136,136';
   }
-  const rgb = hexToRgb(color);
+
+  /* Se recalcula solo al cambiar de tema, no en cada fotograma. */
+  let temaVisto = null, rgb = null, colorReal = color;
+  function refrescarColor() {
+    const t = document.documentElement.getAttribute('data-theme') || 'dark';
+    if (t === temaVisto) return;
+    temaVisto = t;
+    rgb = rgbDe(color);
+    colorReal = `rgb(${rgb})`;
+  }
+  refrescarColor();
 
   function frame(ts) {
+    refrescarColor();
     const elapsed = (ts - startTime) / 1000;
     ctx.clearRect(0, 0, W, H);
 
@@ -854,7 +915,7 @@ function drawAtom(atomicNum, shells, color) {
     ctx.stroke();
 
     // Atomic number label inside nucleus
-    ctx.fillStyle = color;
+    ctx.fillStyle = colorReal;
     ctx.font = `bold ${Math.max(8, Math.min(13, minR * 0.85))}px 'DM Mono', monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -892,7 +953,7 @@ function drawAtom(atomicNum, shells, color) {
         // Electron dot
         ctx.beginPath();
         ctx.arc(ex, ey, 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = color;
+        ctx.fillStyle = colorReal;
         ctx.fill();
       }
 
@@ -932,6 +993,7 @@ function filterCat(cat) {
       l.style.opacity = l.dataset.cat === cat ? '1' : '0.35';
     });
   }
+  soltarSiQuedaFuera(n => elMap[n] && elMap[n][4], activeFilter);
 }
 
 // ── View mode: categorías ↔ electronegatividad ↔ valencia ──
@@ -960,14 +1022,14 @@ function valElectrons(num) {
   return filled.length ? filled[filled.length - 1] : null;
 }
 
-const VAL_COLORS = {1:'#EF4444',2:'#F97316',3:'#FBBF24',4:'#4ADE80',5:'#2DD4BF',6:'#3B82F6',7:'#A78BFA'};
-const VAL_COMPLETE = '#E2E8F0'; // capa llena: gases nobles (incluido He, con la K llena a 2)
+const VAL_COLORS = {1:'var(--val-1)',2:'var(--val-2)',3:'var(--val-3)',4:'var(--val-4)',5:'var(--val-5)',6:'var(--val-6)',7:'var(--val-7)'};
+const VAL_COMPLETE = 'var(--val-completa)'; // capa llena: gases nobles (incluido He, con la K llena a 2)
 
 function valColor(num) {
   const e = elMap[num];
   if (e && e[4] === 'gas-noble') return VAL_COMPLETE;
   const v = valElectrons(num);
-  return VAL_COLORS[v] || '#888';
+  return VAL_COLORS[v] || 'var(--cat-defecto)';
 }
 
 // Chips de la leyenda de valencia — accionables: iluminan el grupo completo
@@ -1022,6 +1084,7 @@ function filterVal(key) {
     if (activeValFilter === null) { el.classList.remove('dimmed'); return; }
     el.classList.toggle('dimmed', valGroupOf(parseInt(el.dataset.num)) !== activeValFilter);
   });
+  soltarSiQuedaFuera(valGroupOf, activeValFilter);
 }
 
 let viewMode = 'cat';
@@ -1055,7 +1118,7 @@ function setViewMode(mode) {
     } else if (mode === 'val' && !el.classList.contains('val-nodata')) {
       el.style.setProperty('--cat-color', valColor(num));
     } else {
-      el.style.setProperty('--cat-color', CATS[el.dataset.cat]?.color || '#888');
+      el.style.setProperty('--cat-color', CATS[el.dataset.cat]?.color || 'var(--cat-defecto)');
     }
   });
   updateEnPin(activeNum);      // restaura el pin si ya había un elemento seleccionado
@@ -1085,7 +1148,7 @@ function updateModePills(num) {
 
   const e = num != null ? elMap[num] : null;
   if (!e) return;
-  const color = CATS[e[4]]?.color || '#888';
+  const color = CATS[e[4]]?.color || 'var(--cat-defecto)';
 
   let pill = null, dato = '';
   if (viewMode === 'cat') {
@@ -1139,5 +1202,9 @@ document.getElementById('search').addEventListener('input', function() {
   if (first) selectElement(first[0]);
 });
 </script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>

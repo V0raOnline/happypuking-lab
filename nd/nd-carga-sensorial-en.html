@@ -25,6 +25,14 @@
 <meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
 :root {
   --bg: #09080d;
@@ -52,7 +60,7 @@
   --ambient-glow: radial-gradient(ellipse, rgba(212,0,106,0.12) 0%, transparent 70%);
 }
 
-body[data-theme="light"] {
+:root[data-theme="light"] {
   --bg: #e7e0d6;
   --surface: #f4ede3;
   --surface2: #e8ddd0;
@@ -1096,11 +1104,8 @@ summary:focus-visible,
   <h1>Sensory <span>Load Model</span></h1>
   <p class="subtitle">An explanatory tool about how sensory pre-filtering works and why it gets overwhelmed. Not a test, not a diagnosis - it's for understanding and explaining.</p>
   <div class="divider-line"></div>
-  <div class="header-meta">
-    <button class="theme-btn" id="theme-toggle" type="button" aria-pressed="false" onclick="toggleTheme()">
-      <span class="theme-btn-indicator" aria-hidden="true"></span>
-      <span id="theme-toggle-label">Light mode</span>
-    </button>
+  <!-- lab.js monta aqui el conmutador de tema, al lado del de idioma. -->
+  <div class="header-meta" data-lab-chasis>
     <button class="theme-btn" id="language-toggle" type="button" title="Switch to Spanish" onclick="window.location.href='nd-carga-sensorial.html'">
       <span class="theme-btn-indicator" aria-hidden="true"></span>
       <span>ES</span>
@@ -1726,36 +1731,13 @@ updateBurnoutDisplay();
 <script>
 var currentActiveLoad = 0;
 var effectiveReserve = 100;
-var themeKey = 'sensory-overload-theme-en';
 
 function clampPct(value) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
-function setTheme(theme) {
-  document.body.setAttribute('data-theme', theme);
-  try { localStorage.setItem(themeKey, theme); } catch (e) {}
-  var label = document.getElementById('theme-toggle-label');
-  var button = document.getElementById('theme-toggle');
-  if (label) label.textContent = theme === 'light' ? 'Dark mode' : 'Light mode';
-  if (button) {
-    button.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
-    button.setAttribute('title', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
-  }
-  if (typeof update === 'function') update();
-}
 
-function toggleTheme() {
-  var nextTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-  setTheme(nextTheme);
-}
 
-function initTheme() {
-  var storedTheme = null;
-  try { storedTheme = localStorage.getItem(themeKey); } catch (e) {}
-  var preferredLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-  setTheme(storedTheme || (preferredLight ? 'light' : 'dark'));
-}
 
 function getEffectiveReserve(baseReserve, loadPct) {
   return clampPct(baseReserve - loadPct * 0.58);
@@ -1996,7 +1978,6 @@ function update() {
   updateBurnoutDisplay();
 }
 
-initTheme();
 update();
 var isolationBtn = document.querySelectorAll('.burnout-btn.recharge-btn')[0];
 if (isolationBtn) {
@@ -2011,6 +1992,10 @@ if (movementBtn) {
   movementBtn.setAttribute('onclick', 'applyMovement()');
 }
 </script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
 </body>
 </html>
 
