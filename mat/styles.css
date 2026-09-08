@@ -37,6 +37,7 @@
     --panel-alto: #2e324d;
     --sombra-fuerte: rgba(0,0,0,0.5);
     --grano-op: 1;
+  --green-lab-texto: var(--green-lab);
 
     /* Paleta de fila: cicla por franja y pinta TEXTO, asi que sobre
        papel los diez tienen que bajar o no se leen. */
@@ -79,6 +80,7 @@
     --panel-alto: #ded3c5;
     --sombra-fuerte: rgba(76,47,63,0.22);
     --grano-op: 0.45;
+  --green-lab-texto: color-mix(in srgb, var(--green-lab) 40%, var(--text));
 
     --fila-1: color-mix(in srgb, #818cf8 42%, var(--text));
     --fila-2: color-mix(in srgb, #34d399 42%, var(--text));
@@ -733,7 +735,7 @@
   .conq-input:disabled { opacity: 0.6; }
   .conq-check {
     font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700;
-    color: var(--green-lab); background: color-mix(in srgb, var(--green-lab) 12%, transparent);
+    color: var(--green-lab-texto); background: color-mix(in srgb, var(--green-lab) 12%, transparent);
     border: 2px solid var(--green-lab); border-radius: 10px; padding: 0.6rem 1rem;
     cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
   }
@@ -751,7 +753,7 @@
     min-height: 2.4rem; margin-top: 0.7rem;
     font-size: 0.8rem; line-height: 1.5; text-align: center;
   }
-  .conq-feedback.ok { color: var(--green-lab); }
+  .conq-feedback.ok { color: var(--green-lab-texto); }
   .conq-feedback.ko { color: var(--red); }
   .conq-feedback strong { font-weight: 700; }
   .conq-done { display: none; text-align: center; }
@@ -1218,7 +1220,7 @@ body.esperando-salida .btn-vamos {
   padding: 0.75rem 1rem;
   font-family: 'Nunito', sans-serif;
   font-size: 1.05rem; font-weight: 800; letter-spacing: 0.02em;
-  color: var(--green-lab);
+  color: var(--green-lab-texto);
   background: color-mix(in srgb, var(--green-lab) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--green-lab) 45%, transparent);
   border-radius: 12px;

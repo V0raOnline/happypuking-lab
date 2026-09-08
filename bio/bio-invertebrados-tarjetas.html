@@ -446,7 +446,7 @@ body::before {
     padding: 2px 6px;
     border-radius: 2px;
     border: 1px solid currentColor;
-    opacity: 0.5;
+    opacity: 0.85;
   }
 
   /* ── CARA FRONTAL — FIRMA ── */
@@ -1155,15 +1155,17 @@ function getColor(id) {
 
 function makeFirmaCard(g) {
   const color = g.color;
+  // El mismo tono para figura; su version legible para texto.
+  const colorTexto = color.replace(/\)$/, '-texto)');
   return `
     <div class="card-face firma-face">
       <div class="card-band" style="background:${color}"></div>
       <div class="card-meta">
         <span class="card-num">#0${g.numero}</span>
-        <span class="card-type-badge" style="color:${color}">Firma</span>
+        <span class="card-type-badge" style="color:${colorTexto}">Firma</span>
       </div>
       <div class="firma-emoji">${g.emoji}</div>
-      <div class="firma-nombre" style="color:${color}">${g.nombre}</div>
+      <div class="firma-nombre" style="color:${colorTexto}">${g.nombre}</div>
       <div class="firma-id">Invertebrado · Grupo ${g.numero}</div>
       <ul class="firma-rasgos">
         ${g.firma.rasgos_clave.map(r => `
@@ -1186,7 +1188,7 @@ function makeFirmaCard(g) {
       <div class="card-band" style="background:${color}"></div>
       <div class="vital-header">
         <span class="vital-emoji">${g.emoji}</span>
-        <span class="vital-nombre" style="color:${color}">${g.nombre}</span>
+        <span class="vital-nombre" style="color:${colorTexto}">${g.nombre}</span>
       </div>
       <div class="vital-sections">
         <div class="vital-section">
@@ -1213,6 +1215,8 @@ function makeFirmaCard(g) {
 
 function makeDetectiveCards(g) {
   const color = g.color;
+  // El mismo tono para figura; su version legible para texto.
+  const colorTexto = color.replace(/\)$/, '-texto)');
   return g.tarjetas_detective.map(t => `
     <div class="card-face detective-face">
       <!-- Ni el nombre del grupo ni su color en la cara de delante: la pregunta
@@ -1227,7 +1231,7 @@ function makeDetectiveCards(g) {
     <div class="card-face card-back det-respuesta-face">
       <div class="card-band" style="background:${color}"></div>
       <div class="det-resp-label">Soy un…</div>
-      <div class="det-resp-answer" style="color:${color}">${t.respuesta}</div>
+      <div class="det-resp-answer" style="color:${colorTexto}">${t.respuesta}</div>
       <div class="det-resp-emoji">${g.emoji}</div>
       <div class="det-resp-pista-recap">"${t.pista}"</div>
     </div>`);
@@ -1235,6 +1239,8 @@ function makeDetectiveCards(g) {
 
 function makeIntrusoCards(g) {
   const color = g.color;
+  // El mismo tono para figura; su version legible para texto.
+  const colorTexto = color.replace(/\)$/, '-texto)');
   return g.intrusos.map(t => {
     const esError = !!t.error;
     const veredictoText = esError ? '⚠ Aquí hay un error' : '✓ Esta es correcta';
@@ -1262,13 +1268,15 @@ function makeIntrusoCards(g) {
 
 function makePoderCard(g) {
   const color = g.color;
+  // El mismo tono para figura; su version legible para texto.
+  const colorTexto = color.replace(/\)$/, '-texto)');
   const p = g.carta_poder;
   return `
     <div class="card-face poder-face">
       <div class="card-band" style="background:${color}"></div>
       <div class="poder-title-row">
         <span class="poder-emoji">${g.emoji}</span>
-        <span class="poder-nombre" style="color:${color}">${g.nombre}</span>
+        <span class="poder-nombre" style="color:${colorTexto}">${g.nombre}</span>
       </div>
       <div class="poder-stats">
         <div class="poder-stat">

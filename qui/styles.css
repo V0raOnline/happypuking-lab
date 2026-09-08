@@ -44,6 +44,9 @@
   --pista: #FBBF24;
   --sombra-base: #000;
   --grano-op: 1;
+  --masa: color-mix(in srgb, var(--text) 25%, transparent);
+  --lantanido-texto: var(--lantanido);
+  --actinido-texto: var(--actinido);
   --acierto-texto: var(--acierto);
   --error-texto: var(--error);
   --no-metal-texto: var(--no-metal);
@@ -81,6 +84,9 @@
   --en-bar-fondo: #ded3c5;
   --cat-defecto: #6f6472;
   --grano-op: 0.45;
+  --masa: #675c6c;
+  --lantanido-texto: color-mix(in srgb, var(--lantanido) 40%, var(--text));
+  --actinido-texto: color-mix(in srgb, var(--actinido) 40%, var(--text));
   --acierto-texto: color-mix(in srgb, var(--acierto) 40%, var(--text));
   --error-texto: color-mix(in srgb, var(--error) 40%, var(--text));
   --no-metal-texto: color-mix(in srgb, var(--no-metal) 40%, var(--text));
@@ -252,6 +258,21 @@ header {
 .el { --cat-color-texto: var(--cat-color, var(--text)); }
 .card-header, .card, .info-panel { --accent-texto: var(--accent, var(--magenta)); }
 
+/* La derivacion clara faltaba: el hueco se abrio en el paso 2 y nunca se
+   relleno, asi que sobre papel los 118 simbolos de elemento salian con el
+   color crudo de su categoria — #F59E0B sobre #f4ede3 son 2:1.
+
+   Van aqui y no en :root porque --cat-color y --accent los pone el JS por
+   elemento: en :root no existen y el color-mix quedaria invalido. */
+:root[data-theme="light"] .el {
+  --cat-color-texto: color-mix(in srgb, var(--cat-color, var(--text)) 42%, var(--text));
+}
+:root[data-theme="light"] .card-header,
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .info-panel {
+  --accent-texto: color-mix(in srgb, var(--accent, var(--magenta)) 45%, var(--text));
+}
+
 .el::before {
   content:'';
   position:absolute; inset:0;
@@ -296,7 +317,7 @@ header {
 .el-mass {
   font-family: 'DM Mono', monospace;
   font-size: 0.4rem;
-  color: color-mix(in srgb, var(--text) 25%, transparent);
+  color: var(--masa);
   line-height: 1;
 }
 

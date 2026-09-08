@@ -19,6 +19,10 @@
     --surface: #0f160f;
     --surface2: #141e14;
     --border: color-mix(in srgb, var(--glow) 10%, transparent);
+    --titulo-a: var(--glow);
+    --titulo-b: var(--glow2);
+    --titulo-halo: 25%;
+    --sobre-vivo: #080d08;
   }
 
   /* ── MODO CLARO ───────────────────────────────────────────────────────
@@ -38,6 +42,13 @@
     --magenta: #9c22b0;
     --cian: #0a6d7c;
     --grano-op: 0.45;
+    /* El titular va en degradado recortado sobre las letras. Sobre papel
+       los dos neon crudos no se leen: se gritan. Y un halo verde encima
+       de verde oscuro solo emborrona, asi que se apaga. */
+    --titulo-a: #206632;
+    --titulo-b: #426636;
+    --titulo-halo: 0%;
+    --sobre-vivo: #0d1a10;
   }
 
   /* ── EL COLOR NO PUEDE HACER DOS TRABAJOS ────────────────────────────────
@@ -165,7 +176,7 @@
   }
   .mode-btn.active {
     background: var(--glow);
-    color: var(--bg);
+    color: var(--sobre-vivo);
     border-color: var(--glow);
   }
 
@@ -579,11 +590,11 @@
     font-size: clamp(1.5rem, 5vw, 2.4rem);
     font-weight: 900;
     line-height: 1.15;
-    background: linear-gradient(135deg, var(--glow) 0%, var(--glow2) 100%);
+    background: linear-gradient(135deg, var(--titulo-a) 0%, var(--titulo-b) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 0 15px color-mix(in srgb, var(--glow) 25%, transparent));
+    filter: drop-shadow(0 0 15px color-mix(in srgb, var(--titulo-a) var(--titulo-halo), transparent));
     margin-bottom: 1.2rem;
   }
 
@@ -676,7 +687,7 @@
   .nav-btn.next {
     border-color: var(--glow);
     background: var(--glow);
-    color: var(--bg);
+    color: var(--sobre-vivo);
   }
 
   .nav-btn.next:hover:not(:disabled) {

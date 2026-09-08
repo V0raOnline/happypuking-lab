@@ -48,6 +48,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   --cyan: #22D3EE;
   --dorado: #FFD700;
   --grano-op: 1;
+  --ipa: color-mix(in srgb, var(--acc-pattern) 55%, transparent);
+  --fonetica: color-mix(in srgb, var(--dorado) 55%, transparent);
   /* Las diez familias fonologicas. */
   --fam-aaa: #818CF8;
   --fam-endent: #FCD34D;
@@ -101,6 +103,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   --cyan: #0a6d7c;
   --dorado: #7b5f02;
   --grano-op: 0.45;
+  --ipa: color-mix(in srgb, var(--acc-pattern) 35%, var(--text));
+  --fonetica: color-mix(in srgb, var(--dorado) 40%, var(--text));
 
   /* Se conservan: son didacticas y van en la pasada de tonos. */
   --fam-aaa: #818CF8;
@@ -719,8 +723,8 @@ button.family-item {
 .verb-base { font-weight: 700; font-size: 0.83rem; }
 .verb-base.is-high { color: var(--green-lab-texto); }
 .verb-trans { font-size: 0.63rem; color: var(--muted); }
-.verb-ipa { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: color-mix(in srgb, var(--acc-pattern) 55%, transparent); display: none; }
-.verb-phonetic { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: color-mix(in srgb, var(--dorado) 55%, transparent); display: none; }
+.verb-ipa { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--ipa); display: none; }
+.verb-phonetic { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--fonetica); display: none; }
 body.show-ipa .verb-ipa, body.show-ipa .verb-phonetic { display: block; }
 
 /* ── RIGHT SIDEBAR ── */
