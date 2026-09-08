@@ -673,6 +673,38 @@ function selectElement(num) {
   updateModePills(num);
 }
 
+// La ficha arranca vacia, asi que soltar el elemento tiene estado al que
+// volver. Debe seguir igual que el markup de #card en el HTML.
+const CARD_VACIA = `
+      <div class="card-empty">
+        <div class="big-symbol">⚛</div>
+        <p>Selecciona un elemento<br>para ver su ficha</p>
+      </div>`;
+
+// Deshace selectElement.
+function deselectElement() {
+  if (atomAnimId) { cancelAnimationFrame(atomAnimId); atomAnimId = null; }
+  const prev = document.querySelector(`.el[data-num="${activeNum}"]`);
+  if (prev) prev.classList.remove('active');
+  activeNum = null;
+  document.getElementById('card').innerHTML = CARD_VACIA;
+  updateEnPin(null);
+  updateModePills(null);
+}
+
+// Dos cosas distintas encienden una pastilla y se parecen demasiado:
+//   .selected  lectura — "el elemento que has elegido vive en este grupo"
+//   .active    accion  — "he filtrado por este grupo"
+// Si el elemento seleccionado NO pertenece al grupo recien iluminado se queda
+// atenuado y aun asi sigue encendiendo su pastilla: dos encendidas a la vez y
+// ninguna forma de saber cual es cual. Ahi se suelta.
+// Si SI pertenece se conserva: las dos marcas caen en la misma pastilla y ese
+// es justo el momento que interesa ensenar.
+function soltarSiQuedaFuera(grupoDe, filtro) {
+  if (!filtro || activeNum == null) return;
+  if (grupoDe(activeNum) !== filtro) deselectElement();
+}
+
 const SHELL_NAMES = ['K','L','M','N','O','P','Q'];
 
 function renderCard(num) {
@@ -961,6 +993,7 @@ function filterCat(cat) {
       l.style.opacity = l.dataset.cat === cat ? '1' : '0.35';
     });
   }
+  soltarSiQuedaFuera(n => elMap[n] && elMap[n][4], activeFilter);
 }
 
 // ── View mode: categorías ↔ electronegatividad ↔ valencia ──
@@ -1051,6 +1084,7 @@ function filterVal(key) {
     if (activeValFilter === null) { el.classList.remove('dimmed'); return; }
     el.classList.toggle('dimmed', valGroupOf(parseInt(el.dataset.num)) !== activeValFilter);
   });
+  soltarSiQuedaFuera(valGroupOf, activeValFilter);
 }
 
 let viewMode = 'cat';
