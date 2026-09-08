@@ -56,11 +56,15 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --shadow: 0 4px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.2);
     --cyan: #22D3EE;
     --sobre-vivo: #181511;
-    --vs-nutricion: #c0533a;
+    /* Las tres pastillas de funcion vital NO invierten: llevan --sobre-vivo
+       encima, que es tinta oscura y tampoco invierte. Si se oscurece la
+       pastilla para el papel se rompe la pareja y queda negro sobre negro.
+       Su tono sube lo justo para sostener esa tinta a 4,6:1. */
+    --vs-nutricion: #c9624b;
     --magenta: #E040FB;
     --sombra-base: #000;
     --grano-op: 1;
-    --vs-relacion: #3a7ac0;
+    --vs-relacion: #4583c7;
     --vs-reproduccion: #3a9c5a;
     --veredicto-error: #c0392b;
     --veredicto-ok: #27ae60;
@@ -96,8 +100,6 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     --magenta: #9c22b0;
     --cyan: #0a6d7c;
     --grano-op: 0.45;
-    --vs-relacion: #2a5c96;
-    --vs-reproduccion: #2b7745;
     --veredicto-error: #96271c;
     --veredicto-ok: #1c7a44;
     --banda-neutra: #8b8b93;
