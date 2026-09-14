@@ -1002,9 +1002,50 @@ footer {
   border-radius: 20px;
   padding: 1.5rem;
   width: 90%;
-  max-width: 600px;
+  max-width: 720px;
   max-height: 80vh;
   overflow-y: auto;
+}
+
+/* Los dos pasos dentro del modal de carga: generar el prompt y pegar el YAML. */
+.paso-carga {
+  margin-bottom: 1.1rem;
+  padding: 0.95rem 1.05rem 1rem;
+  background: color-mix(in srgb, var(--surface2) 55%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.paso-carga-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.35rem;
+}
+.paso-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--green-lab);
+  color: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  flex: 0 0 auto;
+}
+.paso-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.paso-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0 0 0.65rem;
+  line-height: 1.5;
 }
 
 .yaml-modal-inner h3 {
@@ -1360,6 +1401,90 @@ footer {
 .about-code .yaml-val { color: var(--green-lab-texto); }
 .about-code .yaml-comment { color: var(--muted); font-style: italic; }
 
+/* Generador de prompt — ensambla el bloque para copiar y pegar en un chatbot. */
+.prompt-gen-form {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem 0.6rem;
+  margin: 0.4rem 0 0.7rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.prompt-gen-nivel { display: flex; flex-direction: column; gap: 0.25rem; }
+.prompt-gen-nivel label {
+  font-size: 0.7rem;
+  color: var(--tenue);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.prompt-gen-nivel .nivel-hint {
+  font-size: 0.62rem;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+}
+.prompt-gen-nivel input {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.prompt-gen-nivel input:focus {
+  outline: 2px solid var(--acierto);
+  outline-offset: 1px;
+}
+.prompt-gen-total {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+  color: var(--tenue);
+  text-align: right;
+  margin-top: 0.15rem;
+  font-family: 'DM Mono', monospace;
+}
+.prompt-gen-out {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--surface2);
+  color: var(--tenue);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 10rem;
+  margin-bottom: 0.5rem;
+}
+.prompt-gen-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.prompt-gen-nota {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.prompt-gen-actions .btn-modal[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+@media (max-width: 640px) {
+  .prompt-gen-form { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* Modal solución */
 .solucion-modal {
   display: none;
@@ -1687,23 +1812,8 @@ summary:focus-visible,
     </div>
 
     <div class="about-section">
-      <h3>Formato YAML para oraciones propias</h3>
-      <p style="margin-bottom:0.8rem;background:color-mix(in srgb, var(--acierto) 6%, transparent);border:1px solid color-mix(in srgb, var(--acierto) 20%, transparent);border-radius:8px;padding:0.7rem 0.9rem">💡 <strong>Tip:</strong> El formato YAML es ideal para generarlo con un chatbot. Usa este prompt:</p>
-      <div class="about-code" style="margin-bottom:1rem"><span class="yaml-comment">Genera X oraciones nuevas para este formato YAML de análisis morfosintáctico.</span>
-<span class="yaml-comment">Reglas:</span>
-<span class="yaml-comment">- Usa frases totalmente distintas entre sí.</span>
-<span class="yaml-comment">- Longitud variable (3–10 palabras).</span>
-<span class="yaml-comment">- Cada palabra debe aparecer en tokens.</span>
-<span class="yaml-comment">- Todos los tokens deben aparecer en al menos un paso.</span>
-<span class="yaml-comment">- Actualiza siempre tokens_correctos, feedback_ok y feedback_error.</span>
-<span class="yaml-comment">- Mantén exactamente la estructura YAML.</span>
-<span class="yaml-comment">Niveles:</span>
-<span class="yaml-comment">1 = muy simple</span>
-<span class="yaml-comment">2 = simple con CD o CC</span>
-<span class="yaml-comment">3 = estructuras un poco más complejas</span>
-<span class="yaml-comment">4 = subordinadas o estructuras complejas</span>
-<span class="yaml-comment">Devuelve solo YAML listo para pegar.</span></div>
-      <p>Puedes personalizar la guía de resolución con tus propias frases. Descarga el YAML plantilla desde <a href="https://github.com/V0raOnline/happypuking-lab" target="_blank" style="color: var(--green-lab-texto);text-decoration:none;font-weight:700">github.com/V0raOnline/happypuking-lab</a> y edítalo siguiendo esta estructura:</p>
+      <h3>Formato YAML de referencia</h3>
+      <p>Para trabajar con oraciones propias tienes <strong>Cargar mis oraciones</strong> en la cabecera de la pestaña: allí puedes generar un banco nuevo con un chatbot y pegarlo. Esta es la estructura de cada oración, por si prefieres escribirla a mano o comprobar lo que te devuelva el modelo:</p>
       <div class="about-code"><span class="yaml-key">oraciones</span>:
   - <span class="yaml-key">id</span>: <span class="yaml-val">1</span>              <span class="yaml-comment"># un id único por frase</span>
     <span class="yaml-key">nivel</span>: <span class="yaml-val">1</span>           <span class="yaml-comment"># nivel de dificultad (1–4)</span>
@@ -1733,9 +1843,53 @@ summary:focus-visible,
 <div class="yaml-modal" id="yaml-modal">
   <div class="yaml-modal-inner">
     <h3>Cargar oraciones propias</h3>
-    <p>Pega aquí el contenido de tu archivo YAML con el formato del banco de oraciones incluido en el repositorio. La estructura debe seguir el mismo esquema para funcionar correctamente.</p>
-    <div class="yaml-status" id="yaml-status"></div>
-    <textarea class="yaml-textarea" id="yaml-textarea" placeholder="Pega aquí el contenido de tu YAML..."></textarea>
+    <p>Genera un banco nuevo con un chatbot o pega uno que ya tengas listo.</p>
+
+    <div class="paso-carga">
+      <div class="paso-carga-head">
+        <span class="paso-num">1</span>
+        <span class="paso-title">Genera con un chatbot</span>
+      </div>
+      <p class="paso-desc">Elige cuántas oraciones quieres de cada nivel. La herramienta te prepara el prompt completo, con un ejemplo real pegado debajo, listo para copiar y pegar en cualquier chatbot.</p>
+
+      <div class="prompt-gen-form">
+        <div class="prompt-gen-nivel">
+          <label>N1 <span class="nivel-hint">muy simple</span></label>
+          <input type="number" min="0" max="30" value="5" data-nivel="1" oninput="renderPromptGenerado()" aria-label="Cuántas oraciones de nivel 1">
+        </div>
+        <div class="prompt-gen-nivel">
+          <label>N2 <span class="nivel-hint">CD o CC</span></label>
+          <input type="number" min="0" max="30" value="5" data-nivel="2" oninput="renderPromptGenerado()" aria-label="Cuántas oraciones de nivel 2">
+        </div>
+        <div class="prompt-gen-nivel">
+          <label>N3 <span class="nivel-hint">más complejas</span></label>
+          <input type="number" min="0" max="30" value="5" data-nivel="3" oninput="renderPromptGenerado()" aria-label="Cuántas oraciones de nivel 3">
+        </div>
+        <div class="prompt-gen-nivel">
+          <label>N4 <span class="nivel-hint">subordinadas</span></label>
+          <input type="number" min="0" max="30" value="5" data-nivel="4" oninput="renderPromptGenerado()" aria-label="Cuántas oraciones de nivel 4">
+        </div>
+        <div class="prompt-gen-total" id="prompt-gen-total">Total: 20 oraciones</div>
+      </div>
+
+      <textarea class="prompt-gen-out" id="prompt-gen-out" readonly rows="10" aria-label="Prompt generado"></textarea>
+
+      <div class="prompt-gen-actions">
+        <button class="btn-modal primary" id="btn-copiar-prompt" onclick="copiarPromptGenerado()">Copiar prompt</button>
+        <span class="prompt-gen-nota">Los modelos se inventan cosas con aplomo. Revisa lo que devuelvan.</span>
+      </div>
+    </div>
+
+    <div class="paso-carga">
+      <div class="paso-carga-head">
+        <span class="paso-num">2</span>
+        <span class="paso-title">Pega el YAML y cárgalo</span>
+      </div>
+      <p class="paso-desc">Pega aquí lo que te devuelva el chatbot (incluidas las líneas <code style="font-family:'DM Mono',monospace">\`\`\`yaml</code> y <code style="font-family:'DM Mono',monospace">\`\`\`</code> del principio y el final si las trae) o un YAML propio.</p>
+      <div class="yaml-status" id="yaml-status"></div>
+      <textarea class="yaml-textarea" id="yaml-textarea" placeholder="Pega aquí el contenido de tu YAML..."></textarea>
+    </div>
+
     <div class="yaml-modal-actions">
       <button class="btn-modal secondary" onclick="cerrarYamlModal()">Cancelar</button>
       <button class="btn-modal primary" onclick="cargarYamlPersonalizado()">Cargar oraciones</button>
@@ -2999,6 +3153,110 @@ function abrirAbout() {
   document.getElementById('about-modal').classList.add('visible');
 }
 
+// Ensambla el prompt del generador cada vez que cambian los contadores. El
+// ejemplo se saca de la primera oracion cargada (por defecto o del YAML que
+// el profe haya pegado): asi el few-shot siempre esta al dia.
+function renderPromptGenerado() {
+  const inputs = document.querySelectorAll('.prompt-gen-nivel input');
+  if (!inputs.length) return;
+  const conteos = {};
+  let total = 0;
+  inputs.forEach(inp => {
+    const n = parseInt(inp.dataset.nivel, 10);
+    const v = Math.max(0, parseInt(inp.value, 10) || 0);
+    conteos[n] = v;
+    total += v;
+  });
+
+  const totalEl = document.getElementById('prompt-gen-total');
+  const outEl = document.getElementById('prompt-gen-out');
+  const btn = document.getElementById('btn-copiar-prompt');
+
+  totalEl.textContent = `Total: ${total} ${total === 1 ? 'oración' : 'oraciones'}`;
+
+  if (total === 0) {
+    outEl.value = 'Elige al menos una oración de algún nivel.';
+    btn.disabled = true;
+    return;
+  }
+
+  const NIVEL_DESC = {
+    1: 'muy simple',
+    2: 'simple con complemento directo o circunstancial',
+    3: 'estructuras algo más complejas',
+    4: 'subordinadas'
+  };
+
+  const distribucion = [1,2,3,4]
+    .filter(n => conteos[n] > 0)
+    .map(n => `    ${conteos[n]} del nivel ${n} (${NIVEL_DESC[n]})`)
+    .join('\n');
+
+  let ejemplo = '';
+  try {
+    if (ORACIONES && ORACIONES.length > 0) {
+      // flowLevel: 5 deja block-style toda la estructura excepto los arrays
+      // hoja (tokens_correctos), que salen en linea "[a, b]". Sin esto, un LLM
+      // pone feedback_ok con indentacion mala pensando que es hijo del item.
+      // forceQuotes: todo string entre comillas dobles. Sin uniformidad, el
+      // LLM cita algunos valores y otros no, y un "feedback: X: Y" sin cotizar
+      // rompe el YAML por el segundo colon.
+      ejemplo = jsyaml.dump(
+        { oraciones: [ORACIONES[0]] },
+        { lineWidth: 120, noRefs: true, flowLevel: 5, forceQuotes: true, quotingType: '"' }
+      );
+    }
+  } catch(e) { /* si peta el dump, seguimos sin ejemplo */ }
+
+  const cabecera = total === 1
+    ? 'Genera 1 oración nueva'
+    : `Genera ${total} oraciones nuevas`;
+
+  outEl.value = `${cabecera} para un banco YAML de análisis morfosintáctico de ESO.
+
+Requisitos de contenido:
+- Frases naturales en español, totalmente distintas entre sí.
+- Longitud variable (3-12 palabras).
+- Distribución exacta por nivel:
+${distribucion}
+- Cada palabra del texto debe aparecer en tokens.
+- Todos los tokens deben aparecer en al menos un paso.
+- tokens_correctos debe coincidir EXACTAMENTE con palabras del texto.
+- Rellena siempre feedback_ok y feedback_error.
+
+Requisitos de formato (críticos):
+- Envuelve TODA la respuesta en un bloque \`\`\`yaml ... \`\`\`. Es imprescindible: fuera del bloque, el chat destroza la indentación al copiar y el YAML queda inservible.
+- Dentro del bloque, mantén la indentación EXACTA del ejemplo. Los hijos de un campo van con 2 espacios más que su padre.
+- Usa "- " (guion + espacio) para cada elemento de lista. Nunca "*" ni "•".
+- Envuelve TODO valor de texto entre comillas dobles, sin excepciones. Es lo que hace el ejemplo. Un valor con un ":" dentro sin cotizar rompe el YAML.
+- No añadas texto antes ni después del bloque: ni introducciones, ni cierres, ni explicaciones.
+- Usa los mismos nombres de campo del ejemplo, sin renombrar.
+
+Ejemplo de estructura (tómalo como plantilla):
+
+${ejemplo}`;
+  btn.disabled = false;
+}
+
+function copiarPromptGenerado() {
+  const outEl = document.getElementById('prompt-gen-out');
+  const btn = document.getElementById('btn-copiar-prompt');
+  if (!outEl || !btn || btn.disabled) return;
+  outEl.select();
+  const marcarCopiado = () => {
+    const txtOriginal = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => { btn.textContent = txtOriginal; }, 1800);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(outEl.value).then(marcarCopiado).catch(() => {
+      try { document.execCommand('copy'); marcarCopiado(); } catch(_) {}
+    });
+  } else {
+    try { document.execCommand('copy'); marcarCopiado(); } catch(_) {}
+  }
+}
+
 function cerrarAbout() {
   document.getElementById('about-modal').classList.remove('visible');
 }
@@ -3015,14 +3273,50 @@ function abrirYamlModal() {
   document.getElementById('yaml-modal').classList.add('visible');
   document.getElementById('yaml-status').className = 'yaml-status';
   document.getElementById('yaml-textarea').value = '';
+  renderPromptGenerado();
 }
 
 function cerrarYamlModal() {
   document.getElementById('yaml-modal').classList.remove('visible');
 }
 
+// Los modelos suelen devolver YAML con cuatro tropiezos:
+//   1. Envuelven la salida en un bloque markdown ``` ... ```.
+//   2. Usan '*' como bullet en lugar de '-'.
+//   3. Dejan valores de texto sin cotizar y algun valor tiene ':' dentro,
+//      lo que hace que el parser lo interprete como otro mapping y peta.
+//   4. (Aun sin arreglar) el chat se come la sangria si no hay fence.
+// El (1) y (2) son inequivocos. El (3) se rescata cotizando valores que
+// contienen ": " y no empiezan por comilla ni por corchete/llave (flow).
+function sanearYamlPegado(txt) {
+  let s = txt;
+  s = s.replace(/^\s*```(?:yaml|yml)?\s*\n/i, '');
+  s = s.replace(/\n```\s*$/i, '');
+  s = s.replace(/^(\s*)\*(\s+)/gm, '$1-$2');
+  s = s.split('\n').map(cotizarValorSiHaceFalta).join('\n');
+  return s;
+}
+
+function cotizarValorSiHaceFalta(linea) {
+  // Matchea "   nombreDeCampo: valor" (permite '- ' delante para items).
+  const m = linea.match(/^(\s*(?:-\s+)?[A-Za-z_][A-Za-z0-9_-]*: )(.+?)\s*$/);
+  if (!m) return linea;
+  const prefijo = m[1];
+  const valor = m[2];
+  // Ya cotizado o valor especial (flow, ancla, timestamp/numerico): no tocar.
+  if (/^["'\[\{&*!|>]/.test(valor)) return linea;
+  // Si el valor no tiene ": " dentro, el parser YAML lo aceptara tal cual.
+  if (!/: /.test(valor)) return linea;
+  // Cotizar: dobles por defecto; si el valor lleva dobles internos, cambio a
+  // simples y escapo las simples doblandolas (regla YAML).
+  if (valor.includes('"')) {
+    return prefijo + "'" + valor.replace(/'/g, "''") + "'";
+  }
+  return prefijo + '"' + valor + '"';
+}
+
 function cargarYamlPersonalizado() {
-  const texto = document.getElementById('yaml-textarea').value.trim();
+  const texto = sanearYamlPegado(document.getElementById('yaml-textarea').value.trim());
   const status = document.getElementById('yaml-status');
 
   if (!texto) {
