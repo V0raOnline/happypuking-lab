@@ -100,9 +100,9 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 
   <!-- Barra compartida por los dos modos de tablero: ámbito + progreso -->
   <div class="board-bar" id="board-bar">
-    <div class="conq-scope" role="radiogroup" aria-label="Qué tabla practicar">
+    <div class="conq-scope" role="toolbar" aria-label="Qué tablas practicar (una o varias)">
       <span class="conq-scope-label">Qué tabla</span>
-      <button type="button" class="conq-chip active" role="radio" aria-checked="true" data-table="all">Todas</button>
+      <button type="button" class="conq-chip active" aria-pressed="true" data-table="all">Todas</button>
       <div class="conq-tables" id="conq-tables"></div>
     </div>
 
@@ -489,8 +489,8 @@ function applyClasses(td, r, c) {
 
 // ── Navegacion entre grupos de controles ─────────────────────────────────
 // Misma logica en todas las herramientas:
-//   excluyentes (modos, ambito, ritmo) -> radiogroup: moverse SELECCIONA
-//   interruptores (capas, filtros)     -> toolbar:    moverse solo mueve
+//   excluyentes (modos, ritmo)     -> radiogroup: moverse SELECCIONA
+//   interruptores (capas, ambito)  -> toolbar:    moverse solo mueve
 function tecladoEnGrupo(contenedor, selector, seleccionaAlMover) {
   if (!contenedor) return;
   const items = () => [...contenedor.querySelectorAll(selector)]
@@ -798,7 +798,10 @@ function programarAvance(fn, ms) {
   avanceTimer = setTimeout(fn, ms);
 }
 function cancelarAvance() { clearTimeout(avanceTimer); avanceTimer = null; }
-let scopeTable = 'all';
+// Set vacio = sin filtro (todas las tablas cuentan). Uno o mas numeros = solo
+// las tablas seleccionadas. V0ra pidio poder mezclar varias en una ronda:
+// "estudiamos hoy las del 3, 6 y 9" es un patron habitual de clase.
+let scopeTables = new Set();
 let currentTarget = null;
 let conqLocked = false;
 
@@ -818,7 +821,7 @@ function targets() {
   const out = [];
   for (let r = 1; r <= N; r++) {
     for (let c = r; c <= N; c++) {
-      if (scopeTable === 'all' || r === +scopeTable || c === +scopeTable) out.push([r, c]);
+      if (scopeTables.size === 0 || scopeTables.has(r) || scopeTables.has(c)) out.push([r, c]);
     }
   }
   return out;
@@ -826,7 +829,30 @@ function targets() {
 
 const pending = () => targets().filter(([r, c]) => !conquered.has(cellKey(r, c)));
 
-const enAmbito = (r, c) => scopeTable === 'all' || r === +scopeTable || c === +scopeTable;
+const enAmbito = (r, c) => scopeTables.size === 0 || scopeTables.has(r) || scopeTables.has(c);
+
+// Nombre humano del ambito, en dos registros. Retornan null si no hay filtro;
+// cada caller decide como frasear ese caso ("todo", "el campo entero"...).
+//   nombreScope       -> "la tabla del 7"  /  "las tablas del 3, 5 y 7"
+//   nombreScopeCorto  -> "la del 7"        /  "las del 3, 5 y 7"
+function _scopeSorted() {
+  return [...scopeTables].sort((a, b) => a - b);
+}
+function _juntarConY(arr) {
+  if (arr.length === 1) return String(arr[0]);
+  const ultima = arr[arr.length - 1];
+  return `${arr.slice(0, -1).join(', ')} y ${ultima}`;
+}
+function nombreScope() {
+  if (scopeTables.size === 0) return null;
+  const arr = _scopeSorted();
+  return arr.length === 1 ? `la tabla del ${arr[0]}` : `las tablas del ${_juntarConY(arr)}`;
+}
+function nombreScopeCorto() {
+  if (scopeTables.size === 0) return null;
+  const arr = _scopeSorted();
+  return arr.length === 1 ? `la del ${arr[0]}` : `las del ${_juntarConY(arr)}`;
+}
 
 // Lo conquistado FUERA del ámbito de la ronda se marca, pero no se lee: enseña
 // la geometría (la cruz de la tabla del 7, el reflejo en la diagonal) sin
@@ -867,7 +893,7 @@ function scopeStats() {
 // elegido, y con la geometria a la vista los restos de otras tablas se notan.
 function pintaBotonReminar() {
   document.getElementById('conq-reset').textContent =
-    scopeTable === 'all' ? 'Volver a minar todo' : `Volver a minar la del ${scopeTable}`;
+    scopeTables.size === 0 ? 'Volver a minar todo' : `Volver a minar ${nombreScopeCorto()}`;
 }
 
 function updateConqStats() {
@@ -889,7 +915,7 @@ function nextQuestion() {
   if (done) {
     stopTimer();
     const s = scopeStats();
-    const donde = scopeTable === 'all' ? '' : ` de la tabla del ${scopeTable}`;
+    const donde = scopeTables.size === 0 ? '' : ` de ${nombreScope()}`;
     let txt = `Has despejado las ${s.casillas} casillas${donde} con ${s.minas} respuestas. Las gemelas hicieron el resto.`;
     if (boardElapsed > 0) {
       txt += boardReloj
@@ -1044,33 +1070,53 @@ function iniciaGruposRadio() {
   });
 }
 
-// Chips de ambito
+// Chips de ambito: toolbar de toggles (no radiogroup). Se pueden marcar varias
+// a la vez -> Set. "Todas" es un boton especial que resetea a "sin filtro"
+// (Set vacio). Al marcar cualquier tabla concreta se apaga; si desmarcas la
+// ultima, "Todas" vuelve a encenderse sola.
+function syncScopeChipsUI() {
+  const sinFiltro = scopeTables.size === 0;
+  document.querySelectorAll('.conq-scope .conq-chip').forEach(chip => {
+    const t = chip.dataset.table;
+    const activo = t === 'all' ? sinFiltro : scopeTables.has(+t);
+    chip.classList.toggle('active', activo);
+    chip.setAttribute('aria-pressed', activo ? 'true' : 'false');
+  });
+}
 (function buildScopeChips() {
   const wrap = document.getElementById('conq-tables');
   for (let i = 1; i <= N; i++) {
     const d = document.createElement('button');
     d.type = 'button';
     d.className = 'conq-chip';
-    d.setAttribute('role', 'radio');
-    d.setAttribute('aria-checked', 'false');
+    d.setAttribute('aria-pressed', 'false');
     d.dataset.table = String(i);
     d.textContent = i;
     wrap.appendChild(d);
   }
-  // Acotado a .conq-scope: hay otros .conq-chip en la barra (el ritmo de caza)
   document.querySelectorAll('.conq-scope .conq-chip').forEach(chip => {
     chip.onclick = () => {
-      scopeTable = chip.dataset.table;
-      marcaRadio(document.querySelector('.conq-scope'), chip);
+      const t = chip.dataset.table;
+      if (t === 'all') {
+        scopeTables.clear();
+      } else {
+        const n = +t;
+        if (scopeTables.has(n)) scopeTables.delete(n);
+        else scopeTables.add(n);
+      }
+      syncScopeChipsUI();
       if (viewMode === 'caza') { startCaza(); return; }
       paintConquered();          // cambia quien esta dentro y fuera del ambito
       updateConqStats();
       nextQuestion();
     };
   });
-  // Aqui, no antes: los chips del 1 al 10 se generan en este mismo bloque y
-  // sin ellos el roving tabindex no llegaba, asi que "Que tabla" metia once
-  // paradas de tabulador en vez de una.
+  // Toolbar: mover con flechas mueve el foco pero NO selecciona (segunda
+  // categoria del helper, como los filtros de leyenda). Antes era radiogroup
+  // porque solo se podia elegir una tabla; ahora que se combinan, la seleccion
+  // es un acto explicito.
+  tecladoEnGrupo(document.querySelector('.conq-scope'), '.conq-chip', false);
+  // Los otros grupos excluyentes (modos y ritmo) siguen siendo radiogroup.
   iniciaGruposRadio();
 })();
 
@@ -1090,7 +1136,7 @@ function reminar() {
 
 document.getElementById('conq-again').onclick = reminar;
 document.getElementById('conq-reset').onclick = () => {
-  const que = scopeTable === 'all' ? 'el campo entero' : `la tabla del ${scopeTable}`;
+  const que = scopeTables.size === 0 ? 'el campo entero' : nombreScope();
   if (!confirm(`¿Volver a minar ${que} y empezar de cero?`)) return;
   reminar();
 };
