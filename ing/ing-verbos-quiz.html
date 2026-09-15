@@ -2648,8 +2648,10 @@ function loadYaml() {
       throw new Error('El YAML debe tener una clave "verbs:" con al menos una entrada.');
     }
     ALL_VERBS = parsed.verbs;
+    resetTrasCargarYaml();
     buildSidebar();
     updateStats();
+    updateSelectAllBtn();
     status.className = 'yaml-status ok';
     status.textContent = `✓ ${ALL_VERBS.length} frases cargadas.`;
     setTimeout(() => closeYamlModal(), 1200);
@@ -2657,6 +2659,32 @@ function loadYaml() {
     status.className = 'yaml-status error';
     status.textContent = `✗ Error: ${e.message}`;
   }
+}
+
+// Un YAML cargado a mitad de tanda invalida las preguntas en curso (son de
+// otro banco), asi que descartamos su estado y volvemos al setup. Y las
+// familias / niveles que ya no tienen verbos se sueltan de la seleccion para
+// que los contadores no mientan.
+function resetTrasCargarYaml() {
+  quizVerbs = [];
+  currentIdx = 0;
+  results = [];
+
+  selectedFamilies = new Set(ALL_VERBS.map(v => v.family));
+  selectedLevels = new Set(ALL_VERBS.map(v => v.level));
+
+  document.querySelectorAll('#level-pills .level-pill').forEach(p => {
+    const activo = selectedLevels.has(p.dataset.level);
+    p.classList.toggle('active', activo);
+    p.setAttribute('aria-pressed', activo ? 'true' : 'false');
+  });
+
+  const setupScreen = document.getElementById('setup-screen');
+  const quizScreen = document.getElementById('quiz-screen');
+  const resultsScreen = document.getElementById('results-screen');
+  quizScreen?.classList.remove('active');
+  resultsScreen?.classList.remove('active');
+  if (setupScreen) setupScreen.style.display = 'flex';
 }
 
 // Los modelos suelen devolver YAML con tres tropiezos: envuelven la salida en
