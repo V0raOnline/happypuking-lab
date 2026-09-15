@@ -871,9 +871,187 @@ button.level-pill {
   border-radius: 18px;
   padding: 1.5rem;
   width: 90%;
-  max-width: 560px;
+  max-width: 720px;
   max-height: 85vh;
   overflow-y: auto;
+}
+
+/* Los dos pasos dentro del modal de carga: generar el prompt y pegar el YAML. */
+.paso-carga {
+  margin-bottom: 1.1rem;
+  padding: 0.95rem 1.05rem 1rem;
+  background: color-mix(in srgb, var(--surface2) 55%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.paso-carga-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.35rem;
+}
+.paso-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--green-lab);
+  color: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  flex: 0 0 auto;
+}
+.paso-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.paso-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0 0 0.65rem;
+  line-height: 1.5;
+}
+
+/* Generador de prompt para el chatbot. */
+.prompt-gen-form {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem 0.6rem;
+  margin: 0.4rem 0 0.7rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.prompt-gen-nivel { display: flex; flex-direction: column; gap: 0.25rem; }
+.prompt-gen-nivel label {
+  font-size: 0.72rem;
+  color: var(--tenue);
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.prompt-gen-nivel .nivel-hint {
+  font-size: 0.62rem;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+}
+.prompt-gen-nivel input {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.prompt-gen-nivel input:focus {
+  outline: 2px solid var(--green-lab);
+  outline-offset: 1px;
+}
+.prompt-gen-total {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+  color: var(--tenue);
+  text-align: right;
+  margin-top: 0.15rem;
+  font-family: 'DM Mono', monospace;
+}
+.prompt-gen-familias {
+  margin: 0 0 0.7rem;
+  padding: 0.6rem 0.85rem 0.75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.prompt-gen-familias > summary {
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--tenue);
+  font-weight: 700;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.prompt-gen-familias > summary::-webkit-details-marker { display: none; }
+.prompt-gen-familias > summary::before {
+  content: "▸";
+  transition: transform 0.15s;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.prompt-gen-familias[open] > summary::before { transform: rotate(90deg); }
+.prompt-gen-familias .fam-count {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  font-weight: 400;
+}
+.prompt-gen-fam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.35rem 0.6rem;
+  margin-top: 0.55rem;
+}
+.prompt-gen-fam-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+  color: var(--tenue);
+}
+.prompt-gen-fam-item input { cursor: pointer; margin: 0; }
+.prompt-gen-fam-item .fam-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.prompt-gen-out {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--surface2);
+  color: var(--tenue);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 10rem;
+  margin-bottom: 0.5rem;
+}
+.prompt-gen-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+.prompt-gen-nota {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.prompt-gen-actions .btn-modal[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+@media (max-width: 640px) {
+  .prompt-gen-form { grid-template-columns: repeat(2, 1fr); }
 }
 .yaml-modal-inner h3 {
   font-family: 'Space Grotesk', sans-serif;
@@ -1492,12 +1670,61 @@ body.compacto header { padding-bottom: 0.4rem; }
 <div class="yaml-modal" id="yaml-modal">
   <div class="yaml-modal-inner">
     <h3>Cargar mis frases</h3>
-    <p>Pega el contenido de tu YAML con el mismo formato del fichero base. La estructura debe tener una clave <code style="font-family:'DM Mono',monospace;color:var(--green-lab-texto)">verbs:</code> con entradas que incluyan <code style="font-family:'DM Mono',monospace;color:var(--green-lab-texto)">verb, family, level, tense, sentence, answer, translation</code>.</p>
-    <div class="prompt-tip">
-      💡 <strong>Genera más frases con IA:</strong> abre el fichero <code style="font-family:'DM Mono',monospace">verbos_evaluacion.yaml</code> del repositorio, copia el prompt de la cabecera y pégalo en cualquier chatbot con el contexto de la familia que quieras ampliar.
+    <p>Genera un banco nuevo con un chatbot o pega uno que ya tengas listo.</p>
+
+    <div class="paso-carga">
+      <div class="paso-carga-head">
+        <span class="paso-num">1</span>
+        <span class="paso-title">Genera con un chatbot</span>
+      </div>
+      <p class="paso-desc">Elige cuántas frases quieres de cada nivel MCER y las familias que te interesa cubrir. La herramienta te prepara el prompt completo, con un ejemplo real pegado debajo, listo para copiar y pegar en cualquier chatbot.</p>
+
+      <div class="prompt-gen-form">
+        <div class="prompt-gen-nivel">
+          <label>A1 <span class="nivel-hint">básico</span></label>
+          <input type="number" min="0" max="30" value="3" data-nivel="A1" oninput="renderPromptGenerado()" aria-label="Cuántas frases de nivel A1">
+        </div>
+        <div class="prompt-gen-nivel">
+          <label>A2 <span class="nivel-hint">elemental</span></label>
+          <input type="number" min="0" max="30" value="3" data-nivel="A2" oninput="renderPromptGenerado()" aria-label="Cuántas frases de nivel A2">
+        </div>
+        <div class="prompt-gen-nivel">
+          <label>B1 <span class="nivel-hint">intermedio</span></label>
+          <input type="number" min="0" max="30" value="2" data-nivel="B1" oninput="renderPromptGenerado()" aria-label="Cuántas frases de nivel B1">
+        </div>
+        <div class="prompt-gen-nivel">
+          <label>B2 <span class="nivel-hint">avanzado</span></label>
+          <input type="number" min="0" max="30" value="2" data-nivel="B2" oninput="renderPromptGenerado()" aria-label="Cuántas frases de nivel B2">
+        </div>
+        <div class="prompt-gen-total" id="prompt-gen-total">Total: 10 frases</div>
+      </div>
+
+      <details class="prompt-gen-familias" id="prompt-gen-familias">
+        <summary>
+          <span>Familias a cubrir</span>
+          <span class="fam-count" id="prompt-gen-fam-count">10 de 10 seleccionadas</span>
+        </summary>
+        <div class="prompt-gen-fam-grid" id="prompt-gen-fam-grid"></div>
+      </details>
+
+      <textarea class="prompt-gen-out" id="prompt-gen-out" readonly rows="10" aria-label="Prompt generado"></textarea>
+
+      <div class="prompt-gen-actions">
+        <button class="btn-modal primary" id="btn-copiar-prompt" onclick="copiarPromptGenerado()">Copiar prompt</button>
+        <span class="prompt-gen-nota">Los modelos se inventan cosas con aplomo. Revisa lo que devuelvan.</span>
+      </div>
     </div>
-    <div class="yaml-status" id="yaml-status"></div>
-    <textarea class="yaml-textarea" id="yaml-textarea" placeholder="Pega aquí el contenido de tu YAML..."></textarea>
+
+    <div class="paso-carga">
+      <div class="paso-carga-head">
+        <span class="paso-num">2</span>
+        <span class="paso-title">Pega el YAML y cárgalo</span>
+      </div>
+      <p class="paso-desc">Pega aquí lo que te devuelva el chatbot (incluidas las líneas <code style="font-family:'DM Mono',monospace">\`\`\`yaml</code> y <code style="font-family:'DM Mono',monospace">\`\`\`</code> del principio y el final si las trae) o un YAML propio.</p>
+      <div class="yaml-status" id="yaml-status"></div>
+      <textarea class="yaml-textarea" id="yaml-textarea" placeholder="Pega aquí el contenido de tu YAML..."></textarea>
+    </div>
+
     <div class="yaml-modal-actions">
       <button class="btn-modal secondary" onclick="closeYamlModal()">Cancelar</button>
       <button class="btn-modal primary" onclick="loadYaml()">Cargar</button>
@@ -2283,12 +2510,14 @@ function openYamlModal() {
   document.getElementById('yaml-modal').classList.add('visible');
   document.getElementById('yaml-status').className = 'yaml-status';
   document.getElementById('yaml-textarea').value = '';
+  buildFamiliesChecklist();
+  renderPromptGenerado();
 }
 function closeYamlModal() {
   document.getElementById('yaml-modal').classList.remove('visible');
 }
 function loadYaml() {
-  const txt = document.getElementById('yaml-textarea').value.trim();
+  const txt = sanearYamlPegado(document.getElementById('yaml-textarea').value.trim());
   const status = document.getElementById('yaml-status');
   if (!txt) {
     status.className = 'yaml-status error';
@@ -2309,6 +2538,155 @@ function loadYaml() {
   } catch(e) {
     status.className = 'yaml-status error';
     status.textContent = `✗ Error: ${e.message}`;
+  }
+}
+
+// Los modelos suelen devolver YAML con tres tropiezos: envuelven la salida en
+// un bloque markdown ``` ... ```, usan '*' como bullet en lugar de '-', y
+// dejan valores de texto con ':' dentro sin cotizar (lo que rompe el parser).
+// Los sanean antes de pasarlo a jsyaml. Explicado en detalle en el gemelo de
+// len-morfosintaxis.html.
+function sanearYamlPegado(txt) {
+  let s = txt;
+  s = s.replace(/^\s*```(?:yaml|yml)?\s*\n/i, '');
+  s = s.replace(/\n```\s*$/i, '');
+  s = s.replace(/^(\s*)\*(\s+)/gm, '$1-$2');
+  s = s.split('\n').map(cotizarValorSiHaceFalta).join('\n');
+  return s;
+}
+function cotizarValorSiHaceFalta(linea) {
+  const m = linea.match(/^(\s*(?:-\s+)?[A-Za-z_][A-Za-z0-9_-]*: )(.+?)\s*$/);
+  if (!m) return linea;
+  const prefijo = m[1];
+  const valor = m[2];
+  if (/^["'\[\{&*!|>]/.test(valor)) return linea;
+  if (!/: /.test(valor)) return linea;
+  if (valor.includes('"')) {
+    return prefijo + "'" + valor.replace(/'/g, "''") + "'";
+  }
+  return prefijo + '"' + valor + '"';
+}
+
+// Rellena los checkboxes de familia dentro del modal de carga. Se llama al
+// abrir para que refleje el estado actual de FAMILY_META si algun dia cambia.
+function buildFamiliesChecklist() {
+  const grid = document.getElementById('prompt-gen-fam-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(FAMILY_META).map(([id, m]) => `
+    <label class="prompt-gen-fam-item">
+      <input type="checkbox" data-family="${id}" checked oninput="renderPromptGenerado()">
+      <span class="fam-dot" style="background:${m.color}"></span>
+      <span>${m.label}</span>
+    </label>
+  `).join('');
+}
+
+// Ensambla el prompt cada vez que cambian los contadores o las familias.
+// El ejemplo se saca de ALL_VERBS[0] con jsyaml.dump y opciones que evitan
+// las ambiguedades que hacen tropezar al LLM: flowLevel:5 pone en linea los
+// arrays hoja, forceQuotes: todo valor de texto entre comillas dobles.
+function renderPromptGenerado() {
+  const inputs = document.querySelectorAll('#yaml-modal .prompt-gen-nivel input');
+  if (!inputs.length) return;
+  const conteos = {};
+  let total = 0;
+  inputs.forEach(inp => {
+    const lvl = inp.dataset.nivel;
+    const v = Math.max(0, parseInt(inp.value, 10) || 0);
+    conteos[lvl] = v;
+    total += v;
+  });
+
+  const familiasCheckboxes = document.querySelectorAll('#prompt-gen-fam-grid input[type="checkbox"]');
+  const familiasSeleccionadas = Array.from(familiasCheckboxes).filter(c => c.checked).map(c => c.dataset.family);
+
+  const totalEl = document.getElementById('prompt-gen-total');
+  const outEl = document.getElementById('prompt-gen-out');
+  const btn = document.getElementById('btn-copiar-prompt');
+  const famCount = document.getElementById('prompt-gen-fam-count');
+  const totalFams = Object.keys(FAMILY_META).length;
+
+  totalEl.textContent = `Total: ${total} ${total === 1 ? 'frase' : 'frases'}`;
+  if (famCount) famCount.textContent = `${familiasSeleccionadas.length} de ${totalFams} seleccionadas`;
+
+  if (total === 0) {
+    outEl.value = 'Elige al menos una frase de algún nivel.';
+    btn.disabled = true;
+    return;
+  }
+  if (familiasSeleccionadas.length === 0) {
+    outEl.value = 'Marca al menos una familia en la lista.';
+    btn.disabled = true;
+    return;
+  }
+
+  const NIVEL_DESC = {
+    A1: 'básico',
+    A2: 'elemental',
+    B1: 'intermedio',
+    B2: 'avanzado'
+  };
+
+  const distribucion = ['A1', 'A2', 'B1', 'B2']
+    .filter(n => conteos[n] > 0)
+    .map(n => `    ${conteos[n]} del nivel ${n} (${NIVEL_DESC[n]})`)
+    .join('\n');
+
+  const listaFams = familiasSeleccionadas.join(', ');
+
+  let ejemplo = '';
+  try {
+    if (typeof ALL_VERBS !== 'undefined' && ALL_VERBS.length > 0) {
+      ejemplo = jsyaml.dump({ verbs: [ALL_VERBS[0]] }, { lineWidth: 120, noRefs: true, flowLevel: 5, forceQuotes: true, quotingType: '"' });
+    }
+  } catch (e) { /* si peta el dump, seguimos sin ejemplo */ }
+
+  const cabecera = total === 1
+    ? 'Genera 1 frase nueva'
+    : `Genera ${total} frases nuevas`;
+
+  outEl.value = `${cabecera} para un banco YAML de práctica de verbos irregulares en inglés, nivel ESO.
+
+Requisitos de contenido:
+- Frases naturales y de uso cotidiano, totalmente distintas entre sí.
+- Distribución exacta por nivel MCER:
+${distribucion}
+- Familias a cubrir (reparte aproximadamente entre ellas): ${listaFams}
+- El hueco va marcado con ___ y "answer" es EXACTAMENTE la forma que lo rellena.
+- "translation" es la frase entera en español, no el verbo suelto.
+- "tense" es "past_simple", "past_participle" o "both". Usa "both" solo cuando la frase pida las dos formas, y entonces "answer" lleva las dos separadas por " / ".
+- "hint" SOLO si hay un error típico de hispanohablante que merezca avisarse. Si no lo hay, omite el campo.
+
+Requisitos de formato (críticos):
+- Envuelve TODA la respuesta en un bloque \`\`\`yaml ... \`\`\`. Es imprescindible: fuera del bloque, el chat destroza la indentación al copiar y el YAML queda inservible.
+- Dentro del bloque, mantén la indentación EXACTA del ejemplo. Los hijos de un campo van con 2 espacios más que su padre.
+- Usa "- " (guion + espacio) para cada elemento de lista. Nunca "*" ni "•".
+- Envuelve TODO valor de texto entre comillas dobles, sin excepciones. Es lo que hace el ejemplo. Un valor con un ":" dentro sin cotizar rompe el YAML.
+- No añadas texto antes ni después del bloque: ni introducciones, ni cierres, ni explicaciones.
+- Usa los mismos nombres de campo del ejemplo, sin renombrar.
+
+Ejemplo de estructura (tómalo como plantilla):
+
+${ejemplo}`;
+  btn.disabled = false;
+}
+
+function copiarPromptGenerado() {
+  const outEl = document.getElementById('prompt-gen-out');
+  const btn = document.getElementById('btn-copiar-prompt');
+  if (!outEl || !btn || btn.disabled) return;
+  outEl.select();
+  const marcarCopiado = () => {
+    const txtOriginal = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => { btn.textContent = txtOriginal; }, 1800);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(outEl.value).then(marcarCopiado).catch(() => {
+      try { document.execCommand('copy'); marcarCopiado(); } catch(_) {}
+    });
+  } else {
+    try { document.execCommand('copy'); marcarCopiado(); } catch(_) {}
   }
 }
 
