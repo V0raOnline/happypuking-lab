@@ -872,6 +872,50 @@ footer {
   opacity: 0.4;
 }
 
+/* Introduccion del modo activo (morfologia o sintaxis) mientras nadie ha
+   pinchado una categoria. Ocupa el sitio del antiguo "detalle-vacio" y
+   ademas explica en corto de que va cada mitad del analisis, con un cruce
+   a la otra para dejar clara la relacion. */
+.detalle-intro {
+  padding: 0.2rem;
+  color: var(--tenue);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.detalle-intro-titulo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.6rem;
+}
+.detalle-intro p { margin: 0 0 0.6rem; }
+.detalle-intro em { font-style: italic; color: var(--muted); }
+.detalle-intro strong { color: var(--text); }
+.detalle-intro-cruce {
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0.65rem 0.8rem;
+  background: color-mix(in srgb, var(--surface2) 55%, transparent);
+  border-left: 3px solid var(--border);
+  border-radius: 6px;
+  margin: 0.8rem 0 0;
+}
+.detalle-intro-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--muted2);
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--border);
+}
+.detalle-intro-hint .hint-icon {
+  font-size: 1.2rem;
+  opacity: 0.55;
+}
+
 .detalle-header {
   display: flex;
   align-items: center;
@@ -1763,12 +1807,9 @@ summary:focus-visible,
     </div>
 
     <div class="explora-sidebar">
-      <div class="detalle-box" id="detalle-box">
-        <div class="detalle-vacio">
-          <div class="hint-icon">↖</div>
-          <div>Selecciona una categoría o función para ver su definición, ejemplos y errores frecuentes</div>
-        </div>
-      </div>
+      <!-- El contenido inicial lo pinta resetDetalle() con el modo activo
+           (morfologia por defecto); asi no vive duplicado en HTML y JS. -->
+      <div class="detalle-box" id="detalle-box"></div>
       <div class="relaciones-box" id="relaciones-box" style="display:none">
         <h4>Relaciones con otras categorías</h4>
         <div class="rel-tag-list" id="rel-tags"></div>
@@ -2644,6 +2685,7 @@ function init() {
   construirSelector();
   cargarOracion(0);
   construirExplora();
+  resetDetalle();  // Pinta la introduccion del modo activo (morfologia por defecto)
 }
 
 // ══════════════════════════════════════════════
@@ -3136,12 +3178,39 @@ function saltarA(id, tipo) {
   seleccionarCat(id);
 }
 
-function resetDetalle() {
-  document.getElementById('detalle-box').innerHTML = `
-    <div class="detalle-vacio">
-      <div class="hint-icon">↖</div>
-      <div>Selecciona una categoría o función para ver su definición, ejemplos y errores frecuentes</div>
+// Introduccion del modo activo. Antes habia un vacio generico "selecciona
+// una categoria"; ahora explicamos en corto qué es cada mitad del analisis
+// y cruzamos a la otra, para que la relacion entre morfologia y sintaxis
+// quede clara desde el principio y no cuando ya ha pinchado en algo.
+function contenidoIntroExplora(modo) {
+  if (modo === 'sintaxis') {
+    return `
+      <div class="detalle-intro">
+        <h3 class="detalle-intro-titulo">Sintaxis</h3>
+        <p>Estudia <strong>cómo se combinan las palabras dentro de una oración</strong>: qué función cumple cada una y qué relaciones establecen entre sí.</p>
+        <p>Nombra <em>funciones</em> (sujeto, complemento directo, complemento circunstancial…) y <em>sintagmas</em> (SN, SV, SPrep…) — dos maneras distintas de mirar la misma frase.</p>
+        <div class="detalle-intro-cruce">Es la mitad <em>para qué sirve</em> del análisis. La otra mitad —<em>qué es cada palabra</em>— la responde la <strong>morfología</strong>.</div>
+        <div class="detalle-intro-hint">
+          <span class="hint-icon">↖</span>
+          <span>Toca cualquier función para ver su definición, ejemplos y errores frecuentes</span>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="detalle-intro">
+      <h3 class="detalle-intro-titulo">Morfología</h3>
+      <p>Estudia <strong>las palabras en sí</strong>: qué tipo de palabra es cada una y qué forma tiene.</p>
+      <p>Nombra las <em>clases</em> (sustantivo, verbo, adjetivo, determinante…) y las <em>categorías internas</em> de cada clase (género, número, tiempo, persona…).</p>
+      <div class="detalle-intro-cruce">Es la mitad <em>qué es</em> del análisis. La otra mitad —<em>para qué sirve en la frase</em>— la responde la <strong>sintaxis</strong>.</div>
+      <div class="detalle-intro-hint">
+        <span class="hint-icon">↖</span>
+        <span>Toca cualquier categoría para ver su definición, ejemplos y errores frecuentes</span>
+      </div>
     </div>`;
+}
+
+function resetDetalle() {
+  document.getElementById('detalle-box').innerHTML = contenidoIntroExplora(exploraMode);
   document.getElementById('relaciones-box').style.display = 'none';
 }
 
