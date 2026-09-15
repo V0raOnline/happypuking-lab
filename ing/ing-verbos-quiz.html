@@ -1053,6 +1053,111 @@ button.level-pill {
 @media (max-width: 640px) {
   .prompt-gen-form { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Modo "lista de verbos concretos": el profe pega los verbos de su libro. */
+.prompt-gen-lista {
+  margin: 0 0 0.7rem;
+  padding: 0.6rem 0.85rem 0.75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.prompt-gen-lista > summary {
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--tenue);
+  font-weight: 700;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.prompt-gen-lista > summary::-webkit-details-marker { display: none; }
+.prompt-gen-lista > summary::before {
+  content: "▸";
+  transition: transform 0.15s;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.prompt-gen-lista[open] > summary::before { transform: rotate(90deg); }
+.prompt-gen-lista .lista-count {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  font-weight: 400;
+}
+.prompt-gen-lista .lista-count.activa {
+  color: var(--green-lab-texto);
+  font-weight: 700;
+}
+.lista-hint {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin: 0.5rem 0 0.4rem;
+  line-height: 1.5;
+}
+.lista-verbos-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  min-height: 4rem;
+  resize: vertical;
+  outline: none;
+  margin-bottom: 0.5rem;
+}
+.lista-verbos-textarea:focus { border-color: color-mix(in srgb, var(--green-lab) 60%, transparent); }
+.lista-verbos-resumen { font-size: 0.7rem; line-height: 1.7; }
+.lista-verbos-resumen .fam-linea {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+.lista-verbos-resumen .fam-linea .fam-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  align-self: center;
+}
+.lista-verbos-resumen .fam-linea .fam-label {
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  font-size: 0.65rem;
+  min-width: 4.5rem;
+}
+.lista-verbos-resumen .fam-linea .fam-verbos { color: var(--tenue); }
+.lista-verbos-resumen .fam-linea.sin-id .fam-dot { background: var(--ambar, #d97706); }
+.lista-verbos-resumen .fam-linea.sin-id .fam-label { color: var(--ambar, #d97706); }
+.lista-verbos-config {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--tenue);
+}
+.lista-verbos-config input {
+  width: 3.5rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.4rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+}
+/* Cuando la lista esta activa, apagamos visualmente los ejes que no aplican. */
+.prompt-gen-form.modo-lista,
+.prompt-gen-familias.modo-lista { opacity: 0.4; pointer-events: none; }
 .yaml-modal-inner h3 {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.1rem;
@@ -1698,6 +1803,19 @@ body.compacto header { padding-bottom: 0.4rem; }
         </div>
         <div class="prompt-gen-total" id="prompt-gen-total">Total: 10 frases</div>
       </div>
+
+      <details class="prompt-gen-lista" id="prompt-gen-lista">
+        <summary>
+          <span>Lista de verbos concretos</span>
+          <span class="lista-count" id="prompt-gen-lista-count">opcional</span>
+        </summary>
+        <p class="lista-hint">Pega el listado del libro o de la unidad, separado por comas o saltos de línea. Se detectan las familias automáticamente. Con la lista activa, las frases se generan sobre estos verbos concretos y los contadores de arriba se ignoran.</p>
+        <textarea class="lista-verbos-textarea" id="lista-verbos-textarea" placeholder="cut, put, cost, hurt&#10;o uno por línea&#10;acepta '1. cut', 'cut - cortar', 'cut cut cut'" oninput="renderPromptGenerado()" aria-label="Lista de verbos a practicar"></textarea>
+        <div class="lista-verbos-resumen" id="lista-verbos-resumen"></div>
+        <div class="lista-verbos-config" id="lista-verbos-config" style="display:none">
+          <label>Frases por verbo <input type="number" min="1" max="5" value="1" id="lista-frases-por-verbo" oninput="renderPromptGenerado()"></label>
+        </div>
+      </details>
 
       <details class="prompt-gen-familias" id="prompt-gen-familias">
         <summary>
@@ -2581,7 +2699,49 @@ function buildFamiliesChecklist() {
   `).join('');
 }
 
-// Ensambla el prompt cada vez que cambian los contadores o las familias.
+// Parsea una lista pegada por el profe: acepta comas, saltos, punto y coma,
+// numeraciones ("1. cut"), guiones ("cut - cortar"), y las tres formas
+// ("cut cut cut"). Devuelve infinitivos unicos, en minusculas.
+function parseListaVerbos(txt) {
+  if (!txt) return [];
+  const tokens = txt.split(/[,;\n\r]+/);
+  const verbos = [];
+  const vistos = new Set();
+  tokens.forEach(t => {
+    const limpio = t.replace(/^\s*[\d]+[.)]?\s*/, '').trim();
+    if (!limpio) return;
+    const primeraPalabra = limpio.match(/^[a-zA-Z]+/);
+    if (!primeraPalabra) return;
+    const w = primeraPalabra[0].toLowerCase();
+    if (!vistos.has(w)) {
+      vistos.add(w);
+      verbos.push(w);
+    }
+  });
+  return verbos;
+}
+
+// Detecta la familia de un verbo: primero lookup contra ALL_VERBS (el mapeo
+// canonico), luego heuristica de sufijo prudente. Los sufijos elegidos son
+// los que casi nunca se cruzan entre familias en verbos irregulares. Los que
+// no matcheen se marcan como null (sin identificar); el LLM los clasificara.
+function detectFamilia(verbo) {
+  if (typeof ALL_VERBS !== 'undefined') {
+    const match = ALL_VERBS.find(v => v.verb === verbo);
+    if (match) return match.family;
+  }
+  if (/end$/.test(verbo) && verbo.length <= 6) return 'endent';
+  if (/ind$/.test(verbo) && verbo.length <= 6) return 'indound';
+  if (/(eep|eed|eel|eave|ean)$/.test(verbo)) return 'eeshort';
+  if (/(ide|ive|ise|ite)$/.test(verbo)) return 'iveove';
+  if (/ow$/.test(verbo) && verbo.length <= 5) return 'ew';
+  return null;
+}
+
+// Ensambla el prompt cada vez que cambian los contadores, las familias o la
+// lista de verbos. Hay dos modos alternativos: "distribucion" (por nivel +
+// familias) y "lista" (una frase por verbo concreto). Si el textarea de lista
+// tiene contenido, entra en modo lista y los ejes de distribucion se apagan.
 // El ejemplo se saca de ALL_VERBS[0] con jsyaml.dump y opciones que evitan
 // las ambiguedades que hacen tropezar al LLM: flowLevel:5 pone en linea los
 // arrays hoja, forceQuotes: todo valor de texto entre comillas dobles.
@@ -2608,6 +2768,105 @@ function renderPromptGenerado() {
 
   totalEl.textContent = `Total: ${total} ${total === 1 ? 'frase' : 'frases'}`;
   if (famCount) famCount.textContent = `${familiasSeleccionadas.length} de ${totalFams} seleccionadas`;
+
+  // ── Modo lista: el profe ha pegado verbos concretos ────────────────────
+  const listaTxt = (document.getElementById('lista-verbos-textarea')?.value || '');
+  const verbosLista = parseListaVerbos(listaTxt);
+  const modoLista = verbosLista.length > 0;
+
+  const formEjes = document.querySelector('#yaml-modal .prompt-gen-form');
+  const familiasEje = document.getElementById('prompt-gen-familias');
+  const listaCount = document.getElementById('prompt-gen-lista-count');
+  const configLista = document.getElementById('lista-verbos-config');
+  const resumenLista = document.getElementById('lista-verbos-resumen');
+
+  formEjes?.classList.toggle('modo-lista', modoLista);
+  familiasEje?.classList.toggle('modo-lista', modoLista);
+  if (configLista) configLista.style.display = modoLista ? 'flex' : 'none';
+
+  if (modoLista) {
+    // Detectar familias, pintar resumen
+    const porFam = {};
+    verbosLista.forEach(v => {
+      const f = detectFamilia(v) || '__sin__';
+      if (!porFam[f]) porFam[f] = [];
+      porFam[f].push(v);
+    });
+    const conocidas = Object.keys(porFam).filter(f => f !== '__sin__');
+    const sinId = porFam['__sin__'] || [];
+    if (listaCount) {
+      listaCount.textContent = `${verbosLista.length} verbos · ${verbosLista.length - sinId.length} identificados`;
+      listaCount.classList.add('activa');
+    }
+    if (resumenLista) {
+      let html = '';
+      conocidas.forEach(fid => {
+        const meta = FAMILY_META[fid];
+        html += `<div class="fam-linea"><span class="fam-dot" style="background:${meta.color}"></span><span class="fam-label">${fid}</span><span class="fam-verbos">${porFam[fid].join(', ')}</span></div>`;
+      });
+      if (sinId.length > 0) {
+        html += `<div class="fam-linea sin-id"><span class="fam-dot"></span><span class="fam-label">sin id.</span><span class="fam-verbos">${sinId.join(', ')} <span style="color:var(--muted);font-style:italic">— el LLM las clasificará</span></span></div>`;
+      }
+      resumenLista.innerHTML = html;
+    }
+
+    let ejemplo = '';
+    try {
+      if (typeof ALL_VERBS !== 'undefined' && ALL_VERBS.length > 0) {
+        ejemplo = jsyaml.dump({ verbs: [ALL_VERBS[0]] }, { lineWidth: 120, noRefs: true, flowLevel: 5, forceQuotes: true, quotingType: '"' });
+      }
+    } catch (e) { /* si peta el dump, seguimos sin ejemplo */ }
+
+    const frasesPorVerbo = Math.max(1, parseInt(document.getElementById('lista-frases-por-verbo')?.value, 10) || 1);
+    const totalFrasesLista = verbosLista.length * frasesPorVerbo;
+    const familiasValidas = Object.keys(FAMILY_META).join(', ');
+
+    const listaVerbosPrompt = verbosLista.map(v => {
+      const fam = detectFamilia(v);
+      return fam
+        ? `  - ${v}  (familia: ${fam})`
+        : `  - ${v}  (familia: sin identificar — asígnale una)`;
+    }).join('\n');
+
+    const cabecera = frasesPorVerbo === 1
+      ? `Genera 1 frase por cada uno de los siguientes verbos (${totalFrasesLista} en total)`
+      : `Genera ${frasesPorVerbo} frases por cada uno de los siguientes verbos (${totalFrasesLista} en total)`;
+
+    outEl.value = `${cabecera} para un banco YAML de práctica de verbos irregulares en inglés, nivel ESO.
+
+Verbos a cubrir:
+${listaVerbosPrompt}
+
+Requisitos de contenido:
+- Frases naturales y de uso cotidiano, distintas entre sí.
+- Para cada verbo, usa el "family" indicado. Si dice "sin identificar", elígele una de estas: ${familiasValidas}.
+- Escoge un nivel MCER (A1, A2, B1 o B2) apropiado para cada frase según la dificultad léxica del contexto — no del verbo.
+- El hueco va marcado con ___ y "answer" es EXACTAMENTE la forma que lo rellena.
+- "translation" es la frase entera en español, no el verbo suelto.
+- "tense" es "past_simple", "past_participle" o "both". Usa "both" solo cuando la frase pida las dos formas, y entonces "answer" lleva las dos separadas por " / ".
+- "hint" SOLO si hay un error típico de hispanohablante que merezca avisarse.
+
+Requisitos de formato (críticos):
+- Envuelve TODA la respuesta en un bloque \`\`\`yaml ... \`\`\`. Es imprescindible: fuera del bloque, el chat destroza la indentación al copiar y el YAML queda inservible.
+- Dentro del bloque, mantén la indentación EXACTA del ejemplo. Los hijos de un campo van con 2 espacios más que su padre.
+- Usa "- " (guion + espacio) para cada elemento de lista. Nunca "*" ni "•".
+- Envuelve TODO valor de texto entre comillas dobles, sin excepciones.
+- No añadas texto antes ni después del bloque.
+- Usa los mismos nombres de campo del ejemplo, sin renombrar.
+
+Ejemplo de estructura (tómalo como plantilla):
+
+${ejemplo}`;
+    btn.disabled = false;
+    return;
+  }
+
+  // ── Modo distribucion (por nivel + familias) — el original ──────────────
+  if (listaCount) {
+    listaCount.textContent = 'opcional';
+    listaCount.classList.remove('activa');
+  }
+  if (resumenLista) resumenLista.innerHTML = '';
 
   if (total === 0) {
     outEl.value = 'Elige al menos una frase de algún nivel.';
