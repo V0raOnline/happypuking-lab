@@ -13,15 +13,19 @@
   --muted2: #5A6478;
   --magenta: #E040FB;
   --border: rgba(255,255,255,0.07);
-  /* Category colors */
-  --metal-alcalino: #EF4444;
-  --metal-alcalinoterreo: #F97316;
+  /* Category colors — pasada de tonos 2026-09-16 (V0ra):
+       m-alc pasa de rosa-rojo (#EF4444) a rojo puro (#EF1F1F): se aleja del rosa del halogeno.
+       m-alc.terr baja de naranja vivo (#F97316) a naranja rojo oscuro (#DD5722): se separa del ambar del no-metal.
+       metaloide cambia de esmeralda (#10B981) a verde puro (#2ABB25): sube hue para alejarse del cyan del lantanido.
+       gas-noble sube L de #8B5CF6 a lila mas claro (#B084F7): se separa del indigo del m-postransicion. */
+  --metal-alcalino: #EF1F1F;
+  --metal-alcalinoterreo: #DD5722;
   --metal-transicion: #3B82F6;
   --metal-postransicion: #6366F1;
-  --metaloide: #10B981;
+  --metaloide: #2ABB25;
   --no-metal: #F59E0B;
   --halogeno: #EC4899;
-  --gas-noble: #8B5CF6;
+  --gas-noble: #B084F7;
   --lantanido: #06B6D4;
   --actinido: #84CC16;
 
@@ -93,6 +97,23 @@
   --pista-texto: color-mix(in srgb, var(--pista) 40%, var(--text));
   --cyan-texto: color-mix(in srgb, var(--cyan) 40%, var(--text));
   --magenta-texto: color-mix(in srgb, var(--magenta) 40%, var(--text));
+
+  /* Diez familias periodicas reelegidas para papel. Se preserva el hue de
+     cada oscuro y se bajan L y C hasta rango de fondo (L 52-68%, C 0.09-0.14)
+     para funcionar como celda coloreada sin agredir sobre #e7e0d6. Distancia
+     minima de hue entre vecinas ~15 grados. Metaloide se queda en su hue
+     esmeralda historico (160): en claro la separacion con el cyan del
+     lantanido no era el problema, y respeta la identidad de la herramienta. */
+  --metal-alcalino: #b85449;
+  --metal-alcalinoterreo: #b57543;
+  --metal-transicion: #4A78C4;
+  --metal-postransicion: #786BA5;
+  --metaloide: #479784;
+  --no-metal: #ac8944;
+  --halogeno: #b85674;
+  --gas-noble: #9C5CB0;
+  --lantanido: #6d94a3;
+  --actinido: #8fa666;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -285,6 +306,14 @@ header {
 .el:hover::before { opacity: 0.28; }
 .el.active { border-color: var(--cat-color, var(--metal-transicion)); }
 .el.active::before { opacity: 0.22; }
+
+/* En claro el 8% del color sobre papel se lava: 92% papel + 8% familia queda
+   casi papel. Subimos la opacidad para que el tinte se lea. La saturacion
+   del token influye poco cuando la mezcla con el papel domina — lo que
+   necesitabamos era mas cantidad de color, no colores mas vivos. */
+:root[data-theme="light"] .el::before { opacity: 0.30; }
+:root[data-theme="light"] .el:hover::before { opacity: 0.55; }
+:root[data-theme="light"] .el.active::before { opacity: 0.45; }
 
 .el-number {
   font-family: 'DM Mono', monospace;
