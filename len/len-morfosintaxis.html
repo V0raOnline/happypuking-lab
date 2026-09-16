@@ -78,12 +78,15 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   --cag-texto: var(--cag);
   --cn-texto: var(--cn);
 
-  /* Categorías morfológicas — colores consistentes en toda la herramienta */
+  /* Categorías morfológicas — colores consistentes en toda la herramienta.
+     Se comparten con las funciones sintácticas por diseño: sustantivo -> sujeto,
+     verbo -> predicado, adjetivo -> cpred, etc. El paralelismo se enseña en la
+     intro de Explora y se ve al cambiar el toggle. */
   --sustantivo: #60A5FA;
   --verbo: #F87171;
   --adjetivo: #FB923C;
-  --determinante: #FBBF24;
-  --pronombre: #34D399;
+  --determinante: #FFD51A;
+  --pronombre: #1A6F21;
   --adverbio: #22D3EE;
   --preposicion: #A78BFA;
   --conjuncion: #F472B6;
@@ -92,14 +95,14 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   /* Funciones sintácticas */
   --sujeto: #60A5FA;
   --predicado: #F87171;
-  --cd: #34D399;
+  --cd: #1A6F21;
   --ci: #22D3EE;
   --cc: #A78BFA;
-  --atributo: #FBBF24;
+  --atributo: #FFD51A;
   --cpred: #FB923C;
   --creg: #F472B6;
   --cag: #94A3B8;
-  --cn: #6EE7B7;
+  --cn: #00A822;
 
   --magenta: #E040FB;
   --green-lab: #4ADE80;
@@ -812,7 +815,13 @@ footer {
 .cat-nombre {
   font-weight: 900;
   font-size: 0.82rem;
-  color: var(--c, var(--text));
+  /* Derivamos con --text para que el mismo hex crudo funcione en oscuro y
+     claro sin override: sobre negro se aclara con --text blanco y brilla,
+     sobre papel se oscurece con --text tinta y pasa AA como texto. Mismo
+     patron que los tokens *-texto, pero al 55% en vez del 40% habitual:
+     con 40% el mix se lavaba tanto que verbo (#F87171) y conjuncion
+     (#F472B6) acababan ambos en rosa palido y colisionaban al leer. */
+  color: color-mix(in srgb, var(--c, var(--text)) 55%, var(--text));
   margin-bottom: 0.2rem;
 }
 
