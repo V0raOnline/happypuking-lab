@@ -207,8 +207,8 @@
     color: var(--text);
   }
   .legend-btn[data-mode="squares"].active    { border-color: var(--square-color); color: var(--square-color-texto); background: color-mix(in srgb, var(--square-color) 8%, transparent); }
-  .legend-btn[data-mode="commutative"].active{ border-color: var(--comm-a); color: var(--comm-a); background: color-mix(in srgb, var(--comm-a) 8%, transparent); }
-  .legend-btn[data-mode="sameresult"].active { border-color: var(--same-result); color: var(--same-result); background: color-mix(in srgb, var(--same-result) 8%, transparent); }
+  .legend-btn[data-mode="commutative"].active{ border-color: var(--comm-a); color: var(--comm-a-texto); background: color-mix(in srgb, var(--comm-a) 8%, transparent); }
+  .legend-btn[data-mode="sameresult"].active { border-color: var(--same-result); color: var(--same-result-texto); background: color-mix(in srgb, var(--same-result) 8%, transparent); }
 
   /* ── LAYOUT ── */
   .outer-layout {
@@ -819,7 +819,7 @@
   .caza-number {
     font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(2.6rem, 8vw, 3.6rem); font-weight: 700;
-    color: var(--same-result); text-align: center; line-height: 1.1;
+    color: var(--same-result-texto); text-align: center; line-height: 1.1;
     margin: 0.1rem 0 0.3rem;
   }
   .caza-remaining {
