@@ -201,19 +201,30 @@ Cada recurso incluye múltiples modos de navegación cuando el contenido lo just
 Algunas herramientas separan el contenido del código mediante archivos YAML. Esto permite:
 
 - Añadir o modificar contenido sin tocar el HTML
-- Generar nuevas oraciones o ejercicios con un chatbot usando la plantilla incluida
+- Generar nuevas oraciones o ejercicios con un chatbot desde la propia herramienta
 - Adaptar los recursos a cualquier nivel o contexto sin conocimientos técnicos avanzados
 
-Plantilla y prompt de ejemplo incluidos en cada herramienta que lo soporte.
+**Generador guiado dentro del propio "Cargar mis..."** en `len-morfosintaxis` y
+`ing-verbos-quiz`: eliges cuántas frases quieres por nivel (y por familia, o
+pegas tu propio listado de verbos y se te detectan las familias). La herramienta
+prepara el prompt completo con un ejemplo real como plantilla, tú lo pegas en
+un chatbot y devuelves el YAML. El cargador tolera los tropiezos habituales
+del modelo (envolturas markdown, `*` en vez de `-`, valores sin cotizar).
 
 ---
 
 ## 🎨 Identidad visual
 
-Fondo oscuro · Tipografía Unbounded · Diseño pensado para reducir fatiga
-visual y maximizar contraste.
+Dos temas: **oscuro** por defecto (papel casi negro) y **claro** (papel cálido
+`#e7e0d6`, no blanco puro — un blanco sobre pantalla brillante es fuente de
+carga sensorial). El conmutador está en la esquina inferior derecha; la
+elección se recuerda y respeta la preferencia del sistema si no la fijas.
 
-El color significa algo y siempre lo mismo, en las once herramientas:
+Tipografía Unbounded · Diseño pensado para reducir fatiga visual y maximizar
+contraste en los dos temas (paletas didácticas reelegidas para papel sin
+perder la distinguibilidad entre familias).
+
+El color significa algo y siempre lo mismo, en las 16 herramientas:
 
 | Color       | Qué dice                                        |
 | ----------- | ----------------------------------------------- |
