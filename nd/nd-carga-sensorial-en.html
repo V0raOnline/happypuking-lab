@@ -255,6 +255,12 @@ main {
   border-color: var(--magenta-border);
   text-shadow: 0 0 12px rgba(212,0,106,0.4);
 }
+/* En claro el cyan #22D3EE sobre el rosa suave del magenta-soft queda a
+   ratio 1:1, ilegible. Bajamos a cyan oscuro y quitamos el halo magenta. */
+:root[data-theme="light"] .mode-btn.active {
+  color: #0a6d7c;
+  text-shadow: none;
+}
 
 /* MAIN LOAD */
 .load-card {
