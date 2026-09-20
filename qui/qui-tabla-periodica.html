@@ -108,13 +108,36 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   </div>
   <div class="info-card">
     <div class="card-box" id="card">
-      <div class="card-empty">
-        <div class="big-symbol">⚛</div>
-        <p>Selecciona un elemento<br>para ver su ficha</p>
+      <div class="card-body">
+        <div class="card-empty">
+          <div class="big-symbol">⚛</div>
+          <p>Selecciona un elemento para ver su ficha</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Ficha compacta que flota en el fondo del viewport cuando la ficha
+     normal esta fuera de vista. Solo aparece con elemento seleccionado. -->
+<button type="button" class="card-sticky" id="card-sticky" hidden aria-label="Volver a la ficha del elemento">
+  <span class="sticky-symbol" id="sticky-symbol"></span>
+  <span class="sticky-body">
+    <span class="sticky-name" id="sticky-name"></span>
+    <span class="sticky-cat" id="sticky-cat"></span>
+  </span>
+  <span class="sticky-stats">
+    <span class="sticky-stat">
+      <span class="sticky-stat-label">EN</span>
+      <span class="sticky-stat-val" id="sticky-en"></span>
+    </span>
+    <span class="sticky-stat">
+      <span class="sticky-stat-label">Val</span>
+      <span class="sticky-stat-val" id="sticky-val"></span>
+    </span>
+  </span>
+  <span class="sticky-arrow" aria-hidden="true">↓</span>
+</button>
 
 <footer>
   <div class="footer-left">
@@ -671,14 +694,25 @@ function selectElement(num) {
   renderCard(num);
   updateEnPin(num);
   updateModePills(num);
+  pintaSticky(num);
+  // Scroll acoplado en movil: al pinchar un elemento, la ficha ahora vive
+  // debajo de la tabla; sin scroll el usuario no la ve. En desktop se ve
+  // sin scrollear porque cabe todo, asi que no molestamos.
+  if (window.matchMedia('(max-width: 900px)').matches) {
+    const card = document.getElementById('card');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 // La ficha arranca vacia, asi que soltar el elemento tiene estado al que
 // volver. Debe seguir igual que el markup de #card en el HTML.
+// El estado vacio ocupa las 4 columnas con grid-column: 1 / -1 en el CSS.
 const CARD_VACIA = `
-      <div class="card-empty">
-        <div class="big-symbol">⚛</div>
-        <p>Selecciona un elemento<br>para ver su ficha</p>
+      <div class="card-body">
+        <div class="card-empty">
+          <div class="big-symbol">⚛</div>
+          <p>Selecciona un elemento para ver su ficha</p>
+        </div>
       </div>`;
 
 // Deshace selectElement.
@@ -690,7 +724,69 @@ function deselectElement() {
   document.getElementById('card').innerHTML = CARD_VACIA;
   updateEnPin(null);
   updateModePills(null);
+  ocultaSticky();
 }
+
+// ── FICHA STICKY (float compacto) ─────────────────────────────────────────
+// Aparece pegada al fondo del viewport cuando la ficha grande esta fuera de
+// vista y hay un elemento seleccionado. Al clicarla el foco vuelve a la
+// ficha completa con scroll suave.
+function pintaSticky(num) {
+  const e = elMap[num];
+  if (!e) return;
+  const [n, sym, name, mass, cat, group] = e;
+  const color = CATS[cat]?.color || 'var(--cat-defecto)';
+  const catLabel = CATS[cat]?.label || cat;
+  const sticky = document.getElementById('card-sticky');
+  if (!sticky) return;
+  sticky.style.setProperty('--accent', color);
+  document.getElementById('sticky-symbol').textContent = sym;
+  document.getElementById('sticky-name').textContent = `${name} · ${mass} u`;
+  document.getElementById('sticky-cat').textContent = catLabel;
+  // EN: numero de Pauling o "—" si no aplica (sintetico, gas noble sin dato).
+  const en = EXTRA[n]?.[1];
+  document.getElementById('sticky-en').textContent = en != null ? en : '—';
+  // Valencia: mismos criterios que en la ficha grande. Los gases nobles
+  // llevan la capa completa; los de transicion, lantanidos y actinidos
+  // "var"; los grupos principales su numero de e⁻ de ultima capa.
+  const val = valElectrons(n);
+  let valTxt;
+  if (cat === 'gas-noble') valTxt = '✓';
+  else if (val == null) valTxt = 'var';
+  else valTxt = val;
+  document.getElementById('sticky-val').textContent = valTxt;
+}
+
+function ocultaSticky() {
+  const sticky = document.getElementById('card-sticky');
+  if (!sticky) return;
+  sticky.classList.remove('visible');
+  sticky.hidden = true;
+}
+
+(function iniciaSticky() {
+  const sticky = document.getElementById('card-sticky');
+  const card = document.getElementById('card');
+  if (!sticky || !card) return;
+  sticky.addEventListener('click', () => {
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  // IntersectionObserver mira si la ficha grande esta a la vista. Cuando
+  // sale del viewport y hay elemento seleccionado, el sticky flota.
+  const io = new IntersectionObserver((entries) => {
+    const enVista = entries[0].isIntersecting;
+    if (activeNum != null && !enVista) {
+      sticky.hidden = false;
+      // Un tick para que la transicion de opacity se dispare
+      requestAnimationFrame(() => sticky.classList.add('visible'));
+    } else {
+      sticky.classList.remove('visible');
+      // Deja el elemento en el DOM durante la transicion para no cortarla
+      setTimeout(() => { if (!sticky.classList.contains('visible')) sticky.hidden = true; }, 240);
+    }
+  }, { threshold: 0.15 });
+  io.observe(card);
+})();
 
 // Dos cosas distintas encienden una pastilla y se parecen demasiado:
 //   .selected  lectura — "el elemento que has elegido vive en este grupo"
@@ -745,48 +841,51 @@ function renderCard(num) {
   ` : '').join('');
 
   document.getElementById('card').innerHTML = `
-    <div class="card-header" style="--accent:${color}">
-      <div class="card-number">N.º ${n} · Período ${period} · Grupo ${group}</div>
-      <div class="card-symbol-row">
-        <div class="card-symbol">${sym}</div>
-        <div>
+    <div class="card-body" style="--accent:${color}">
+
+      <div class="card-col col-identidad">
+        <div class="card-header">
+          <div class="card-number">N.º ${n} · Período ${period} · Grupo ${group}</div>
+          <div class="card-symbol">${sym}</div>
           <div class="card-name">${name}</div>
           <div class="card-cat">${catLabel}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-top:0.3rem">Masa atómica: <span style="color:${color}">${mass} u</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-
-      <div class="card-section">
-        <div class="section-label" style="color:${color}">Estructura atómica</div>
-        <div class="atom-viz">
-          <canvas id="atom-canvas" width="220" height="220"></canvas>
-        </div>
-        <div class="econfig-row" style="margin-top:0.5rem">
-          ${shellChips}
-        </div>
-        <div style="font-size:0.68rem;color:var(--muted);margin-top:0.35rem;font-family:'DM Mono',monospace">
-          ${n} protones · ${Math.round(parseFloat(mass)) - n || '?'} neutrones (aprox.)
+          <div class="card-masa">Masa atómica: <span style="color:${color}">${mass} u</span></div>
         </div>
       </div>
 
-      ${valenciaLinea(n, group, color)}
-
-      <div class="card-section">
-        <div class="section-label" style="color:${color}">Electronegatividad</div>
-        ${enHTML}
+      <div class="card-col col-atomo">
+        <div class="card-section">
+          <div class="section-label" style="color:${color}">Estructura atómica</div>
+          <div class="atom-viz">
+            <canvas id="atom-canvas" width="220" height="220"></canvas>
+          </div>
+          <div class="econfig-row" style="margin-top:0.5rem">
+            ${shellChips}
+          </div>
+          <div style="font-size:0.68rem;color:var(--muted);margin-top:0.35rem;font-family:'DM Mono',monospace">
+            ${n} protones · ${Math.round(parseFloat(mass)) - n || '?'} neutrones (aprox.)
+          </div>
+        </div>
       </div>
 
-      <div class="card-section">
-        <div class="section-label" style="color:${color}">Origen del nombre</div>
-        <div class="section-text">${origin}</div>
+      <div class="card-col col-props">
+        ${valenciaLinea(n, group, color)}
+        <div class="card-section">
+          <div class="section-label" style="color:${color}">Electronegatividad</div>
+          ${enHTML}
+        </div>
+        <div class="card-section">
+          <div class="section-label" style="color:${color}">Origen del nombre</div>
+          <div class="section-text">${origin}</div>
+        </div>
       </div>
 
-      <div class="card-section">
-        <div class="section-label" style="color:${color}">Usos y aplicaciones</div>
-        <div class="app-tags">
-          ${apps.map(a => `<span class="app-tag" style="background:color-mix(in srgb,${color} 14%,var(--surface2));border-color:color-mix(in srgb,${color} 35%,transparent);color:${color}">${a}</span>`).join('')}
+      <div class="card-col col-usos">
+        <div class="card-section">
+          <div class="section-label" style="color:${color}">Usos y aplicaciones</div>
+          <div class="app-tags">
+            ${apps.map(a => `<span class="app-tag" style="background:color-mix(in srgb,${color} 14%,var(--surface2));border-color:color-mix(in srgb,${color} 35%,transparent);color:${color}">${a}</span>`).join('')}
+          </div>
         </div>
       </div>
 

@@ -226,18 +226,21 @@ header {
 
 /* MAIN LAYOUT */
 .main-wrap {
+  /* Antes era flex row con panel lateral de 300px. Ahora la tabla ocupa el
+     ancho pleno hasta 1400px y la ficha vive debajo. */
   display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   padding: 0.5rem 1.5rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
   position: relative; z-index: 1;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 /* TABLE */
 .table-wrap {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   overflow-x: auto;
 }
@@ -372,10 +375,139 @@ header {
 
 /* INFO CARD */
 .info-card {
-  width: 300px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 1.5rem;
+  /* Ficha horizontal debajo de la tabla. Antes era un panel lateral de 300px
+     que se pegaba al scroll; ahora es un contenedor a ancho pleno con la
+     rejilla de 4 columnas dentro (ver .card-body). */
+  width: 100%;
+}
+
+/* ── FICHA COMPACTA FLOTANTE ────────────────────────────────────────────
+   Aparece pegada al fondo del viewport cuando la ficha grande no esta a
+   la vista y hay un elemento seleccionado. Reune identidad + familia +
+   masa en una sola linea, y al pincharla el foco vuelve a la ficha
+   completa con scroll suave. Es un boton entero: cualquier clic vale. */
+.card-sticky {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translate(-50%, 20px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: min(480px, 92vw);
+  max-width: min(640px, 96vw);
+  padding: 0.55rem 0.85rem 0.55rem 0.55rem;
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent, var(--metal-transicion)) 35%, transparent);
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--sombra-base) 45%, transparent);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  pointer-events: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+.card-sticky.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.card-sticky:hover {
+  background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 18%, var(--surface));
+}
+.card-sticky:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.sticky-symbol {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, var(--metal-transicion)) 40%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent-texto, var(--magenta));
+  line-height: 1;
+}
+.sticky-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  line-height: 1.15;
+}
+.sticky-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sticky-cat {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent-texto, var(--magenta));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sticky-arrow {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  color: var(--muted);
+  padding: 0 0.3rem;
+}
+
+/* Mini-stats a la derecha: EN y Valencia. Numeros grandes con etiqueta
+   pequenita encima, para que se lean de golpe mientras exploras la tabla. */
+.sticky-stats {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  padding-left: 0.5rem;
+  border-left: 1px solid color-mix(in srgb, var(--accent, var(--muted)) 25%, transparent);
+}
+.sticky-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  line-height: 1;
+  min-width: 2.2rem;
+}
+.sticky-stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.sticky-stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--accent-texto, var(--magenta));
+}
+
+/* En anchos muy justos ocultamos los stats para que el sticky no se estire
+   fuera del viewport; nombre y familia son la informacion minima. */
+@media (max-width: 540px) {
+  .sticky-stats { display: none; }
 }
 
 .card-box {
@@ -386,64 +518,76 @@ header {
   transition: all 0.3s ease;
 }
 
-.card-header {
+/* ── FICHA HORIZONTAL EN 4 COLUMNAS ─────────────────────────────────────
+   Antes la ficha era un panel lateral con card-header arriba y card-body
+   apilado debajo. Ahora vive en horizontal debajo de la tabla, con la
+   identidad, el atomo, las propiedades numericas y los usos cada uno en
+   su columna. En movil la rejilla se apila. */
+.card-body {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 0.9fr)  /* identidad */
+    minmax(220px, 1.1fr)  /* atomo */
+    minmax(240px, 1.2fr)  /* valencia + EN + origen */
+    minmax(200px, 1fr);   /* usos */
+  gap: 1.5rem;
   padding: 1.5rem;
-  position: relative;
-  border-bottom: 1px solid var(--border);
-  background: linear-gradient(135deg, var(--surface2), var(--surface));
+}
+.card-col { min-width: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+@media (max-width: 900px) {
+  /* Tablet: 2 columnas 2x2. La identidad y el atomo arriba, propiedades
+     y usos abajo. */
+  .card-body { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+}
+@media (max-width: 620px) {
+  .card-body { grid-template-columns: 1fr; gap: 1.2rem; }
 }
 
-.card-header::before {
-  content:'';
-  position:absolute; inset:0;
-  background: var(--accent, var(--metal-transicion));
-  opacity: 0.08;
+.card-header {
+  position: relative;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 6%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent, var(--metal-transicion)) 18%, transparent);
 }
 
 .card-number {
   font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--accent-texto, var(--magenta));
-  opacity: 0.8;
-  position: relative;
-  margin-bottom: 0.3rem;
-}
-
-.card-symbol-row {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  position: relative;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
 }
 
 .card-symbol {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 4.5rem;
+  font-size: 3.4rem;
   line-height: 1;
   color: var(--accent-texto, var(--magenta));
-  text-shadow: 0 0 40px color-mix(in srgb, var(--accent, var(--metal-transicion)) 40%, transparent);
+  margin-bottom: 0.4rem;
 }
 
 .card-name {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   color: var(--text);
+  line-height: 1.15;
 }
 
 .card-cat {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent-texto, var(--magenta));
-  margin-top: 0.2rem;
+  margin-top: 0.35rem;
 }
 
-.card-body {
-  padding: 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.card-masa {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
 }
 
 .stat-grid {
@@ -511,6 +655,7 @@ header {
 }
 
 .card-empty {
+  grid-column: 1 / -1;   /* Ocupa las 4 columnas del card-body */
   padding: 3rem 1.5rem;
   text-align: center;
   color: var(--muted);
@@ -534,11 +679,19 @@ header {
 /* ── ATOM VISUALIZER ── */
 .atom-viz {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  max-width: 220px;
-  margin: 0 auto;
+  width: 220px;         /* fijo, no % — asi el .atom-viz siempre mide 220 */
+  height: 220px;
+  max-width: 100%;      /* seguro en columnas muy estrechas */
+  align-self: center;   /* centro del cross axis en el flex-column padre */
 }
+
+/* En la columna del atomo solo centramos las piezas que rodean el atomo:
+   la caja del canvas ya iba con align-self, y los chips de configuracion
+   electronica + la linea de protones se justifican al centro para que la
+   simetria acompane al dibujo. El titulo "Estructura atomica" se queda a
+   la izquierda como en el resto de columnas. */
+.col-atomo .econfig-row { justify-content: center; }
+.col-atomo .card-section > div:last-child { text-align: center; }
 
 .atom-viz canvas {
   width: 100%;
@@ -629,17 +782,10 @@ header {
   color: var(--muted);
 }
 
-@media (max-width: 900px) {
-  /* Al pasar a columna hay que soltar el align-items:flex-start heredado: en
-  V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
-     eje columna hace que los hijos midan lo que su CONTENIDO, asi que
-     .table-wrap se hinchaba a 915px, su overflow-x nunca entraba en juego y
-     la tabla se desbordaba hasta que el body la recortaba a mitad de
-     elemento. Con stretch se cine al ancho real y hace scroll ella sola. */
-  .main-wrap { flex-direction: column; align-items: stretch; }
-  .table-wrap { width: 100%; }
-  .info-card { width: 100%; position: static; }
-}
+/* .main-wrap ya arranca en column con stretch: el ajuste que vivia aqui
+   para no desbordar la tabla en portrait pequenos se resuelve solo ahora
+   que el layout es de una sola columna a cualquier ancho.
+   V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 
 /* Search bar */
 .search-bar {
