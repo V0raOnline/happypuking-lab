@@ -1155,6 +1155,15 @@ footer {
   background: var(--green-lab);
   color: var(--bg);
 }
+/* En claro el verde neon del fondo es agresivo y --bg (papel) encima no lee.
+   Patron del boton "Comprobar" de Grammar Builder: borde saturado, fondo
+   apenas tintado, texto derivado con --green-lab-texto que ya deriva a verde
+   bosque en el bloque light. */
+:root[data-theme="light"] .btn-modal.primary {
+  background: color-mix(in srgb, var(--green-lab) 15%, transparent);
+  border: 1px solid var(--green-lab);
+  color: var(--green-lab-texto);
+}
 
 .btn-modal.secondary {
   background: var(--surface2);
@@ -1582,7 +1591,10 @@ footer {
   padding: 0.8rem 1rem;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1rem;
-  color: color-mix(in srgb, var(--pista) 95%, transparent);
+  /* Usa el derivado -texto, que en oscuro es ambar y en claro cae a ambar
+     oscuro mezclado con --text: sobre el fondo tintado al 7% ya no se lava.
+     Antes: color-mix(--pista 95%, transparent), ilegible en claro. */
+  color: var(--pista-texto);
   margin-bottom: 0.8rem;
   line-height: 1.5;
 }
@@ -2851,12 +2863,17 @@ function renderTokens() {
        resueltas es ademas redundante, porque .token-label ya la muestra.
        El nombre accesible sale del contenido: la palabra sola mientras no esta
        resuelta, y palabra + categoria cuando ya lo esta. */
+    // Los textos de token y su etiqueta se derivan con --text al 55% como en
+    // .cat-nombre de Explora: el color crudo (por ejemplo #FFD51A determinante)
+    // era ilegible sobre el fondo tintado en modo claro. El borde SI usa el
+    // color crudo, que es lo que le da identidad de familia a la caja.
+    const cTexto = `color-mix(in srgb, ${fnColor} 55%, var(--text))`;
     return `<button type="button" class="token ${clases}"
-      style="${esCorrecto ? `color:${fnColor};border-color:${fnColor};background:color-mix(in srgb,${fnColor} 12%,var(--surface2))` : ''}"
+      style="${esCorrecto ? `color:${cTexto};border-color:${fnColor};background:color-mix(in srgb,${fnColor} 12%,var(--surface2))` : ''}"
       aria-pressed="${esCorrecto || esSel}"${esCorrecto ? ' aria-disabled="true"' : ''}
       tabindex="-1">
       ${t.palabra}
-      <span class="token-label" style="background:color-mix(in srgb,${fnColor} 20%,var(--surface2));color:${fnColor}">${labelText}</span>
+      <span class="token-label" style="background:color-mix(in srgb,${fnColor} 20%,var(--surface2));color:${cTexto}">${labelText}</span>
     </button>`;
   }).join('');
   sincronizaTokens();
@@ -3017,8 +3034,11 @@ function actualizarResumen() {
     const primerToken = o.tokens.find(t => claves.includes(t.palabra + '_' + o.tokens.indexOf(t)));
     const color = primerToken ? (FUNCIONES_COLOR[primerToken.funcion] || CATEGORIAS_COLOR[primerToken.categoria] || 'var(--muted)') : 'var(--muted)';
 
+    // Idem que en renderTokens: texto derivado con --text al 55% para que el
+    // color crudo no lave sobre papel. El borde izquierdo conserva el color
+    // crudo — es la marca de identidad de familia.
     return `<div class="resumen-item" style="border-left:3px solid ${color}">
-      <span class="resumen-fn" style="color:${color}">${fn.toUpperCase()}</span>
+      <span class="resumen-fn" style="color:color-mix(in srgb, ${color} 55%, var(--text))">${fn.toUpperCase()}</span>
       <span class="resumen-palabra">${palabras}</span>
     </div>`;
   }).join('');
