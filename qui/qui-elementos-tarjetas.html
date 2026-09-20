@@ -323,19 +323,22 @@ body.en-pausa .btn-pensar { color: var(--bg); background: var(--no-metal); borde
 }
 body.en-pausa .pausa-overlay { display: flex; }
 .pausa-msg {
-  /* Fijo al viewport, no centrado dentro del overlay: el overlay cubre un
-  V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
-     panel que puede ser mas alto que la pantalla, y entonces el mensaje y su
-     boton caen fuera. Mismo remedio que en la tabla pitagorica. */
-  position: fixed;
+  /* Centrado dentro del overlay (que cubre el panel de juego), no del
+     viewport: con position: fixed el mensaje se descolgaba hasta el footer
+     cuando la cabecera empujaba el panel hacia abajo, y ademas su fondo
+     translucido dejaba pasar el pie de pagina. Position absolute cae dentro
+     del overlay y su max-height ya evita que se salga por abajo si el panel
+     fuera muy alto.
+     V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
+  position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   z-index: 31;
   max-width: min(420px, 88vw);
-  max-height: 92vh; overflow-y: auto;
+  max-height: min(92%, 92vh); overflow-y: auto;
   text-align: center; padding: 1.2rem 1.4rem;
   border: 1px solid color-mix(in srgb, var(--no-metal) 30%, transparent); border-radius: 14px;
-  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  background: var(--bg);
 }
 .pausa-title { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color:var(--no-metal-texto); }
 .pausa-sub { display: block; margin-top: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
@@ -873,6 +876,7 @@ const PAUSA_TEXTO = {
   respira: ['Respira', 'Puedes tomarte un tiempo para pensar'],
 };
 
+let focoPrePausa = null;
 function setPausa(on, motivo = 'manual') {
   if (document.getElementById('screen-quiz').classList.contains('hidden')) return;
   if (on && motivo === 'manual' && (!qTimer || !ritmoReloj)) return;
@@ -889,6 +893,16 @@ function setPausa(on, motivo = 'manual') {
   document.body.classList.toggle('en-pausa', on);
   document.getElementById('btn-pensar').textContent = on ? 'Ya lo tengo' : 'Estoy pensando';
   renderTimer();
+  // Foco al boton Seguir cuando aparece la pausa: sin esto el respiro se
+  // dispara solo tras tres fallos y el foco queda en el body, asi que Enter
+  // no cierra el mensaje. Se guarda el foco previo para devolverlo al salir.
+  if (on) {
+    focoPrePausa = document.activeElement;
+    requestAnimationFrame(() => document.getElementById('pausa-seguir').focus());
+  } else if (focoPrePausa && document.body.contains(focoPrePausa)) {
+    focoPrePausa.focus();
+    focoPrePausa = null;
+  }
 }
 
 function resetRonda() {
