@@ -179,6 +179,14 @@
     color: var(--sobre-vivo);
     border-color: var(--glow);
   }
+  /* En claro --glow (#39ff6a) es neon sobre papel: agresivo y con --sobre-vivo
+     encima ni siquiera lee bien. Patron habitual: fondo tintado, borde con
+     --mid (verde bosque) y texto --glow-texto derivado. */
+  :root[data-theme="light"] .mode-btn.active {
+    background: color-mix(in srgb, var(--glow) 18%, transparent);
+    color: var(--glow-texto);
+    border-color: var(--mid);
+  }
 
   /* ── MAIN LAYOUT ── */
   main {
