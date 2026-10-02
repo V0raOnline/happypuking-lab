@@ -78,6 +78,7 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   <button class="mode-btn active" id="mode-cat" role="radio" aria-checked="true">Familias</button>
   <button class="mode-btn" id="mode-en" role="radio" aria-checked="false">Electronegatividad</button>
   <button class="mode-btn" id="mode-val" role="radio" aria-checked="false">Valencia</button>
+  <button class="mode-btn" id="mode-oxid" role="radio" aria-checked="false">Oxidación</button>
 </div>
 
 <div class="legend" id="legend"></div>
@@ -94,6 +95,12 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   <p class="en-legend-note"><strong>¿Qué es?</strong> La electronegatividad mide la fuerza con la que un átomo atrae hacia sí los electrones cuando forma un enlace con otro: el que tiene el valor más alto tira más fuerte de ellos.</p>
   <p class="en-legend-note">Y crece <strong>→ hacia la derecha</strong> y <strong>↑ hacia arriba</strong>.</p>
   <p class="en-legend-note"><strong>Esa diagonal explica la forma de la tabla</strong>: metales que ceden electrones abajo a la izquierda, no metales que los atraen arriba a la derecha. Los atenuados no tienen dato (gases nobles ligeros y elementos sintéticos).</p>
+</div>
+<div class="oxid-legend" id="oxid-legend">
+  <div class="oxid-chips-row" id="oxid-chips-row"></div>
+  <p class="en-legend-note"><strong>¿Qué es?</strong> El estado de oxidación es la carga que ese átomo tiene dentro de un compuesto: cuántos electrones ha ganado (signo −) o cedido (signo +) al unirse con otro. Es <strong>el dato con el que se formula</strong>.</p>
+  <p class="en-legend-note">Cada casilla se pinta por su estado <strong>más frecuente</strong>. Los chips iluminan a todos los que pueden actuar con esa carga, aunque no sea su dominante. Los atenuados son gases nobles (no forman iones estables en ESO) o sintéticos (sin dato curado).</p>
+  <p class="en-legend-note"><strong>Es el puente hacia formular</strong>: elige dos elementos y equilibra sus cargas con subíndices. La electronegatividad decide quién manda; los estados dicen con cuántas cargas cada uno.</p>
 </div>
 <div class="val-legend" id="val-legend">
   <div class="val-chips" id="val-chips"></div>
@@ -420,6 +427,118 @@ const EXTRA = {
 };
 // Default for superheavy elements
 for(let i=104;i<=118;i++) EXTRA[i] = [[2,8,18,32,32,10,2], null];
+
+// ── Estados de oxidacion ─────────────────────────────────────────────────
+// Solo los estados usados con frecuencia en libros ESO/bachiller para
+// formular. El primero de la lista es el mas comun (lo usa el modo tabla).
+// Gases nobles y sinteticos: null. Numeros con signo, sin ceros.
+const OXID = {
+  1:  [+1, -1],
+  2:  null,
+  3:  [+1],
+  4:  [+2],
+  5:  [+3],
+  6:  [+4, +2, -4],
+  7:  [-3, +3, +5],
+  8:  [-2],
+  9:  [-1],
+  10: null,
+  11: [+1],
+  12: [+2],
+  13: [+3],
+  14: [+4, -4],
+  15: [-3, +3, +5],
+  16: [-2, +4, +6],
+  17: [-1, +1, +3, +5, +7],
+  18: null,
+  19: [+1],
+  20: [+2],
+  21: [+3],
+  22: [+4, +3, +2],
+  23: [+5, +4, +3, +2],
+  24: [+3, +6, +2],
+  25: [+2, +4, +7],
+  26: [+3, +2],
+  27: [+2, +3],
+  28: [+2, +3],
+  29: [+2, +1],
+  30: [+2],
+  31: [+3],
+  32: [+4, +2],
+  33: [-3, +3, +5],
+  34: [-2, +4, +6],
+  35: [-1, +1, +3, +5, +7],
+  36: null,
+  37: [+1],
+  38: [+2],
+  39: [+3],
+  40: [+4],
+  41: [+5, +3],
+  42: [+6, +4, +2],
+  43: [+7, +4],
+  44: [+3, +4, +8],
+  45: [+3],
+  46: [+2, +4],
+  47: [+1],
+  48: [+2],
+  49: [+3],
+  50: [+4, +2],
+  51: [-3, +3, +5],
+  52: [-2, +4, +6],
+  53: [-1, +1, +3, +5, +7],
+  54: null,
+  55: [+1],
+  56: [+2],
+  57: [+3],
+  58: [+3, +4],
+  59: [+3],
+  60: [+3],
+  61: [+3],
+  62: [+3],
+  63: [+3, +2],
+  64: [+3],
+  65: [+3],
+  66: [+3],
+  67: [+3],
+  68: [+3],
+  69: [+3],
+  70: [+3, +2],
+  71: [+3],
+  72: [+4],
+  73: [+5],
+  74: [+6, +4],
+  75: [+7, +4],
+  76: [+4, +8],
+  77: [+3, +4],
+  78: [+2, +4],
+  79: [+3, +1],
+  80: [+2, +1],
+  81: [+1, +3],
+  82: [+2, +4],
+  83: [+3, +5],
+  84: [+4, +2, -2],
+  85: [-1, +1, +3, +5, +7],
+  86: null,
+  87: [+1],
+  88: [+2],
+  89: [+3],
+  90: [+4],
+  91: [+5],
+  92: [+6, +4],
+  93: [+5],
+  94: [+4],
+  95: [+3],
+  96: [+3],
+  97: [+3],
+  98: [+3],
+  99: [+3],
+  100:[+3],
+  101:[+3],
+  102:[+3],
+  103:[+3],
+};
+// Sinteticos (>=104): sin dato
+for(let i=104;i<=118;i++) OXID[i] = null;
 
 // Map number → data
 const elMap = {};
@@ -870,6 +989,7 @@ function renderCard(num) {
 
       <div class="card-col col-props">
         ${valenciaLinea(n, group, color)}
+        ${oxidacionLinea(n, color)}
         <div class="card-section">
           <div class="section-label" style="color:${color}">Electronegatividad</div>
           ${enHTML}
@@ -932,6 +1052,31 @@ function valenciaLinea(n, group, color) {
           <span class="en-value" style="color:${color}">${valor}</span>
           <span class="en-scale-label">en la &uacute;ltima capa</span>
         </div>
+        <div class="section-text">${nota}</div>
+      </div>`;
+}
+
+// Estados de oxidacion en la ficha: solo aparece si hay dato curado en OXID.
+// El primero es el mas comun (destacado); el resto en gris. Signo con U+2212
+// (menos tipografico) para que se lea igual que el resto de la pagina.
+function oxidacionLinea(n, color) {
+  const estados = OXID[n];
+  if (!estados || !estados.length) return '';
+  const fmt = v => (v > 0 ? '+' + v : String(v).replace('-', '−'));
+  const chips = estados.map((v, i) => {
+    const cls = i === 0 ? 'oxid-chip oxid-chip-main' : 'oxid-chip';
+    const style = i === 0
+      ? `background:color-mix(in srgb,${color} 18%,var(--surface2));border-color:${color};color:${color}`
+      : `background:var(--surface2);border-color:color-mix(in srgb,${color} 25%,transparent);color:var(--text-dim)`;
+    return `<span class="${cls}" style="${style}">${fmt(v)}</span>`;
+  }).join('');
+  const nota = estados.length === 1
+    ? 'Act&uacute;a siempre con este estado al formular.'
+    : `Puede actuar con varios estados; el destacado (${fmt(estados[0])}) es el m&aacute;s frecuente.`;
+  return `
+      <div class="card-section">
+        <div class="section-label" style="color:${color}">Estados de oxidaci&oacute;n</div>
+        <div class="oxid-chips">${chips}</div>
         <div class="section-text">${nota}</div>
       </div>`;
 }
@@ -1186,12 +1331,85 @@ function filterVal(key) {
   soltarSiQuedaFuera(valGroupOf, activeValFilter);
 }
 
+// ── Modo Oxidacion ────────────────────────────────────────────────────
+// Color por estado dominante (primer valor de OXID[n]). Los chips iluminan
+// TODOS los que puedan actuar con ese estado, no solo los dominantes.
+const OXID_COLORS = {
+  '-3': 'var(--oxid-neg-3)',
+  '-2': 'var(--oxid-neg-2)',
+  '-1': 'var(--oxid-neg-1)',
+  '+1': 'var(--oxid-pos-1)',
+  '+2': 'var(--oxid-pos-2)',
+  '+3': 'var(--oxid-pos-3)',
+  '+4': 'var(--oxid-pos-4)',
+  '+5': 'var(--oxid-pos-5)',
+  '+6': 'var(--oxid-pos-6)',
+  '+7': 'var(--oxid-pos-7)',
+};
+// Orden en la leyenda: mas oxidante a mas reductor
+const OXID_ORDER = ['-3','-2','-1','+1','+2','+3','+4','+5','+6','+7'];
+
+function fmtEstado(v) { return v > 0 ? '+' + v : String(v).replace('-', '−'); }
+function keyEstado(v) { return v > 0 ? '+' + v : String(v); } // clave interna con "-" ASCII
+
+function oxidMainOf(num) {
+  const st = OXID[num];
+  return (st && st.length) ? keyEstado(st[0]) : null;
+}
+
+function oxidColor(num) {
+  const key = oxidMainOf(num);
+  return key ? OXID_COLORS[key] : 'var(--cat-defecto)';
+}
+
+// Chips iluminan cualquier elemento que pueda actuar con ese estado
+(function buildOxidChips() {
+  const wrap = document.getElementById('oxid-chips-row');
+  if (!wrap) return;
+  OXID_ORDER.forEach(key => {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'oxid-tag-chip';
+    d.dataset.oxid = key;
+    d.setAttribute('aria-pressed', 'false');
+    const label = key.replace('-', '−');
+    d.setAttribute('aria-label', `Resaltar los que pueden actuar con estado ${label}`);
+    d.innerHTML = `<span class="oxid-dot" style="background:${OXID_COLORS[key]}"></span>${label}<span class="pill-badge"></span>`;
+    d.onclick = () => filterOxid(key);
+    wrap.appendChild(d);
+  });
+  barraDeBotones(wrap, '.oxid-tag-chip', 'Filtrar por estado de oxidacion');
+})();
+
+let activeOxidFilter = null;
+
+function elementoTieneEstado(num, key) {
+  const st = OXID[num];
+  if (!st) return false;
+  const target = parseInt(key, 10);
+  return st.includes(target);
+}
+
+function filterOxid(key) {
+  activeOxidFilter = activeOxidFilter === key ? null : key;
+  document.querySelectorAll('.oxid-tag-chip').forEach(c => {
+    const on = c.dataset.oxid === activeOxidFilter;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  document.querySelectorAll('.el[data-num]').forEach(el => {
+    if (activeOxidFilter === null) { el.classList.remove('dimmed'); return; }
+    el.classList.toggle('dimmed', !elementoTieneEstado(parseInt(el.dataset.num), activeOxidFilter));
+  });
+  soltarSiQuedaFuera(n => elementoTieneEstado(n, activeOxidFilter) ? activeOxidFilter : null, activeOxidFilter);
+}
+
 let viewMode = 'cat';
 
 function setViewMode(mode) {
   if (mode === viewMode) return;
   viewMode = mode;
-  ['cat','en','val'].forEach(m => {
+  ['cat','en','val','oxid'].forEach(m => {
     const b = document.getElementById('mode-' + m);
     const on = mode === m;
     b.classList.toggle('active', on);
@@ -1200,12 +1418,15 @@ function setViewMode(mode) {
   });
   ptable.classList.toggle('mode-en', mode === 'en');
   ptable.classList.toggle('mode-val', mode === 'val');
+  ptable.classList.toggle('mode-oxid', mode === 'oxid');
   document.getElementById('legend').classList.toggle('hidden', mode !== 'cat');
   document.getElementById('cat-intro').classList.toggle('hidden', mode !== 'cat');
   document.getElementById('en-legend').classList.toggle('visible', mode === 'en');
   document.getElementById('val-legend').classList.toggle('visible', mode === 'val');
+  document.getElementById('oxid-legend').classList.toggle('visible', mode === 'oxid');
   if (activeFilter) filterCat(activeFilter);        // limpia el filtro de categoría al cambiar de modo
   if (activeValFilter) filterVal(activeValFilter);  // idem el de valencia
+  if (activeOxidFilter) filterOxid(activeOxidFilter); // idem el de oxidacion
   document.querySelectorAll('.el[data-num]').forEach(el => {
     const num = parseInt(el.dataset.num);
     const en = EXTRA[num] ? EXTRA[num][1] : null;
@@ -1216,9 +1437,20 @@ function setViewMode(mode) {
       el.style.setProperty('--en-op', (0.12 + 0.38 * Math.max(0, Math.min(1, t))).toFixed(2));
     } else if (mode === 'val' && !el.classList.contains('val-nodata')) {
       el.style.setProperty('--cat-color', valColor(num));
+    } else if (mode === 'oxid') {
+      const key = oxidMainOf(num);
+      if (key) {
+        el.style.setProperty('--cat-color', OXID_COLORS[key]);
+        el.classList.remove('oxid-nodata');
+      } else {
+        el.style.setProperty('--cat-color', 'var(--cat-defecto)');
+        el.classList.add('oxid-nodata');
+      }
     } else {
       el.style.setProperty('--cat-color', CATS[el.dataset.cat]?.color || 'var(--cat-defecto)');
+      el.classList.remove('oxid-nodata');
     }
+    if (mode !== 'oxid') el.classList.remove('oxid-nodata');
   });
   updateEnPin(activeNum);      // restaura el pin si ya había un elemento seleccionado
   updateModePills(activeNum);  // idem el pill iluminado del modo destino
@@ -1227,6 +1459,7 @@ function setViewMode(mode) {
 document.getElementById('mode-cat').onclick = () => setViewMode('cat');
 document.getElementById('mode-en').onclick = () => setViewMode('en');
 document.getElementById('mode-val').onclick = () => setViewMode('val');
+document.getElementById('mode-oxid').onclick = () => setViewMode('oxid');
 
 // Tendencia iónica por grupo — el dato que se muestra en el pill de Valencia
 const TENDENCIA_ION = { 1:'+1', 2:'+2', 13:'+3', 14:'±4', 15:'−3', 16:'−2', 17:'−1' };
@@ -1241,7 +1474,7 @@ function tendenciaIon(num) {
 // Misma filosofía que el pin de electronegatividad: al seleccionar un elemento
 // se ilumina su pill en el modo actual, con el dato concreto de ese elemento.
 function updateModePills(num) {
-  document.querySelectorAll('.legend-item.selected, .val-chip.selected')
+  document.querySelectorAll('.legend-item.selected, .val-chip.selected, .oxid-tag-chip.selected')
     .forEach(c => { c.classList.remove('selected'); c.style.removeProperty('--pill-color'); });
   document.querySelectorAll('.pill-badge').forEach(b => { b.textContent = ''; });
 
@@ -1258,6 +1491,16 @@ function updateModePills(num) {
     if (key) {
       pill = document.querySelector(`.val-chip[data-val="${key}"]`);
       dato = `${e[1]} · ${tendenciaIon(num)}`;
+    }
+  } else if (viewMode === 'oxid') {
+    const key = oxidMainOf(num);
+    if (key) {
+      pill = document.querySelector(`.oxid-tag-chip[data-oxid="${key}"]`);
+      const st = OXID[num];
+      const otros = st.length > 1
+        ? ' (también ' + st.slice(1).map(fmtEstado).join(', ') + ')'
+        : '';
+      dato = `${e[1]} · ${fmtEstado(st[0])}${otros}`;
     }
   }
   if (!pill) return;

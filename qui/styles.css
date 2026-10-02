@@ -39,6 +39,20 @@
   --val-6: #3B82F6;
   --val-7: #A78BFA;
   --val-completa: #E2E8F0;
+
+  /* Estados de oxidacion. Escala diverging: azules a violeta para aniones
+     (ganan e-), amarillos/rojos/violeta para cationes (ceden e-). El +7
+     usa violeta para no chocar con el +6 rosa y darle rango al gradiente. */
+  --oxid-neg-3: #2563EB;
+  --oxid-neg-2: #0EA5E9;
+  --oxid-neg-1: #06B6D4;
+  --oxid-pos-1: #FBBF24;
+  --oxid-pos-2: #F59E0B;
+  --oxid-pos-3: #F97316;
+  --oxid-pos-4: #EF4444;
+  --oxid-pos-5: #EC4899;
+  --oxid-pos-6: #D946EF;
+  --oxid-pos-7: #A78BFA;
   --cat-defecto: #888;
   --en-bar-fondo: #1A1D27;
   --cyan: #22D3EE;
@@ -86,6 +100,18 @@
   --mas-tenue: #695e6c;
   --val-completa: #b9b3a8;
   --en-bar-fondo: #ded3c5;
+
+  /* Estados de oxidacion — mismos hues, L ~35-45%, C moderada para papel. */
+  --oxid-neg-3: #1E40AF;
+  --oxid-neg-2: #0369A1;
+  --oxid-neg-1: #0E7490;
+  --oxid-pos-1: #A16207;
+  --oxid-pos-2: #B45309;
+  --oxid-pos-3: #C2410C;
+  --oxid-pos-4: #B91C1C;
+  --oxid-pos-5: #BE185D;
+  --oxid-pos-6: #A21CAF;
+  --oxid-pos-7: #7C3AED;
   --cat-defecto: #6f6472;
   --grano-op: 0.45;
   --masa: #675c6c;
@@ -729,6 +755,29 @@ header {
   font-weight: 600;
 }
 
+/* ── ESTADOS DE OXIDACION ── */
+.oxid-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.oxid-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  line-height: 1.4;
+}
+
+.oxid-chip-main {
+  font-size: 0.92rem;
+  padding: 0.25rem 0.65rem;
+}
+
 /* ── ELECTRONEGATIVIDAD BAR ── */
 .en-bar-wrap {
   display: flex;
@@ -1042,6 +1091,54 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   flex-shrink: 0;
 }
 
+/* ── MODO OXIDACION EN LA TABLA ── */
+.mode-oxid .el::before { opacity: 0.22; }
+.mode-oxid .el:hover::before { opacity: 0.42; }
+.mode-oxid .el.oxid-nodata { opacity: 0.28; }
+.mode-oxid .el.oxid-nodata.dimmed { opacity: 0.1; }
+
+.oxid-legend {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0.8rem 1.5rem 0.3rem;
+  position: relative; z-index: 1;
+}
+.oxid-legend.visible { display: flex; }
+.oxid-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.oxid-tag-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.oxid-tag-chip:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 20%, transparent); }
+.oxid-tag-chip.active {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text) 30%, transparent);
+}
+.oxid-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 /* ── CABECERA PLEGABLE ─────────────────────────────────────────────────────
    En movil la cabecera se come mas de una pantalla antes de llegar a la
    herramienta. Plegada deja el topbar y el breadcrumb, que es lo unico que
@@ -1148,7 +1245,7 @@ button.el {
 
 /* Leyenda y chips de valencia son <button> desde que se pueden usar con
    teclado: filtran la tabla, nunca fueron decoracion. */
-button.legend-item, button.val-chip {
+button.legend-item, button.val-chip, button.oxid-tag-chip {
   /* Solo lo que impone el navegador. "font: inherit" y "color: inherit"
      tenian mas especificidad que .legend-item y le borraban el tamano, el
      peso y el color del diseno: los pills salian sin texto legible. */
@@ -1158,7 +1255,7 @@ button.legend-item, button.val-chip {
   font-family: inherit;
   text-align: left;
 }
-.legend-item:focus-visible, .val-chip:focus-visible {
+.legend-item:focus-visible, .val-chip:focus-visible, .oxid-tag-chip:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }
