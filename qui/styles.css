@@ -1273,7 +1273,7 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
 }
 
 /* ── YAML CARGADO POR EL USUARIO ─────────────────────────────────────────
-   El modo oxidacion acepta un dataset propio en YAML (modal "Mis valencias").
+   El modo oxidacion acepta un dataset propio en YAML (modal "Editar oxidacion").
    Patron de la casa: default embebido + modal con prompt generador + pegar
    y aplicar. La fusion es simbolo-a-simbolo: lo que no listes hereda del
    default, para que no haga falta reescribirlo todo. */
@@ -1286,7 +1286,7 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   margin-top: 0.4rem;
 }
 
-.btn-mis-valencias {
+.btn-editar-oxid {
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
   color: var(--muted);
@@ -1300,11 +1300,11 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   align-items: center;
   gap: 0.35rem;
 }
-.btn-mis-valencias:hover {
+.btn-editar-oxid:hover {
   color: var(--text);
   border-color: color-mix(in srgb, var(--text) 20%, transparent);
 }
-.btn-mis-valencias:focus-visible {
+.btn-editar-oxid:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }

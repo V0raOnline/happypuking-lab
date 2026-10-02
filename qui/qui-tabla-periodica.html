@@ -99,17 +99,17 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 <div class="oxid-legend" id="oxid-legend">
   <div class="oxid-chips-row" id="oxid-chips-row"></div>
   <div class="oxid-tools">
-    <button type="button" class="btn-mis-valencias" onclick="abrirYamlModal()" aria-label="Cargar mis valencias desde un YAML">
-      <span aria-hidden="true">⚗</span> Mis valencias
+    <button type="button" class="btn-editar-oxid" onclick="abrirYamlModal()" aria-label="Editar los estados de oxidación en YAML">
+      <span aria-hidden="true">⚗</span> Editar oxidación
     </button>
     <span class="oxid-usuario-badge" id="oxid-usuario-badge">
-      <span>Valencias propias cargadas</span>
+      <span>Oxidación propia cargada</span>
       <button type="button" class="btn-volver-default" onclick="volverADefaultOxid()" aria-label="Volver al dataset por defecto">volver al defecto</button>
     </span>
   </div>
   <p class="en-legend-note"><strong>¿Qué es?</strong> El estado de oxidación es la carga que ese átomo tiene dentro de un compuesto: cuántos electrones ha ganado (signo −) o cedido (signo +) al unirse con otro. Es <strong>el dato con el que se formula</strong>.</p>
   <p class="en-legend-note">Cada casilla se pinta por su estado <strong>más frecuente</strong>. Los chips iluminan a todos los que pueden actuar con esa carga, aunque no sea su dominante. Los atenuados son gases nobles (no forman iones estables en ESO) o sintéticos (sin dato curado).</p>
-  <p class="en-legend-note"><strong>Es el puente hacia formular</strong>: elige dos elementos y equilibra sus cargas con subíndices. La electronegatividad decide quién manda; los estados dicen con cuántas cargas cada uno. ¿Tu libro usa otros estados? Pulsa <strong>Mis valencias</strong> y pega el tuyo.</p>
+  <p class="en-legend-note"><strong>Es el puente hacia formular</strong>: elige dos elementos y equilibra sus cargas con subíndices. La electronegatividad decide quién manda; los estados dicen con cuántas cargas cada uno. ¿Tu libro usa otros estados? Pulsa <strong>Editar oxidación</strong> y ajústalos.</p>
 </div>
 <div class="val-legend" id="val-legend">
   <div class="val-chips" id="val-chips"></div>
@@ -155,14 +155,14 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   <span class="sticky-arrow" aria-hidden="true">↓</span>
 </button>
 
-<!-- ══════════ MODAL YAML — "Mis valencias" ══════════
+<!-- ══════════ MODAL YAML — "Editar oxidacion" ══════════
      Un unico textarea precargado con el YAML actual (BASE o lo que haya
      cargado el usuario). El profe edita las lineas que quiera y aplica.
      La fusion es simbolo-a-simbolo: borrar una linea = ese elemento
      hereda del dataset embebido. -->
 <div class="yaml-modal" id="yaml-modal" aria-hidden="true" role="dialog" aria-labelledby="yaml-modal-title">
   <div class="yaml-modal-inner">
-    <h3 id="yaml-modal-title">Mis valencias</h3>
+    <h3 id="yaml-modal-title">Editar oxidación</h3>
     <p>Edita el YAML abajo con los estados de oxidación que use tu libro o tu aula. Los elementos que borres heredan del dataset por defecto, no se pierden.</p>
 
     <div class="yaml-status" id="yaml-status"></div>
@@ -467,7 +467,7 @@ for(let i=104;i<=118;i++) EXTRA[i] = [[2,8,18,32,32,10,2], null];
 // formular. El primero de la lista es el mas comun (lo usa el modo tabla).
 // Gases nobles y sinteticos: null. Numeros con signo, sin ceros.
 // OXID_BASE es el default inmutable; OXID es la copia activa que se puede
-// sobreescribir con el YAML del usuario (modal "Mis valencias").
+// sobreescribir con el YAML del usuario (modal "Editar oxidacion").
 const OXID_BASE = {
   1:  [+1, -1],
   2:  null,
@@ -1575,7 +1575,7 @@ function updateEnPin(num) {
   pin.classList.add('visible');
 }
 
-// ── Modal "Mis valencias": YAML editable para estados de oxidacion ───────
+// ── Modal "Editar oxidacion": YAML editable para los estados ─────────────
 // Carga por simbolo (Fe, Cl, Cu...). Lo que no se liste hereda del default.
 // Validacion: YAML inviable -> aviso y no se aplica. Simbolos desconocidos
 // o estados fuera de -3..+7 -> se avisan pero se cargan los validos.
