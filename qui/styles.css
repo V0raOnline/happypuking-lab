@@ -42,11 +42,13 @@
 
   /* Estados de oxidacion. Escala diverging: azules a violeta para aniones
      (ganan e-), amarillos/rojos/violeta para cationes (ceden e-). El +7
-     usa violeta para no chocar con el +6 rosa y darle rango al gradiente. */
+     usa violeta para no chocar con el +6 rosa y darle rango al gradiente.
+     +1 vive en amarillo puro para despegarlo del +2 ambar: si no, columna
+     1 (Na, K) y columna 2 (Ca, Mg) se confunden al recorrerlas. */
   --oxid-neg-3: #2563EB;
   --oxid-neg-2: #0EA5E9;
   --oxid-neg-1: #06B6D4;
-  --oxid-pos-1: #FBBF24;
+  --oxid-pos-1: #FACC15;
   --oxid-pos-2: #F59E0B;
   --oxid-pos-3: #F97316;
   --oxid-pos-4: #EF4444;
@@ -101,11 +103,13 @@
   --val-completa: #b9b3a8;
   --en-bar-fondo: #ded3c5;
 
-  /* Estados de oxidacion — mismos hues, L ~35-45%, C moderada para papel. */
+  /* Estados de oxidacion — mismos hues, L ~35-45%, C moderada para papel.
+     +1 va a dorado hue amarillo (no amber) para despegarlo del +2 amber:
+     en papel el amarillo puro desaparece, pero yellow-600 aguanta. */
   --oxid-neg-3: #1E40AF;
   --oxid-neg-2: #0369A1;
   --oxid-neg-1: #0E7490;
-  --oxid-pos-1: #A16207;
+  --oxid-pos-1: #CA8A04;
   --oxid-pos-2: #B45309;
   --oxid-pos-3: #C2410C;
   --oxid-pos-4: #B91C1C;
