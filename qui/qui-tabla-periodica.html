@@ -98,9 +98,18 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 </div>
 <div class="oxid-legend" id="oxid-legend">
   <div class="oxid-chips-row" id="oxid-chips-row"></div>
+  <div class="oxid-tools">
+    <button type="button" class="btn-mis-valencias" onclick="abrirYamlModal()" aria-label="Cargar mis valencias desde un YAML">
+      <span aria-hidden="true">⚗</span> Mis valencias
+    </button>
+    <span class="oxid-usuario-badge" id="oxid-usuario-badge">
+      <span>Valencias propias cargadas</span>
+      <button type="button" class="btn-volver-default" onclick="volverADefaultOxid()" aria-label="Volver al dataset por defecto">volver al defecto</button>
+    </span>
+  </div>
   <p class="en-legend-note"><strong>¿Qué es?</strong> El estado de oxidación es la carga que ese átomo tiene dentro de un compuesto: cuántos electrones ha ganado (signo −) o cedido (signo +) al unirse con otro. Es <strong>el dato con el que se formula</strong>.</p>
   <p class="en-legend-note">Cada casilla se pinta por su estado <strong>más frecuente</strong>. Los chips iluminan a todos los que pueden actuar con esa carga, aunque no sea su dominante. Los atenuados son gases nobles (no forman iones estables en ESO) o sintéticos (sin dato curado).</p>
-  <p class="en-legend-note"><strong>Es el puente hacia formular</strong>: elige dos elementos y equilibra sus cargas con subíndices. La electronegatividad decide quién manda; los estados dicen con cuántas cargas cada uno.</p>
+  <p class="en-legend-note"><strong>Es el puente hacia formular</strong>: elige dos elementos y equilibra sus cargas con subíndices. La electronegatividad decide quién manda; los estados dicen con cuántas cargas cada uno. ¿Tu libro usa otros estados? Pulsa <strong>Mis valencias</strong> y pega el tuyo.</p>
 </div>
 <div class="val-legend" id="val-legend">
   <div class="val-chips" id="val-chips"></div>
@@ -145,6 +154,31 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   </span>
   <span class="sticky-arrow" aria-hidden="true">↓</span>
 </button>
+
+<!-- ══════════ MODAL YAML — "Mis valencias" ══════════
+     Un unico textarea precargado con el YAML actual (BASE o lo que haya
+     cargado el usuario). El profe edita las lineas que quiera y aplica.
+     La fusion es simbolo-a-simbolo: borrar una linea = ese elemento
+     hereda del dataset embebido. -->
+<div class="yaml-modal" id="yaml-modal" aria-hidden="true" role="dialog" aria-labelledby="yaml-modal-title">
+  <div class="yaml-modal-inner">
+    <h3 id="yaml-modal-title">Mis valencias</h3>
+    <p>Edita el YAML abajo con los estados de oxidación que use tu libro o tu aula. Los elementos que borres heredan del dataset por defecto, no se pierden.</p>
+
+    <div class="yaml-status" id="yaml-status"></div>
+    <textarea class="yaml-textarea" id="yaml-textarea" spellcheck="false" aria-label="Dataset YAML editable"></textarea>
+    <div class="yaml-restore-row">
+      <button type="button" class="btn-link-restore" onclick="restaurarYamlEnTextarea()" title="Rellena el textarea con el dataset por defecto (no lo aplica hasta que pulses Aplicar)">↺ Restaurar al YAML por defecto</button>
+    </div>
+
+    <div class="yaml-modal-actions">
+      <button type="button" class="btn-modal secondary" onclick="cerrarYamlModal()">Cancelar</button>
+      <button type="button" class="btn-modal primary" onclick="cargarYamlOxid()">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 
 <footer>
   <div class="footer-left">
@@ -432,7 +466,9 @@ for(let i=104;i<=118;i++) EXTRA[i] = [[2,8,18,32,32,10,2], null];
 // Solo los estados usados con frecuencia en libros ESO/bachiller para
 // formular. El primero de la lista es el mas comun (lo usa el modo tabla).
 // Gases nobles y sinteticos: null. Numeros con signo, sin ceros.
-const OXID = {
+// OXID_BASE es el default inmutable; OXID es la copia activa que se puede
+// sobreescribir con el YAML del usuario (modal "Mis valencias").
+const OXID_BASE = {
   1:  [+1, -1],
   2:  null,
   3:  [+1],
@@ -538,11 +574,26 @@ const OXID = {
   103:[+3],
 };
 // Sinteticos (>=104): sin dato
-for(let i=104;i<=118;i++) OXID[i] = null;
+for(let i=104;i<=118;i++) OXID_BASE[i] = null;
+
+// Copia mutable del dataset. Las funciones del modo oxidacion y de la ficha
+// leen SIEMPRE desde OXID, nunca desde OXID_BASE: asi al cargar un YAML
+// propio basta con mutar OXID y repintar.
+let OXID = clonarOxid(OXID_BASE);
+function clonarOxid(src) {
+  const out = {};
+  for (const k in src) out[k] = src[k] == null ? null : [...src[k]];
+  return out;
+}
+
+// Simbolo -> numero atomico, se construye tras ELEMENTS. Lo usa el parser YAML
+// porque el usuario lista por simbolo ("Fe:") en vez de por numero.
+const NUM_POR_SIMBOLO = {};
 
 // Map number → data
 const elMap = {};
 ELEMENTS.forEach(e => elMap[e[0]] = e);
+ELEMENTS.forEach(e => NUM_POR_SIMBOLO[e[1]] = e[0]);
 
 // Build legend
 const legendEl = document.getElementById('legend');
@@ -1335,6 +1386,7 @@ function filterVal(key) {
 // Color por estado dominante (primer valor de OXID[n]). Los chips iluminan
 // TODOS los que puedan actuar con ese estado, no solo los dominantes.
 const OXID_COLORS = {
+  '-4': 'var(--oxid-neg-4)',
   '-3': 'var(--oxid-neg-3)',
   '-2': 'var(--oxid-neg-2)',
   '-1': 'var(--oxid-neg-1)',
@@ -1345,9 +1397,10 @@ const OXID_COLORS = {
   '+5': 'var(--oxid-pos-5)',
   '+6': 'var(--oxid-pos-6)',
   '+7': 'var(--oxid-pos-7)',
+  '+8': 'var(--oxid-pos-8)',
 };
-// Orden en la leyenda: mas oxidante a mas reductor
-const OXID_ORDER = ['-3','-2','-1','+1','+2','+3','+4','+5','+6','+7'];
+// Orden en la leyenda: anion mas cargado a cation mas cargado
+const OXID_ORDER = ['-4','-3','-2','-1','+1','+2','+3','+4','+5','+6','+7','+8'];
 
 function fmtEstado(v) { return v > 0 ? '+' + v : String(v).replace('-', '−'); }
 function keyEstado(v) { return v > 0 ? '+' + v : String(v); } // clave interna con "-" ASCII
@@ -1521,6 +1574,235 @@ function updateEnPin(num) {
   document.getElementById('en-pin-label').textContent = `${elMap[num][1]} · ${en.toFixed(2)}`;
   pin.classList.add('visible');
 }
+
+// ── Modal "Mis valencias": YAML editable para estados de oxidacion ───────
+// Carga por simbolo (Fe, Cl, Cu...). Lo que no se liste hereda del default.
+// Validacion: YAML inviable -> aviso y no se aplica. Simbolos desconocidos
+// o estados fuera de -3..+7 -> se avisan pero se cargan los validos.
+
+const OXID_STORAGE_KEY = 'hpk-qui-oxid-yaml';
+const OXID_RANGO = [-4, -3, -2, -1, +1, +2, +3, +4, +5, +6, +7, +8];
+
+// Serializa OXID (por numero) a YAML indexado por simbolo. Util para el prompt
+// generador y como "exportar" el estado actual del dataset.
+function oxidADumpYaml(src) {
+  const lineas = ['elementos:'];
+  for (let n = 1; n <= 118; n++) {
+    const sym = elMap[n] ? elMap[n][1] : null;
+    if (!sym) continue;
+    const estados = src[n];
+    const padSym = sym.padEnd(3, ' ');
+    if (estados == null) {
+      lineas.push(`  ${padSym}: null`);
+    } else if (estados.length === 1) {
+      lineas.push(`  ${padSym}: ${fmtEstadoYaml(estados[0])}`);
+    } else {
+      lineas.push(`  ${padSym}: [${estados.map(fmtEstadoYaml).join(', ')}]`);
+    }
+  }
+  return lineas.join('\n');
+}
+function fmtEstadoYaml(v) { return v > 0 ? '+' + v : String(v); }
+
+// Cabecera del YAML por defecto en el textarea: ensena las convenciones
+// sin tener que abrir ayuda aparte.
+const OXID_YAML_HEADER = [
+  '# Estados de oxidacion por elemento (simbolo: lista).',
+  '# El PRIMER valor es el mas comun (determina el color en la tabla).',
+  '# Signo + opcional para positivos, - obligatorio para negativos.',
+  '# null = sin estado comun (gases nobles, sinteticos).',
+  '# Validos entre -4 y +8. Borrar una linea = hereda del default.',
+  ''
+].join('\n');
+
+function abrirYamlModal() {
+  // El textarea se precarga con el YAML actual (BASE si no hay nada cargado,
+  // o lo que el usuario ya tenga activo). Asi el profe ve el panorama entero
+  // y edita las lineas que le interesen.
+  document.getElementById('yaml-textarea').value = OXID_YAML_HEADER + oxidADumpYaml(OXID);
+  const status = document.getElementById('yaml-status');
+  status.className = 'yaml-status';
+  status.textContent = '';
+  document.getElementById('yaml-modal').classList.add('visible');
+  document.getElementById('yaml-modal').setAttribute('aria-hidden', 'false');
+}
+function cerrarYamlModal() {
+  document.getElementById('yaml-modal').classList.remove('visible');
+  document.getElementById('yaml-modal').setAttribute('aria-hidden', 'true');
+}
+document.getElementById('yaml-modal').addEventListener('click', function (e) {
+  if (e.target === this) cerrarYamlModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('yaml-modal').classList.contains('visible')) {
+    cerrarYamlModal();
+  }
+});
+
+// Rellena el textarea con el YAML del BASE sin aplicarlo todavia. El usuario
+// puede editar sobre ese estado limpio y luego pulsar Aplicar (o Cancelar
+// para no tocar lo que ya estuviera activo).
+function restaurarYamlEnTextarea() {
+  document.getElementById('yaml-textarea').value = OXID_YAML_HEADER + oxidADumpYaml(OXID_BASE);
+  const status = document.getElementById('yaml-status');
+  status.className = 'yaml-status';
+  status.textContent = '';
+}
+
+// Quita el ```yaml``` del principio/final si el chatbot lo trae
+function limpiarYamlPegado(txt) {
+  return txt
+    .replace(/^\s*```(?:yaml|yml)?\s*\n/i, '')
+    .replace(/\n```\s*$/i, '')
+    .trim();
+}
+
+// Parsea y valida un YAML. Devuelve { ok, dict, aciertos, errores, warnings }.
+// dict: { numeroAtomico: [estados...] } con solo los simbolos validos.
+function parseOxidYaml(txt) {
+  const limpio = limpiarYamlPegado(txt);
+  if (!limpio) return { ok: false, errores: ['El campo esta vacio.'] };
+
+  let parsed;
+  try {
+    parsed = jsyaml.load(limpio);
+  } catch (e) {
+    return { ok: false, errores: ['YAML inviable: ' + e.message] };
+  }
+  if (!parsed || typeof parsed !== 'object') {
+    return { ok: false, errores: ['El YAML no es un diccionario.'] };
+  }
+  const elementos = parsed.elementos || parsed.elements;
+  if (!elementos || typeof elementos !== 'object') {
+    return { ok: false, errores: ['Falta la clave "elementos:" con los simbolos.'] };
+  }
+
+  const dict = {};
+  const aciertos = [];
+  const warnings = [];
+  for (const sym in elementos) {
+    const num = NUM_POR_SIMBOLO[sym];
+    if (!num) { warnings.push(`${sym}: simbolo desconocido, ignorado.`); continue; }
+    let raw = elementos[sym];
+    if (raw == null) { dict[num] = null; aciertos.push(`${sym}: null`); continue; }
+    if (typeof raw === 'number' || typeof raw === 'string') raw = [raw];
+    if (!Array.isArray(raw)) { warnings.push(`${sym}: valor no es lista ni numero, ignorado.`); continue; }
+
+    const estados = [];
+    const malos = [];
+    for (const v of raw) {
+      const n = typeof v === 'number' ? v : parseInt(String(v).replace(/\s+/g, ''), 10);
+      if (!Number.isFinite(n) || !OXID_RANGO.includes(n)) { malos.push(String(v)); continue; }
+      if (!estados.includes(n)) estados.push(n);
+    }
+    if (malos.length) warnings.push(`${sym}: ignorado(s) por fuera de rango -4..+8: ${malos.join(', ')}`);
+    if (estados.length === 0 && raw.length > 0) { warnings.push(`${sym}: sin estados validos, ignorado.`); continue; }
+    dict[num] = estados.length ? estados : null;
+    aciertos.push(`${sym}: ${estados.length ? estados.map(fmtEstadoYaml).join(', ') : 'null'}`);
+  }
+  if (aciertos.length === 0) {
+    return { ok: false, errores: ['Ningun simbolo valido en el YAML.'], warnings };
+  }
+  return { ok: true, dict, aciertos, warnings };
+}
+
+// Aplica un dict sobre OXID. Semantica: resetear primero al BASE y luego
+// sobreescribir los simbolos presentes. Asi "borrar una linea en el YAML"
+// equivale a "este elemento vuelve al default", como anuncia el modal.
+// No toca badge ni storage: eso lo decide el llamador segun su contexto.
+function aplicarOxid(dict) {
+  OXID = clonarOxid(OXID_BASE);
+  for (const num in dict) OXID[num] = dict[num];
+  if (viewMode === 'oxid') {
+    document.querySelectorAll('.el[data-num]').forEach(el => {
+      const num = parseInt(el.dataset.num);
+      const key = oxidMainOf(num);
+      if (key) { el.style.setProperty('--cat-color', OXID_COLORS[key]); el.classList.remove('oxid-nodata'); }
+      else     { el.style.setProperty('--cat-color', 'var(--cat-defecto)'); el.classList.add('oxid-nodata'); }
+    });
+    if (activeOxidFilter) filterOxid(activeOxidFilter);  // revalida los dimmed
+  }
+  if (activeNum != null) { renderCard(activeNum); pintaSticky(activeNum); }
+  updateModePills(activeNum);
+}
+
+function mostrarBadgeUsuario() {
+  document.getElementById('oxid-usuario-badge').classList.add('visible');
+}
+function ocultarBadgeUsuario() {
+  document.getElementById('oxid-usuario-badge').classList.remove('visible');
+}
+
+function cargarYamlOxid() {
+  const texto = document.getElementById('yaml-textarea').value;
+  const status = document.getElementById('yaml-status');
+  const res = parseOxidYaml(texto);
+
+  if (!res.ok) {
+    status.className = 'yaml-status error';
+    status.textContent = '✗ ' + (res.errores || ['Error desconocido']).join('\n✗ ');
+    if (res.warnings && res.warnings.length) status.textContent += '\n' + res.warnings.map(w => '· ' + w).join('\n');
+    return;
+  }
+
+  aplicarOxid(res.dict);
+
+  // Si el usuario pego el YAML del default sin editar, no tiene sentido
+  // guardar en storage ni mostrar el badge: equivale a estar en default.
+  const distintos = contarDiferenciasConBase();
+  if (distintos === 0) {
+    try { localStorage.removeItem(OXID_STORAGE_KEY); } catch (e) {}
+    ocultarBadgeUsuario();
+  } else {
+    try { localStorage.setItem(OXID_STORAGE_KEY, limpiarYamlPegado(texto)); } catch (e) {}
+    mostrarBadgeUsuario();
+  }
+
+  let msg = distintos === 0
+    ? '✓ Dataset actualizado (coincide con el por defecto).'
+    : `✓ Dataset actualizado — ${distintos} elemento(s) distinto(s) del default.`;
+  if (res.warnings && res.warnings.length) {
+    msg += '\n\nAvisos:\n' + res.warnings.map(w => '· ' + w).join('\n');
+  }
+  status.className = 'yaml-status ok';
+  status.textContent = msg;
+  setTimeout(cerrarYamlModal, res.warnings && res.warnings.length ? 2500 : 1200);
+}
+
+function contarDiferenciasConBase() {
+  let n = 0;
+  for (const k in OXID_BASE) {
+    const a = OXID[k], b = OXID_BASE[k];
+    if (a === b) continue;
+    if (a == null || b == null) { n++; continue; }
+    if (a.length !== b.length || a.some((v, i) => v !== b[i])) n++;
+  }
+  return n;
+}
+
+function volverADefaultOxid() {
+  aplicarOxid({});
+  try { localStorage.removeItem(OXID_STORAGE_KEY); } catch (e) {}
+  ocultarBadgeUsuario();
+}
+
+// Al cargar la pagina: si hay YAML guardado, aplicarlo en silencio y mostrar
+// el badge. Lo envolvemos en try/catch para que localStorage bloqueado (modo
+// privado, cookies desactivadas) no rompa la tabla.
+(function restaurarYamlGuardado() {
+  let guardado = null;
+  try { guardado = localStorage.getItem(OXID_STORAGE_KEY); } catch (e) {}
+  if (!guardado) return;
+  const res = parseOxidYaml(guardado);
+  if (!res.ok) {
+    // YAML guardado corrompido: lo descartamos silenciosamente, no es el momento
+    // de molestar al usuario.
+    try { localStorage.removeItem(OXID_STORAGE_KEY); } catch (e) {}
+    return;
+  }
+  aplicarOxid(res.dict);
+  if (contarDiferenciasConBase() > 0) mostrarBadgeUsuario();
+})();
 
 // Search
 document.getElementById('search').addEventListener('input', function() {

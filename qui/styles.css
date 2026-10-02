@@ -13,6 +13,7 @@
   --muted2: #5A6478;
   --magenta: #E040FB;
   --border: rgba(255,255,255,0.07);
+  --scrim: rgba(0,0,0,0.7);
   /* Category colors — pasada de tonos 2026-09-16 (V0ra):
        m-alc pasa de rosa-rojo (#EF4444) a rojo puro (#EF1F1F): se aleja del rosa del halogeno.
        m-alc.terr baja de naranja vivo (#F97316) a naranja rojo oscuro (#DD5722): se separa del ambar del no-metal.
@@ -44,7 +45,9 @@
      (ganan e-), amarillos/rojos/violeta para cationes (ceden e-). El +7
      usa violeta para no chocar con el +6 rosa y darle rango al gradiente.
      +1 vive en amarillo puro para despegarlo del +2 ambar: si no, columna
-     1 (Na, K) y columna 2 (Ca, Mg) se confunden al recorrerlas. */
+     1 (Na, K) y columna 2 (Ca, Mg) se confunden al recorrerlas.
+     -4 es raro pero existe en C y Si (CH4, SiH4): azul mas intenso. */
+  --oxid-neg-4: #1D4ED8;
   --oxid-neg-3: #2563EB;
   --oxid-neg-2: #0EA5E9;
   --oxid-neg-1: #06B6D4;
@@ -55,6 +58,7 @@
   --oxid-pos-5: #EC4899;
   --oxid-pos-6: #D946EF;
   --oxid-pos-7: #A78BFA;
+  --oxid-pos-8: #7C3AED;
   --cat-defecto: #888;
   --en-bar-fondo: #1A1D27;
   --cyan: #22D3EE;
@@ -92,6 +96,7 @@
   --surface2: #ede4d8;
   --surface3: #ded3c5;
   --border: rgba(58,33,52,0.14);
+  --scrim: rgba(76,47,63,0.55);
   --text: #3d3345;
   --muted: #695e6c;
   --muted2: #5c5060;
@@ -105,7 +110,9 @@
 
   /* Estados de oxidacion — mismos hues, L ~35-45%, C moderada para papel.
      +1 va a dorado hue amarillo (no amber) para despegarlo del +2 amber:
-     en papel el amarillo puro desaparece, pero yellow-600 aguanta. */
+     en papel el amarillo puro desaparece, pero yellow-600 aguanta.
+     -4 raro (CH4, SiH4): azul navy mas oscuro que -3. */
+  --oxid-neg-4: #1E3A8A;
   --oxid-neg-3: #1E40AF;
   --oxid-neg-2: #0369A1;
   --oxid-neg-1: #0E7490;
@@ -116,6 +123,7 @@
   --oxid-pos-5: #BE185D;
   --oxid-pos-6: #A21CAF;
   --oxid-pos-7: #7C3AED;
+  --oxid-pos-8: #5B21B6;
   --cat-defecto: #6f6472;
   --grano-op: 0.45;
   --masa: #675c6c;
@@ -1263,3 +1271,205 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }
+
+/* ── YAML CARGADO POR EL USUARIO ─────────────────────────────────────────
+   El modo oxidacion acepta un dataset propio en YAML (modal "Mis valencias").
+   Patron de la casa: default embebido + modal con prompt generador + pegar
+   y aplicar. La fusion es simbolo-a-simbolo: lo que no listes hereda del
+   default, para que no haga falta reescribirlo todo. */
+
+.oxid-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+.btn-mis-valencias {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  padding: 0.3rem 0.75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.btn-mis-valencias:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--text) 20%, transparent);
+}
+.btn-mis-valencias:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* Badge que aparece cuando hay un YAML personalizado activo: pequeno, discreto,
+   con un boton para volver al dataset embebido. */
+.oxid-usuario-badge {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  background: color-mix(in srgb, var(--acierto) 10%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--acierto) 35%, transparent);
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--acierto-texto);
+}
+.oxid-usuario-badge.visible { display: inline-flex; }
+.btn-volver-default {
+  margin-left: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--acierto) 30%, transparent);
+  border-radius: 100px;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.62rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-volver-default:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--text) 25%, transparent);
+}
+
+/* Modal — mismo patron que len-morfosintaxis, pero con tokens de qui. */
+.yaml-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+.yaml-modal.visible { display: flex; }
+
+.yaml-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.yaml-modal-inner h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  color: var(--text);
+  margin: 0 0 0.4rem;
+}
+.yaml-modal-inner > p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.yaml-textarea {
+  width: 100%;
+  height: 420px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 0.6rem;
+}
+.yaml-textarea:focus { border-color: var(--acierto); }
+
+/* Enlace discreto para rellenar el textarea con el YAML del BASE. No es una
+   accion destructiva, por eso no se le da peso visual de boton primary. */
+.yaml-restore-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.8rem;
+}
+.btn-link-restore {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.btn-link-restore:hover { color: var(--text); text-decoration: underline; }
+.btn-link-restore:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 4px; }
+
+.yaml-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.6rem;
+  display: none;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.yaml-status.ok {
+  background: color-mix(in srgb, var(--acierto) 10%, transparent);
+  color: var(--acierto-texto);
+  display: block;
+}
+.yaml-status.error {
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  color: var(--error-texto);
+  display: block;
+}
+.yaml-status.warn {
+  background: color-mix(in srgb, var(--pista) 10%, transparent);
+  color: var(--pista-texto);
+  display: block;
+}
+
+.yaml-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.btn-modal {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-modal.primary {
+  background: var(--acierto);
+  color: var(--bg);
+}
+:root[data-theme="light"] .btn-modal.primary {
+  background: color-mix(in srgb, var(--acierto) 15%, transparent);
+  border: 1px solid var(--acierto);
+  color: var(--acierto-texto);
+}
+.btn-modal.secondary {
+  background: var(--surface2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-modal:hover { filter: brightness(1.12); }
+.btn-modal:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
