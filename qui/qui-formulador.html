@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<!--
+  hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
+  Copyright (c) 2024-2026 V0ra (v0raonline)
+  Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="V0ra (v0raonline)">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<title>Formulador de óxidos: fórmula y nomenclatura española</title>
+<meta name="description" content="Elige un elemento y descubre los óxidos que forma, con la fórmula equilibrada y las tres nomenclaturas (tradicional, Stock, sistemática). Gratis y sin cuentas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hAppYpUkIng Lab">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/qui/qui-formulador.html">
+<meta property="og:title" content="Formulador de óxidos: fórmula y nomenclatura española">
+<meta property="og:description" content="Elige un elemento y descubre los óxidos que forma, con la fórmula equilibrada y las tres nomenclaturas (tradicional, Stock, sistemática). Gratis y sin cuentas.">
+<meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/readme-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="484">
+<meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
+</head>
+<body>
+
+<header>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span>
+    <span class="topbar-marca">hAppYpUkIng · Lab</span>
+    <span class="sep topbar-sep-claim">//</span>
+    <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
+    <button class="plegar" id="plegar" type="button" aria-expanded="true"
+            aria-label="Plegar la cabecera y la explicación">
+      <span class="plegar-texto">Plegar</span>
+      <span class="plegar-chevron" aria-hidden="true">▲</span>
+    </button>
+  </div>
+  <h1 class="header-title">Formulador — Óxidos</h1>
+  <p class="header-subtitle">Elige un elemento y mira qué óxidos forma, equilibrados y con sus tres nombres</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Química →</span>
+    <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
+    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Tarjetas</a>
+    <a class="nav-tool active" href="#">Formulador</a>
+  </nav>
+</header>
+
+<!-- Solo aparece en movil vertical. Como en la tabla, la mini-tabla necesita
+     ancho; no es un fallo, es la forma de la tabla. -->
+<p class="aviso-apaisado">
+  <span aria-hidden="true">📱↻</span>
+  Gira el móvil. La mini-tabla del formulador también necesita ancho —
+  es la misma forma de la tabla periódica.
+</p>
+
+<div class="formu-wrap">
+
+  <div class="formu-intro" data-plegable>
+    <p>El oxígeno forma óxidos con casi cualquier elemento, pero la fórmula depende de su <strong>estado de oxidación</strong>. Elige un elemento y mira qué óxidos forma: el motor equilibra las cargas con subíndices y te da los tres nombres (tradicional, Stock y sistemática) uno al lado del otro, para que veas cuál usa tu libro.</p>
+    <p>Los elementos atenuados no forman óxidos en formulación de ESO: gases nobles, sintéticos, flúor (que supera al oxígeno en EN) y el propio oxígeno. ¿Tu libro usa estados distintos? En la <a href="./qui-tabla-periodica.html">tabla periódica</a> puedes cambiarlos con <strong>Editar oxidación</strong> — el formulador respeta ese dataset.</p>
+  </div>
+
+  <div class="formu-selector">
+    <div class="formu-label">Elige un elemento</div>
+    <div class="periodic-table formu-table" id="formu-table"></div>
+  </div>
+
+  <div class="formu-resultado" id="formu-resultado" hidden>
+    <div class="formu-elemento-head" id="formu-head"></div>
+    <div class="formu-compuestos" id="formu-compuestos"></div>
+  </div>
+
+  <div class="formu-vacio" id="formu-vacio">
+    <div class="formu-big">⚗</div>
+    <p>Elige un elemento de la tabla para ver sus óxidos</p>
+  </div>
+
+</div>
+
+<script src="qui-datos.js"></script>
+
+<footer>
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
+  </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
+</footer>
+
+<script>
+
+// ── Cabecera plegable (patron compartido del lab) ────────────────────────
+(function () {
+  const KEY = 'hpk-compacto';
+  const btn = document.getElementById('plegar');
+  if (!btn) return;
+  let compacto = false;
+  try { compacto = localStorage.getItem(KEY) === 'si'; } catch (e) {}
+  function pinta() {
+    document.body.classList.toggle('compacto', compacto);
+    btn.setAttribute('aria-expanded', compacto ? 'false' : 'true');
+    btn.setAttribute('aria-label', compacto
+      ? 'Desplegar la cabecera y la explicación'
+      : 'Plegar la cabecera y la explicación');
+    btn.querySelector('.plegar-texto').textContent = compacto ? 'Desplegar' : 'Plegar';
+  }
+  btn.addEventListener('click', function () {
+    compacto = !compacto;
+    try { localStorage.setItem(KEY, compacto ? 'si' : 'no'); } catch (e) {}
+    pinta();
+  });
+  pinta();
+})();
+
+// ── Mini-tabla periodica: misma estructura que la grande, celdas mas pequenas.
+// Un elemento se puede seleccionar si forma oxidos (tiene al menos un estado
+// positivo en el OXID activo). Los demas quedan atenuados visualmente pero
+// clicables; al clicar se muestra un mensaje.
+
+const positions = {};
+const layout = [
+  [[1,1,1],[2,18,1]],
+  [[3,1,2],[4,2,2],[5,13,2],[6,14,2],[7,15,2],[8,16,2],[9,17,2],[10,18,2]],
+  [[11,1,3],[12,2,3],[13,13,3],[14,14,3],[15,15,3],[16,16,3],[17,17,3],[18,18,3]],
+  [[19,1,4],[20,2,4],[21,3,4],[22,4,4],[23,5,4],[24,6,4],[25,7,4],[26,8,4],[27,9,4],[28,10,4],[29,11,4],[30,12,4],[31,13,4],[32,14,4],[33,15,4],[34,16,4],[35,17,4],[36,18,4]],
+  [[37,1,5],[38,2,5],[39,3,5],[40,4,5],[41,5,5],[42,6,5],[43,7,5],[44,8,5],[45,9,5],[46,10,5],[47,11,5],[48,12,5],[49,13,5],[50,14,5],[51,15,5],[52,16,5],[53,17,5],[54,18,5]],
+  [[55,1,6],[56,2,6],[57,3,6],[72,4,6],[73,5,6],[74,6,6],[75,7,6],[76,8,6],[77,9,6],[78,10,6],[79,11,6],[80,12,6],[81,13,6],[82,14,6],[83,15,6],[84,16,6],[85,17,6],[86,18,6]],
+  [[87,1,7],[88,2,7],[89,3,7],[104,4,7],[105,5,7],[106,6,7],[107,7,7],[108,8,7],[109,9,7],[110,10,7],[111,11,7],[112,12,7],[113,13,7],[114,14,7],[115,15,7],[116,16,7],[117,17,7],[118,18,7]],
+  [[57,3,9],[58,4,9],[59,5,9],[60,6,9],[61,7,9],[62,8,9],[63,9,9],[64,10,9],[65,11,9],[66,12,9],[67,13,9],[68,14,9],[69,15,9],[70,16,9],[71,17,9]],
+  [[89,3,10],[90,4,10],[91,5,10],[92,6,10],[93,7,10],[94,8,10],[95,9,10],[96,10,10],[97,11,10],[98,12,10],[99,13,10],[100,14,10],[101,15,10],[102,16,10],[103,17,10]],
+];
+layout.forEach(period => period.forEach(([num, col, row]) => { positions[num] = {col, row}; }));
+
+const ROWS = 10, COLS = 18;
+const ptable = document.getElementById('formu-table');
+ptable.style.gridTemplateRows = `repeat(${ROWS}, 1fr)`;
+
+// Rellenamos huecos vacios para que el grid tenga forma incluso donde no hay
+// elemento (las bisagras entre bloques s y p en las periodas 2 y 3).
+const cells = {};
+for (let row = 1; row <= ROWS; row++) {
+  for (let col = 1; col <= COLS; col++) {
+    const div = document.createElement('div');
+    div.style.gridColumn = col;
+    div.style.gridRow = row;
+    div.className = 'el el-empty';
+    ptable.appendChild(div);
+    cells[`${row}-${col}`] = div;
+  }
+}
+
+// Elementos que NO forman oxidos pedagogicos en ESO: oxigeno, fluor, gases
+// nobles y sinteticos (segun el OXID activo).
+function formaOxidos(num) {
+  if (num === 8) return false;                    // O
+  const estados = OXID[num];
+  if (!estados || !estados.length) return false;  // gases nobles, sinteticos
+  return estados.some(e => e > 0);
+}
+
+ELEMENTS.forEach(e => {
+  const [num, sym, name, mass, cat] = e;
+  const pos = positions[num];
+  if (!pos) return;
+  const key = `${pos.row}-${pos.col}`;
+  const hueco = cells[key];
+  if (!hueco) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.style.gridColumn = hueco.style.gridColumn;
+  btn.style.gridRow = hueco.style.gridRow;
+  btn.className = 'el formu-el';
+  btn.dataset.num = num;
+  btn.dataset.cat = cat;
+  btn.dataset.row = pos.row;
+  btn.dataset.col = pos.col;
+  btn.style.setProperty('--cat-color', `var(--${cat})`);
+  if (!formaOxidos(num)) btn.classList.add('dimmed');
+  btn.innerHTML = `
+    <span class="el-sym">${sym}</span>
+    <span class="el-name">${name}</span>
+    <span class="el-num">${num}</span>
+  `;
+  btn.setAttribute('aria-label',
+    `${name}, símbolo ${sym}, número ${num}, ${CATS[cat] ? CATS[cat].label : cat}` +
+    (formaOxidos(num) ? '' : ' (no forma óxidos en formulación básica)'));
+  btn.tabIndex = -1;
+  btn.onclick = () => elegirElemento(num);
+  hueco.replaceWith(btn);
+  cells[key] = btn;
+});
+
+// Flecha para los lantanidos/actinidos: dos indicadores en las posiciones 6-3
+// y 7-3 (donde solapan con La y Ac) marcan el "ver abajo".
+(function placeholderLaAc() {
+  // No pintamos placeholders en el formulador: el usuario puede elegir La y
+  // Ac directamente desde la fila principal (donde ya aparecen con sus
+  // propios botones por el layout) o desde la fila ampliada.
+})();
+
+// ── Seleccion y renderizado del resultado ────────────────────────────────
+
+let elementoActivo = null;
+
+function elegirElemento(num) {
+  // Resaltar celda activa en la mini-tabla
+  document.querySelectorAll('.formu-el.active').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll(`.formu-el[data-num="${num}"]`).forEach(el => el.classList.add('active'));
+  elementoActivo = num;
+
+  const oxidos = oxidosPosibles(num);
+  const resultado = document.getElementById('formu-resultado');
+  const vacio = document.getElementById('formu-vacio');
+  const head = document.getElementById('formu-head');
+  const cont = document.getElementById('formu-compuestos');
+
+  const e = elMap[num];
+  if (!e) return;
+  const [n, sym, name, mass, cat] = e;
+  const color = CATS[cat] ? CATS[cat].color : 'var(--cat-defecto)';
+  const catLabel = CATS[cat] ? CATS[cat].label : cat;
+
+  head.innerHTML = `
+    <span class="formu-sym" style="color:${color}">${sym}</span>
+    <div class="formu-head-text">
+      <div class="formu-nombre">${name}</div>
+      <div class="formu-cat" style="color:${color}">${catLabel}</div>
+    </div>
+  `;
+
+  if (!oxidos.length) {
+    cont.innerHTML = `
+      <div class="formu-sin-oxidos">
+        <p>${name} no forma óxidos en la formulación de ESO/bachiller.</p>
+        <p class="formu-sin-oxidos-por"></p>
+      </div>
+    `;
+    const por = cont.querySelector('.formu-sin-oxidos-por');
+    if (num === 8) por.textContent = 'Es el propio oxígeno — "óxido de oxígeno" no tiene sentido químico.';
+    else if (num === 9) por.textContent = 'El flúor es más electronegativo que el oxígeno; en OF₂ el oxígeno actúa como +2, no como −2, así que no es un óxido estándar.';
+    else if (cat === 'gas-noble') por.textContent = 'Los gases nobles no forman compuestos iónicos estables en ESO.';
+    else if (num >= 104) por.textContent = 'Los sintéticos no tienen estados de oxidación curados aquí.';
+    else por.textContent = 'No tiene estados de oxidación positivos en el dataset activo.';
+  } else {
+    cont.innerHTML = oxidos.map(ox => tarjetaCompuesto(sym, color, ox)).join('');
+  }
+
+  resultado.hidden = false;
+  vacio.hidden = true;
+  // En movil, desplaza el resultado a la vista
+  if (window.innerWidth < 900) {
+    requestAnimationFrame(() => {
+      resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
+
+function tarjetaCompuesto(sym, color, ox) {
+  const trad = ox.nombres.tradicional || '<em class="formu-nombre-vacio">— sin nombre tradicional estandar —</em>';
+  return `
+    <div class="compuesto-card" style="--accent:${color}">
+      <div class="compuesto-formula">${ox.formula}</div>
+      <div class="compuesto-cargas">
+        <span class="carga-chip"><span class="carga-sym">${sym}</span> ${ox.estado > 0 ? '+' : ''}${ox.estado}</span>
+        <span class="carga-op">·</span>
+        <span class="carga-chip"><span class="carga-sym">O</span> −2</span>
+      </div>
+      <div class="compuesto-mcm">
+        subíndices: ${sym}${ox.subE > 1 ? '<sub>' + ox.subE + '</sub>' : ''} · O${ox.subO > 1 ? '<sub>' + ox.subO + '</sub>' : ''}
+      </div>
+      <div class="nomen-grid">
+        <div class="nomen-row">
+          <span class="nomen-label">Tradicional</span>
+          <span class="nomen-value">${trad}</span>
+        </div>
+        <div class="nomen-row">
+          <span class="nomen-label">Stock</span>
+          <span class="nomen-value">${ox.nombres.stock}</span>
+        </div>
+        <div class="nomen-row">
+          <span class="nomen-label">Sistemática</span>
+          <span class="nomen-value">${ox.nombres.sistematico}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Navegacion de teclado por la mini-tabla (misma logica que la grande,
+// simplificada: flechas mueven, Enter/Space seleccionan).
+(function navTeclado() {
+  const conElemento = () => [...ptable.querySelectorAll('button.formu-el')];
+  function buscar(desdeR, desdeC, dr, dc) {
+    const todos = conElemento();
+    for (let paso = 1; paso <= 30; paso++) {
+      const r = desdeR + dr * paso, c = desdeC + dc * paso;
+      if (r < 1 || r > ROWS || c < 1 || c > COLS) return null;
+      const hit = todos.find(b => +b.dataset.row === r && +b.dataset.col === c);
+      if (hit) return hit;
+    }
+    return null;
+  }
+  ptable.addEventListener('keydown', (e) => {
+    const b = e.target.closest && e.target.closest('button.formu-el');
+    if (!b) return;
+    const r = +b.dataset.row, c = +b.dataset.col;
+    const dirs = { ArrowUp: [-1,0], ArrowDown: [1,0], ArrowLeft: [0,-1], ArrowRight: [0,1] };
+    if (dirs[e.key]) {
+      e.preventDefault();
+      const [dr, dc] = dirs[e.key];
+      const destino = buscar(r, c, dr, dc);
+      if (destino) { destino.tabIndex = 0; destino.focus(); b.tabIndex = -1; }
+    }
+  });
+  const primero = conElemento()[0];
+  if (primero) primero.tabIndex = 0;
+})();
+
+</script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
+</body>
+</html>

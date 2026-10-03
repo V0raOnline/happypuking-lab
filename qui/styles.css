@@ -1473,3 +1473,254 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
 }
 .btn-modal:hover { filter: brightness(1.12); }
 .btn-modal:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* ── FORMULADOR ──────────────────────────────────────────────────────────
+   Layout vertical, tres paneles: intro (plegable con la cabecera),
+   mini-tabla selector y resultado. En movil se stackea; en escritorio
+   la mini-tabla queda arriba y el resultado abajo con padding generoso. */
+
+.formu-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.formu-intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.1rem 1.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.formu-intro p { margin: 0 0 0.6rem; }
+.formu-intro p:last-child { margin-bottom: 0; }
+.formu-intro strong { color: var(--text); font-weight: 700; }
+.formu-intro a { color: var(--magenta); text-decoration: underline; text-underline-offset: 2px; }
+.formu-intro a:hover { color: var(--magenta-texto); }
+
+.formu-selector {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.2rem 1.2rem;
+}
+.formu-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+
+/* Mini-tabla: hereda del grid de .periodic-table pero con celdas mas pequenas
+   para que la selectora quepa holgadamente aun con la ficha de resultados
+   siempre visible debajo. */
+.periodic-table.formu-table {
+  min-width: 0;
+  width: 100%;
+  gap: 3px;
+}
+.periodic-table.formu-table .el {
+  min-height: 36px;
+  font-size: 0.6rem;
+}
+.periodic-table.formu-table .el-sym {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.periodic-table.formu-table .el-name {
+  display: none;    /* la mini no muestra el nombre, el acento es el simbolo */
+}
+.periodic-table.formu-table .el-num {
+  font-size: 0.5rem;
+  opacity: 0.7;
+}
+.periodic-table.formu-table .el.dimmed {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+.periodic-table.formu-table .el.active {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  z-index: 2;
+}
+.periodic-table.formu-table .el:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.formu-vacio {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--muted);
+}
+.formu-vacio .formu-big {
+  font-size: 3rem;
+  opacity: 0.4;
+  margin-bottom: 0.6rem;
+}
+.formu-vacio p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.formu-resultado {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem 1.8rem;
+}
+
+/* Cabecera del resultado: simbolo grande + nombre + categoria del elemento
+   seleccionado, muy visual para que el alumno sepa "estoy formulando con esto". */
+.formu-elemento-head {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.3rem;
+  border-bottom: 1px solid var(--border);
+}
+.formu-sym {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.formu-head-text { display: flex; flex-direction: column; gap: 0.2rem; }
+.formu-nombre {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.formu-cat {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.formu-compuestos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* Una tarjeta por cada oxido posible. Fondo tintado con el color de la
+   categoria del elemento (--accent se setea inline en el nodo). */
+.compuesto-card {
+  background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 6%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent, var(--metal-transicion)) 30%, transparent);
+  border-radius: 12px;
+  padding: 1rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.compuesto-formula {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent, var(--text));
+  line-height: 1.1;
+}
+.compuesto-formula sub {
+  font-size: 0.7em;
+  font-weight: 600;
+  position: relative;
+  bottom: -0.1em;
+}
+
+.compuesto-cargas {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.carga-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+}
+.carga-sym {
+  font-weight: 700;
+  color: var(--text);
+}
+.carga-op { opacity: 0.5; }
+
+.compuesto-mcm {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  padding: 0.4rem 0.6rem;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  border-radius: 6px;
+}
+
+.nomen-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+}
+.nomen-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.nomen-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+.nomen-value {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.3;
+}
+.formu-nombre-vacio {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.formu-sin-oxidos {
+  padding: 1.5rem;
+  color: var(--muted);
+  text-align: center;
+}
+.formu-sin-oxidos p { margin: 0 0 0.5rem; font-size: 0.9rem; }
+.formu-sin-oxidos p:first-child { color: var(--text); font-weight: 600; font-size: 1rem; }
+.formu-sin-oxidos p:last-child { margin-bottom: 0; }
+
+/* En movil, formulas y nombres mas pequenos; una tarjeta por fila. */
+@media (max-width: 620px) {
+  .formu-wrap { padding: 0.5rem 1rem 1.5rem; gap: 0.9rem; }
+  .formu-sym { font-size: 2.6rem; }
+  .formu-nombre { font-size: 1rem; }
+  .compuesto-formula { font-size: 1.7rem; }
+  .formu-compuestos { grid-template-columns: 1fr; }
+  .periodic-table.formu-table .el { min-height: 32px; }
+  .periodic-table.formu-table .el-sym { font-size: 0.75rem; }
+  .periodic-table.formu-table .el-num { display: none; }
+}

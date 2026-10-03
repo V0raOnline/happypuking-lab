@@ -527,3 +527,190 @@ function contarDiferenciasConBase() {
   OXID = clonarOxid(OXID_BASE);
   for (const num in res.dict) OXID[num] = res.dict[num];
 })();
+
+// ── Motor de nomenclatura inorganica ─────────────────────────────────────
+// Lo usa el formulador. Puro: no depende del DOM. Lee OXID (dataset activo).
+
+// Prefijos griegos para la nomenclatura sistematica IUPAC 2005.
+const PREFIJO_GRIEGO = ['', 'mono', 'di', 'tri', 'tetra', 'penta', 'hexa', 'hepta', 'octa', 'nona', 'deca', 'undeca', 'dodeca'];
+function prefijoGriego(n) {
+  return PREFIJO_GRIEGO[n] || String(n) + '-';
+}
+// "mono" se omite al principio de palabra (nombre_del_elemento) pero se
+// mantiene como "monóxido". Esta funcion devuelve "" para n=1 y el prefijo
+// completo en el resto; el llamador decide si incluir "mono" u omitir.
+function prefijoGriegoSinMono(n) {
+  return n <= 1 ? '' : (PREFIJO_GRIEGO[n] || String(n) + '-');
+}
+
+// Prefijo griego antes de "óxido": elide la 'a' u 'o' final para evitar
+// hiato ("monoóxido" -> "monóxido", "tetraóxido" -> "tetróxido"). Los
+// prefijos "di" y "tri" terminan en 'i' y no eliden.
+function prefijoOxido(n) {
+  const p = prefijoGriego(n);
+  if (!p) return 'ó';  // no deberia pasar en oxidos (siempre hay sub>=1)
+  if (/[ao]$/.test(p)) return p.slice(0, -1) + 'ó';
+  return p + 'ó';
+}
+
+// Numeros romanos del 1 al 8 (los estados de oxidacion maximos en ESO/bach).
+function romano(n) {
+  const R = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+  return R[n] || String(n);
+}
+
+// Adjetivos tradicionales en espanol para formar "oxido <adjetivo>". El
+// mapa es simbolo -> estado -> adjetivo completo (con tildes). Lo que no
+// este en esta tabla cae en el fallback "oxido de <nombre>", que es la
+// Stock sin numero romano y sirve para elementos de un solo estado o con
+// nomenclatura tradicional en desuso.
+//
+// Para los halogenos (escala de 4) usamos la regla clasica
+// hipo-/-oso/-ico/per- directamente escrita, con tildes donde toca.
+const ADJ_TRADICIONAL = {
+  // Metales con dos (o mas) estados comunes
+  'Fe':  { 2: 'ferroso',     3: 'férrico' },
+  'Cu':  { 1: 'cuproso',     2: 'cúprico' },
+  'Au':  { 1: 'auroso',      3: 'áurico' },
+  'Hg':  { 1: 'mercurioso',  2: 'mercúrico' },
+  'Pb':  { 2: 'plumboso',    4: 'plúmbico' },
+  'Sn':  { 2: 'estannoso',   4: 'estánnico' },
+  'Co':  { 2: 'cobaltoso',   3: 'cobáltico' },
+  'Ni':  { 2: 'niqueloso',   3: 'niquélico' },
+  'Cr':  { 2: 'cromoso',     3: 'crómico',   6: 'crómico' },
+  'Mn':  { 2: 'manganoso',   4: 'mangánico', 7: 'permangánico' },
+
+  // Metales con un solo estado comun (usan sufijo -ico sin alternativa)
+  'Na':  { 1: 'sódico' },
+  'K':   { 1: 'potásico' },
+  'Li':  { 1: 'lítico' },
+  'Rb':  { 1: 'rubídico' },
+  'Cs':  { 1: 'césico' },
+  'Ca':  { 2: 'cálcico' },
+  'Mg':  { 2: 'magnésico' },
+  'Ba':  { 2: 'bárico' },
+  'Sr':  { 2: 'estróncico' },
+  'Be':  { 2: 'berílico' },
+  'Al':  { 3: 'alumínico' },
+  'Zn':  { 2: 'cíncico' },
+  'Ag':  { 1: 'argéntico' },
+  'Cd':  { 2: 'cádmico' },
+
+  // No-metales. En la tradicional clasica estos oxidos se llamaban "anhidrido
+  // X-ico" pero los libros modernos los integran como oxidos.
+  'Cl':  { 1: 'hipocloroso', 3: 'cloroso',  5: 'clórico',  7: 'perclórico' },
+  'Br':  { 1: 'hipobromoso', 3: 'bromoso',  5: 'brómico',  7: 'perbrómico' },
+  'I':   { 1: 'hipoyodoso',  3: 'yodoso',   5: 'yódico',   7: 'peryódico' },
+  'N':   { 3: 'nitroso',     5: 'nítrico' },
+  'S':   { 4: 'sulfuroso',   6: 'sulfúrico' },
+  'Se':  { 4: 'selenoso',    6: 'selénico' },
+  'Te':  { 4: 'teluroso',    6: 'telúrico' },
+  'C':   { 2: 'carbonoso',   4: 'carbónico' },
+  'Si':  { 4: 'silícico' },
+  'P':   { 3: 'fosforoso',   5: 'fosfórico' },
+  'As':  { 3: 'arsenioso',   5: 'arsénico' },
+  'Sb':  { 3: 'antimonioso', 5: 'antimónico' },
+  'B':   { 3: 'bórico' },
+};
+
+// MCD y MCM para equilibrar subindices.
+function mcd(a, b) { return b === 0 ? Math.abs(a) : mcd(b, a % b); }
+function mcm(a, b) { return Math.abs(a * b) / mcd(a, b); }
+
+// Calcula los subindices equilibrados de un compuesto binario E_a X_b, dado
+// el estado de oxidacion positivo de E y el negativo de X. Simplifica al
+// minimo (ej: Fe +2, O -2 -> 1,1 no 2,2).
+function subindicesEquilibrados(cargaPos, cargaNeg) {
+  const absNeg = Math.abs(cargaNeg);
+  const m = mcm(cargaPos, absNeg);
+  return { sub1: m / cargaPos, sub2: m / absNeg };
+}
+
+// Formula con subindices HTML. Para texto plano usa formulaTxt.
+function formulaHtml(sym1, s1, sym2, s2) {
+  const p1 = s1 > 1 ? `<sub>${s1}</sub>` : '';
+  const p2 = s2 > 1 ? `<sub>${s2}</sub>` : '';
+  return `${sym1}${p1}${sym2}${p2}`;
+}
+// Para strings puros usamos subindices Unicode (U+2082..U+2089).
+const SUB_UNICODE = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+function toSubUnicode(n) {
+  return String(n).split('').map(d => SUB_UNICODE[+d] || d).join('');
+}
+function formulaTxt(sym1, s1, sym2, s2) {
+  return sym1 + (s1 > 1 ? toSubUnicode(s1) : '') + sym2 + (s2 > 1 ? toSubUnicode(s2) : '');
+}
+
+// Nomenclatura tradicional para un oxido con E en estado dado. Devuelve
+// null si no hay forma tradicional conocida para ese estado concreto.
+function nombreTradicionalOxido(sym, estado) {
+  const porEstado = ADJ_TRADICIONAL[sym];
+  if (!porEstado) {
+    // Fallback: forma Stock sin romano (como si tuviera un solo estado).
+    const num = NUM_POR_SIMBOLO[sym];
+    const name = num ? elMap[num][2].toLowerCase() : sym.toLowerCase();
+    return 'óxido de ' + name;
+  }
+  const adj = porEstado[estado];
+  if (!adj) return null;
+  return 'óxido ' + adj;
+}
+
+// Nomenclatura Stock: "óxido de <nombre>(romano)". El numero romano solo
+// aparece si el elemento tiene mas de un estado positivo curado en OXID.
+function nombreStockOxido(sym, estado) {
+  const num = NUM_POR_SIMBOLO[sym];
+  if (!num) return null;
+  const name = elMap[num][2].toLowerCase();
+  const estados = OXID[num] || [];
+  const positivos = estados.filter(e => e > 0);
+  const necesitaRomano = positivos.length > 1;
+  return necesitaRomano
+    ? `óxido de ${name}(${romano(estado)})`
+    : `óxido de ${name}`;
+}
+
+// Nomenclatura sistematica IUPAC 2005: "<prefijo>óxido de <prefijo><nombre>".
+// El prefijo delante de "óxido" elide la vocal final para evitar hiato
+// ("monóxido", "pentóxido"). El prefijo del elemento se omite si es 1
+// ("dióxido de carbono", no "dióxido de monocarbono").
+function nombreSistematicoOxido(sym, subE, subO) {
+  const num = NUM_POR_SIMBOLO[sym];
+  if (!num) return null;
+  const name = elMap[num][2].toLowerCase();
+  const prefO = prefijoOxido(subO) + 'xido';
+  const prefE = prefijoGriegoSinMono(subE);
+  return `${prefO} de ${prefE}${name}`;
+}
+
+// Lista los oxidos posibles del elemento 'num' segun su OXID actual.
+// Devuelve un array con un objeto por estado positivo:
+//   { estado, subE, subO, formula, formulaTxt, nombres: {trad, stock, sist} }
+// Si el elemento es el propio oxigeno, devuelve [] (no formulamos "oxido de
+// oxigeno"). Si no tiene estados positivos (gases nobles, sinteticos, F),
+// tambien []. El fluor es un caso especial: su unico estado es -1, no forma
+// oxidos (en realidad OF2 existe pero el O ahi es +2, y eso ya no es un
+// oxido estandar; lo dejamos fuera del MVP).
+function oxidosPosibles(num) {
+  if (num === 8) return [];
+  const estados = OXID[num];
+  if (!estados || !estados.length) return [];
+  const positivos = estados.filter(e => e > 0);
+  if (!positivos.length) return [];
+  const sym = elMap[num][1];
+  return positivos.map(estado => {
+    const { sub1: subE, sub2: subO } = subindicesEquilibrados(estado, -2);
+    return {
+      estado,
+      subE,
+      subO,
+      formula: formulaHtml(sym, subE, 'O', subO),
+      formulaTxt: formulaTxt(sym, subE, 'O', subO),
+      nombres: {
+        tradicional: nombreTradicionalOxido(sym, estado),
+        stock:       nombreStockOxido(sym, estado),
+        sistematico: nombreSistematicoOxido(sym, subE, subO),
+      }
+    };
+  });
+}
