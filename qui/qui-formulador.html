@@ -259,7 +259,38 @@ function elegirElemento(num) {
     else if (num >= 104) por.textContent = 'Los sintéticos no tienen estados de oxidación curados aquí.';
     else por.textContent = 'No tiene estados de oxidación positivos en el dataset activo.';
   } else {
-    cont.innerHTML = oxidos.map(ox => tarjetaCompuesto(sym, color, ox)).join('');
+    const toolbar = oxidos.length > 1
+      ? `<div class="compuestos-toolbar">
+           <button type="button" class="btn-toggle-todos" id="btn-toggle-todos">
+             <span class="btn-toggle-chevron" aria-hidden="true">▸</span>
+             <span class="btn-toggle-texto">Expandir todos</span>
+           </button>
+         </div>`
+      : '';
+    cont.innerHTML = toolbar +
+      '<div class="compuestos-lista">' +
+      oxidos.map(ox => tarjetaCompuesto(sym, color, ox, num)).join('') +
+      '</div>';
+    pintarCanvasCompuestos();
+    // Abrir el primero por defecto: es el estado dominante del elemento.
+    const primera = cont.querySelector('.compuesto-card');
+    if (primera) primera.open = true;
+    // Toggle expandir/colapsar todos (solo con >1 compuesto)
+    const btn = document.getElementById('btn-toggle-todos');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const tarjetas = [...cont.querySelectorAll('.compuesto-card')];
+        const algunoCerrado = tarjetas.some(t => !t.open);
+        tarjetas.forEach(t => { t.open = algunoCerrado; });
+        actualizarTextoToggle();
+      });
+      // Sincronizar el texto del boton cuando el usuario abre/cierra
+      // tarjetas sueltas (sin pasar por el boton).
+      cont.querySelectorAll('.compuesto-card').forEach(t => {
+        t.addEventListener('toggle', actualizarTextoToggle);
+      });
+      actualizarTextoToggle();
+    }
   }
 
   resultado.hidden = false;
@@ -272,35 +303,137 @@ function elegirElemento(num) {
   }
 }
 
-function tarjetaCompuesto(sym, color, ox) {
+// Actualiza el texto del boton "Expandir / Colapsar todos" segun el estado
+// actual de las tarjetas <details>. Si al menos una esta cerrada, el boton
+// invita a abrirlas todas; si todas estan abiertas, invita a cerrarlas.
+function actualizarTextoToggle() {
+  const btn = document.getElementById('btn-toggle-todos');
+  if (!btn) return;
+  const tarjetas = [...document.querySelectorAll('.compuesto-card')];
+  const algunoCerrado = tarjetas.some(t => !t.open);
+  btn.querySelector('.btn-toggle-texto').textContent = algunoCerrado
+    ? 'Expandir todos'
+    : 'Colapsar todos';
+  btn.querySelector('.btn-toggle-chevron').textContent = algunoCerrado ? '▸' : '▾';
+}
+
+// La tarjeta cuenta cada oxido como una tira comica de 4 pasos narrativos:
+//  1. Al elemento le sobran N electrones en su ultima capa (los que podria ceder).
+//  2. Al O le faltan 2 para completar su ultima capa (regla del octeto).
+//  3. Se juntan: cede, capta. Si no cuadran 1 a 1, hay que repetir atomos.
+//  4. Resultado: formula equilibrada.
+// Los pasos 1 y 2 llevan mini-canvas con el atomo; el 3 y el 4 son solo texto.
+function tarjetaCompuesto(sym, color, ox, numElemento) {
   const trad = ox.nombres.tradicional || '<em class="formu-nombre-vacio">— sin nombre tradicional estandar —</em>';
+  const nombreEl = elMap[numElemento][2];
+  const nTransferidos = ox.subE * ox.estado;  // == ox.subO * 2 por diseño
+  const esSimple = ox.subE === 1 && ox.subO === 1;
+  const variosEstados = (OXID[numElemento] || []).filter(e => e > 0).length > 1;
+
+  // Concordancia singular/plural para que lea natural en castellano.
+  const sobrarV = ox.estado > 1 ? 'sobran' : 'sobra';
+  const eElementos = ox.estado > 1 ? `${ox.estado} electrones` : '1 electr&oacute;n';
+  const totalElectrones = nTransferidos > 1 ? `${nTransferidos} electrones` : '1 electr&oacute;n';
+  const sonTotal = nTransferidos > 1 ? 'son' : 'es';
+
+  const paso1 = `${variosEstados ? 'En esta variante, al' : 'Al'} <strong>${sym}</strong> le <strong>${sobrarV} ${eElementos}</strong> en su &uacute;ltima capa — son los que puede <strong>ceder</strong>.`;
+
+  const paso2 = `Al <strong>O</strong> le <strong>faltan 2 electrones</strong> para completar su &uacute;ltima capa. Todos los &aacute;tomos buscan lo mismo: dejar llena la &uacute;ltima capa (<em>regla del octeto</em>).`;
+
+  const paso3 = esSimple
+    ? `Se juntan: el ${sym} cede ${eElementos}, el O capta 2. Las cuentas cuadran <strong>1 a 1</strong>, no hacen falta sub&iacute;ndices.`
+    : `Se juntan: el ${sym} cede ${eElementos}, el O capta 2. Pero <strong>${ox.estado} &ne; 2</strong>: las cuentas no cuadran 1 a 1, hay que repetir &aacute;tomos para equilibrar.`;
+
+  const paso4 = esSimple
+    ? `Un ${sym} con un O: todo el intercambio ${sonTotal} <strong>${totalElectrones}</strong>. &rarr; ${ox.formula}`
+    : `Con <strong>${ox.subE} ${sym}</strong> (ceden ${nTransferidos}) y <strong>${ox.subO} O</strong> (captan ${nTransferidos}), las cargas se compensan. &rarr; ${ox.formula}`;
+
   return `
-    <div class="compuesto-card" style="--accent:${color}">
-      <div class="compuesto-formula">${ox.formula}</div>
-      <div class="compuesto-cargas">
-        <span class="carga-chip"><span class="carga-sym">${sym}</span> ${ox.estado > 0 ? '+' : ''}${ox.estado}</span>
-        <span class="carga-op">·</span>
-        <span class="carga-chip"><span class="carga-sym">O</span> −2</span>
-      </div>
-      <div class="compuesto-mcm">
-        subíndices: ${sym}${ox.subE > 1 ? '<sub>' + ox.subE + '</sub>' : ''} · O${ox.subO > 1 ? '<sub>' + ox.subO + '</sub>' : ''}
-      </div>
-      <div class="nomen-grid">
-        <div class="nomen-row">
-          <span class="nomen-label">Tradicional</span>
-          <span class="nomen-value">${trad}</span>
+    <details class="compuesto-card" style="--accent:${color}">
+      <summary class="compuesto-head">
+        <span class="compuesto-chevron" aria-hidden="true">▸</span>
+        <span class="compuesto-formula">${ox.formula}</span>
+        <span class="compuesto-cargas">
+          <span class="carga-chip"><span class="carga-sym">${sym}</span> ${ox.estado > 0 ? '+' : ''}${ox.estado}</span>
+          <span class="carga-op">·</span>
+          <span class="carga-chip"><span class="carga-sym">O</span> −2</span>
+        </span>
+      </summary>
+
+      <div class="compuesto-body">
+        <ol class="compuesto-pasos">
+          <li class="paso paso-con-canvas">
+            <div class="paso-texto">${paso1}</div>
+            <canvas class="paso-canvas" width="140" height="140"
+                    data-tipo="E" data-num="${numElemento}" data-estado="${ox.estado}"
+                    data-color="${color}"
+                    aria-label="&Aacute;tomo de ${nombreEl} con ${ox.estado} electron(es) resaltado(s) en la &uacute;ltima capa"></canvas>
+          </li>
+          <li class="paso paso-con-canvas">
+            <div class="paso-texto">${paso2}</div>
+            <canvas class="paso-canvas" width="140" height="140"
+                    data-tipo="O"
+                    aria-label="&Aacute;tomo de ox&iacute;geno con 6 electrones en la &uacute;ltima capa y 2 huecos marcados"></canvas>
+          </li>
+          <li class="paso">
+            <div class="paso-texto">${paso3}</div>
+          </li>
+          <li class="paso paso-resultado">
+            <div class="paso-texto">${paso4}</div>
+          </li>
+        </ol>
+
+        <div class="nomen-grid">
+          <div class="nomen-row">
+            <span class="nomen-label">Tradicional</span>
+            <span class="nomen-value">${trad}</span>
+          </div>
+          <div class="nomen-row">
+            <span class="nomen-label">Stock</span>
+            <span class="nomen-value">${ox.nombres.stock}</span>
+          </div>
+          <div class="nomen-row">
+            <span class="nomen-label">Sistem&aacute;tica</span>
+            <span class="nomen-value">${ox.nombres.sistematico}</span>
+          </div>
         </div>
-        <div class="nomen-row">
-          <span class="nomen-label">Stock</span>
-          <span class="nomen-value">${ox.nombres.stock}</span>
-        </div>
-        <div class="nomen-row">
-          <span class="nomen-label">Sistemática</span>
-          <span class="nomen-value">${ox.nombres.sistematico}</span>
-        </div>
       </div>
-    </div>
+    </details>
   `;
+}
+
+// Pinta los mini-canvas de los pasos 1 y 2 de cada tarjeta. El del paso 1 es
+// el atomo del elemento con N electrones resaltados en la ultima capa (los
+// que cede). El del paso 2 es el atomo del oxigeno con 2 huecos en la ultima
+// capa (los que capta).
+function pintarCanvasCompuestos() {
+  const colorO = 'var(--atomo-oxigeno)';
+  document.querySelectorAll('.paso-canvas').forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+    const nucleoR = 18;
+
+    if (canvas.dataset.tipo === 'E') {
+      const numE = parseInt(canvas.dataset.num, 10);
+      const estado = parseInt(canvas.dataset.estado, 10);
+      const colorE = canvas.dataset.color;
+      const extraE = EXTRA[numE];
+      const shellsE = extraE ? extraE[0] : [1];
+      drawAtomoEstatico({
+        ctx, cx, cy, nucleoR, num: numE, shells: shellsE, color: colorE,
+        electronesExternosResaltados: estado,
+      });
+    } else {
+      // Oxigeno: K=2, L=6, con 2 huecos marcados (los que le faltan para octeto)
+      drawAtomoEstatico({
+        ctx, cx, cy, nucleoR, num: 8, shells: [2, 6], color: colorO,
+        electronesExternosResaltados: 0,
+        huecosExternos: 2,
+      });
+    }
+  });
 }
 
 // Navegacion de teclado por la mini-tabla (misma logica que la grande,

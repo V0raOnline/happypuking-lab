@@ -683,6 +683,198 @@ function nombreSistematicoOxido(sym, subE, subO) {
   return `${prefO} de ${prefE}${name}`;
 }
 
+// ── Canvas atomico estatico (compartido) ────────────────────────────────
+// Las herramientas que necesitan dibujar atomos (formulador, posibles
+// futuras) usan estas funciones. No se anima: la version animada vive en
+// la tabla porque alli es decoracion sin informacion. Aqui es informacion
+// pura (cuantos electrones hay en la ultima capa, cuales se mueven) y la
+// animacion solo distraeria.
+//
+// resolverColorCanvas convierte un color CSS (var(--x), hex, color-mix(...))
+// en "r,g,b" interrogando al navegador con una sonda. Es la misma estrategia
+// que la version animada de la tabla: el contexto 2D no soporta var().
+function resolverColorCanvas(valor) {
+  const sonda = document.createElement('span');
+  sonda.style.cssText = 'display:none';
+  sonda.style.color = valor;
+  document.body.appendChild(sonda);
+  const m = getComputedStyle(sonda).color.match(/[\d.]+/g);
+  sonda.remove();
+  return m ? `${Math.round(m[0])},${Math.round(m[1])},${Math.round(m[2])}` : '136,136,136';
+}
+
+// Dibuja un atomo estatico (nucleo + capas + electrones) en el canvas, con la
+// capa externa resaltada. opts:
+//   ctx: contexto 2D
+//   cx, cy: centro
+//   nucleoR: radio del nucleo (controla el tamano global)
+//   num: numero atomico (etiqueta en el nucleo)
+//   shells: array [K, L, M, ...] con electrones por capa
+//   color: color CSS (var() soportado) para el atomo
+//   electronesExternosResaltados: cuantos electrones de la ultima capa
+//     resaltar con un halo mas intenso (visualiza "estos van a ceder")
+//   huecosExternos: cuantos marcadores de "falta electron" dibujar en la
+//     ultima capa (circulos vacios, visualiza "le faltan N para octeto")
+function drawAtomoEstatico(opts) {
+  const { ctx, cx, cy, nucleoR, num, shells, color, electronesExternosResaltados = 0, huecosExternos = 0 } = opts;
+  const rgb = resolverColorCanvas(color);
+  const colorReal = `rgb(${rgb})`;
+
+  const activeLayers = shells.map((n, i) => ({ idx: i, count: n })).filter(s => s.count > 0);
+  const displayLayers = activeLayers.slice(0, 5);
+  const maxR = nucleoR + 42;
+  const gap = (maxR - nucleoR - 4) / Math.max(displayLayers.length, 1);
+  const radii = displayLayers.map((_, i) => nucleoR + gap * (i + 1));
+
+  // Nucleo con halo
+  const glowR = nucleoR + 5;
+  const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+  grd.addColorStop(0, `rgba(${rgb},0.45)`);
+  grd.addColorStop(0.5, `rgba(${rgb},0.18)`);
+  grd.addColorStop(1, `rgba(${rgb},0)`);
+  ctx.beginPath();
+  ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+  ctx.fillStyle = grd;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, nucleoR, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${rgb},0.22)`;
+  ctx.fill();
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = `rgba(${rgb},0.75)`;
+  ctx.stroke();
+
+  // Numero atomico centrado
+  ctx.fillStyle = colorReal;
+  ctx.font = `bold ${Math.max(8, Math.min(12, nucleoR * 0.75))}px 'DM Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(num), cx, cy);
+
+  // Capas con electrones repartidos. La capa externa tiene posiciones fijas
+  // para que los resaltados aparezcan siempre en el lado que mira al otro
+  // atomo (angulo 0, derecha; el llamador rota el canvas si quiere).
+  const ultimaIdx = displayLayers.length - 1;
+  displayLayers.forEach((layer, i) => {
+    const r = radii[i];
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${rgb},0.14)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const count = Math.min(layer.count, 8);
+    const esUltima = i === ultimaIdx;
+    // En la ultima capa reservamos huecos: pintamos count electrones y
+    // huecosExternos marcadores vacios, repartidos en count+huecos posiciones
+    // para que se vea la capa "incompleta".
+    const posicionesUltima = esUltima ? count + huecosExternos : count;
+    for (let j = 0; j < count; j++) {
+      const angle = (Math.PI * 2 * j / posicionesUltima);
+      const ex = cx + r * Math.cos(angle);
+      const ey = cy + r * Math.sin(angle);
+
+      const esResaltado = esUltima && j < electronesExternosResaltados;
+      const haloR = esResaltado ? 6 : 4;
+
+      const eg = ctx.createRadialGradient(ex, ey, 0, ex, ey, haloR);
+      eg.addColorStop(0, `rgba(${rgb},${esResaltado ? 1 : 0.75})`);
+      eg.addColorStop(1, `rgba(${rgb},0)`);
+      ctx.beginPath();
+      ctx.arc(ex, ey, haloR, 0, Math.PI * 2);
+      ctx.fillStyle = eg;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(ex, ey, esResaltado ? 3 : 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = colorReal;
+      ctx.fill();
+    }
+    // Huecos: circulos vacios en las posiciones libres de la ultima capa
+    if (esUltima && huecosExternos > 0) {
+      for (let j = count; j < posicionesUltima; j++) {
+        const angle = (Math.PI * 2 * j / posicionesUltima);
+        const ex = cx + r * Math.cos(angle);
+        const ey = cy + r * Math.sin(angle);
+        ctx.beginPath();
+        ctx.arc(ex, ey, 3.5, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${rgb},0.7)`;
+        ctx.lineWidth = 1.4;
+        ctx.setLineDash([2, 2]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+  });
+}
+
+// Dibuja una flecha de transferencia de electrones de un atomo al otro.
+// Pinta la lista de puntos (electrones viajando) distribuidos a lo largo de
+// la flecha. opts:
+//   ctx: contexto 2D
+//   x1, y1, x2, y2: coordenadas de origen y destino
+//   n: numero de electrones a representar (si es grande se muestran los
+//      primeros 6 + "..." como texto)
+//   color: color de los electrones viajeros
+function drawFlechaTransferencia(opts) {
+  const { ctx, x1, y1, x2, y2, n, color } = opts;
+  const rgb = resolverColorCanvas(color);
+  const colorReal = `rgb(${rgb})`;
+
+  // Linea guia tenue
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = `rgba(${rgb},0.25)`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Punta de flecha
+  const dx = x2 - x1, dy = y2 - y1;
+  const ang = Math.atan2(dy, dx);
+  const headL = 8;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headL * Math.cos(ang - Math.PI / 6), y2 - headL * Math.sin(ang - Math.PI / 6));
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headL * Math.cos(ang + Math.PI / 6), y2 - headL * Math.sin(ang + Math.PI / 6));
+  ctx.strokeStyle = `rgba(${rgb},0.55)`;
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+
+  // Electrones viajando: hasta 6 bolitas espaciadas; mas que eso se resume
+  // en texto para no apelmazar.
+  const maxBolitas = Math.min(n, 6);
+  for (let i = 0; i < maxBolitas; i++) {
+    const t = 0.2 + 0.6 * (maxBolitas === 1 ? 0.5 : i / (maxBolitas - 1));
+    const px = x1 + dx * t;
+    const py = y1 + dy * t - 6; // ligera elevacion para evitar la linea
+    const eg = ctx.createRadialGradient(px, py, 0, px, py, 5);
+    eg.addColorStop(0, `rgba(${rgb},1)`);
+    eg.addColorStop(1, `rgba(${rgb},0)`);
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, Math.PI * 2);
+    ctx.fillStyle = eg;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = colorReal;
+    ctx.fill();
+  }
+
+  // Etiqueta "N e-" encima de la flecha
+  const midX = (x1 + x2) / 2;
+  const midY = (y1 + y2) / 2;
+  ctx.fillStyle = colorReal;
+  ctx.font = `600 11px 'DM Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(`${n} e⁻`, midX, midY - 14);
+}
+
 // Lista los oxidos posibles del elemento 'num' segun su OXID actual.
 // Devuelve un array con un objeto por estado positivo:
 //   { estado, subE, subO, formula, formulaTxt, nombres: {trad, stock, sist} }

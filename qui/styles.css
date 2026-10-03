@@ -59,6 +59,11 @@
   --oxid-pos-6: #D946EF;
   --oxid-pos-7: #A78BFA;
   --oxid-pos-8: #7C3AED;
+
+  /* Color CPK del oxigeno (rojo), que el formulador usa en el canvas de
+     transferencia electronica para distinguirlo del elemento, incluso cuando
+     ese elemento es otro no-metal con color de familia naranja/amarillo. */
+  --atomo-oxigeno: #EF4444;
   --cat-defecto: #888;
   --en-bar-fondo: #1A1D27;
   --cyan: #22D3EE;
@@ -124,6 +129,9 @@
   --oxid-pos-6: #A21CAF;
   --oxid-pos-7: #7C3AED;
   --oxid-pos-8: #5B21B6;
+
+  /* CPK del oxigeno adaptado a papel: rojo con menos chroma. */
+  --atomo-oxigeno: #B91C1C;
   --cat-defecto: #6f6472;
   --grano-op: 0.45;
   --masa: #675c6c;
@@ -1610,30 +1618,102 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   text-transform: uppercase;
 }
 
+/* Las tarjetas se apilan verticalmente; cada una es un <details> colapsable.
+   El layout en grid se abandono: una fila por compuesto hace la cabecera
+   facil de escanear y agrupa toda la narrativa dentro, sin tener que mirar
+   dos columnas a la vez. */
 .formu-compuestos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.compuestos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.compuestos-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.6rem;
+}
+.btn-toggle-todos {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-toggle-todos:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--text) 20%, transparent);
+}
+.btn-toggle-todos:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+.btn-toggle-chevron {
+  font-size: 0.75rem;
+  opacity: 0.75;
 }
 
-/* Una tarjeta por cada oxido posible. Fondo tintado con el color de la
-   categoria del elemento (--accent se setea inline en el nodo). */
+/* Cada compuesto es un <details> colapsable. Fondo tintado con el color de
+   la categoria del elemento (--accent se setea inline en el nodo). */
 .compuesto-card {
   background: color-mix(in srgb, var(--accent, var(--metal-transicion)) 6%, var(--surface2));
   border: 1px solid color-mix(in srgb, var(--accent, var(--metal-transicion)) 30%, transparent);
   border-radius: 12px;
-  padding: 1rem 1.1rem 1.1rem;
+  overflow: hidden;
+}
+
+/* La cabecera clickable. Oculta el disclosure triangle nativo y usa un chevron
+   custom (giro al abrir). */
+.compuesto-head {
+  list-style: none;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  user-select: none;
+}
+.compuesto-head::-webkit-details-marker { display: none; }
+.compuesto-head::marker { content: ''; }
+.compuesto-head:hover {
+  background: color-mix(in srgb, var(--accent, var(--text)) 4%, transparent);
+}
+.compuesto-head:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: -2px;
+}
+
+.compuesto-chevron {
+  display: inline-block;
+  font-size: 1rem;
+  color: var(--accent, var(--text));
+  transition: transform 0.2s;
+  flex: 0 0 auto;
+  width: 1rem;
+  text-align: center;
+}
+.compuesto-card[open] .compuesto-chevron {
+  transform: rotate(90deg);
 }
 
 .compuesto-formula {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--accent, var(--text));
   line-height: 1.1;
+  flex: 0 0 auto;
 }
 .compuesto-formula sub {
   font-size: 0.7em;
@@ -1650,6 +1730,7 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   font-family: 'DM Mono', monospace;
   font-size: 0.72rem;
   color: var(--muted);
+  margin-left: auto;
 }
 .carga-chip {
   display: inline-flex;
@@ -1666,6 +1747,15 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
 }
 .carga-op { opacity: 0.5; }
 
+/* Cuerpo desplegable. Separador superior y layout de los pasos. */
+.compuesto-body {
+  padding: 0.9rem 1.1rem 1.1rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent, var(--text)) 18%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
 .compuesto-mcm {
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
@@ -1675,15 +1765,111 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   border-radius: 6px;
 }
 
+/* Tira comica en 4 columnas (desktop). En moviles vuelve a stack vertical.
+   Cada paso tiene un contador circular, un texto didactico y, cuando aplica,
+   un mini-canvas con el atomo. */
+.compuesto-pasos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: paso;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.7rem;
+}
+.paso {
+  counter-increment: paso;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.7rem 0.75rem 0.75rem;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  border-radius: 8px;
+  position: relative;
+  padding-top: 2.1rem;
+}
+.paso::before {
+  content: counter(paso);
+  position: absolute;
+  left: 0.65rem;
+  top: 0.65rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  background: var(--accent, var(--text));
+  color: var(--bg);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+:root[data-theme="light"] .paso::before {
+  color: var(--surface);
+}
+.paso-texto {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.paso-texto strong {
+  color: var(--accent, var(--text));
+  font-weight: 700;
+}
+.paso-texto em {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Mini-canvas de los pasos 1 y 2. Cuadrado para no deformar el atomo
+   (el buffer interno es 140x140); se renderiza a 130x130 y se centra en
+   la columna del paso. */
+.paso-canvas {
+  display: block;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto;
+  background: color-mix(in srgb, var(--text) 2%, transparent);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* Paso de resultado: ligeramente mas destacado (es el "lo que consigo"). */
+.paso-resultado {
+  background: color-mix(in srgb, var(--accent, var(--text)) 10%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent, var(--text)) 30%, transparent);
+}
+.paso-resultado .paso-texto { font-size: 0.85rem; }
+
+/* En tablet/movil: los 4 pasos en una sola columna de nuevo. */
+@media (max-width: 900px) {
+  .compuesto-pasos { grid-template-columns: 1fr; gap: 0.6rem; }
+  .paso { flex-direction: row; padding: 0.6rem 0.75rem 0.6rem 2.2rem; padding-top: 0.6rem; align-items: flex-start; }
+  .paso::before { left: 0.6rem; top: 0.6rem; }
+  .paso-texto { flex: 1; font-size: 0.82rem; }
+  .paso-canvas { width: 120px; height: 120px; margin: 0; flex: 0 0 120px; }
+  .paso-con-canvas { gap: 0.75rem; }
+}
+@media (max-width: 540px) {
+  .paso-con-canvas { flex-direction: column; align-items: center; }
+  .paso-canvas { width: 130px; height: 130px; flex: none; }
+}
+
 .nomen-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.4rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  padding-top: 0.3rem;
+  border-top: 1px dashed color-mix(in srgb, var(--text) 10%, transparent);
 }
 .nomen-row {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+}
+@media (max-width: 900px) {
+  .nomen-grid { grid-template-columns: 1fr; gap: 0.4rem; border-top: none; padding-top: 0; }
 }
 .nomen-label {
   font-family: 'DM Mono', monospace;
