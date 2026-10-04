@@ -906,3 +906,118 @@ function oxidosPosibles(num) {
     };
   });
 }
+
+// ── Hidruros metalicos ──────────────────────────────────────────────────
+// Metal (+n) + H (-1)  →  MH_n. El H actua como anion hidruro, siempre -1
+// y siempre con subindice = estado del metal. subE es siempre 1: nunca
+// aparece mas de un atomo del metal.
+//
+// Elementos activos: metales con al menos un estado positivo BAJO en OXID.
+// Los metaloides (B, Si, Ge, As, Sb, Te) quedan fuera por categoria (no
+// cuentan como "metal"). Sn y Pb se excluyen a mano: tienen cat
+// "metal-postransicion" pero sus hidruros (SnH4, PbH4) son covalentes y los
+// libros los tratan aparte, con los hidracidos o directamente omitidos en
+// ESO/bach.
+//
+// Ademas CAPAMOS a estados <= +3: los hidruros metalicos reales viven en
+// estados bajos. CrH6, MnH7, WH6, RuH8... existen en el motor combinatorio
+// pero no son hidruros ionicos ni se enseñan como tales. Esto deja W y Mo
+// (+6/+4) sin hidruros validos y a Mn/V/Cr/Fe/Co/Ni con solo sus estados
+// bajos (+2 y, cuando toca, +3). Hablamos este criterio con V0ra el
+// 2026-10-04.
+const EXCLUIDOS_HIDRURO = new Set([50, 82]);  // Sn, Pb (postransicion covalentes)
+const CATS_METAL = new Set([
+  'metal-alcalino', 'metal-alcalinoterreo', 'metal-transicion',
+  'metal-postransicion', 'lantanido', 'actinido',
+]);
+const ESTADO_HIDRURO_MAX = 3;
+
+function formaHidruroMetalico(num) {
+  if (num === 1) return false;                    // H + H no es hidruro metalico
+  if (EXCLUIDOS_HIDRURO.has(num)) return false;
+  const el = elMap[num];
+  if (!el) return false;
+  const cat = el[4];
+  if (!CATS_METAL.has(cat)) return false;
+  const estados = OXID[num];
+  if (!estados || !estados.length) return false;  // sinteticos sin dataset
+  return estados.some(e => e > 0 && e <= ESTADO_HIDRURO_MAX);
+}
+
+// Nomenclatura tradicional: "hidruro ferroso / ferrico / sodico ..."
+// Mismo adjetivo que en oxidos (es propiedad del elemento, no del anion).
+// Si el estado concreto no tiene adjetivo tradicional (ej. +3 del cromo que
+// comparte "cromico" con +6, o estados exoticos de transicion), devolvemos
+// null y la UI muestra el aviso de "sin nombre tradicional estandar".
+function nombreTradicionalHidruro(sym, estado) {
+  const porEstado = ADJ_TRADICIONAL[sym];
+  if (!porEstado) {
+    // Fallback: si no hay adjetivo, usamos "hidruro de <nombre>" (como Stock
+    // sin romano). Pasa con lantanidos y actinidos poco cubiertos por los
+    // libros tradicionales.
+    const num = NUM_POR_SIMBOLO[sym];
+    const name = num ? elMap[num][2].toLowerCase() : sym.toLowerCase();
+    return 'hidruro de ' + name;
+  }
+  const adj = porEstado[estado];
+  if (!adj) return null;
+  return 'hidruro ' + adj;
+}
+
+// Nomenclatura Stock: "hidruro de <nombre>(romano)". El romano solo aparece
+// si quedan dos o mas estados visibles en esta familia (criterio confirmado
+// con V0ra: para hidruros con valencia unica el romano estorba). "Visibles"
+// significa que pasan el cap ESTADO_HIDRURO_MAX: Mn tiene +2/+4/+7 en OXID
+// pero solo +2 forma hidruro, asi que es "hidruro de manganeso" sin romano.
+function nombreStockHidruro(sym, estado) {
+  const num = NUM_POR_SIMBOLO[sym];
+  if (!num) return null;
+  const name = elMap[num][2].toLowerCase();
+  const visibles = (OXID[num] || []).filter(e => e > 0 && e <= ESTADO_HIDRURO_MAX);
+  const necesitaRomano = visibles.length > 1;
+  return necesitaRomano
+    ? `hidruro de ${name}(${romano(estado)})`
+    : `hidruro de ${name}`;
+}
+
+// Nomenclatura sistematica IUPAC 2005. Si subH = 1 el prefijo "mono" se
+// omite y queda "hidruro de X" (no "monohidruro de X"). Para subH >= 2 el
+// prefijo griego va pegado a "hidruro" sin elision (no hay vocal que choque:
+// "dihidruro", "trihidruro", "tetrahidruro"). El nombre del metal nunca
+// lleva prefijo porque subE es siempre 1.
+function nombreSistematicoHidruro(sym, subH) {
+  const num = NUM_POR_SIMBOLO[sym];
+  if (!num) return null;
+  const name = elMap[num][2].toLowerCase();
+  const pref = subH <= 1 ? '' : prefijoGriego(subH);
+  return `${pref}hidruro de ${name}`;
+}
+
+// Paralelo a oxidosPosibles. Devuelve un array con un objeto por estado
+// positivo del metal:
+//   { estado, subE (=1), subH, formula, formulaTxt, nombres: {...} }
+function hidrurosMetalicosPosibles(num) {
+  if (!formaHidruroMetalico(num)) return [];
+  // El cap ESTADO_HIDRURO_MAX filtra los estados altos que no forman
+  // hidruros reales (CrH6, MnH7, WH6...). Si el metal solo tiene estados
+  // altos, formaHidruroMetalico ya lo habra descartado antes de llegar aqui.
+  const positivos = (OXID[num] || []).filter(e => e > 0 && e <= ESTADO_HIDRURO_MAX);
+  if (!positivos.length) return [];
+  const sym = elMap[num][1];
+  return positivos.map(estado => {
+    // Metal +estado, H -1  →  subE = 1, subH = estado (no hace falta MCM).
+    const subE = 1, subH = estado;
+    return {
+      estado,
+      subE,
+      subH,
+      formula: formulaHtml(sym, subE, 'H', subH),
+      formulaTxt: formulaTxt(sym, subE, 'H', subH),
+      nombres: {
+        tradicional: nombreTradicionalHidruro(sym, estado),
+        stock:       nombreStockHidruro(sym, estado),
+        sistematico: nombreSistematicoHidruro(sym, subH),
+      }
+    };
+  });
+}
