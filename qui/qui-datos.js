@@ -993,6 +993,199 @@ function nombreSistematicoHidruro(sym, subH) {
   return `${pref}hidruro de ${name}`;
 }
 
+// ── Sales binarias (metal + no-metal grupo 16 o 17) ─────────────────────
+// Mecanicamente simetricas a los oxidos: el metal cede, el no-metal capta.
+// La diferencia esta en que el anion no es fijo: el usuario elige F, Cl,
+// Br, I, S, Se o Te. El motor reusa el mismo balance de cargas y la raiz
+// "uro" del hidracido ("cloruro", "sulfuro"...).
+const SAL_ANIONES = ['F', 'Cl', 'Br', 'I', 'S', 'Se', 'Te'];
+const SAL_ANIONES_NUM = { F: 9, Cl: 17, Br: 35, I: 53, S: 16, Se: 34, Te: 52 };
+
+// Metal valido = mismo criterio base que hidruros (CATS_METAL + estado
+// positivo en OXID), pero SIN excluir Sn/Pb: SnCl2 y PbCl2 si son sales
+// clasicas de bach. Tampoco capamos a +3: FeCl3, CrCl3, CrCl6 y MnCl7 estan
+// en los libros aunque algunas rayan lo covalente — las dejamos y que la
+// pedagogia del profesor haga el resto.
+function formaSalBinariaMetal(num) {
+  const el = elMap[num];
+  if (!el) return false;
+  const cat = el[4];
+  if (!CATS_METAL.has(cat)) return false;
+  const estados = OXID[num];
+  if (!estados || !estados.length) return false;
+  return estados.some(e => e > 0);
+}
+
+// El anion solo cuenta como "valido" si sigue teniendo su estado negativo
+// clasico en el OXID activo (el usuario podria habero quitado en el YAML).
+function formaSalBinariaAnion(anionSym) {
+  const num = SAL_ANIONES_NUM[anionSym];
+  if (!num) return false;
+  const grupo = elMap[num][5];
+  const estadoClave = grupo === 17 ? -1 : -2;
+  const estados = OXID[num];
+  return !!estados && estados.includes(estadoClave);
+}
+
+function nombreTradicionalSal(sym, estado, anionSym) {
+  const raiz = RAIZ_HIDRACIDO[anionSym];
+  if (!raiz) return null;
+  const porEstado = ADJ_TRADICIONAL[sym];
+  if (!porEstado) {
+    const num = NUM_POR_SIMBOLO[sym];
+    const name = num ? elMap[num][2].toLowerCase() : sym.toLowerCase();
+    return `${raiz.uro} de ${name}`;
+  }
+  const adj = porEstado[estado];
+  if (!adj) return null;
+  return `${raiz.uro} ${adj}`;
+}
+
+function nombreStockSal(sym, estado, anionSym) {
+  const num = NUM_POR_SIMBOLO[sym];
+  const raiz = RAIZ_HIDRACIDO[anionSym];
+  if (!num || !raiz) return null;
+  const name = elMap[num][2].toLowerCase();
+  const positivos = (OXID[num] || []).filter(e => e > 0);
+  const necesitaRomano = positivos.length > 1;
+  return necesitaRomano
+    ? `${raiz.uro} de ${name}(${romano(estado)})`
+    : `${raiz.uro} de ${name}`;
+}
+
+// Sistematica IUPAC 2005: "<prefijo>uro de <prefijo>metal". El prefijo "mono"
+// se omite tanto para el anion como para el metal (NaCl = "cloruro de sodio",
+// no "monocloruro de monosodio"). Si el anion termina en vocal ya la lleva
+// pegada ("di" + "sulfuro" = "disulfuro"), no hay elision aqui porque los
+// prefijos pequeños terminan en 'i' ("di-", "tri-") y los uros empiezan en
+// consonante.
+function nombreSistematicoSal(sym, subE, anionSym, subAn) {
+  const num = NUM_POR_SIMBOLO[sym];
+  const raiz = RAIZ_HIDRACIDO[anionSym];
+  if (!num || !raiz) return null;
+  const name = elMap[num][2].toLowerCase();
+  const prefAn = prefijoGriegoSinMono(subAn);
+  const prefE  = prefijoGriegoSinMono(subE);
+  return `${prefAn}${raiz.uro} de ${prefE}${name}`;
+}
+
+function salesBinariasPosibles(numMetal, anionSym) {
+  if (!formaSalBinariaMetal(numMetal)) return [];
+  if (!formaSalBinariaAnion(anionSym)) return [];
+  const anionNum = SAL_ANIONES_NUM[anionSym];
+  const grupo = elMap[anionNum][5];
+  const estadoAnion = grupo === 17 ? -1 : -2;
+  const sym = elMap[numMetal][1];
+  const positivos = (OXID[numMetal] || []).filter(e => e > 0);
+  return positivos.map(estado => {
+    const { sub1: subE, sub2: subAn } = subindicesEquilibrados(estado, estadoAnion);
+    return {
+      estado,
+      subE,
+      subAn,
+      formula: formulaHtml(sym, subE, anionSym, subAn),
+      formulaTxt: formulaTxt(sym, subE, anionSym, subAn),
+      nombres: {
+        tradicional: nombreTradicionalSal(sym, estado, anionSym),
+        stock:       nombreStockSal(sym, estado, anionSym),
+        sistematico: nombreSistematicoSal(sym, subE, anionSym, subAn),
+      }
+    };
+  });
+}
+
+// ── Hidracidos (H + no-metal grupos 16 y 17) ────────────────────────────
+// Aqui los roles se invierten: el H es CATION (+1) y el no-metal es ANION
+// (-1 en halogenos, -2 en calcogenos). Nunca hay varios estados por elemento
+// (siempre es -1 o -2, segun grupo). Un solo compuesto por elemento. La
+// formula convencional escribe H primero porque es menos electronegativo:
+// HCl, HBr, H2S, H2Se.
+//
+// Doble nomenclatura real:
+//  - Tradicional ("como acido en disolucion"): acido clorhidrico, sulfhidrico...
+//  - Stock ("como gas puro"): cloruro de hidrogeno, sulfuro de hidrogeno...
+//  - Sistematica IUPAC 2005: anade "di" al hidrogeno cuando subH=2: sulfuro
+//    de dihidrogeno. Esto distingue a la sistematica de la Stock en los
+//    hidracidos de grupo 16 (los de grupo 17 coinciden).
+//
+// At (ácido astatidrico) existe pero su rareza lo deja fuera del alcance ESO.
+// O queda fuera: H + O es agua, los libros no lo tratan como hidracido.
+const EXCLUIDOS_HIDRACIDO = new Set([1, 8, 85]);  // H, O, At
+
+const RAIZ_HIDRACIDO = {
+  'F':  { tradicional: 'fluorhídrico',  uro: 'fluoruro' },
+  'Cl': { tradicional: 'clorhídrico',   uro: 'cloruro' },
+  'Br': { tradicional: 'bromhídrico',   uro: 'bromuro' },
+  'I':  { tradicional: 'yodhídrico',    uro: 'yoduro' },
+  'S':  { tradicional: 'sulfhídrico',   uro: 'sulfuro' },
+  'Se': { tradicional: 'selenhídrico',  uro: 'seleniuro' },
+  'Te': { tradicional: 'telurhídrico',  uro: 'teluriuro' },
+};
+
+function formaHidracido(num) {
+  if (EXCLUIDOS_HIDRACIDO.has(num)) return false;
+  const el = elMap[num];
+  if (!el) return false;
+  const cat = el[4];
+  if (cat !== 'halogeno' && cat !== 'no-metal') return false;
+  const grupo = el[5];
+  if (grupo !== 16 && grupo !== 17) return false;
+  // Y el no-metal debe seguir teniendo su estado -1 o -2 en el OXID activo
+  // (podria haberlo quitado en Editar oxidacion).
+  const estadoClave = grupo === 17 ? -1 : -2;
+  const estados = OXID[num];
+  if (!estados || !estados.length) return false;
+  return estados.includes(estadoClave);
+}
+
+function nombreTradicionalHidracido(sym) {
+  const raiz = RAIZ_HIDRACIDO[sym];
+  if (!raiz) return null;
+  return 'ácido ' + raiz.tradicional;
+}
+
+// Stock: "<raiz>uro de hidrogeno", sin prefijo griego aunque haya 2 H
+// (en Stock el prefijo lo lleva el anion si tiene valencia variable, no el
+// hidrogeno; aqui no hay valencia variable del no-metal).
+function nombreStockHidracido(sym) {
+  const raiz = RAIZ_HIDRACIDO[sym];
+  if (!raiz) return null;
+  return raiz.uro + ' de hidrógeno';
+}
+
+// Sistematica IUPAC 2005: cuando hay 2 H (grupos 16), el hidrogeno lleva
+// prefijo "di". Es la unica diferencia con Stock para hidracidos; para
+// grupos 17 (subH=1) ambas coinciden.
+function nombreSistematicoHidracido(sym, subH) {
+  const raiz = RAIZ_HIDRACIDO[sym];
+  if (!raiz) return null;
+  const prefH = subH <= 1 ? '' : prefijoGriego(subH);
+  return raiz.uro + ' de ' + prefH + 'hidrógeno';
+}
+
+function hidracidosPosibles(num) {
+  if (!formaHidracido(num)) return [];
+  const el = elMap[num];
+  const grupo = el[5];
+  const sym = el[1];
+  const estado = grupo === 17 ? -1 : -2;          // carga del no-metal
+  // Balance: 1 no-metal capta |estado| electrones, |estado| H ceden 1 c/u
+  const subE = 1, subH = Math.abs(estado);
+  return [{
+    estado,
+    subE,
+    subH,
+    // Formula: H primero (menos electronegativo), no-metal despues.
+    formula: formulaHtml('H', subH, sym, subE),
+    formulaTxt: formulaTxt('H', subH, sym, subE),
+    nombres: {
+      tradicional: nombreTradicionalHidracido(sym),
+      stock:       nombreStockHidracido(sym),
+      sistematico: nombreSistematicoHidracido(sym, subH),
+    }
+  }];
+}
+
 // Paralelo a oxidosPosibles. Devuelve un array con un objeto por estado
 // positivo del metal:
 //   { estado, subE (=1), subH, formula, formulaTxt, nombres: {...} }

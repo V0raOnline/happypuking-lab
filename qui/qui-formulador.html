@@ -91,6 +91,33 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
         <span class="familia-texto">Hidruros metálicos</span>
         <span class="familia-anion">metal + H⁻</span>
       </button>
+      <button type="button" class="formu-familia-boton" role="tab" aria-selected="false"
+              data-familia="hidracidos">
+        <span class="familia-emoji" aria-hidden="true">🧪</span>
+        <span class="familia-texto">Hidrácidos</span>
+        <span class="familia-anion">H⁺ + no-metal</span>
+      </button>
+      <button type="button" class="formu-familia-boton" role="tab" aria-selected="false"
+              data-familia="sales">
+        <span class="familia-emoji" aria-hidden="true">🧂</span>
+        <span class="familia-texto">Sales binarias</span>
+        <span class="familia-anion">metal + no-metal⁻</span>
+      </button>
+    </div>
+
+    <!-- Sub-selector visible solo en la familia Sales: elige el anion
+         (fluoruro, cloruro, bromuro, yoduro, sulfuro, seleniuro, teluriuro). -->
+    <div class="formu-sub-selector" id="formu-sub-sales" hidden>
+      <div class="formu-sub-label">Y qué anión:</div>
+      <div class="formu-anion-chips" role="tablist" aria-label="Anión de la sal binaria">
+        <button type="button" class="formu-anion-chip" data-anion="F">F⁻</button>
+        <button type="button" class="formu-anion-chip active" data-anion="Cl" aria-selected="true">Cl⁻</button>
+        <button type="button" class="formu-anion-chip" data-anion="Br">Br⁻</button>
+        <button type="button" class="formu-anion-chip" data-anion="I">I⁻</button>
+        <button type="button" class="formu-anion-chip" data-anion="S">S²⁻</button>
+        <button type="button" class="formu-anion-chip" data-anion="Se">Se²⁻</button>
+        <button type="button" class="formu-anion-chip" data-anion="Te">Te²⁻</button>
+      </div>
     </div>
   </div>
 
@@ -211,8 +238,10 @@ const FAMILIAS = {
     anionColorCss: 'var(--atomo-oxigeno)',
     anionShells: [2, 6],
     anionHuecos: 2,
+    anionResaltados: 0,
     anionNombre: 'oxígeno',
     subAnionKey: 'subO',
+    elementoCede: true,
     forma: formaOxidos,
     posibles: oxidosPosibles,
     textoIntroHTML: 'El oxígeno forma óxidos con casi cualquier elemento, pero la fórmula depende de su <strong>estado de oxidación</strong>. El motor equilibra las cargas con subíndices y te da los tres nombres (tradicional, Stock y sistemática) uno al lado del otro, para que veas cuál usa tu libro.',
@@ -237,8 +266,10 @@ const FAMILIAS = {
     anionColorCss: 'var(--atomo-hidrogeno)',
     anionShells: [1],
     anionHuecos: 1,
+    anionResaltados: 0,
     anionNombre: 'hidrógeno',
     subAnionKey: 'subH',
+    elementoCede: true,
     forma: formaHidruroMetalico,
     posibles: hidrurosMetalicosPosibles,
     textoIntroHTML: 'El hidrógeno acepta un electrón de un metal para llenar su capa K (que solo pide 2). El metal <strong>cede</strong>, el H <strong>capta</strong>: fórmula MH<sub>n</sub>, con n = estado de oxidación del metal. Los no-metales, metaloides y Sn/Pb quedan fuera: sus "hidruros" son covalentes (los verás con hidrácidos).',
@@ -251,15 +282,108 @@ const FAMILIAS = {
       if (cat === 'no-metal' || cat === 'halogeno') return 'Los no-metales y halógenos forman hidrácidos (H + no-metal), no hidruros metálicos.';
       if (cat === 'gas-noble') return 'Los gases nobles no forman compuestos en ESO.';
       if (num >= 104) return 'Los sintéticos no tienen estados de oxidación curados aquí.';
-      return 'No tiene estados de oxidación positivos en el dataset activo.';
+      return 'No tiene estados de oxidación positivos en el dataset activo (como mucho estados > +3, que no forman hidruro iónico).';
     },
     narraPaso2: () => 'Al <strong>H</strong> le <strong>falta 1 electr&oacute;n</strong> para completar su &uacute;nica capa (K llena = 2). Todos los &aacute;tomos buscan lo mismo: dejar llena la &uacute;ltima capa.',
+  },
+  hidracidos: {
+    // Hidracido: H + no-metal (grupos 16 y 17). AQUI SE INVIERTEN LOS ROLES:
+    // el no-metal (elemento clicado) CAPTA electrones y el H los CEDE. Esto
+    // hace que paso 1 hable de huecos y paso 2 de un electron que viaja.
+    nombreCompuesto: 'hidrácido',
+    nombreCompuestos: 'hidrácidos',
+    emoji: '🧪',
+    anionSym: 'H',
+    anionCarga: +1,
+    anionCargaUI: '+1',
+    anionColorCss: 'var(--atomo-hidrogeno)',
+    anionShells: [1],
+    anionHuecos: 0,
+    anionResaltados: 1,
+    anionNombre: 'hidrógeno',
+    subAnionKey: 'subH',
+    elementoCede: false,
+    forma: formaHidracido,
+    posibles: hidracidosPosibles,
+    textoIntroHTML: 'En un hidrácido se invierten los roles: el no-metal (halógeno o grupo 16) <strong>capta</strong> electrones y el H <strong>cede</strong> el suyo (es menos electronegativo). En agua, el H escapa como H⁺ y el compuesto se comporta como ácido — de ahí la <strong>doble nomenclatura</strong>: nombre de gas puro (cloruro de hidrógeno) y nombre de disolución (ácido clorhídrico).',
+    textoVacio: 'Elige un halógeno (F, Cl, Br, I) o un no-metal del grupo 16 (S, Se, Te)',
+    sinCompuestosTitulo: (name) => `${name} no forma hidrácidos en formulación de ESO/bachiller.`,
+    sinCompuestosPor: (num, cat) => {
+      if (num === 1) return 'Es el propio hidrógeno.';
+      if (num === 8) return 'H + O es agua. Los libros no la tratan como hidrácido por convención.';
+      if (num === 85) return 'El ástato es demasiado raro y radiactivo para la formulación de ESO.';
+      if (cat === 'metal-alcalino' || cat === 'metal-alcalinoterreo' || cat === 'metal-transicion' || cat === 'metal-postransicion' || cat === 'lantanido' || cat === 'actinido') return 'Los metales + H forman hidruros metálicos, no hidrácidos — cambia de familia.';
+      if (cat === 'metaloide') return 'Los metaloides forman compuestos covalentes distintos (silanos, boranos...), fuera de la formulación de hidrácidos.';
+      if (cat === 'no-metal') return 'Solo los no-metales del grupo 16 (S, Se, Te) forman hidrácidos clásicos.';
+      if (cat === 'halogeno') return 'Debería formarlo, revisa el OXID activo (necesita el estado −1).';
+      if (cat === 'gas-noble') return 'Los gases nobles no forman compuestos en ESO.';
+      if (num >= 104) return 'Los sintéticos no tienen estados de oxidación curados aquí.';
+      return 'No es grupo 16 ni 17 — las únicas familias que forman hidrácidos.';
+    },
+    // En hidracidos el paso 2 habla del H que CEDE (el que se va a soltar
+    // como H+ en agua). El resaltado va sobre su unico electron.
+    narraPaso2: () => 'El <strong>H</strong> es menos electronegativo que el no-metal: le <strong>sobra 1 electrón</strong> en su capa K. Lo cede y queda como <strong>H⁺</strong> (en agua se separa y por eso el compuesto es ácido).',
   },
 };
 
 let familiaActiva = 'oxidos';
 let elementoActivo = null;
-function famAct() { return FAMILIAS[familiaActiva]; }
+let anionSalActivo = 'Cl';   // sub-selector de las sales binarias
+function famAct() {
+  if (familiaActiva === 'sales') return construyeFamiliaSales(anionSalActivo);
+  return FAMILIAS[familiaActiva];
+}
+
+// La familia Sales no cabe en FAMILIAS como objeto estatico: el anion lo
+// elige el usuario (F, Cl, Br, I, S, Se, Te) y el motor debe reconstruir
+// los textos, las shells y la carga segun esa eleccion. Esta factoria
+// devuelve un objeto con la misma forma que las otras tres familias.
+function construyeFamiliaSales(anionSym) {
+  const anionNum = SAL_ANIONES_NUM[anionSym];
+  const anionEl = elMap[anionNum];
+  const anionNombre = anionEl[2].toLowerCase();        // "cloro", "azufre", ...
+  const anionCat = anionEl[4];                         // halogeno o no-metal
+  const anionGrupo = anionEl[5];
+  const anionCarga = anionGrupo === 17 ? -1 : -2;
+  const anionShells = EXTRA[anionNum][0];
+  const faltanN = Math.abs(anionCarga);
+  const faltaV = faltanN > 1 ? 'faltan' : 'falta';
+  const eN = faltanN > 1 ? `${faltanN} electrones` : '1 electr&oacute;n';
+  // Nombre del "uro" (cloruro, sulfuro) para los copies de ayuda.
+  const raiz = RAIZ_HIDRACIDO[anionSym];
+  const uroPlural = raiz ? raiz.uro + 's' : (anionNombre + 's');
+  return {
+    nombreCompuesto: 'sal binaria',
+    nombreCompuestos: 'sales binarias',
+    emoji: '🧂',
+    anionSym,
+    anionCarga,
+    anionCargaUI: anionCarga === -1 ? '−1' : '−2',
+    anionColorCss: anionCat === 'halogeno' ? 'var(--halogeno)' : 'var(--atomo-oxigeno)',
+    // Para S/Se/Te usamos --atomo-oxigeno (rojo CPK) por mantener la convencion
+    // de "anion grupo 16 = rojizo"; los halogenos van con su color de familia.
+    anionShells,
+    anionHuecos: faltanN,
+    anionResaltados: 0,
+    anionNombre,
+    subAnionKey: 'subAn',
+    elementoCede: true,
+    forma: formaSalBinariaMetal,
+    posibles: (num) => salesBinariasPosibles(num, anionSym),
+    textoIntroHTML: `En una sal binaria el metal <strong>cede</strong> y el no-metal <strong>capta</strong>. Elige el anión arriba y un metal en la tabla. La nomenclatura tradicional usa el sufijo <em>-uro</em> (${raiz ? raiz.uro : 'cloruro'}) con el adjetivo del metal; Stock y sistemática siguen el patrón de los óxidos.`,
+    textoVacio: `Elige un metal para ver sus ${uroPlural}`,
+    sinCompuestosTitulo: (name) => `${name} no forma ${uroPlural} en formulación de ESO/bachiller.`,
+    sinCompuestosPor: (num, cat) => {
+      if (SAL_ANIONES.includes(elMap[num] && elMap[num][1])) return `${anionSym} es el propio anión que has elegido — elige un metal.`;
+      if (cat === 'metaloide') return 'Los metaloides forman compuestos covalentes, no sales iónicas típicas.';
+      if (cat === 'no-metal' || cat === 'halogeno') return 'Los no-metales + no-metales dan compuestos covalentes, no sales binarias.';
+      if (cat === 'gas-noble') return 'Los gases nobles no forman compuestos en ESO.';
+      if (num >= 104) return 'Los sintéticos no tienen estados de oxidación curados aquí.';
+      return 'No tiene estados de oxidación positivos en el dataset activo.';
+    },
+    narraPaso2: () => `Al <strong>${anionSym}</strong> le <strong>${faltaV} ${eN}</strong> para completar su &uacute;ltima capa. Es menos abundante que el oxígeno en los libros, pero el mecanismo es el mismo (<em>regla del octeto</em>).`,
+  };
+}
 
 ELEMENTS.forEach(e => {
   const [num, sym, name, mass, cat] = e;
@@ -290,7 +414,7 @@ ELEMENTS.forEach(e => {
 });
 
 // Repinta la mini-tabla, intro y estado vacio segun la familia activa. Se
-// llama al cargar y cada vez que el usuario pulsa un boton de familia.
+// llama al cargar, al cambiar de familia y al cambiar el anion en sales.
 function aplicarFamilia() {
   const fam = famAct();
   // Intro, estado vacio, botones
@@ -301,6 +425,14 @@ function aplicarFamilia() {
     const act = b.dataset.familia === familiaActiva;
     b.classList.toggle('active', act);
     b.setAttribute('aria-selected', act ? 'true' : 'false');
+  });
+  // Sub-selector de anion: solo visible en sales binarias.
+  const subSel = document.getElementById('formu-sub-sales');
+  if (subSel) subSel.hidden = (familiaActiva !== 'sales');
+  document.querySelectorAll('.formu-anion-chip').forEach(c => {
+    const act = c.dataset.anion === anionSalActivo;
+    c.classList.toggle('active', act);
+    c.setAttribute('aria-selected', act ? 'true' : 'false');
   });
   // Celdas: dim / activo segun el filtro de la familia
   document.querySelectorAll('button.formu-el').forEach(btn => {
@@ -335,6 +467,15 @@ document.querySelectorAll('.formu-familia-boton').forEach(b => {
   b.addEventListener('click', () => {
     if (b.dataset.familia === familiaActiva) return;
     familiaActiva = b.dataset.familia;
+    aplicarFamilia();
+  });
+});
+
+// Listener del sub-selector de anion (solo activo en sales binarias)
+document.querySelectorAll('.formu-anion-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    if (c.dataset.anion === anionSalActivo) return;
+    anionSalActivo = c.dataset.anion;
     aplicarFamilia();
   });
 });
@@ -453,27 +594,37 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
   const nombreEl = elMap[numElemento][2];
   const subA = comp[fam.subAnionKey];                            // subO o subH
   const cargaA = Math.abs(fam.anionCarga);                       // 2 (O) o 1 (H)
-  const nTransferidos = comp.subE * comp.estado;                 // == subA * cargaA por diseno
+  const estadoAbs = Math.abs(comp.estado);                       // en hidracidos el estado es negativo
+  const nTransferidos = comp.subE * estadoAbs;                   // == subA * cargaA por diseno
   const esSimple = comp.subE === 1 && subA === 1;
-  const variosEstados = (OXID[numElemento] || []).filter(e => e > 0).length > 1;
+  // "variosEstados" solo tiene sentido donde el elemento usa el estado positivo
+  // (oxidos, hidruros). En hidracidos siempre hay un unico compuesto por
+  // elemento, asi que lo apagamos para evitar el "en esta variante, al...".
+  const variosEstados = fam.elementoCede
+    && (OXID[numElemento] || []).filter(e => e > 0).length > 1;
   const anSym = fam.anionSym;
+  const elementoCede = fam.elementoCede !== false;
 
   // Concordancia singular/plural para que lea natural en castellano.
-  const sobrarV = comp.estado > 1 ? 'sobran' : 'sobra';
-  const eElementos = comp.estado > 1 ? `${comp.estado} electrones` : '1 electr&oacute;n';
+  const sobrarV = estadoAbs > 1 ? 'sobran' : 'sobra';
+  const faltarV = estadoAbs > 1 ? 'faltan' : 'falta';
+  const eElementos = estadoAbs > 1 ? `${estadoAbs} electrones` : '1 electr&oacute;n';
   const totalElectrones = nTransferidos > 1 ? `${nTransferidos} electrones` : '1 electr&oacute;n';
   const sonTotal = nTransferidos > 1 ? 'son' : 'es';
-  const captaN = cargaA > 1 ? `${cargaA} electrones` : '1 electr&oacute;n';
-  const captaV = cargaA > 1 ? 'capta' : 'capta';                 // ambas formas usan "capta"
 
-  const paso1 = `${variosEstados ? 'En esta variante, al' : 'Al'} <strong>${sym}</strong> le <strong>${sobrarV} ${eElementos}</strong> en su &uacute;ltima capa — son los que puede <strong>ceder</strong>.`;
+  // Paso 1: habla del elemento clicado. Si cede (oxidos/hidruros) le sobran
+  // electrones; si capta (hidracidos) le faltan. Singular/plural segun N.
+  const esElSon = estadoAbs > 1 ? 'son los que' : 'es el que';
+  const paso1 = elementoCede
+    ? `${variosEstados ? 'En esta variante, al' : 'Al'} <strong>${sym}</strong> le <strong>${sobrarV} ${eElementos}</strong> en su &uacute;ltima capa — ${esElSon} puede <strong>ceder</strong>.`
+    : `Al <strong>${sym}</strong> le <strong>${faltarV} ${eElementos}</strong> para completar su &uacute;ltima capa — ${esElSon} necesita <strong>captar</strong>.`;
 
   const paso2 = fam.narraPaso2();
 
   // Texto corto para el paso 3 (ahora la visual lleva el peso).
   const paso3 = esSimple
     ? `Las cuentas cuadran <strong>1 a 1</strong>, no hacen falta sub&iacute;ndices.`
-    : `<strong>${comp.estado} &ne; ${cargaA}</strong>: hay que repetir &aacute;tomos para que las cuentas cuadren en ambos lados.`;
+    : `<strong>${estadoAbs} &ne; ${cargaA}</strong>: hay que repetir &aacute;tomos para que las cuentas cuadren en ambos lados.`;
 
   // Bolitas-electron agrupadas por atomo. Un "grupo" = los electrones que
   // intercambia un atomo concreto. Lo que cuenta es que el ojo vea el mismo
@@ -486,13 +637,21 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
     }
     return grupos.join('');
   }
+  // Verbos del paso 3: elemento y anion segun quien cede y quien capta.
+  const vElCede = comp.subE > 1 ? 'ceden' : 'cede';
+  const vElCapta = comp.subE > 1 ? 'captan' : 'capta';
+  const vAnCede = subA > 1 ? 'ceden' : 'cede';
+  const vAnCapta = subA > 1 ? 'captan' : 'capta';
+  const verboEl  = elementoCede ? vElCede  : vElCapta;
+  const verboAn  = elementoCede ? vAnCapta : vAnCede;
+
   const cuentaVisual = `
     <div class="cuenta-visual" style="--anion-color:${fam.anionColorCss}">
       <div class="cuenta-lado">
-        <div class="cuenta-dots cuenta-dots-el">${dotsHTML(comp.subE, comp.estado)}</div>
+        <div class="cuenta-dots cuenta-dots-el">${dotsHTML(comp.subE, estadoAbs)}</div>
         <div class="cuenta-rotulo">
           <strong>${comp.subE === 1 ? '1' : comp.subE} ${sym}</strong>
-          · ${comp.subE > 1 ? 'ceden' : 'cede'} ${nTransferidos}&nbsp;e⁻
+          · ${verboEl} ${nTransferidos}&nbsp;e⁻
         </div>
       </div>
       <div class="cuenta-balance" aria-hidden="true">${esSimple ? '=' : '⇄'}</div>
@@ -500,11 +659,14 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
         <div class="cuenta-dots cuenta-dots-anion">${dotsHTML(subA, cargaA)}</div>
         <div class="cuenta-rotulo">
           <strong>${subA === 1 ? '1' : subA} ${anSym}</strong>
-          · ${subA > 1 ? 'captan' : 'capta'} ${nTransferidos}&nbsp;e⁻
+          · ${verboAn} ${nTransferidos}&nbsp;e⁻
         </div>
       </div>
     </div>
   `;
+
+  // Carga del elemento en el chip: + para positivos, − unicode para negativos.
+  const chipElCarga = comp.estado > 0 ? ('+' + comp.estado) : String(comp.estado).replace('-', '−');
 
   return `
     <details class="compuesto-card" style="--accent:${color}">
@@ -512,7 +674,7 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
         <span class="compuesto-chevron" aria-hidden="true">▸</span>
         <span class="compuesto-formula">${comp.formula}</span>
         <span class="compuesto-cargas">
-          <span class="carga-chip"><span class="carga-sym">${sym}</span> ${comp.estado > 0 ? '+' : ''}${comp.estado}</span>
+          <span class="carga-chip"><span class="carga-sym">${sym}</span> ${chipElCarga}</span>
           <span class="carga-op">·</span>
           <span class="carga-chip"><span class="carga-sym">${anSym}</span> ${fam.anionCargaUI}</span>
         </span>
@@ -523,15 +685,15 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
           <li class="paso paso-con-canvas">
             <div class="paso-texto">${paso1}</div>
             <canvas class="paso-canvas" width="140" height="140"
-                    data-tipo="E" data-num="${numElemento}" data-estado="${comp.estado}"
+                    data-tipo="E" data-num="${numElemento}" data-estado="${estadoAbs}"
                     data-color="${color}"
-                    aria-label="&Aacute;tomo de ${nombreEl} con ${comp.estado} electron(es) resaltado(s) en la &uacute;ltima capa"></canvas>
+                    aria-label="&Aacute;tomo de ${nombreEl} con ${estadoAbs} ${elementoCede ? 'electron(es) resaltado(s)' : 'hueco(s) marcado(s)'} en la &uacute;ltima capa"></canvas>
           </li>
           <li class="paso paso-con-canvas">
             <div class="paso-texto">${paso2}</div>
             <canvas class="paso-canvas" width="140" height="140"
                     data-tipo="A"
-                    aria-label="&Aacute;tomo de ${fam.anionNombre} con sus electrones en la &uacute;ltima capa y ${fam.anionHuecos} hueco(s) marcado(s)"></canvas>
+                    aria-label="&Aacute;tomo de ${fam.anionNombre} con ${fam.anionResaltados || 0} electr&oacute;n resaltado y ${fam.anionHuecos} hueco(s) marcado(s)"></canvas>
           </li>
           <li class="paso paso-cuenta">
             <div class="paso-texto">${paso3}</div>
@@ -578,20 +740,26 @@ function pintarCanvasCompuestos() {
 
     if (canvas.dataset.tipo === 'E') {
       const numE = parseInt(canvas.dataset.num, 10);
-      const estado = parseInt(canvas.dataset.estado, 10);
+      const estado = parseInt(canvas.dataset.estado, 10);  // ya en absoluto
       const colorE = canvas.dataset.color;
       const extraE = EXTRA[numE];
       const shellsE = extraE ? extraE[0] : [1];
+      // En oxidos/hidruros el elemento cede (resalta electrones).
+      // En hidracidos capta (marca huecos). La familia lo decide.
       drawAtomoEstatico({
         ctx, cx, cy, nucleoR, num: numE, shells: shellsE, color: colorE,
-        electronesExternosResaltados: estado,
+        electronesExternosResaltados: fam.elementoCede ? estado : 0,
+        huecosExternos: fam.elementoCede ? 0 : estado,
       });
     } else {
-      // Anion: O (K=2, L=6, 2 huecos) o H (K=1, 1 hueco)
+      // Anion (O o H): su rol tambien lo decide la familia.
+      //  - Oxidos: O con 2 huecos.
+      //  - Hidruros: H con 1 hueco.
+      //  - Hidracidos: H con 1 electron resaltado (el que cede).
       drawAtomoEstatico({
         ctx, cx, cy, nucleoR, num: numAnion,
         shells: fam.anionShells, color: fam.anionColorCss,
-        electronesExternosResaltados: 0,
+        electronesExternosResaltados: fam.anionResaltados || 0,
         huecosExternos: fam.anionHuecos,
       });
     }

@@ -1580,6 +1580,54 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   color: color-mix(in srgb, var(--magenta-texto) 70%, var(--muted));
 }
 
+/* Sub-selector de anion para la familia Sales binarias. Chips pequeños
+   tipo pastilla, el activo con borde magenta como los botones de familia. */
+.formu-sub-selector {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.formu-sub-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.formu-anion-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.formu-anion-chip {
+  padding: 0.4rem 0.8rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.formu-anion-chip:hover {
+  border-color: color-mix(in srgb, var(--magenta) 35%, var(--border));
+}
+.formu-anion-chip:focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 2px;
+}
+.formu-anion-chip.active {
+  background: color-mix(in srgb, var(--magenta) 12%, var(--surface2));
+  border-color: color-mix(in srgb, var(--magenta) 55%, transparent);
+  color: var(--magenta-texto);
+  cursor: default;
+}
+
 .formu-selector {
   background: var(--surface);
   border: 1px solid var(--border);
