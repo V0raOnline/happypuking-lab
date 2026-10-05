@@ -571,6 +571,78 @@ header {
   .sticky-stats { display: none; }
 }
 
+/* ── FICHA FLOTANTE DEL FORMULADOR ──────────────────────────────────────
+   Variante compacta: solo la formula del primer compuesto + CTA + flecha.
+   Hereda el patron visual del card-sticky de la tabla periodica (fixed al
+   fondo, pill con fondo tintado por el --accent del compuesto). Aparece
+   cuando la primera compuesto-card se sale del viewport. */
+.formu-sticky {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translate(-50%, 20px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: min(320px, 92vw);
+  max-width: min(540px, 96vw);
+  padding: 0.55rem 1rem 0.55rem 1rem;
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--accent, var(--magenta)) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent, var(--magenta)) 35%, transparent);
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--sombra-base) 45%, transparent);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  pointer-events: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+.formu-sticky.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.formu-sticky:hover {
+  background: color-mix(in srgb, var(--accent, var(--magenta)) 18%, var(--surface));
+}
+.formu-sticky:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.formu-sticky-formula {
+  flex: 1;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-texto, var(--text));
+  line-height: 1;
+  min-width: 0;
+}
+.formu-sticky-formula sub {
+  font-size: 0.7em;
+  vertical-align: baseline;
+}
+.formu-sticky-cta {
+  flex: 0 0 auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.formu-sticky-arrow {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  color: var(--accent-texto, var(--muted));
+  padding-right: 0.1rem;
+}
+@media (max-width: 480px) {
+  .formu-sticky-cta { display: none; }
+}
+
 .card-box {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -876,10 +948,13 @@ header {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  padding: 0 2rem 1rem;
+  padding: 1rem 1.5rem;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 auto 0.7rem;
   position: relative; z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 
 .search-input {
@@ -926,8 +1001,13 @@ header {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.2rem 2rem 0;
+  padding: 0.9rem 1.5rem;
   position: relative; z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 .mode-btn {
   font-family: 'DM Mono', monospace;
@@ -2845,6 +2925,78 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   border-color: color-mix(in srgb, var(--magenta) 55%, transparent);
   color: var(--magenta-texto);
   cursor: default;
+}
+
+/* Selector de nivel de apoyo: Tutorial / Aprendiz / Experto. Acento cyan
+   para separarlo visualmente del nivel de dificultad (magenta). El estado
+   activo lleva el mismo tratamiento que .lab-nivel-chip.active pero con
+   el acento del nivel de apoyo. */
+.lab-apoyo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.lab-apoyo-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex: 0 0 auto;
+}
+.lab-apoyo-chips {
+  display: flex;
+  gap: 0.35rem;
+  flex: 1;
+}
+.lab-apoyo-chip {
+  flex: 1;
+  padding: 0.35rem 0.4rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.lab-apoyo-chip .apoyo-emoji { font-size: 0.9rem; }
+.lab-apoyo-chip:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--cyan) 35%, var(--border));
+}
+.lab-apoyo-chip.active {
+  background: color-mix(in srgb, var(--cyan) 10%, var(--surface2));
+  border-color: color-mix(in srgb, var(--cyan) 55%, transparent);
+  color: var(--cyan-texto);
+  cursor: default;
+}
+/* Flecha de dirección en Tutorial: te faltan ↓ / te sobran ↑ átomos. */
+.lab-apoyo-flecha {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--cyan-texto);
+  font-size: 1.1em;
+  line-height: 1;
+  padding-left: 0.15em;
+}
+/* Texto solo para lectores de pantalla (equivalente a Bootstrap sr-only). */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .lab-retos-lista {

@@ -11,13 +11,13 @@
 <meta name="author" content="V0ra (v0raonline)">
 <meta name="copyright" content="CC BY-NC-SA 4.0">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-<title>Formulador: óxidos e hidruros con nomenclatura española</title>
+<title>Formulación: óxidos e hidruros con nomenclatura española</title>
 <meta name="description" content="Elige una familia (óxidos o hidruros metálicos) y un elemento. Obtén la fórmula equilibrada y las tres nomenclaturas (tradicional, Stock, sistemática). Gratis y sin cuentas.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="hAppYpUkIng Lab">
 <meta property="og:locale" content="es_ES">
 <meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/qui/qui-formulador.html">
-<meta property="og:title" content="Formulador: óxidos e hidruros con nomenclatura española">
+<meta property="og:title" content="Formulación: óxidos e hidruros con nomenclatura española">
 <meta property="og:description" content="Elige una familia (óxidos o hidruros metálicos) y un elemento. Obtén la fórmula equilibrada y las tres nomenclaturas (tradicional, Stock, sistemática). Gratis y sin cuentas.">
 <meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/readme-banner.png">
 <meta property="og:image:width" content="1200">
@@ -51,13 +51,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       <span class="plegar-chevron" aria-hidden="true">▲</span>
     </button>
   </div>
-  <h1 class="header-title">Formulador</h1>
+  <h1 class="header-title">Formulación</h1>
   <p class="header-subtitle">Elige una familia y un elemento, mira el compuesto equilibrado con sus tres nombres</p>
   <nav class="header-nav">
     <span class="nav-domain">Química →</span>
     <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
-    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Tarjetas</a>
-    <a class="nav-tool active" href="#">Formulador</a>
+    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Quiz</a>
+    <a class="nav-tool active" href="#">Formulación</a>
     <a class="nav-tool" href="./qui-lab.html">Lab</a>
   </nav>
 </header>
@@ -138,6 +138,15 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   </div>
 
 </div>
+
+<!-- Ficha flotante con la fórmula del primer compuesto. Aparece pegada al
+     fondo cuando esa tarjeta se sale del viewport por scroll. Al clicarla
+     scrollea de vuelta y despliega el <details>. -->
+<button type="button" class="formu-sticky" id="formu-sticky" hidden aria-label="Ver la explicación del compuesto">
+  <span class="formu-sticky-formula" id="formu-sticky-formula"></span>
+  <span class="formu-sticky-cta">Ver pasos</span>
+  <span class="formu-sticky-arrow" aria-hidden="true">↑</span>
+</button>
 
 <script src="qui-datos.js"></script>
 
@@ -461,6 +470,7 @@ function deseleccionar() {
   elementoActivo = null;
   document.getElementById('formu-resultado').hidden = true;
   document.getElementById('formu-vacio').hidden = false;
+  ocultaFormuSticky();
 }
 
 // Listener de los botones de familia
@@ -525,6 +535,7 @@ function elegirElemento(num) {
         <p class="formu-sin-oxidos-por">${fam.sinCompuestosPor(num, cat)}</p>
       </div>
     `;
+    ocultaFormuSticky();
   } else {
     const toolbar = compuestos.length > 1
       ? `<div class="compuestos-toolbar">
@@ -541,7 +552,10 @@ function elegirElemento(num) {
     pintarCanvasCompuestos();
     // Abrir el primero por defecto: es el estado dominante del elemento.
     const primera = cont.querySelector('.compuesto-card');
-    if (primera) primera.open = true;
+    if (primera) {
+      primera.open = true;
+      configurarFormuSticky(primera);
+    }
     // Toggle expandir/colapsar todos (solo con >1 compuesto)
     const btn = document.getElementById('btn-toggle-todos');
     if (btn) {
@@ -796,6 +810,51 @@ function pintarCanvasCompuestos() {
   const primero = conElemento()[0];
   if (primero) primero.tabIndex = 0;
 })();
+
+// ── FICHA FLOTANTE DEL FORMULADOR ─────────────────────────────────────
+// Aparece pegada al fondo del viewport cuando la primera compuesto-card se
+// sale de vista. Un IntersectionObserver vigila esa primera tarjeta. Al
+// clicarla volvemos a ella con scroll suave y la dejamos abierta.
+let formuStickyObserver = null;
+
+function configurarFormuSticky(primera) {
+  const sticky = document.getElementById('formu-sticky');
+  if (!sticky || !primera) return;
+  const formula = primera.querySelector('.compuesto-formula');
+  if (!formula) return;
+  const accent = primera.style.getPropertyValue('--accent') || 'var(--magenta)';
+  sticky.style.setProperty('--accent', accent);
+  document.getElementById('formu-sticky-formula').innerHTML = formula.innerHTML;
+  sticky.onclick = () => {
+    primera.open = true;
+    primera.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  if (formuStickyObserver) formuStickyObserver.disconnect();
+  // Observamos la cabecera (summary) y no la card entera: la card puede ser
+  // muy alta y quedar parcialmente visible mientras scrolleas la tira
+  // comica. El sticky debe aparecer cuando el usuario pierde de vista la
+  // formula + nombre, no la ultima linea del canvas.
+  const diana = primera.querySelector('.compuesto-head') || primera;
+  formuStickyObserver = new IntersectionObserver((entries) => {
+    const enVista = entries[0].isIntersecting;
+    if (!enVista) {
+      sticky.hidden = false;
+      requestAnimationFrame(() => sticky.classList.add('visible'));
+    } else {
+      sticky.classList.remove('visible');
+      setTimeout(() => { if (!sticky.classList.contains('visible')) sticky.hidden = true; }, 240);
+    }
+  }, { threshold: 0 });
+  formuStickyObserver.observe(diana);
+}
+
+function ocultaFormuSticky() {
+  const sticky = document.getElementById('formu-sticky');
+  if (!sticky) return;
+  if (formuStickyObserver) { formuStickyObserver.disconnect(); formuStickyObserver = null; }
+  sticky.classList.remove('visible');
+  sticky.hidden = true;
+}
 
 // Pintar el estado inicial: intro, dim de celdas y estado vacio segun la
 // familia por defecto. Debe correr DESPUES de que las celdas existan.

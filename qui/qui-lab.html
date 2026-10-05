@@ -56,8 +56,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <nav class="header-nav">
     <span class="nav-domain">Química →</span>
     <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
-    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Tarjetas</a>
-    <a class="nav-tool" href="./qui-formulador.html">Formulador</a>
+    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Quiz</a>
+    <a class="nav-tool" href="./qui-formulador.html">Formulación</a>
     <a class="nav-tool active" href="#">Lab</a>
   </nav>
 </header>
@@ -169,6 +169,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
             </button>
           </div>
           <div class="lab-puntuacion" id="lab-puntuacion" aria-live="polite"></div>
+        </div>
+
+        <!-- Nivel de apoyo del feedback. Tutorial da flecha arriba/abajo cuando
+             los tipos ya cuadran y falta cantidad. Aprendiz distingue "falta
+             algún ingrediente" de "mal proporcion". Experto da feedback
+             austero, sin nombrar lo que tienes. -->
+        <div class="lab-apoyo-row">
+          <span class="lab-apoyo-label">Apoyo</span>
+          <div class="lab-apoyo-chips" role="tablist" aria-label="Nivel de apoyo en el feedback">
+            <button type="button" class="lab-apoyo-chip" role="tab" data-apoyo="tutorial" aria-selected="false">
+              <span class="apoyo-emoji" aria-hidden="true">🎓</span> Tutorial
+            </button>
+            <button type="button" class="lab-apoyo-chip active" role="tab" data-apoyo="aprendiz" aria-selected="true">
+              <span class="apoyo-emoji" aria-hidden="true">🧑‍🔬</span> Aprendiz
+            </button>
+            <button type="button" class="lab-apoyo-chip" role="tab" data-apoyo="experto" aria-selected="false">
+              <span class="apoyo-emoji" aria-hidden="true">🧪</span> Experto
+            </button>
+          </div>
         </div>
 
         <ol class="lab-retos-lista" id="lab-retos-lista"></ol>
@@ -427,6 +446,13 @@ function aplicarFiltroBuscador(q) {
 // ── Estado del lab ───────────────────────────────────────────────────────
 let modoActivo = 'recetario';         // 'recetario' | 'sandbox'
 let nivelActivo = 1;                  // 1 | 2 | 3
+// Nivel de apoyo del feedback. Tutorial: flecha arriba/abajo cuando los
+// tipos cuadran y falta cantidad. Aprendiz: distingue "falta tipo" de "mal
+// proporcion" sin cantidades. Experto: austero, sin nombrar lo que tienes.
+let nivelApoyo = (function() {
+  try { return localStorage.getItem('hpk-lab-apoyo') || 'aprendiz'; }
+  catch (e) { return 'aprendiz'; }
+})();
 let retoActivo = null;                // objeto reto en curso
 let atomosEnMesa = [];                // [{id, num, donado, captado, enlaces}]
 let proxId = 1;                       // id autoincrementable
@@ -1067,6 +1093,29 @@ document.querySelectorAll('.lab-nivel-chip').forEach(c => {
   });
 });
 
+// ── Panel: nivel de apoyo del feedback ───────────────────────────────────
+// Aplicar el estado guardado en localStorage al cargar.
+document.querySelectorAll('.lab-apoyo-chip').forEach(c => {
+  const act = c.dataset.apoyo === nivelApoyo;
+  c.classList.toggle('active', act);
+  c.setAttribute('aria-selected', act ? 'true' : 'false');
+});
+document.querySelectorAll('.lab-apoyo-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    const nuevo = c.dataset.apoyo;
+    if (nuevo === nivelApoyo) return;
+    nivelApoyo = nuevo;
+    try { localStorage.setItem('hpk-lab-apoyo', nivelApoyo); } catch (e) {}
+    document.querySelectorAll('.lab-apoyo-chip').forEach(x => {
+      const act = x.dataset.apoyo === nivelApoyo;
+      x.classList.toggle('active', act);
+      x.setAttribute('aria-selected', act ? 'true' : 'false');
+    });
+    // Repintar el feedback con el nuevo tono.
+    if (modoActivo === 'recetario' && retoActivo) pintarFeedbackReceta();
+  });
+});
+
 function retosDelNivel(n) { return RETOS.filter(r => r.dificultad === n); }
 
 function renderRecetario() {
@@ -1159,9 +1208,16 @@ function diagnosticarMesa(formula) {
   if (faltan.length || sobran.length) {
     return { tipo: 'mal-elementos', faltan, sobran };
   }
+  // Tipos coinciden: comparamos cantidades. delta>0 = faltan átomos en
+  // total, delta<0 = sobran. delta=0 con diff: mal distribuidos entre tipos
+  // (ej. 3Fe+2O cuando toca 2Fe+3O).
+  let delta = 0;
+  let diff = false;
   for (const s of Object.keys(necesita)) {
-    if (tengo[s] !== necesita[s]) return { tipo: 'mal-proporcion' };
+    delta += necesita[s] - tengo[s];
+    if (tengo[s] !== necesita[s]) diff = true;
   }
+  if (diff) return { tipo: 'mal-proporcion', delta };
   return { tipo: 'match' };
 }
 
@@ -1206,15 +1262,32 @@ function pintarFeedbackReceta() {
       const verbo = diag.sobran.length > 1 ? 'están' : 'está';
       fb.innerHTML = `<span aria-hidden="true">❌</span> ${lista} no ${verbo} en la receta. Prueba otros ingredientes.`;
     } else {
-      // Solo faltan sin sobrar: aviso genérico sin nombrar los símbolos.
-      fb.innerHTML = `<span aria-hidden="true">❌</span> Aún faltan ingredientes. Piensa qué elementos entran en la receta.`;
+      // Solo faltan tipos. El nivel de apoyo cambia el tono, no el fondo
+      // de la pista (seguimos sin nombrar los simbolos que faltan).
+      if (nivelApoyo === 'experto') {
+        fb.innerHTML = `<span aria-hidden="true">❌</span> Faltan ingredientes.`;
+      } else {
+        fb.innerHTML = `<span aria-hidden="true">❌</span> Falta algún ingrediente. Piensa qué elementos entran en la receta.`;
+      }
     }
     return;
   }
   if (diag.tipo === 'mal-proporcion') {
-    const tengo = cuentaDeMesa();
     fb.className = 'lab-receta-feedback estado-nomatch';
-    fb.innerHTML = `<span aria-hidden="true">⚠️</span> Los símbolos están bien, pero las cantidades no. Tienes <strong>${formatearConteo(tengo)}</strong>, revisa la proporción.`;
+    // Tutorial: flecha arriba/abajo cuando el total diverge. Si delta=0
+    // (misma suma pero mal distribuida entre tipos) solo texto, no flecha.
+    if (nivelApoyo === 'tutorial') {
+      let flecha = '';
+      if (diag.delta > 0)      flecha = ' <span class="lab-apoyo-flecha" aria-hidden="true">↓</span><span class="sr-only">faltan átomos</span>';
+      else if (diag.delta < 0) flecha = ' <span class="lab-apoyo-flecha" aria-hidden="true">↑</span><span class="sr-only">sobran átomos</span>';
+      fb.innerHTML = `<span aria-hidden="true">⚠️</span> Los símbolos están bien. Revisa las cantidades${flecha}.`;
+    } else if (nivelApoyo === 'experto') {
+      fb.innerHTML = `<span aria-hidden="true">⚠️</span> La proporción no cuadra.`;
+    } else {
+      // Aprendiz: comportamiento previo (nombra lo que hay en mesa).
+      const tengo = cuentaDeMesa();
+      fb.innerHTML = `<span aria-hidden="true">⚠️</span> Los símbolos están bien, pero las cantidades no. Tienes <strong>${formatearConteo(tengo)}</strong>, revisa la proporción.`;
+    }
     return;
   }
   // Match: proporciones OK. Fase que falta: montaje (en slots) o enlace.
