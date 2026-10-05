@@ -250,8 +250,13 @@ header {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: center;
-  padding: 0.8rem 2rem;
+  padding: 0.9rem 1.5rem;
   position: relative; z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 
 .legend-item {
@@ -295,6 +300,10 @@ header {
   width: 100%;
   min-width: 0;
   overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.2rem 1.1rem;
 }
 
 .periodic-table {
@@ -318,7 +327,7 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2px;
+  padding: 1px;
 }
 
 /* ── EL COLOR NO PUEDE HACER DOS TRABAJOS ────────────────────────────────
@@ -372,7 +381,7 @@ header {
 
 .el-number {
   font-family: 'DM Mono', monospace;
-  font-size: 0.52rem;
+  font-size: 0.65rem;
   color: var(--muted);
   line-height: 1;
   margin-bottom: 1px;
@@ -380,7 +389,7 @@ header {
 
 .el-symbol {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
   color: var(--cat-color-texto, var(--text));
   line-height: 1;
   font-weight: 400;
@@ -963,9 +972,12 @@ header {
   align-items: flex-start;
   gap: 0.45rem;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 0.8rem 1.5rem 0.3rem;
+  margin: 0 auto 0.7rem;
+  padding: 1rem 1.5rem 1.1rem;
   position: relative; z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 .en-legend.visible { display: flex; }
 /* Barra al ancho exacto de la tabla: 100% menos panel lateral (300px) y gap (1.5rem) */
@@ -1051,9 +1063,12 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   align-items: flex-start;
   gap: 0.45rem;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 0.3rem 1.5rem 0.3rem;
+  margin: 0 auto 0.7rem;
+  padding: 1rem 1.5rem 1.1rem;
   position: relative; z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 .cat-intro.hidden { display: none; }
 
@@ -1079,9 +1094,12 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   align-items: flex-start;
   gap: 0.45rem;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 0.8rem 1.5rem 0.3rem;
+  margin: 0 auto 0.7rem;
+  padding: 1rem 1.5rem 1.1rem;
   position: relative; z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 .val-legend.visible { display: flex; }
 .val-chips {
@@ -1129,9 +1147,12 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   align-items: flex-start;
   gap: 0.45rem;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 0.8rem 1.5rem 0.3rem;
+  margin: 0 auto 0.7rem;
+  padding: 1rem 1.5rem 1.1rem;
   position: relative; z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 .oxid-legend.visible { display: flex; }
 .oxid-chips-row {
@@ -1652,11 +1673,11 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   gap: 3px;
 }
 .periodic-table.formu-table .el {
-  min-height: 36px;
+  min-height: 42px;
   font-size: 0.6rem;
 }
 .periodic-table.formu-table .el-sym {
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 .periodic-table.formu-table .el-name {
@@ -2289,12 +2310,12 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   grid-template-columns: repeat(18, minmax(0, 1fr));
 }
 .periodic-table.lab-table .el {
-  min-height: 38px;
+  min-height: 44px;
   font-size: 0.6rem;
   border-radius: 6px;
 }
 .periodic-table.lab-table .el-sym {
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 .periodic-table.lab-table .el-name { display: none; }
@@ -2639,9 +2660,12 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
 
 /* Átomo estupefacto: lo han clicado como receptor sin donante activo.
    Shake breve + carita (O_O) coloreada en amarillo. Se autodestruye en
-   ~700ms (lo gestiona marcarEstupefacto en JS). */
+   ~700ms (lo gestiona marcarEstupefacto en JS).
+   El keyframe mantiene translate(-50%, -50%) para no romper el centrado
+   del átomo en el slot — si no, el átomo salta de posición durante el
+   shake. Mismo patrón que el fix del hover. */
 .lab-atomo.estupefacto {
-  animation: shake-atomo 420ms ease-in-out;
+  animation: shake-atomo 320ms ease-in-out;
   border-color: color-mix(in srgb, #f59e0b 60%, var(--border));
 }
 .lab-atomo.estupefacto .lab-atomo-carita {
@@ -2649,10 +2673,10 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   font-weight: 700;
 }
 @keyframes shake-atomo {
-  0%, 100% { transform: translateX(0); }
-  15%, 55% { transform: translateX(-5px); }
-  30%, 70% { transform: translateX(5px); }
-  85%      { transform: translateX(-2px); }
+  0%, 100% { transform: translate(-50%, -50%); }
+  25%      { transform: translate(calc(-50% - 3px), -50%); }
+  50%      { transform: translate(calc(-50% + 3px), -50%); }
+  75%      { transform: translate(calc(-50% - 2px), -50%); }
 }
 .lab-atomo.lleno .lab-atomo-carita {
   color: #22c55e;
