@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<!--
+  hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
+  Copyright (c) 2024-2026 V0ra (v0raonline)
+  Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="V0ra (v0raonline)">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<title>Lab de química: construye compuestos con átomos y electrones</title>
+<meta name="description" content="Un lab manipulable para formular: elige una receta y arrastra átomos y paquetes de electrones hasta formar el compuesto. También modo sandbox para construir libre. Gratis y sin cuentas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hAppYpUkIng Lab">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/qui/qui-lab.html">
+<meta property="og:title" content="Lab de química: construye compuestos con átomos y electrones">
+<meta property="og:description" content="Un lab manipulable para formular: elige una receta y arrastra átomos y paquetes de electrones hasta formar el compuesto. También modo sandbox para construir libre.">
+<meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/readme-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="484">
+<meta property="og:image:alt" content="La caja del laboratorio hAppYpUkIng, con Glitch asomando">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<!-- Tema antes de pintar. Inline y sin dependencias a proposito: si de esto
+     se encargara lab.js habria un parpadeo oscuro en cada carga, y una copia
+     suelta de este fichero perderia el tema guardado. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
+</head>
+<body>
+
+<header>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span>
+    <span class="topbar-marca">hAppYpUkIng · Lab</span>
+    <span class="sep topbar-sep-claim">//</span>
+    <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
+    <button class="plegar" id="plegar" type="button" aria-expanded="true"
+            aria-label="Plegar la cabecera y la explicación">
+      <span class="plegar-texto">Plegar</span>
+      <span class="plegar-chevron" aria-hidden="true">▲</span>
+    </button>
+  </div>
+  <h1 class="header-title">Lab</h1>
+  <p class="header-subtitle">Monta compuestos con tus manos: elige ingredientes, mueve electrones, cocina química</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Química →</span>
+    <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
+    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Tarjetas</a>
+    <a class="nav-tool" href="./qui-formulador.html">Formulador</a>
+    <a class="nav-tool active" href="#">Lab</a>
+  </nav>
+</header>
+
+<!-- Solo aparece en movil vertical. El lab necesita ancho (3 zonas); en
+     vertical las zonas se apilan y hay que avisar que gira es mas comodo. -->
+<p class="aviso-apaisado">
+  <span aria-hidden="true">📱↻</span>
+  Gira el móvil. El lab tiene despensa + mesa + recetario, cabe mejor apaisado.
+</p>
+
+<div class="lab-wrap">
+
+  <div class="lab-intro" data-plegable>
+    <p>Un laboratorio manipulable. En la <strong>despensa</strong> (izquierda) están los elementos: pícalos y aterrizan en la <strong>mesa</strong> (centro). El <strong>recetario</strong> (derecha) te propone compuestos para montar; el <strong>sandbox</strong> te deja construir libre.</p>
+    <p>En esta primera versión solo tenemos <strong>óxidos</strong>. Los electrones se moverán por paquetes de valencia en la próxima tanda — por ahora puedes elegir ingredientes y ver qué le sobra o le falta a cada átomo.</p>
+  </div>
+
+  <div class="lab-grid">
+
+    <!-- ─── DESPENSA (izquierda) ────────────────────────────────────── -->
+    <section class="lab-despensa" aria-label="Despensa de elementos">
+      <header class="lab-panel-head">
+        <span class="lab-panel-emoji" aria-hidden="true">🧺</span>
+        <h2 class="lab-panel-titulo">Despensa</h2>
+        <button type="button" class="lab-plegar-panel" id="plegar-despensa"
+                aria-expanded="true" aria-controls="despensa-cuerpo"
+                aria-label="Plegar la despensa">
+          <span class="plegar-chevron" aria-hidden="true">▲</span>
+        </button>
+      </header>
+      <div class="lab-panel-cuerpo" id="despensa-cuerpo">
+        <div class="lab-despensa-controles">
+          <p class="lab-panel-hint">Pica un elemento y aterriza en la mesa. Los apagados no forman óxidos en ESO.</p>
+          <label class="lab-buscador-wrap">
+            <span class="lab-buscador-icono" aria-hidden="true">🔍</span>
+            <input type="search" class="lab-buscador" id="lab-buscador"
+                   placeholder="Busca: Fe, hierro, 26…"
+                   aria-label="Buscar elemento por símbolo, nombre o número atómico">
+          </label>
+        </div>
+        <div class="periodic-table lab-table" id="lab-table"></div>
+      </div>
+    </section>
+
+    <!-- ─── MESA (centro) ────────────────────────────────────────────── -->
+    <section class="lab-mesa" aria-label="Mesa de trabajo">
+      <header class="lab-panel-head">
+        <span class="lab-panel-emoji" aria-hidden="true">🧪</span>
+        <h2 class="lab-panel-titulo">Mesa</h2>
+        <button type="button" class="lab-limpiar" id="lab-reiniciar"
+                aria-label="Reiniciar enlaces sin quitar átomos" hidden>
+          Reiniciar enlaces
+        </button>
+        <button type="button" class="lab-limpiar" id="lab-limpiar"
+                aria-label="Vaciar la mesa">
+          Vaciar
+        </button>
+      </header>
+      <!-- Bandeja de ingredientes: aqui aterrizan las fichas al picar en la
+           despensa. El alumno despues las lleva a los slots. Fichas compactas
+           (simbolo + numero), apiladas horizontal con wrap. -->
+      <div class="lab-bandeja" id="lab-bandeja" hidden>
+        <span class="lab-bandeja-label">Ingredientes:</span>
+        <div class="lab-bandeja-fichas" id="lab-bandeja-fichas"></div>
+      </div>
+      <div class="lab-mesa-superficie" id="lab-mesa-superficie">
+        <div class="lab-mesa-vacio" id="lab-mesa-vacio">
+          <div class="lab-mesa-vacio-big" aria-hidden="true">⚗</div>
+          <p>La mesa está vacía. Pica un elemento en la despensa para empezar.</p>
+        </div>
+        <!-- SVG overlay para los enlaces entre átomos conectados y las
+             chispas que saltan al cerrar un enlace. No bloquea clicks. -->
+        <svg class="lab-enlaces" id="lab-enlaces" aria-hidden="true"></svg>
+        <!-- Slots: huecos en la mesa (1 centro + N radiales). Posiciones
+             calculadas dinámicamente según cuántos átomos haya en total. -->
+        <div class="lab-slots" id="lab-slots"></div>
+      </div>
+      <footer class="lab-mesa-pie">
+        <span class="lab-balance" id="lab-balance">—</span>
+      </footer>
+    </section>
+
+    <!-- ─── PANEL (derecha) ──────────────────────────────────────────── -->
+    <section class="lab-panel" aria-label="Recetario y sandbox">
+      <div class="lab-modo-switch" role="tablist" aria-label="Modo del lab">
+        <button type="button" class="lab-modo-boton active" role="tab"
+                aria-selected="true" data-modo="recetario">
+          <span aria-hidden="true">📒</span> Recetario
+        </button>
+        <button type="button" class="lab-modo-boton" role="tab"
+                aria-selected="false" data-modo="sandbox">
+          <span aria-hidden="true">🧫</span> Sandbox
+        </button>
+      </div>
+
+      <!-- RECETARIO -->
+      <div class="lab-panel-cuerpo lab-recetario" id="lab-recetario">
+        <div class="lab-nivel-row">
+          <div class="lab-nivel-chips" role="tablist" aria-label="Nivel de dificultad">
+            <button type="button" class="lab-nivel-chip active" data-nivel="1" aria-selected="true">
+              <span class="nivel-estrella" aria-hidden="true">★</span> Fácil
+            </button>
+            <button type="button" class="lab-nivel-chip" data-nivel="2" aria-selected="false">
+              <span class="nivel-estrella" aria-hidden="true">★★</span> Medio
+            </button>
+            <button type="button" class="lab-nivel-chip" data-nivel="3" aria-selected="false">
+              <span class="nivel-estrella" aria-hidden="true">★★★</span> Avanzado
+            </button>
+          </div>
+          <div class="lab-puntuacion" id="lab-puntuacion" aria-live="polite"></div>
+        </div>
+
+        <ol class="lab-retos-lista" id="lab-retos-lista"></ol>
+
+        <div class="lab-receta-activa" id="lab-receta-activa" hidden>
+          <div class="lab-receta-head">
+            <span class="lab-receta-label">Receta activa</span>
+          </div>
+          <div class="lab-receta-nombre" id="lab-receta-nombre"></div>
+          <!-- Validacion de proporciones. Compara los atomos de la mesa con
+               la formula objetivo y da feedback en vivo. El drag de
+               electrones (tanda 2) añadirá el enlace y las chispas; esto es
+               el "¿tienes los ingredientes correctos?" previo. -->
+          <div class="lab-receta-feedback" id="lab-receta-feedback"></div>
+          <div class="lab-receta-pista" id="lab-receta-pista" hidden></div>
+          <button type="button" class="lab-pista-boton" id="lab-pista-boton">
+            <span aria-hidden="true">💡</span> Ver pista
+          </button>
+        </div>
+      </div>
+
+      <!-- SANDBOX -->
+      <div class="lab-panel-cuerpo lab-sandbox" id="lab-sandbox" hidden>
+        <p class="lab-panel-hint">Modo libre: coloca átomos en la mesa y aquí verás si forman un óxido conocido.</p>
+        <div class="lab-sandbox-resultado" id="lab-sandbox-resultado">
+          <p class="lab-sandbox-vacio">Añade al menos un metal y un oxígeno…</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<!-- Dataset de retos. YAML embebido para que se vea de un vistazo y el profe
+     pueda duplicar el patron sin tocar JS. Cada reto: nombre pedagogico,
+     formula objetivo, dificultad (1=facil, 2=medio, 3=avanzado) y una pista
+     opcional. -->
+<script type="text/yaml" id="retos-yaml">
+# ─────────────────────────────────────────────────────────────────────
+# Retos del Lab de química (familia: óxidos)
+# Prompt para generar nuevos retos con un LLM:
+#   "Dame N óxidos para formular, con nombre tradicional en español,
+#    fórmula, dificultad 1-3 y una pista opcional de una línea.
+#    Formato YAML con una lista 'retos:' igual que esta."
+# ─────────────────────────────────────────────────────────────────────
+retos:
+  - nombre: óxido de calcio
+    formula: CaO
+    dificultad: 1
+    pista: El calcio solo tiene valencia +2.
+
+  - nombre: óxido de magnesio
+    formula: MgO
+    dificultad: 1
+
+  - nombre: óxido de sodio
+    formula: Na2O
+    dificultad: 1
+    pista: El sodio es +1, el oxígeno −2. Necesitas dos sodios.
+
+  - nombre: óxido de aluminio
+    formula: Al2O3
+    dificultad: 2
+    pista: Aluminio +3 y oxígeno −2. MCM(3,2) = 6.
+
+  - nombre: dióxido de carbono
+    formula: CO2
+    dificultad: 2
+
+  - nombre: trióxido de azufre
+    formula: SO3
+    dificultad: 2
+    pista: El azufre aquí usa su valencia +6.
+
+  - nombre: óxido de hierro(III)
+    formula: Fe2O3
+    dificultad: 3
+    pista: El hierro aquí usa su valencia +3, no +2.
+
+  - nombre: heptóxido de dicloro
+    formula: Cl2O7
+    dificultad: 3
+
+  - nombre: óxido de manganeso(VII)
+    formula: Mn2O7
+    dificultad: 3
+    pista: El manganeso tiene varias valencias; aquí la máxima (+7).
+</script>
+
+<!-- js-yaml para parsear el dataset embebido. Mismo CDN que la tabla periodica. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="qui-datos.js"></script>
+
+<footer>
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
+  </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
+</footer>
+
+<script>
+
+// ── Cabecera plegable (patron compartido del lab) ────────────────────────
+(function () {
+  const KEY = 'hpk-compacto';
+  const btn = document.getElementById('plegar');
+  if (!btn) return;
+  let compacto = false;
+  try { compacto = localStorage.getItem(KEY) === 'si'; } catch (e) {}
+  function pinta() {
+    document.body.classList.toggle('compacto', compacto);
+    btn.setAttribute('aria-expanded', compacto ? 'false' : 'true');
+    btn.setAttribute('aria-label', compacto
+      ? 'Desplegar la cabecera y la explicación'
+      : 'Plegar la cabecera y la explicación');
+    btn.querySelector('.plegar-texto').textContent = compacto ? 'Desplegar' : 'Plegar';
+  }
+  btn.addEventListener('click', function () {
+    compacto = !compacto;
+    try { localStorage.setItem(KEY, compacto ? 'si' : 'no'); } catch (e) {}
+    pinta();
+  });
+  pinta();
+})();
+
+// ── Plegado de la despensa ───────────────────────────────────────────────
+(function () {
+  const btn = document.getElementById('plegar-despensa');
+  const cuerpo = document.getElementById('despensa-cuerpo');
+  const seccion = btn && btn.closest('section');
+  if (!btn || !cuerpo || !seccion) return;
+  btn.addEventListener('click', () => {
+    const abierto = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', abierto ? 'false' : 'true');
+    btn.setAttribute('aria-label', abierto ? 'Desplegar la despensa' : 'Plegar la despensa');
+    seccion.classList.toggle('plegado', abierto);
+  });
+})();
+
+// ── Mini-tabla periodica (despensa) ──────────────────────────────────────
+// Mismo layout que las otras herramientas: celdas apagadas si no forman
+// oxidos (reusamos formaOxidos logica). Click = aniade atomo a la mesa.
+const positions = {};
+const layout = [
+  [[1,1,1],[2,18,1]],
+  [[3,1,2],[4,2,2],[5,13,2],[6,14,2],[7,15,2],[8,16,2],[9,17,2],[10,18,2]],
+  [[11,1,3],[12,2,3],[13,13,3],[14,14,3],[15,15,3],[16,16,3],[17,17,3],[18,18,3]],
+  [[19,1,4],[20,2,4],[21,3,4],[22,4,4],[23,5,4],[24,6,4],[25,7,4],[26,8,4],[27,9,4],[28,10,4],[29,11,4],[30,12,4],[31,13,4],[32,14,4],[33,15,4],[34,16,4],[35,17,4],[36,18,4]],
+  [[37,1,5],[38,2,5],[39,3,5],[40,4,5],[41,5,5],[42,6,5],[43,7,5],[44,8,5],[45,9,5],[46,10,5],[47,11,5],[48,12,5],[49,13,5],[50,14,5],[51,15,5],[52,16,5],[53,17,5],[54,18,5]],
+  [[55,1,6],[56,2,6],[57,3,6],[72,4,6],[73,5,6],[74,6,6],[75,7,6],[76,8,6],[77,9,6],[78,10,6],[79,11,6],[80,12,6],[81,13,6],[82,14,6],[83,15,6],[84,16,6],[85,17,6],[86,18,6]],
+  [[87,1,7],[88,2,7],[89,3,7],[104,4,7],[105,5,7],[106,6,7],[107,7,7],[108,8,7],[109,9,7],[110,10,7],[111,11,7],[112,12,7],[113,13,7],[114,14,7],[115,15,7],[116,16,7],[117,17,7],[118,18,7]],
+  [[57,3,9],[58,4,9],[59,5,9],[60,6,9],[61,7,9],[62,8,9],[63,9,9],[64,10,9],[65,11,9],[66,12,9],[67,13,9],[68,14,9],[69,15,9],[70,16,9],[71,17,9]],
+  [[89,3,10],[90,4,10],[91,5,10],[92,6,10],[93,7,10],[94,8,10],[95,9,10],[96,10,10],[97,11,10],[98,12,10],[99,13,10],[100,14,10],[101,15,10],[102,16,10],[103,17,10]],
+];
+layout.forEach(period => period.forEach(([num, col, row]) => { positions[num] = {col, row}; }));
+
+const ROWS = 10, COLS = 18;
+const ptable = document.getElementById('lab-table');
+ptable.style.gridTemplateRows = `repeat(${ROWS}, 1fr)`;
+
+// En esta tanda, "forma oxidos" = tiene estado positivo en OXID. Incluimos
+// tambien el oxigeno (num=8) porque es el ingrediente del otro lado del
+// enlace: el alumno lo pica igual que a los metales.
+function esIngredienteValido(num) {
+  if (num === 8) return true;                     // O siempre valido como anion
+  const estados = OXID[num];
+  if (!estados || !estados.length) return false;  // gases nobles, sinteticos
+  return estados.some(e => e > 0);
+}
+
+const celdas = {};
+for (let row = 1; row <= ROWS; row++) {
+  for (let col = 1; col <= COLS; col++) {
+    const div = document.createElement('div');
+    div.style.gridColumn = col;
+    div.style.gridRow = row;
+    div.className = 'el el-empty';
+    ptable.appendChild(div);
+    celdas[`${row}-${col}`] = div;
+  }
+}
+
+ELEMENTS.forEach(e => {
+  const [num, sym, name, mass, cat] = e;
+  const pos = positions[num];
+  if (!pos) return;
+  const key = `${pos.row}-${pos.col}`;
+  const hueco = celdas[key];
+  if (!hueco) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.style.gridColumn = hueco.style.gridColumn;
+  btn.style.gridRow = hueco.style.gridRow;
+  btn.className = 'el lab-el';
+  btn.dataset.num = num;
+  btn.dataset.cat = cat;
+  btn.style.setProperty('--cat-color', `var(--${cat})`);
+  if (!esIngredienteValido(num)) btn.classList.add('dimmed');
+  btn.innerHTML = `
+    <span class="el-sym">${sym}</span>
+    <span class="el-name">${name}</span>
+    <span class="el-num">${num}</span>
+  `;
+  btn.setAttribute('aria-label',
+    `Añadir ${name} a la mesa` + (esIngredienteValido(num) ? '' : ' (no forma óxidos en formulación básica)'));
+  btn.onclick = () => anadirAtomoAMesa(num);
+  hueco.replaceWith(btn);
+  celdas[key] = btn;
+});
+
+// ── Buscador de la despensa ─────────────────────────────────────────────
+// Match por símbolo (prefijo), nombre (substring) o número atómico (exacto).
+// En vivo atenúa los no-matches; Enter añade a la mesa el primer válido.
+function matcheaElemento(num, query) {
+  if (!query) return true;
+  const el = elMap[num];
+  if (!el) return false;
+  const [n, sym, name] = el;
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+  return sym.toLowerCase().startsWith(q)
+      || name.toLowerCase().includes(q)
+      || String(n) === q;
+}
+function aplicarFiltroBuscador(q) {
+  document.querySelectorAll('button.lab-el').forEach(btn => {
+    const num = parseInt(btn.dataset.num, 10);
+    btn.classList.toggle('search-no-match', q && !matcheaElemento(num, q));
+  });
+}
+(function cablearBuscador() {
+  const inp = document.getElementById('lab-buscador');
+  if (!inp) return;
+  inp.addEventListener('input', () => aplicarFiltroBuscador(inp.value.trim()));
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { inp.value = ''; aplicarFiltroBuscador(''); return; }
+    if (e.key !== 'Enter') return;
+    const q = inp.value.trim();
+    if (!q) return;
+    // Primer match válido (que forme óxidos en el OXID activo)
+    for (const btn of document.querySelectorAll('button.lab-el')) {
+      const num = parseInt(btn.dataset.num, 10);
+      if (matcheaElemento(num, q) && esIngredienteValido(num)) {
+        anadirAtomoAMesa(num);
+        inp.value = '';
+        aplicarFiltroBuscador('');
+        return;
+      }
+    }
+  });
+})();
+
+// ── Estado del lab ───────────────────────────────────────────────────────
+let modoActivo = 'recetario';         // 'recetario' | 'sandbox'
+let nivelActivo = 1;                  // 1 | 2 | 3
+let retoActivo = null;                // objeto reto en curso
+let atomosEnMesa = [];                // [{id, num, donado, captado, enlaces}]
+let proxId = 1;                       // id autoincrementable
+let atomoActivo = null;               // id del donante seleccionado (o null)
+let pistaUsada = false;               // si se abrió la pista en el reto actual
+let puntuacion = 0;                   // acumulada en la sesion
+
+// Dataset de retos: parseo del YAML embebido.
+let RETOS = [];
+try {
+  const txt = document.getElementById('retos-yaml').textContent;
+  const parsed = jsyaml.load(txt);
+  RETOS = (parsed && parsed.retos) || [];
+} catch (e) {
+  console.error('Error cargando retos YAML:', e);
+}
+
+// ── Mesa: añadir / eliminar / vaciar / reiniciar enlaces ────────────────
+function anadirAtomoAMesa(num) {
+  // Al picar en la despensa, el átomo aterriza en la BANDEJA (no en un slot).
+  // El alumno después decide dónde lo coloca.
+  atomosEnMesa.push({
+    id: proxId++, num,
+    ubicacion: 'bandeja',
+    donado: 0, captado: 0, enlaces: [],
+    estupefacto: false, malColocado: false,
+  });
+  renderMesa();
+  renderPanel();
+  cerrarDespensa();
+}
+function cerrarDespensa() {
+  const btn = document.getElementById('plegar-despensa');
+  const seccion = btn && btn.closest('section');
+  if (!btn || !seccion) return;
+  if (btn.getAttribute('aria-expanded') === 'true') {
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'Desplegar la despensa');
+    seccion.classList.add('plegado');
+  }
+}
+function eliminarAtomo(id) {
+  atomosEnMesa = atomosEnMesa.filter(a => a.id !== id);
+  // Limpiar enlaces huerfanos en los que quedan
+  atomosEnMesa.forEach(a => { a.enlaces = a.enlaces.filter(e => e !== id); });
+  if (atomoActivo === id) atomoActivo = null;
+  renderMesa();
+  renderPanel();
+}
+// Devuelve una ficha ya colocada a la bandeja (reversible). Es lo que hace
+// el "×" sobre las fichas en slot: el atomo sigue disponible, solo deja el
+// slot libre para reintentar. Si quieres descartarlo del todo, usa el "×"
+// en la bandeja (eso sí llama a eliminarAtomo).
+function devolverABandeja(id) {
+  const a = atomosEnMesa.find(x => x.id === id);
+  if (!a || a.ubicacion === 'bandeja') return;
+  a.ubicacion = 'bandeja';
+  // Deshacemos todos los enlaces: la red queda inconsistente al mover una
+  // pieza. El alumno los rehace.
+  reiniciarEnlacesSoloEstados();
+  if (atomoActivo === id) atomoActivo = null;
+  renderMesa();
+  renderPanel();
+}
+function vaciarMesa() {
+  atomosEnMesa = [];
+  atomoActivo = null;
+  pistaUsada = false;
+  renderMesa();
+  renderPanel();
+}
+function reiniciarEnlaces() {
+  // Resetea solo las transferencias (no quita atomos). Util cuando el
+  // alumno se lia con los enlaces y quiere volver a empezar sin perder la
+  // mesa.
+  atomosEnMesa.forEach(a => { a.donado = 0; a.captado = 0; a.enlaces = []; });
+  atomoActivo = null;
+  renderMesa();
+  renderPanel();
+}
+document.getElementById('lab-limpiar').addEventListener('click', vaciarMesa);
+document.getElementById('lab-reiniciar').addEventListener('click', reiniciarEnlaces);
+
+// ── Modelo de valencia / rol / click-select-click ───────────────────────
+// Un átomo "donante" es un metal (OXID con estado positivo). Un "receptor"
+// es un no-metal (OXID con estado negativo, o el O). La valencia a usar
+// depende del reto: en Fe2O3 cada Fe cede 3, en FeO cede 2. Se infiere de
+// la formula objetivo cuando hay reto activo; sin reto (sandbox) usamos
+// el primer estado positivo como "defecto".
+function valenciaDeAtomo(num) {
+  const sym = elMap[num][1];
+  if (num === 8) return -2;                    // O siempre -2 en oxidos
+  if (modoActivo === 'recetario' && retoActivo) {
+    const cuenta = cuentaDeFormula(retoActivo.formula);
+    const subE = cuenta[sym] || 0;
+    const subO = cuenta.O || 0;
+    if (subE > 0 && subO > 0) return (2 * subO) / subE;  // carga positiva
+  }
+  const estados = OXID[num] || [];
+  const pos = estados.find(e => e > 0);
+  if (pos) return pos;
+  const neg = estados.find(e => e < 0);
+  return neg || 0;
+}
+function rolDeAtomo(num) {
+  if (num === 8) return 'receptor';
+  const estados = OXID[num] || [];
+  return estados.some(e => e > 0) ? 'donante' : 'receptor';
+}
+function cuposDeAtomo(a) {
+  // Cuantos electrones puede todavia mover (ceder o captar).
+  const rol = rolDeAtomo(a.num);
+  const val = Math.abs(valenciaDeAtomo(a.num));
+  const movido = rol === 'donante' ? a.donado : a.captado;
+  return { rol, val, movido, resto: val - movido };
+}
+function esLleno(a) { return cuposDeAtomo(a).resto <= 0; }
+
+// Click en una ficha. Hay dos fases que convive:
+//  - MONTAJE: fichas en bandeja esperando slot. Click en bandeja = activar;
+//    click en slot vacío = colocar la activa; click en ficha colocada con
+//    una activa de bandeja = swap (la clicada vuelve a bandeja).
+//  - ENLACES: todas las fichas colocadas. Click donante → activa; click
+//    receptor con donante activo → transferencia (misma logica que antes).
+function clickAtomo(id) {
+  const a = atomosEnMesa.find(x => x.id === id);
+  if (!a) return;
+  // Deseleccionar la activa
+  if (atomoActivo === id) { atomoActivo = null; renderMesa(); return; }
+  const activo = atomoActivo != null ? atomosEnMesa.find(x => x.id === atomoActivo) : null;
+
+  // 1) Ficha clicada en bandeja (buscando slot)
+  if (a.ubicacion === 'bandeja') {
+    if (!activo || activo.ubicacion === 'bandeja') {
+      atomoActivo = id;
+      renderMesa();
+    }
+    return;
+  }
+
+  // 2) Hay una ficha activa de BANDEJA y clico una ya colocada → SWAP
+  // La ya colocada vuelve a bandeja (perdiendo cualquier enlace, resetea
+  // todos los enlaces del lab para evitar inconsistencias), y la activa
+  // toma su slot.
+  if (activo && activo.ubicacion === 'bandeja') {
+    const slot = a.ubicacion;
+    activo.ubicacion = slot;
+    a.ubicacion = 'bandeja';
+    reiniciarEnlacesSoloEstados();   // reset de donado/captado/enlaces sin tocar ubicaciones
+    atomoActivo = null;
+    renderMesa();
+    renderPanel();
+    return;
+  }
+
+  // 3) Click en ficha colocada, modo ENLACES
+  if (esLleno(a)) return;
+  const rol = rolDeAtomo(a.num);
+  if (atomoActivo == null) {
+    if (rol === 'donante') { atomoActivo = id; renderMesa(); }
+    else { marcarEstupefacto(id); }
+    return;
+  }
+  // Hay donante activo (en slot) y clico otra ficha colocada
+  const d = activo;
+  if (d.ubicacion === 'bandeja') { atomoActivo = null; renderMesa(); return; }
+  if (rol === 'donante') {
+    atomoActivo = id;
+    renderMesa();
+    return;
+  }
+  transferir(d, a);
+}
+
+// Reset de solo los contadores de electrones y enlaces (sin cambiar la
+// ubicacion). Lo usamos al hacer swap entre bandeja y slot: la coherencia
+// de enlaces se rompe y el alumno los rehace.
+function reiniciarEnlacesSoloEstados() {
+  atomosEnMesa.forEach(a => { a.donado = 0; a.captado = 0; a.enlaces = []; });
+}
+
+function transferir(d, r) {
+  const puedeD = cuposDeAtomo(d).resto;
+  const necesitaR = cuposDeAtomo(r).resto;
+  const n = Math.min(puedeD, necesitaR);
+  if (n <= 0) return;
+  d.donado += n;
+  r.captado += n;
+  if (!d.enlaces.includes(r.id)) d.enlaces.push(r.id);
+  if (!r.enlaces.includes(d.id)) r.enlaces.push(d.id);
+  atomoActivo = null;
+  animaChispas(d.id, r.id);
+  renderMesa();
+  renderPanel();
+}
+
+// Carita según estado del átomo: feliz al llenar, pícara si está activo,
+// estupefacta si lo pulsan sin ser su turno, neutra en reposo. Único toque
+// "kawaii" permitido, dosificado.
+function caritaDeAtomo(a) {
+  if (a.estupefacto) return '(⊙.☉)';
+  if (a.malColocado)  return '(¬_¬)';
+  if (esLleno(a))     return '(‾◡◝)';
+  if (atomoActivo === a.id) return '(¬‿¬)';
+  return '(╹ڡ╹ )';
+}
+
+// ¿Está en una posición que "pedagógicamente no cuadra"? El centro va para
+// el átomo "único de su clase" (el minoritario) y los radiales para los
+// mayoritarios. Casos:
+//   CaO (1 Ca + 1 O): empate → donante al centro por convención.
+//   Fe2O3 (2 Fe + 3 O): ambos múltiples → donante al centro.
+//   Na2O (2 Na + 1 O): O único → receptor al centro.
+//   SO3 (1 S + 3 O): S único donante → centro.
+//   CO2 (1 C + 2 O): C único donante → centro.
+// Si el átomo evaluado "debería estar en el centro" pero ya hay otro de su
+// mismo rol ahí (típico 2º Fe en Fe2O3), no se marca como mal colocado.
+function decidirRolCentral(nDonantes, nReceptores) {
+  if (nDonantes === 1 && nReceptores > 1) return 'donante';
+  if (nReceptores === 1 && nDonantes > 1) return 'receptor';
+  return 'donante';   // 1-1 o ambos múltiples: metal al centro por defecto
+}
+function marcarMalColocado(a) {
+  if (a.ubicacion === 'bandeja' || a.ubicacion == null) { a.malColocado = false; return; }
+  const rol = rolDeAtomo(a.num);
+  const nDonantes = atomosEnMesa.filter(x => rolDeAtomo(x.num) === 'donante').length;
+  const nReceptores = atomosEnMesa.filter(x => rolDeAtomo(x.num) === 'receptor').length;
+  const rolCentral = decidirRolCentral(nDonantes, nReceptores);
+  const enCentral = typeof a.ubicacion === 'string' && a.ubicacion.startsWith('c-');
+  // Regla simple: en central → debes ser del rolCentral; en radial → no debes
+  // ser del rolCentral. Hay slots centrales suficientes para todos los del
+  // rolCentral, así que no caben excepciones de "me he quedado fuera".
+  if (enCentral) {
+    a.malColocado = rol !== rolCentral;
+  } else {
+    a.malColocado = rol === rolCentral;
+  }
+}
+
+// Marca un atomo como "estupefacto" durante ~700ms. La clase CSS .estupefacto
+// hace el shake + colorea la carita. Pasado el timeout, volvemos a la carita
+// normal. Si el usuario lo vuelve a tocar antes, el renderMesa() siguiente
+// reinicia el estado.
+function marcarEstupefacto(id) {
+  const a = atomosEnMesa.find(x => x.id === id);
+  if (!a) return;
+  a.estupefacto = true;
+  renderMesa();
+  setTimeout(() => {
+    const b = atomosEnMesa.find(x => x.id === id);
+    if (b && b.estupefacto) { b.estupefacto = false; renderMesa(); }
+  }, 700);
+}
+function chipDeAtomo(a) {
+  const { rol, resto, val, movido } = cuposDeAtomo(a);
+  if (resto <= 0) return { tipo: 'lleno', texto: '✓ enlazado' };
+  const plural = resto > 1;
+  if (rol === 'donante') {
+    const v = plural ? 'sobran' : 'sobra';
+    return { tipo: 'sobra', texto: `${v} ${resto} e⁻` };
+  }
+  const v = plural ? 'faltan' : 'falta';
+  return { tipo: 'falta', texto: `${v} ${resto} e⁻` };
+}
+
+// ── Dibujo de un atomo-ficha en la mesa ──────────────────────────────────
+// Cada ficha tiene: canvas (atomo), carita, chip con "sobra/falta N" y boton
+// de eliminar. Reusamos drawAtomoEstatico resaltando los electrones ya
+// cedidos (metales) o los huecos ya ocupados (no-metales), para que el
+// alumno vea el progreso.
+function pintarAtomoFicha(canvas, num, color) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const extra = EXTRA[num];
+  const shells = extra ? extra[0] : [1];
+  drawAtomoEstatico({
+    ctx, cx: W / 2, cy: H / 2, nucleoR: 18, num, shells, color,
+    electronesExternosResaltados: 0,
+    huecosExternos: 0,
+  });
+}
+
+// ── Enlaces visuales ────────────────────────────────────────────────────
+// SVG superpuesto a la mesa: una linea entre cada par de atomos enlazados,
+// coloreada con el color del cation (el que cede). Se repinta cada
+// renderMesa y en resize.
+function pintarEnlaces() {
+  const svg = document.getElementById('lab-enlaces');
+  const superficie = document.getElementById('lab-mesa-superficie');
+  if (!svg || !superficie) return;
+  svg.innerHTML = '';
+  if (atomosEnMesa.length < 2) return;
+  const supRect = superficie.getBoundingClientRect();
+  // Centro de cada ficha, relativo a la superficie.
+  const centros = {};
+  document.querySelectorAll('.lab-atomo').forEach(el => {
+    const r = el.getBoundingClientRect();
+    centros[el.dataset.id] = {
+      x: r.left - supRect.left + r.width / 2,
+      y: r.top - supRect.top + r.height / 2,
+    };
+  });
+  // Un enlace por par; evitamos duplicar (el par A-B y B-A).
+  const dibujados = new Set();
+  const pathsHTML = [];
+  atomosEnMesa.forEach(a => {
+    const rolA = rolDeAtomo(a.num);
+    if (rolA !== 'donante') return;   // solo iniciamos desde el cation
+    const colorA = CATS[elMap[a.num][4]] ? CATS[elMap[a.num][4]].color : 'var(--cat-defecto)';
+    a.enlaces.forEach(otherId => {
+      const key = [a.id, otherId].sort((x,y) => x - y).join('-');
+      if (dibujados.has(key)) return;
+      dibujados.add(key);
+      const p1 = centros[a.id], p2 = centros[otherId];
+      if (!p1 || !p2) return;
+      // Curva muy ligera para que lineas que se cruzan no se solapen.
+      const mx = (p1.x + p2.x) / 2;
+      const my = (p1.y + p2.y) / 2 - 10;
+      pathsHTML.push(
+        `<path d="M${p1.x} ${p1.y} Q${mx} ${my} ${p2.x} ${p2.y}" ` +
+        `stroke="${colorA}" stroke-width="2.5" fill="none" ` +
+        `opacity="0.7" stroke-linecap="round" />`
+      );
+    });
+  });
+  svg.innerHTML = pathsHTML.join('');
+}
+
+// ── Chispitas al cerrar transferencia ───────────────────────────────────
+// Pequeñas particulas que salen del punto medio del enlace y desvanecen.
+// Las creamos como <circle> SVG con una clase que lleva la animacion CSS.
+function animaChispas(idA, idB) {
+  const svg = document.getElementById('lab-enlaces');
+  const superficie = document.getElementById('lab-mesa-superficie');
+  if (!svg || !superficie) return;
+  const supRect = superficie.getBoundingClientRect();
+  const fichas = {};
+  document.querySelectorAll('.lab-atomo').forEach(el => {
+    const r = el.getBoundingClientRect();
+    fichas[el.dataset.id] = {
+      x: r.left - supRect.left + r.width / 2,
+      y: r.top - supRect.top + r.height / 2,
+    };
+  });
+  const p1 = fichas[idA], p2 = fichas[idB];
+  if (!p1 || !p2) return;
+  const mx = (p1.x + p2.x) / 2;
+  const my = (p1.y + p2.y) / 2;
+  const N = 6;
+  const chispas = [];
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) + Math.random() * 0.4;
+    const dist = 18 + Math.random() * 14;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    chispas.push(
+      `<circle class="chispa" cx="${mx}" cy="${my}" r="3" ` +
+      `fill="#fde047" style="--dx:${dx}px;--dy:${dy}px" />`
+    );
+  }
+  // Añadimos sin pisar los paths de enlaces (que acaban de pintarse).
+  svg.insertAdjacentHTML('beforeend', chispas.join(''));
+  // Limpieza tras la animacion (CSS la pone a 500ms)
+  setTimeout(() => {
+    svg.querySelectorAll('.chispa').forEach(c => c.remove());
+  }, 550);
+}
+// Repintar enlaces al redimensionar la ventana (las posiciones cambian).
+window.addEventListener('resize', () => requestAnimationFrame(pintarEnlaces));
+
+// Posiciones de los slots en la superficie. Hay tantos slots CENTRALES como
+// átomos del rolCentral haya en la mesa (1 Fe → 1 centro grande, 2 Fe →
+// 2 centros juntitos, 1 O en Na2O → 1 centro, 2 Cl en Cl2O7 → 2 centros).
+// Los demás van en círculo exterior (radiales). Devuelve [{key, x%, y%}].
+//   key = 'c-N' para centrales, 'r-N' para radiales.
+function calcularSlots(nTotal, nDonantes, nReceptores) {
+  const slots = [];
+  if (nTotal <= 0) return slots;
+  const rolCentral = decidirRolCentral(nDonantes, nReceptores);
+  const nCentrales = rolCentral === 'donante' ? nDonantes : nReceptores;
+  const nRadiales = Math.max(0, nTotal - nCentrales);
+
+  // Centrales: 1 → punto medio exacto. 2+ → en círculo pequeño alrededor
+  // del punto medio (radio ~11% para no solaparse ni separarse demasiado).
+  if (nCentrales === 1) {
+    slots.push({ key: 'c-0', x: 50, y: 50 });
+  } else if (nCentrales > 1) {
+    // Radio pequeño; con n=2 arrancamos horizontal (uno a cada lado) para
+    // que las fichas no se solapen vertical. Para n>=3, triángulo apuntando
+    // arriba.
+    const Rc = 15;
+    const anguloInicial = nCentrales === 2 ? 0 : -Math.PI / 2;
+    for (let i = 0; i < nCentrales; i++) {
+      const angle = anguloInicial + (Math.PI * 2 * i / nCentrales);
+      slots.push({
+        key: 'c-' + i,
+        x: 50 + Rc * Math.cos(angle),
+        y: 50 + Rc * Math.sin(angle),
+      });
+    }
+  }
+  // Radiales: círculo exterior. Compuestos densos (>5 radiales, p.ej.
+   // Cl2O7, Mn2O7) usan radio mayor para dejar aire entre fichas.
+  if (nRadiales > 0) {
+    const Rr = nRadiales > 5 ? 37 : 32;
+    for (let i = 0; i < nRadiales; i++) {
+      const angle = -Math.PI / 2 + (Math.PI * 2 * i / nRadiales);
+      slots.push({
+        key: 'r-' + i,
+        x: 50 + Rr * Math.cos(angle),
+        y: 50 + Rr * Math.sin(angle),
+      });
+    }
+  }
+  return slots;
+}
+
+function renderMesa() {
+  const vacio = document.getElementById('lab-mesa-vacio');
+  const bandejaWrap = document.getElementById('lab-bandeja');
+  const bandeja = document.getElementById('lab-bandeja-fichas');
+  const slots = document.getElementById('lab-slots');
+  const balance = document.getElementById('lab-balance');
+  const btnReiniciar = document.getElementById('lab-reiniciar');
+
+  if (atomosEnMesa.length === 0) {
+    vacio.hidden = false;
+    bandejaWrap.hidden = true;
+    slots.innerHTML = '';
+    balance.textContent = '—';
+    if (btnReiniciar) btnReiniciar.hidden = true;
+    pintarEnlaces();
+    return;
+  }
+  vacio.hidden = true;
+  if (btnReiniciar) btnReiniciar.hidden = !atomosEnMesa.some(a => a.enlaces.length > 0);
+
+  // Actualizar flag malColocado para cada atomo colocado.
+  atomosEnMesa.forEach(marcarMalColocado);
+
+  // ── BANDEJA: fichas aún no colocadas ───────────────────────────────
+  const enBandeja = atomosEnMesa.filter(a => a.ubicacion === 'bandeja');
+  bandejaWrap.hidden = enBandeja.length === 0;
+  bandeja.innerHTML = enBandeja.map(a => {
+    const el = elMap[a.num];
+    const [num, sym, name, mass, cat] = el;
+    const color = CATS[cat] ? CATS[cat].color : 'var(--cat-defecto)';
+    const activo = atomoActivo === a.id;
+    // DIV con role=button (no <button>) para poder anidar el × dentro: HTML
+    // no permite <button> dentro de <button> y el parser auto-cierra el
+    // outer, dejando el remove como hermano. renderMesa buscaba el remove
+    // como hijo con querySelector y crasheaba.
+    return `
+      <div class="lab-ficha-mini ${activo ? 'activo' : ''}"
+           data-id="${a.id}" style="--atomo-color:${color}; color:${color}"
+           role="button" tabindex="0"
+           aria-label="${name}. Pulsa para colocar en la mesa.">
+        <span class="mini-sym">${sym}</span>
+        <span class="mini-num">${num}</span>
+        <button type="button" class="lab-ficha-mini-remove"
+                aria-label="Descartar ${name}">×</button>
+      </div>
+    `;
+  }).join('');
+  bandeja.querySelectorAll('.lab-ficha-mini').forEach(f => {
+    const id = parseInt(f.dataset.id, 10);
+    f.addEventListener('click', (e) => {
+      if (e.target.closest('.lab-ficha-mini-remove')) return;
+      clickAtomo(id);
+    });
+    f.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickAtomo(id); }
+    });
+    const btnX = f.querySelector('.lab-ficha-mini-remove');
+    if (btnX) btnX.addEventListener('click', (e) => {
+      e.stopPropagation();
+      eliminarAtomo(id);
+    });
+  });
+
+  // ── SLOTS: pintar vacios + fichas ya colocadas ─────────────────────
+  const nDon = atomosEnMesa.filter(x => rolDeAtomo(x.num) === 'donante').length;
+  const nRec = atomosEnMesa.filter(x => rolDeAtomo(x.num) === 'receptor').length;
+  const posiciones = calcularSlots(atomosEnMesa.length, nDon, nRec);
+  const nCentrales = posiciones.filter(p => p.key.startsWith('c-')).length;
+  // Compuestos densos: dar más ancho a la mesa para que los radiales no se
+  // apelotonen.
+  slots.classList.toggle('denso', atomosEnMesa.length >= 7);
+  const porSlot = {};
+  atomosEnMesa.forEach(a => {
+    if (a.ubicacion && a.ubicacion !== 'bandeja') porSlot[a.ubicacion] = a;
+  });
+  slots.innerHTML = posiciones.map(p => {
+    const a = porSlot[p.key];
+    const esCentral = p.key.startsWith('c-');
+    // Si hay un único central, le damos la clase "slot-centro" (grande).
+    // Si hay varios centrales, van todos con "slot-centro-multi" (tamaño
+    // normal como los radiales — ningún "elegido").
+    const claseSlot = esCentral
+      ? (nCentrales === 1 ? 'slot-centro' : 'slot-centro-multi')
+      : 'slot-radial';
+    if (!a) {
+      return `
+        <div class="lab-slot vacio ${claseSlot}"
+             data-slot="${p.key}"
+             style="left:${p.x}%; top:${p.y}%"
+             aria-label="Slot vacío ${esCentral ? 'central' : 'radial'}"></div>
+      `;
+    }
+    const el = elMap[a.num];
+    const [num, sym, name, mass, cat] = el;
+    const color = CATS[cat] ? CATS[cat].color : 'var(--cat-defecto)';
+    const chip = chipDeAtomo(a);
+    const rol = rolDeAtomo(a.num);
+    const activo = atomoActivo === a.id;
+    const lleno = esLleno(a);
+    const clases = ['lab-atomo', 'lab-slot', 'ocupado', claseSlot, `rol-${rol}`];
+    if (activo) clases.push('activo');
+    if (lleno) clases.push('lleno');
+    if (a.estupefacto) clases.push('estupefacto');
+    if (a.malColocado) clases.push('malColocado');
+    const carita = caritaDeAtomo(a);
+    return `
+      <div class="${clases.join(' ')}" data-id="${a.id}" data-slot="${p.key}"
+           style="left:${p.x}%; top:${p.y}%; --atomo-color:${color}"
+           tabindex="0" role="button"
+           aria-label="${name} (${rol}, ${chip.texto}).">
+        <button type="button" class="lab-atomo-remove" title="Devolver a la bandeja"
+                aria-label="Devolver ${name} a la bandeja">×</button>
+        <canvas class="lab-atomo-canvas" width="110" height="110"
+                data-num="${num}" data-color="${color}"></canvas>
+        <div class="lab-atomo-carita" aria-hidden="true">${carita}</div>
+        <div class="lab-atomo-sym" style="color:${color}">${sym}</div>
+        <div class="lab-atomo-chip chip-${chip.tipo}">${chip.texto}</div>
+      </div>
+    `;
+  }).join('');
+  // Cablear clicks: en ficha (colocada) → clickAtomo. En slot vacío → clickSlotVacio.
+  slots.querySelectorAll('.lab-slot.ocupado').forEach(ficha => {
+    const canvas = ficha.querySelector('.lab-atomo-canvas');
+    pintarAtomoFicha(canvas,
+      parseInt(canvas.dataset.num, 10),
+      canvas.dataset.color);
+    const id = parseInt(ficha.dataset.id, 10);
+    ficha.addEventListener('click', (e) => {
+      if (e.target.closest('.lab-atomo-remove')) return;
+      clickAtomo(id);
+    });
+    ficha.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickAtomo(id); }
+    });
+    ficha.querySelector('.lab-atomo-remove').addEventListener('click', (e) => {
+      e.stopPropagation();
+      devolverABandeja(id);   // reversible: vuelve a la bandeja, no se descarta
+    });
+  });
+  slots.querySelectorAll('.lab-slot.vacio').forEach(slot => {
+    const key = slot.dataset.slot;
+    slot.addEventListener('click', () => clickSlotVacio(key));
+  });
+
+  // Balance pedagogico
+  const cuenta = {};
+  atomosEnMesa.forEach(a => {
+    const sym = elMap[a.num][1];
+    cuenta[sym] = (cuenta[sym] || 0) + 1;
+  });
+  const resumen = Object.entries(cuenta)
+    .map(([s, n]) => n > 1 ? `${n} ${s}` : s)
+    .join(' + ');
+  balance.textContent = resumen || '—';
+  ajustarAltoSlots();
+  requestAnimationFrame(pintarEnlaces);
+}
+
+// Forzar que .lab-slots sea cuadrado. El aspect-ratio en CSS no siempre
+// resuelve el height cuando el padre está en un contexto flex; además, si el
+// browser pane está oculto en el momento del render, getBoundingClientRect
+// devuelve 0. Un ResizeObserver resuelve ambos: dispara cuando el elemento
+// adquiere ancho (volver visible) y en cambios de viewport.
+function ajustarAltoSlots() {
+  const slots = document.getElementById('lab-slots');
+  if (!slots) return;
+  const w = slots.getBoundingClientRect().width;
+  if (w > 0) slots.style.height = w + 'px';
+}
+if (window.ResizeObserver) {
+  const ro = new ResizeObserver(() => {
+    ajustarAltoSlots();
+    pintarEnlaces();
+  });
+  const sup = document.getElementById('lab-mesa-superficie');
+  if (sup) ro.observe(sup);
+}
+
+// Click en un slot vacío: si hay una ficha activa en bandeja, la coloca ahí.
+function clickSlotVacio(slotKey) {
+  if (atomoActivo == null) return;
+  const a = atomosEnMesa.find(x => x.id === atomoActivo);
+  if (!a || a.ubicacion !== 'bandeja') return;
+  a.ubicacion = slotKey;
+  marcarMalColocado(a);
+  atomoActivo = null;
+  renderMesa();
+  renderPanel();
+}
+
+// ── Panel derecho: modos ─────────────────────────────────────────────────
+document.querySelectorAll('.lab-modo-boton').forEach(b => {
+  b.addEventListener('click', () => {
+    if (b.dataset.modo === modoActivo) return;
+    modoActivo = b.dataset.modo;
+    document.querySelectorAll('.lab-modo-boton').forEach(x => {
+      const act = x.dataset.modo === modoActivo;
+      x.classList.toggle('active', act);
+      x.setAttribute('aria-selected', act ? 'true' : 'false');
+    });
+    document.getElementById('lab-recetario').hidden = modoActivo !== 'recetario';
+    document.getElementById('lab-sandbox').hidden = modoActivo !== 'sandbox';
+    renderPanel();
+  });
+});
+
+// ── Panel: niveles del recetario ─────────────────────────────────────────
+document.querySelectorAll('.lab-nivel-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    const n = parseInt(c.dataset.nivel, 10);
+    if (n === nivelActivo) return;
+    nivelActivo = n;
+    retoActivo = null;
+    document.querySelectorAll('.lab-nivel-chip').forEach(x => {
+      const act = parseInt(x.dataset.nivel, 10) === nivelActivo;
+      x.classList.toggle('active', act);
+      x.setAttribute('aria-selected', act ? 'true' : 'false');
+    });
+    renderRecetario();
+  });
+});
+
+function retosDelNivel(n) { return RETOS.filter(r => r.dificultad === n); }
+
+function renderRecetario() {
+  const lista = document.getElementById('lab-retos-lista');
+  const activa = document.getElementById('lab-receta-activa');
+  const items = retosDelNivel(nivelActivo);
+  lista.innerHTML = items.map((r, i) => {
+    const idx = RETOS.indexOf(r);
+    const esActivo = retoActivo && RETOS.indexOf(retoActivo) === idx;
+    // Solo nombre, sin formula: no damos pistas en la lista; que el alumno
+    // deduzca sus simbolos y proporciones al colocar.
+    return `
+      <li>
+        <button type="button" class="lab-reto-boton ${esActivo ? 'active' : ''}"
+                data-idx="${idx}">
+          <span class="lab-reto-nombre">${r.nombre}</span>
+        </button>
+      </li>
+    `;
+  }).join('');
+  lista.querySelectorAll('.lab-reto-boton').forEach(b => {
+    b.addEventListener('click', () => {
+      const idx = parseInt(b.dataset.idx, 10);
+      const nuevo = RETOS[idx];
+      // Al cambiar de reto, limpiamos la mesa: evitamos arrastrar atomos del
+      // reto anterior (que soltarian feedback confuso) y damos un punto de
+      // partida en blanco. Si se re-pulsa el mismo reto, no vaciamos para no
+      // frustrar al alumno que esta en medio de montarlo.
+      if (nuevo !== retoActivo) {
+        vaciarMesa();           // tambien resetea atomoActivo y pistaUsada
+      }
+      retoActivo = nuevo;
+      pistaUsada = false;
+      renderRecetario();
+    });
+  });
+  if (retoActivo && retosDelNivel(nivelActivo).includes(retoActivo)) {
+    activa.hidden = false;
+    // Solo el nombre, SIN la formula: queremos que el alumno repase los
+    // simbolos al construir, no que los copie de aqui.
+    document.getElementById('lab-receta-nombre').innerHTML =
+      `<strong>${retoActivo.nombre}</strong>`;
+    const pistaBox = document.getElementById('lab-receta-pista');
+    const pistaBtn = document.getElementById('lab-pista-boton');
+    pistaBox.hidden = true;
+    pistaBox.textContent = retoActivo.pista || '— sin pista para este reto —';
+    pistaBtn.hidden = !retoActivo.pista;
+    pintarFeedbackReceta();
+  } else {
+    activa.hidden = true;
+  }
+}
+
+// Parseo de formula tipo "Fe2O3" -> {Fe:2, O:3}. Admite "CaO" -> {Ca:1, O:1}.
+function cuentaDeFormula(formula) {
+  const out = {};
+  const re = /([A-Z][a-z]?)(\d*)/g;
+  let m;
+  while ((m = re.exec(String(formula))) !== null) {
+    if (!m[1]) continue;
+    out[m[1]] = (out[m[1]] || 0) + (m[2] ? parseInt(m[2], 10) : 1);
+  }
+  return out;
+}
+
+// Conteo de los atomos actualmente en la mesa, por simbolo.
+function cuentaDeMesa() {
+  const out = {};
+  atomosEnMesa.forEach(a => {
+    const sym = elMap[a.num][1];
+    out[sym] = (out[sym] || 0) + 1;
+  });
+  return out;
+}
+
+// Diagnostico detallado de la mesa frente a la formula objetivo. Devuelve:
+//   { tipo: 'vacia' }                              → mesa vacia
+//   { tipo: 'mal-elementos', faltan, sobran }      → simbolos distintos
+//   { tipo: 'mal-proporcion' }                     → simbolos ok, cantidades no
+//   { tipo: 'match' }                              → coincide exactamente
+// La distincion entre "mal-elementos" y "mal-proporcion" es clave pedagogica:
+// decir "piensa la proporcion" cuando el error es haber puesto K en vez de
+// Ca es engañoso.
+function diagnosticarMesa(formula) {
+  const tengo = cuentaDeMesa();
+  if (Object.keys(tengo).length === 0) return { tipo: 'vacia' };
+  const necesita = cuentaDeFormula(formula);
+  const faltan = Object.keys(necesita).filter(s => !(s in tengo));
+  const sobran = Object.keys(tengo).filter(s => !(s in necesita));
+  if (faltan.length || sobran.length) {
+    return { tipo: 'mal-elementos', faltan, sobran };
+  }
+  for (const s of Object.keys(necesita)) {
+    if (tengo[s] !== necesita[s]) return { tipo: 'mal-proporcion' };
+  }
+  return { tipo: 'match' };
+}
+
+// Formato legible de un conteo: {Fe:2, O:3} -> "2 Fe + 3 O"
+function formatearConteo(c) {
+  const partes = Object.entries(c).map(([s, n]) => n > 1 ? `${n} ${s}` : s);
+  return partes.join(' + ') || '—';
+}
+
+// ¿Están todos los átomos de la mesa con la última capa cerrada?
+function todosLlenos() {
+  if (atomosEnMesa.length === 0) return false;
+  return atomosEnMesa.every(esLleno);
+}
+
+// Set de retos ya cocinados en esta sesion (para no sumar puntos dos veces
+// si el alumno vuelve a cocinar el mismo).
+const retosCocinados = new Set();
+
+// Pinta el chip de feedback bajo el nombre de la receta activa. Estados:
+//   - vacia             → gris, "coloca ingredientes"
+//   - mal-ingredientes  → rojo, "no es parte de la receta / falta X"
+//   - mal-proporcion    → naranja, "los simbolos ok, revisa las cantidades"
+//   - match             → verde, "ahora conecta los enlaces"
+//   - cocinado          → dorado, "¡cocinado!" + puntos
+function pintarFeedbackReceta() {
+  const fb = document.getElementById('lab-receta-feedback');
+  if (!fb || !retoActivo) return;
+  const diag = diagnosticarMesa(retoActivo.formula);
+  if (diag.tipo === 'vacia') {
+    fb.className = 'lab-receta-feedback estado-vacia';
+    fb.innerHTML = '<span aria-hidden="true">🧺</span> Coloca ingredientes en la mesa para empezar.';
+    return;
+  }
+  if (diag.tipo === 'mal-elementos') {
+    // Pedagogia: solo nombramos lo que SOBRA, nunca lo que falta.
+    // Nombrar lo que falta ("falta Na") seria soplar el simbolo correcto;
+    // el alumno tiene que deducirlo por si mismo.
+    fb.className = 'lab-receta-feedback estado-mal-ingredientes';
+    if (diag.sobran.length > 0) {
+      const lista = diag.sobran.map(s => `<strong>${s}</strong>`).join(', ');
+      const verbo = diag.sobran.length > 1 ? 'están' : 'está';
+      fb.innerHTML = `<span aria-hidden="true">❌</span> ${lista} no ${verbo} en la receta. Prueba otros ingredientes.`;
+    } else {
+      // Solo faltan sin sobrar: aviso genérico sin nombrar los símbolos.
+      fb.innerHTML = `<span aria-hidden="true">❌</span> Aún faltan ingredientes. Piensa qué elementos entran en la receta.`;
+    }
+    return;
+  }
+  if (diag.tipo === 'mal-proporcion') {
+    const tengo = cuentaDeMesa();
+    fb.className = 'lab-receta-feedback estado-nomatch';
+    fb.innerHTML = `<span aria-hidden="true">⚠️</span> Los símbolos están bien, pero las cantidades no. Tienes <strong>${formatearConteo(tengo)}</strong>, revisa la proporción.`;
+    return;
+  }
+  // Match: proporciones OK. Fase que falta: montaje (en slots) o enlace.
+  const enBandeja = atomosEnMesa.some(a => a.ubicacion === 'bandeja');
+  if (enBandeja) {
+    fb.className = 'lab-receta-feedback estado-match';
+    fb.innerHTML = `<span aria-hidden="true">🧺</span> Ingredientes correctos. Ahora llévalos al laboratorio: pulsa una ficha de la bandeja y después un hueco de la mesa.`;
+    return;
+  }
+  if (!todosLlenos()) {
+    fb.className = 'lab-receta-feedback estado-match';
+    fb.innerHTML = `<span aria-hidden="true">✅</span> Montado. Ahora conecta los enlaces: pulsa un metal y luego un oxígeno.`;
+    return;
+  }
+  // Preparado: proporciones + enlaces completos. (Evitamos "cocinado" por la
+  // connotacion de jerga que tiene "cook" en quimica de drogas; "preparado"
+  // es termino quimico estandar y mantiene la metafora culinaria sin ruido.)
+  const idReto = RETOS.indexOf(retoActivo);
+  if (!retosCocinados.has(idReto)) {
+    retosCocinados.add(idReto);
+    puntuacion += (pistaUsada ? 80 : 100);
+    pintarPuntuacion();
+  }
+  fb.className = 'lab-receta-feedback estado-cocinado';
+  fb.innerHTML = `
+    <div class="lab-formula-cocinada" aria-label="Fórmula resultante">${formatearFormulaHtml(retoActivo.formula)}</div>
+    <div class="lab-cocinado-mensaje">
+      <span aria-hidden="true">✨</span> ¡Preparado! Es <strong>${retoActivo.nombre}</strong>.
+      ${pistaUsada ? '<em>(+80, usaste pista)</em>' : '<em>(+100)</em>'}
+    </div>
+  `;
+}
+
+function pintarPuntuacion() {
+  const el = document.getElementById('lab-puntuacion');
+  if (!el) return;
+  el.textContent = puntuacion > 0 ? `${puntuacion} pts` : '';
+}
+
+// Boton de pista: muestra el texto escondido y marca que se uso (para
+// penalizar la puntuacion). Si la pista estaba abierta y la pliegan, no
+// deshacemos la marca — ya la vio.
+document.getElementById('lab-pista-boton').addEventListener('click', () => {
+  const box = document.getElementById('lab-receta-pista');
+  box.hidden = !box.hidden;
+  if (!box.hidden) pistaUsada = true;
+});
+
+// ── Panel: sandbox ───────────────────────────────────────────────────────
+// En esta tanda, el sandbox cuenta atomos y, si tiene exactamente 1 metal +
+// N oxigenos (o 2 metales + N oxigenos), compara con los oxidos posibles de
+// ese metal e intenta encajar. Sin drag todavia; es feedback descriptivo.
+function renderSandbox() {
+  const cont = document.getElementById('lab-sandbox-resultado');
+  if (atomosEnMesa.length === 0) {
+    cont.innerHTML = '<p class="lab-sandbox-vacio">Añade al menos un metal y un oxígeno…</p>';
+    return;
+  }
+  const cuenta = {};
+  atomosEnMesa.forEach(a => {
+    const sym = elMap[a.num][1];
+    cuenta[sym] = (cuenta[sym] || 0) + 1;
+  });
+  const syms = Object.keys(cuenta);
+  const oxigenos = cuenta.O || 0;
+  const metales = syms.filter(s => s !== 'O');
+  if (metales.length === 0) {
+    cont.innerHTML = '<p class="lab-sandbox-vacio">Solo oxígenos. Añade un metal (o no-metal) para formar un óxido.</p>';
+    return;
+  }
+  if (metales.length > 1) {
+    cont.innerHTML = '<p class="lab-sandbox-vacio">Más de un elemento distinto además del oxígeno. Los óxidos binarios solo tienen uno. Prueba quitando.</p>';
+    return;
+  }
+  const sym = metales[0];
+  const nMetal = cuenta[sym];
+  if (oxigenos === 0) {
+    cont.innerHTML = `<p class="lab-sandbox-vacio">Tienes ${nMetal} ${sym}, pero falta oxígeno.</p>`;
+    return;
+  }
+  const num = NUM_POR_SIMBOLO[sym];
+  const oxidos = oxidosPosibles(num);
+  const match = oxidos.find(o => o.subE === nMetal && o.subO === oxigenos);
+  if (match) {
+    // Tres fases: ingredientes en bandeja → montaje → enlaces → preparado.
+    // Reservamos la nomenclatura hasta la ultima para mantener el estandar
+    // pedagogico del recetario (ningun soplo antes de tiempo).
+    const enBandejaSb = atomosEnMesa.some(a => a.ubicacion === 'bandeja');
+    if (enBandejaSb) {
+      cont.innerHTML = `
+        <div class="lab-sandbox-pendiente">
+          <div class="lab-sandbox-titulo">Tienes los ingredientes</div>
+          <p>Las proporciones son de un óxido conocido. Llévalos al laboratorio: pulsa una ficha de la bandeja y después un hueco de la mesa.</p>
+        </div>
+      `;
+    } else if (!todosLlenos()) {
+      cont.innerHTML = `
+        <div class="lab-sandbox-pendiente">
+          <div class="lab-sandbox-titulo">Montado</div>
+          <p>Prepáralo: pulsa el metal y después un oxígeno para hacer los enlaces.</p>
+        </div>
+      `;
+    } else {
+      cont.innerHTML = `
+        <div class="lab-sandbox-match">
+          <div class="lab-sandbox-titulo">¡Preparado!</div>
+          <div class="lab-sandbox-formula">${match.formula}</div>
+          <div class="lab-sandbox-nombres">
+            <div><span>Tradicional:</span> ${match.nombres.tradicional || '—'}</div>
+            <div><span>Stock:</span> ${match.nombres.stock}</div>
+            <div><span>Sistem.:</span> ${match.nombres.sistematico}</div>
+          </div>
+        </div>
+      `;
+    }
+  } else {
+    const sugerencia = oxidos.length
+      ? `Óxidos conocidos de ${sym}: ${oxidos.map(o => o.formulaTxt).join(', ')}.`
+      : `${sym} no forma óxidos en el dataset activo.`;
+    cont.innerHTML = `
+      <div class="lab-sandbox-nomatch">
+        <div class="lab-sandbox-titulo">Aún no cuadra</div>
+        <p>Tienes <strong>${nMetal} ${sym}</strong> y <strong>${oxigenos} O</strong>, pero esa proporción no coincide con ningún óxido típico.</p>
+        <p class="lab-sandbox-hint">${sugerencia}</p>
+      </div>
+    `;
+  }
+}
+
+// ── Dispatcher del panel ─────────────────────────────────────────────────
+function renderPanel() {
+  if (modoActivo === 'recetario') renderRecetario();
+  else renderSandbox();
+}
+
+// ── Util: fórmula con subíndices HTML ────────────────────────────────────
+function formatearFormulaHtml(txt) {
+  // Admite "Fe2O3", "H2S", "CaO" → "Fe<sub>2</sub>O<sub>3</sub>".
+  return String(txt).replace(/(\d+)/g, '<sub>$1</sub>');
+}
+
+// ── Pintar estado inicial ────────────────────────────────────────────────
+renderMesa();
+renderPanel();
+
+</script>
+
+<!-- El chasis compartido: conmutador de tema (y, mas adelante, de
+     idioma). Si no carga, la pagina se ve y funciona igual. -->
+<script src="../lab.js"></script>
+</body>
+</html>
