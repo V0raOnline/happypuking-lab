@@ -60,7 +60,7 @@ happypuking-lab/
 │   └── mat-tabla-pitagorica.html       # Tabla pitagórica — patrones y simetría
 ├── qui/                                # Química
 │   ├── qui-tabla-periodica.html        # Tabla periódica — 3 modos de lectura
-│   └── qui-elementos-tarjetas.html     # Tarjetas de elementos — práctica
+│   └── qui-elementos-tarjetas.html     # Quiz de elementos — práctica
 ├── nd/                                 # Neurodivergencia
 │   ├── nd-carga-sensorial.html         # Modelo de Carga Sensorial (ES)
 │   └── nd-carga-sensorial-en.html      # Sensory Load Model (EN)
@@ -92,14 +92,16 @@ eso está el historial de git.
 | Morfosintaxis             | Lengua Castellana    | ESO               | `len/len-morfosintaxis.html`          |
 | Tabla Pitagórica          | Matemáticas          | Primaria / ESO    | `mat/mat-tabla-pitagorica.html`       |
 | Tabla Periódica           | Química              | ESO               | `qui/qui-tabla-periodica.html`        |
-| Tarjetas de Elementos     | Química              | ESO               | `qui/qui-elementos-tarjetas.html`     |
+| Quiz de Elementos         | Química              | ESO               | `qui/qui-elementos-tarjetas.html`     |
+| Formulación               | Química              | ESO               | `qui/qui-formulador.html`             |
+| Lab de Química            | Química              | ESO               | `qui/qui-lab.html`                    |
 | El Reloj · The Clock      | Matemáticas · Tiempo | Primaria / ESO    | `trn/trn-reloj.html`                  |
 | Modelo de Carga Sensorial | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial.html`          |
 | Sensory Load Model (EN)   | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial-en.html`       |
 
 ### ⚗️ Química — el viaje hacia la formulación
 
-Las dos herramientas de Química están pensadas como una secuencia, no como
+Las cuatro herramientas de Química están pensadas como una secuencia, no como
 piezas sueltas. La idea es que formular deje de ser memorizar.
 
 La **Tabla Periódica** se lee en tres capas, con el mismo tablero:
@@ -110,9 +112,19 @@ La **Tabla Periódica** se lee en tres capas, con el mismo tablero:
 3. **Electronegatividad** — con cuánta fuerza los agarra. La diagonal que
    explica la forma de la tabla.
 
-Las **Tarjetas de Elementos** cierran el ciclo: practicar símbolos, nombres,
+El **Quiz de Elementos** ancla esas tres capas: practicar símbolos, nombres,
 familias y electrones de valencia, con filtro por familia y lista de fallos
 para repasar.
+
+La **Formulación** enseña el mecanismo. Eliges una familia (óxidos, hidruros
+metálicos, hidrácidos o sales binarias) y un elemento, y aparece el compuesto
+equilibrado con sus tres nomenclaturas (tradicional, Stock y sistemática) y
+una tira paso a paso de cómo cuadran las valencias.
+
+El **Lab** cierra el ciclo. Es un laboratorio manipulable: eliges ingredientes
+en la despensa, los llevas a la mesa, mueves electrones por paquetes y formas
+enlaces. En esta primera versión solo tenemos óxidos; la mecánica es la que
+irá heredando el resto de familias.
 
 ### 🔢 Matemáticas — la tabla pitagórica no es una lista
 
@@ -156,7 +168,6 @@ qui/qui-elementos-tarjetas.html?modo=valence  # electrones de valencia
 
 | Recurso                    | Materia           | Nivel  |
 | -------------------------- | ----------------- | ------ |
-| Formulador de compuestos   | Química           | ESO    |
 | Verbos irregulares español | Lengua Castellana | ESO    |
 | Chuletarios interactivos   | Todas             | VARIOS |
 
