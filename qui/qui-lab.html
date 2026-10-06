@@ -73,7 +73,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 
   <div class="lab-intro" data-plegable>
     <p>Un laboratorio manipulable. En la <strong>despensa</strong> (arriba) están los elementos: pícalos y aterrizan en la <strong>mesa</strong>. El <strong>recetario</strong> (a la derecha) te propone compuestos para montar; el <strong>sandbox</strong> te deja construir libre.</p>
-    <p>En esta primera versión solo tenemos <strong>óxidos</strong>. Los electrones se moverán por paquetes de valencia en la próxima tanda — por ahora puedes elegir ingredientes y ver qué le sobra o le falta a cada átomo.</p>
+    <p>Ya tienes <strong>óxidos</strong> e <strong>hidruros metálicos</strong>; elige la familia en el panel. El sandbox sigue limitado a óxidos; otras familias llegarán por tandas.</p>
   </div>
 
   <div class="lab-grid">
@@ -156,6 +156,21 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 
       <!-- RECETARIO -->
       <div class="lab-panel-cuerpo lab-recetario" id="lab-recetario">
+        <!-- Familia de compuestos. Define quien es receptor (O o H) y que
+             elementos valen en la despensa. Comportamiento retrocompatible:
+             los retos sin campo "familia" en el YAML caen como oxidos. -->
+        <div class="lab-familia-row">
+          <span class="lab-familia-label">Familia</span>
+          <div class="lab-familia-chips" role="tablist" aria-label="Familia de compuestos">
+            <button type="button" class="lab-familia-chip" role="tab" data-familia="oxidos" aria-selected="true">
+              <span class="familia-emoji" aria-hidden="true">⚗</span> Óxidos
+            </button>
+            <button type="button" class="lab-familia-chip" role="tab" data-familia="hidruros" aria-selected="false">
+              <span class="familia-emoji" aria-hidden="true">🜂</span> Hidruros
+            </button>
+          </div>
+        </div>
+
         <div class="lab-nivel-row">
           <div class="lab-nivel-chips" role="tablist" aria-label="Nivel de dificultad">
             <button type="button" class="lab-nivel-chip active" data-nivel="1" aria-selected="true">
@@ -228,54 +243,122 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
      opcional. -->
 <script type="text/yaml" id="retos-yaml">
 # ─────────────────────────────────────────────────────────────────────
-# Retos del Lab de química (familia: óxidos)
+# Retos del Lab de química.
+# Cada reto declara su familia: 'oxidos' (metal/no-metal + O²⁻) o
+# 'hidruros' (metal + H⁻). El motor usa ese campo para decidir quien es
+# receptor (O o H) y que elementos valen en la despensa.
 # Prompt para generar nuevos retos con un LLM:
-#   "Dame N óxidos para formular, con nombre tradicional en español,
-#    fórmula, dificultad 1-3 y una pista opcional de una línea.
-#    Formato YAML con una lista 'retos:' igual que esta."
+#   "Dame N compuestos para formular, con nombre tradicional en español,
+#    familia (oxidos|hidruros), fórmula, dificultad 1-3 y una pista
+#    opcional de una línea. Formato YAML con una lista 'retos:' igual
+#    que esta."
 # ─────────────────────────────────────────────────────────────────────
 retos:
+  # ── ÓXIDOS ────────────────────────────────────────────────────────
   - nombre: óxido de calcio
+    familia: oxidos
     formula: CaO
     dificultad: 1
     pista: El calcio solo tiene valencia +2.
 
   - nombre: óxido de magnesio
+    familia: oxidos
     formula: MgO
     dificultad: 1
 
   - nombre: óxido de sodio
+    familia: oxidos
     formula: Na2O
     dificultad: 1
     pista: El sodio es +1, el oxígeno −2. Necesitas dos sodios.
 
   - nombre: óxido de aluminio
+    familia: oxidos
     formula: Al2O3
     dificultad: 2
     pista: Aluminio +3 y oxígeno −2. MCM(3,2) = 6.
 
   - nombre: dióxido de carbono
+    familia: oxidos
     formula: CO2
     dificultad: 2
 
   - nombre: trióxido de azufre
+    familia: oxidos
     formula: SO3
     dificultad: 2
     pista: El azufre aquí usa su valencia +6.
 
   - nombre: óxido de hierro(III)
+    familia: oxidos
     formula: Fe2O3
     dificultad: 3
     pista: El hierro aquí usa su valencia +3, no +2.
 
   - nombre: heptóxido de dicloro
+    familia: oxidos
     formula: Cl2O7
     dificultad: 3
 
   - nombre: óxido de manganeso(VII)
+    familia: oxidos
     formula: Mn2O7
     dificultad: 3
     pista: El manganeso tiene varias valencias; aquí la máxima (+7).
+
+  # ── HIDRUROS METÁLICOS ────────────────────────────────────────────
+  # H actúa como anión H⁻ (valencia −1). Solo metales forman hidruros
+  # metálicos; los no-metales dan hidruros no metálicos (otra familia,
+  # fuera de esta fase).
+  - nombre: hidruro de sodio
+    familia: hidruros
+    formula: NaH
+    dificultad: 1
+    pista: El sodio es +1, el hidrógeno aquí −1. Uno de cada.
+
+  - nombre: hidruro de potasio
+    familia: hidruros
+    formula: KH
+    dificultad: 1
+
+  - nombre: hidruro de calcio
+    familia: hidruros
+    formula: CaH2
+    dificultad: 1
+    pista: El calcio es +2 y necesita dos hidrógenos para compensarlo.
+
+  - nombre: hidruro de litio
+    familia: hidruros
+    formula: LiH
+    dificultad: 2
+
+  - nombre: hidruro de magnesio
+    familia: hidruros
+    formula: MgH2
+    dificultad: 2
+
+  - nombre: hidruro de aluminio
+    familia: hidruros
+    formula: AlH3
+    dificultad: 2
+    pista: Aluminio +3 pide tres hidrógenos para equilibrarlo.
+
+  - nombre: hidruro de hierro(II)
+    familia: hidruros
+    formula: FeH2
+    dificultad: 3
+    pista: El hierro aquí usa su valencia +2, no +3.
+
+  - nombre: hidruro de hierro(III)
+    familia: hidruros
+    formula: FeH3
+    dificultad: 3
+    pista: El hierro aquí usa su valencia +3, no +2.
+
+  - nombre: hidruro de níquel(II)
+    familia: hidruros
+    formula: NiH2
+    dificultad: 3
 </script>
 
 <!-- js-yaml para parsear el dataset embebido. Mismo CDN que la tabla periodica. -->
@@ -330,6 +413,70 @@ retos:
   });
 })();
 
+// ── Estado del lab ───────────────────────────────────────────────────────
+// Variables globales de estado. Vive aqui arriba porque esIngredienteValido
+// (que se llama al pintar la despensa, mas abajo) necesita familiaActual()
+// y SPEC_FAMILIA ya inicializados.
+let modoActivo = 'recetario';         // 'recetario' | 'sandbox'
+let nivelActivo = 1;                  // 1 | 2 | 3
+// Nivel de apoyo del feedback. Tutorial: flecha arriba/abajo cuando los
+// tipos cuadran y falta cantidad. Aprendiz: distingue "falta tipo" de "mal
+// proporcion" sin cantidades. Experto: austero, sin nombrar lo que tienes.
+let nivelApoyo = (function() {
+  try { return localStorage.getItem('hpk-lab-apoyo') || 'aprendiz'; }
+  catch (e) { return 'aprendiz'; }
+})();
+// Familia activa del lab. Determina quien es receptor (O vs H) y que
+// elementos son validos en la despensa. Default 'oxidos' (comportamiento
+// original). El reto activo manda sobre la familia seleccionada: aunque el
+// alumno tenga Hidruros en el panel, si abre un reto de familia Oxidos el
+// motor usa 'oxidos' durante ese reto. En sandbox manda familiaSeleccionada.
+let familiaSeleccionada = (function() {
+  try { return localStorage.getItem('hpk-lab-familia') || 'oxidos'; }
+  catch (e) { return 'oxidos'; }
+})();
+
+// Especificacion por familia: anion (receptor), su simbolo y su valencia
+// como receptor, y la frase corta para los copy adaptativos.
+const SPEC_FAMILIA = {
+  oxidos:   { anionNum: 8, anionSym: 'O', anionVal: -2,
+              anionNombre: 'oxígeno',
+              hint: 'no forman óxidos en ESO',
+              hintBreve: 'no forma óxidos en formulación básica' },
+  hidruros: { anionNum: 1, anionSym: 'H', anionVal: -1,
+              anionNombre: 'hidrógeno',
+              hint: 'no forman hidruros metálicos en ESO',
+              hintBreve: 'no forma hidruros metálicos en formulación básica' },
+};
+// CATS_METAL, EXCLUIDOS_HIDRURO y formaHidruroMetalico() vienen de
+// qui-datos.js (los mismos que usa Formulación). Ahi se filtran Sn/Pb y se
+// cap a +3, criterio acordado para hidruros metalicos en ESO/bach.
+
+let retoActivo = null;                // objeto reto en curso
+let atomosEnMesa = [];                // [{id, num, donado, captado, enlaces}]
+let proxId = 1;                       // id autoincrementable
+let atomoActivo = null;               // id del donante seleccionado (o null)
+let pistaUsada = false;               // si se abrió la pista en el reto actual
+let puntuacion = 0;                   // acumulada en la sesion
+
+// Familia activa en este momento: la del reto si lo hay, si no la
+// seleccionada en el panel. Si el reto no declara familia (retos de la
+// fase 1 sin el campo), caen como 'oxidos' por retrocompatibilidad.
+function familiaActual() {
+  if (retoActivo && retoActivo.familia) return retoActivo.familia;
+  return familiaSeleccionada;
+}
+
+// Dataset de retos: parseo del YAML embebido.
+let RETOS = [];
+try {
+  const txt = document.getElementById('retos-yaml').textContent;
+  const parsed = jsyaml.load(txt);
+  RETOS = (parsed && parsed.retos) || [];
+} catch (e) {
+  console.error('Error cargando retos YAML:', e);
+}
+
 // ── Mini-tabla periodica (despensa) ──────────────────────────────────────
 // Mismo layout que las otras herramientas: celdas apagadas si no forman
 // oxidos (reusamos formaOxidos logica). Click = aniade atomo a la mesa.
@@ -351,11 +498,16 @@ const ROWS = 10, COLS = 18;
 const ptable = document.getElementById('lab-table');
 ptable.style.gridTemplateRows = `repeat(${ROWS}, 1fr)`;
 
-// En esta tanda, "forma oxidos" = tiene estado positivo en OXID. Incluimos
-// tambien el oxigeno (num=8) porque es el ingrediente del otro lado del
-// enlace: el alumno lo pica igual que a los metales.
+// Que elementos puede picar el alumno en la despensa. Depende de la familia
+// activa: en oxidos vale cualquier donante con estado positivo + el O. En
+// hidruros metalicos reusamos formaHidruroMetalico() de qui-datos.js (solo
+// metales + estado <= +3 + sin Sn/Pb) para quedar alineado con Formulación.
 function esIngredienteValido(num) {
-  if (num === 8) return true;                     // O siempre valido como anion
+  const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
+  if (num === spec.anionNum) return true;         // H o O siempre validos
+  if (familiaActual() === 'hidruros') {
+    return typeof formaHidruroMetalico === 'function' && formaHidruroMetalico(num);
+  }
   const estados = OXID[num];
   if (!estados || !estados.length) return false;  // gases nobles, sinteticos
   return estados.some(e => e > 0);
@@ -443,33 +595,6 @@ function aplicarFiltroBuscador(q) {
   });
 })();
 
-// ── Estado del lab ───────────────────────────────────────────────────────
-let modoActivo = 'recetario';         // 'recetario' | 'sandbox'
-let nivelActivo = 1;                  // 1 | 2 | 3
-// Nivel de apoyo del feedback. Tutorial: flecha arriba/abajo cuando los
-// tipos cuadran y falta cantidad. Aprendiz: distingue "falta tipo" de "mal
-// proporcion" sin cantidades. Experto: austero, sin nombrar lo que tienes.
-let nivelApoyo = (function() {
-  try { return localStorage.getItem('hpk-lab-apoyo') || 'aprendiz'; }
-  catch (e) { return 'aprendiz'; }
-})();
-let retoActivo = null;                // objeto reto en curso
-let atomosEnMesa = [];                // [{id, num, donado, captado, enlaces}]
-let proxId = 1;                       // id autoincrementable
-let atomoActivo = null;               // id del donante seleccionado (o null)
-let pistaUsada = false;               // si se abrió la pista en el reto actual
-let puntuacion = 0;                   // acumulada en la sesion
-
-// Dataset de retos: parseo del YAML embebido.
-let RETOS = [];
-try {
-  const txt = document.getElementById('retos-yaml').textContent;
-  const parsed = jsyaml.load(txt);
-  RETOS = (parsed && parsed.retos) || [];
-} catch (e) {
-  console.error('Error cargando retos YAML:', e);
-}
-
 // ── Mesa: añadir / eliminar / vaciar / reiniciar enlaces ────────────────
 function anadirAtomoAMesa(num) {
   // Al picar en la despensa, el átomo aterriza en la BANDEJA (no en un slot).
@@ -543,13 +668,15 @@ document.getElementById('lab-reiniciar').addEventListener('click', reiniciarEnla
 // la formula objetivo cuando hay reto activo; sin reto (sandbox) usamos
 // el primer estado positivo como "defecto".
 function valenciaDeAtomo(num) {
+  const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
+  if (num === spec.anionNum) return spec.anionVal;      // receptor fijo (O=-2, H=-1)
   const sym = elMap[num][1];
-  if (num === 8) return -2;                    // O siempre -2 en oxidos
   if (modoActivo === 'recetario' && retoActivo) {
     const cuenta = cuentaDeFormula(retoActivo.formula);
     const subE = cuenta[sym] || 0;
-    const subO = cuenta.O || 0;
-    if (subE > 0 && subO > 0) return (2 * subO) / subE;  // carga positiva
+    const subA = cuenta[spec.anionSym] || 0;
+    // Carga del donante = (|val receptor| * subindice receptor) / subindice donante.
+    if (subE > 0 && subA > 0) return (Math.abs(spec.anionVal) * subA) / subE;
   }
   const estados = OXID[num] || [];
   const pos = estados.find(e => e > 0);
@@ -558,7 +685,8 @@ function valenciaDeAtomo(num) {
   return neg || 0;
 }
 function rolDeAtomo(num) {
-  if (num === 8) return 'receptor';
+  const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
+  if (num === spec.anionNum) return 'receptor';
   const estados = OXID[num] || [];
   return estados.some(e => e > 0) ? 'donante' : 'receptor';
 }
@@ -1116,7 +1244,59 @@ document.querySelectorAll('.lab-apoyo-chip').forEach(c => {
   });
 });
 
-function retosDelNivel(n) { return RETOS.filter(r => r.dificultad === n); }
+// ── Panel: familia de compuestos (Oxidos / Hidruros) ─────────────────────
+// Al cambiar de familia: vaciar la mesa (los atomos pueden ya no ser
+// validos), limpiar el reto activo, repintar la despensa (dim adaptativo)
+// y re-renderizar la lista de retos filtrada por la nueva familia.
+function repintarDespensa() {
+  const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
+  document.querySelectorAll('.lab-el').forEach(btn => {
+    const num = parseInt(btn.dataset.num, 10);
+    if (!num) return;
+    const valido = esIngredienteValido(num);
+    btn.classList.toggle('dimmed', !valido);
+    const el = elMap[num];
+    const name = el ? el[2] : '';
+    btn.setAttribute('aria-label',
+      `Añadir ${name} a la mesa` + (valido ? '' : ` (${spec.hintBreve})`));
+  });
+  // Hint de la despensa adaptativa. Mantener la primera frase; cambiar solo
+  // la coletilla sobre "no forman X en ESO".
+  const hint = document.querySelector('.lab-despensa .lab-panel-hint');
+  if (hint) hint.textContent = `Pica un elemento y aterriza en la mesa. Los apagados ${spec.hint}.`;
+}
+
+document.querySelectorAll('.lab-familia-chip').forEach(c => {
+  const act = c.dataset.familia === familiaSeleccionada;
+  c.classList.toggle('active', act);
+  c.setAttribute('aria-selected', act ? 'true' : 'false');
+});
+document.querySelectorAll('.lab-familia-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    const nueva = c.dataset.familia;
+    if (nueva === familiaSeleccionada) return;
+    familiaSeleccionada = nueva;
+    try { localStorage.setItem('hpk-lab-familia', familiaSeleccionada); } catch (e) {}
+    document.querySelectorAll('.lab-familia-chip').forEach(x => {
+      const activo = x.dataset.familia === familiaSeleccionada;
+      x.classList.toggle('active', activo);
+      x.setAttribute('aria-selected', activo ? 'true' : 'false');
+    });
+    // Al cambiar de familia: los atomos de la mesa pueden ser invalidos y
+    // los retos cambian. Vaciamos y re-renderizamos.
+    retoActivo = null;
+    vaciarMesa();
+    repintarDespensa();
+    renderRecetario();
+  });
+});
+
+// Retos del nivel filtrados tambien por la familia activa. Los retos sin
+// campo familia caen como oxidos (retrocompatibilidad con la fase 1).
+function retosDelNivel(n) {
+  const fam = familiaSeleccionada;
+  return RETOS.filter(r => r.dificultad === n && (r.familia || 'oxidos') === fam);
+}
 
 function renderRecetario() {
   const lista = document.getElementById('lab-retos-lista');
@@ -1299,7 +1479,8 @@ function pintarFeedbackReceta() {
   }
   if (!todosLlenos()) {
     fb.className = 'lab-receta-feedback estado-match';
-    fb.innerHTML = `<span aria-hidden="true">✅</span> Montado. Ahora conecta los enlaces: pulsa un metal y luego un oxígeno.`;
+    const specEnlace = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
+    fb.innerHTML = `<span aria-hidden="true">✅</span> Montado. Ahora conecta los enlaces: pulsa un metal y luego un ${specEnlace.anionNombre}.`;
     return;
   }
   // Preparado: proporciones + enlaces completos. (Evitamos "cocinado" por la
@@ -1430,6 +1611,10 @@ function formatearFormulaHtml(txt) {
 }
 
 // ── Pintar estado inicial ────────────────────────────────────────────────
+// repintarDespensa() despues de montar la mini-tabla: si localStorage tiene
+// familia 'hidruros', la despensa debe reflejarlo ya al cargar (los
+// no-metales quedan dim y el hint cambia).
+repintarDespensa();
 renderMesa();
 renderPanel();
 

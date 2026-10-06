@@ -2979,6 +2979,58 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   color: var(--cyan-texto);
   cursor: default;
 }
+
+/* Selector de familia (Oxidos / Hidruros). Mismo patron que el de apoyo
+   pero con acento del metal-transicion para que se separe visualmente de
+   nivel (magenta) y apoyo (cyan). */
+.lab-familia-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.lab-familia-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex: 0 0 auto;
+}
+.lab-familia-chips {
+  display: flex;
+  gap: 0.35rem;
+  flex: 1;
+}
+.lab-familia-chip {
+  flex: 1;
+  padding: 0.35rem 0.4rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.lab-familia-chip .familia-emoji { font-size: 0.95rem; }
+.lab-familia-chip:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--metal-transicion) 35%, var(--border));
+}
+.lab-familia-chip.active {
+  background: color-mix(in srgb, var(--metal-transicion) 10%, var(--surface2));
+  border-color: color-mix(in srgb, var(--metal-transicion) 55%, transparent);
+  color: color-mix(in srgb, var(--metal-transicion) 70%, var(--text));
+  cursor: default;
+}
 /* Flecha de dirección en Tutorial: te faltan ↓ / te sobran ↑ átomos. */
 .lab-apoyo-flecha {
   display: inline-block;
