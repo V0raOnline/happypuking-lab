@@ -73,10 +73,65 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 
   <div class="lab-intro" data-plegable>
     <p>Un laboratorio manipulable. En la <strong>despensa</strong> (arriba) están los elementos: pícalos y aterrizan en la <strong>mesa</strong>. El <strong>recetario</strong> (a la derecha) te propone compuestos para montar; el <strong>sandbox</strong> te deja construir libre.</p>
-    <p>Ya tienes <strong>óxidos</strong> e <strong>hidruros metálicos</strong>; elige la familia en el panel. El sandbox sigue limitado a óxidos; otras familias llegarán por tandas.</p>
+    <p>Elige familia en el panel: <strong>óxidos</strong>, <strong>hidruros metálicos</strong>, <strong>hidrácidos</strong> o <strong>sales binarias</strong>. El sandbox sigue limitado a óxidos; se irá ampliando por tandas.</p>
   </div>
 
   <div class="lab-grid">
+
+    <!-- ─── CONTROLES (banner superior) ──────────────────────────────
+         Familia + Nivel + Apoyo. Antes vivían dentro del Recetario pero
+         en 4 familias ya no cabian a lo ancho del panel. Aqui tienen
+         todo el ancho del lab y el Recetario queda limpio. -->
+    <section class="lab-controles" aria-label="Controles del lab">
+      <div class="lab-familia-row">
+        <span class="lab-familia-label">Familia</span>
+        <div class="lab-familia-chips" role="tablist" aria-label="Familia de compuestos">
+          <button type="button" class="lab-familia-chip" role="tab" data-familia="oxidos" aria-selected="true">
+            <span class="familia-emoji" aria-hidden="true">⚗</span> Óxidos
+          </button>
+          <button type="button" class="lab-familia-chip" role="tab" data-familia="hidruros" aria-selected="false">
+            <span class="familia-emoji" aria-hidden="true">🜂</span> Hidruros
+          </button>
+          <button type="button" class="lab-familia-chip" role="tab" data-familia="hidracidos" aria-selected="false">
+            <span class="familia-emoji" aria-hidden="true">🧪</span> Hidrácidos
+          </button>
+          <button type="button" class="lab-familia-chip" role="tab" data-familia="sales" aria-selected="false">
+            <span class="familia-emoji" aria-hidden="true">🧂</span> Sales
+          </button>
+        </div>
+      </div>
+
+      <div class="lab-nivel-row">
+        <span class="lab-familia-label">Nivel</span>
+        <div class="lab-nivel-chips" role="tablist" aria-label="Nivel de dificultad">
+          <button type="button" class="lab-nivel-chip active" data-nivel="1" aria-selected="true">
+            <span class="nivel-estrella" aria-hidden="true">★</span> Fácil
+          </button>
+          <button type="button" class="lab-nivel-chip" data-nivel="2" aria-selected="false">
+            <span class="nivel-estrella" aria-hidden="true">★★</span> Medio
+          </button>
+          <button type="button" class="lab-nivel-chip" data-nivel="3" aria-selected="false">
+            <span class="nivel-estrella" aria-hidden="true">★★★</span> Avanzado
+          </button>
+        </div>
+        <div class="lab-puntuacion" id="lab-puntuacion" aria-live="polite"></div>
+      </div>
+
+      <div class="lab-apoyo-row">
+        <span class="lab-apoyo-label">Apoyo</span>
+        <div class="lab-apoyo-chips" role="tablist" aria-label="Nivel de apoyo en el feedback">
+          <button type="button" class="lab-apoyo-chip" role="tab" data-apoyo="tutorial" aria-selected="false">
+            <span class="apoyo-emoji" aria-hidden="true">🎓</span> Tutorial
+          </button>
+          <button type="button" class="lab-apoyo-chip active" role="tab" data-apoyo="aprendiz" aria-selected="true">
+            <span class="apoyo-emoji" aria-hidden="true">🧑‍🔬</span> Aprendiz
+          </button>
+          <button type="button" class="lab-apoyo-chip" role="tab" data-apoyo="experto" aria-selected="false">
+            <span class="apoyo-emoji" aria-hidden="true">🧪</span> Experto
+          </button>
+        </div>
+      </div>
+    </section>
 
     <!-- ─── DESPENSA (banner superior) ──────────────────────────────── -->
     <section class="lab-despensa" aria-label="Despensa de elementos">
@@ -156,55 +211,6 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 
       <!-- RECETARIO -->
       <div class="lab-panel-cuerpo lab-recetario" id="lab-recetario">
-        <!-- Familia de compuestos. Define quien es receptor (O o H) y que
-             elementos valen en la despensa. Comportamiento retrocompatible:
-             los retos sin campo "familia" en el YAML caen como oxidos. -->
-        <div class="lab-familia-row">
-          <span class="lab-familia-label">Familia</span>
-          <div class="lab-familia-chips" role="tablist" aria-label="Familia de compuestos">
-            <button type="button" class="lab-familia-chip" role="tab" data-familia="oxidos" aria-selected="true">
-              <span class="familia-emoji" aria-hidden="true">⚗</span> Óxidos
-            </button>
-            <button type="button" class="lab-familia-chip" role="tab" data-familia="hidruros" aria-selected="false">
-              <span class="familia-emoji" aria-hidden="true">🜂</span> Hidruros
-            </button>
-          </div>
-        </div>
-
-        <div class="lab-nivel-row">
-          <div class="lab-nivel-chips" role="tablist" aria-label="Nivel de dificultad">
-            <button type="button" class="lab-nivel-chip active" data-nivel="1" aria-selected="true">
-              <span class="nivel-estrella" aria-hidden="true">★</span> Fácil
-            </button>
-            <button type="button" class="lab-nivel-chip" data-nivel="2" aria-selected="false">
-              <span class="nivel-estrella" aria-hidden="true">★★</span> Medio
-            </button>
-            <button type="button" class="lab-nivel-chip" data-nivel="3" aria-selected="false">
-              <span class="nivel-estrella" aria-hidden="true">★★★</span> Avanzado
-            </button>
-          </div>
-          <div class="lab-puntuacion" id="lab-puntuacion" aria-live="polite"></div>
-        </div>
-
-        <!-- Nivel de apoyo del feedback. Tutorial da flecha arriba/abajo cuando
-             los tipos ya cuadran y falta cantidad. Aprendiz distingue "falta
-             algún ingrediente" de "mal proporcion". Experto da feedback
-             austero, sin nombrar lo que tienes. -->
-        <div class="lab-apoyo-row">
-          <span class="lab-apoyo-label">Apoyo</span>
-          <div class="lab-apoyo-chips" role="tablist" aria-label="Nivel de apoyo en el feedback">
-            <button type="button" class="lab-apoyo-chip" role="tab" data-apoyo="tutorial" aria-selected="false">
-              <span class="apoyo-emoji" aria-hidden="true">🎓</span> Tutorial
-            </button>
-            <button type="button" class="lab-apoyo-chip active" role="tab" data-apoyo="aprendiz" aria-selected="true">
-              <span class="apoyo-emoji" aria-hidden="true">🧑‍🔬</span> Aprendiz
-            </button>
-            <button type="button" class="lab-apoyo-chip" role="tab" data-apoyo="experto" aria-selected="false">
-              <span class="apoyo-emoji" aria-hidden="true">🧪</span> Experto
-            </button>
-          </div>
-        </div>
-
         <ol class="lab-retos-lista" id="lab-retos-lista"></ol>
 
         <div class="lab-receta-activa" id="lab-receta-activa" hidden>
@@ -244,9 +250,10 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <script type="text/yaml" id="retos-yaml">
 # ─────────────────────────────────────────────────────────────────────
 # Retos del Lab de química.
-# Cada reto declara su familia: 'oxidos' (metal/no-metal + O²⁻) o
-# 'hidruros' (metal + H⁻). El motor usa ese campo para decidir quien es
-# receptor (O o H) y que elementos valen en la despensa.
+# Cada reto declara su familia: 'oxidos' (metal/no-metal + O²⁻), 'hidruros'
+# (metal + H⁻), 'hidracidos' (H⁺ + no-metal del grupo 16/17) o 'sales'
+# (metal + no-metal del grupo 16/17). El motor usa ese campo para decidir
+# quien es receptor y que elementos valen en la despensa.
 # Prompt para generar nuevos retos con un LLM:
 #   "Dame N compuestos para formular, con nombre tradicional en español,
 #    familia (oxidos|hidruros), fórmula, dificultad 1-3 y una pista
@@ -359,6 +366,103 @@ retos:
     familia: hidruros
     formula: NiH2
     dificultad: 3
+
+  # ── HIDRÁCIDOS ────────────────────────────────────────────────────────
+  # H actúa como catión H⁺ (donante +1). Los aniones son no-metales del
+  # grupo 16/17 (F⁻, Cl⁻, Br⁻, I⁻, S²⁻, Se²⁻, Te²⁻). Nomenclatura: "ácido
+  # X-hídrico".
+  - nombre: ácido clorhídrico
+    familia: hidracidos
+    formula: HCl
+    dificultad: 1
+    pista: El hidrógeno es +1 y el cloro aquí es −1. Uno de cada.
+
+  - nombre: ácido fluorhídrico
+    familia: hidracidos
+    formula: HF
+    dificultad: 1
+
+  - nombre: ácido bromhídrico
+    familia: hidracidos
+    formula: HBr
+    dificultad: 2
+
+  - nombre: ácido yodhídrico
+    familia: hidracidos
+    formula: HI
+    dificultad: 2
+
+  - nombre: ácido sulfhídrico
+    familia: hidracidos
+    formula: H2S
+    dificultad: 2
+    pista: El azufre pide dos hidrógenos (−2 frente a +1).
+
+  - nombre: ácido selenhídrico
+    familia: hidracidos
+    formula: H2Se
+    dificultad: 3
+
+  - nombre: ácido telurhídrico
+    familia: hidracidos
+    formula: H2Te
+    dificultad: 3
+
+  # ── SALES BINARIAS ────────────────────────────────────────────────────
+  # Metal + no-metal (sin H ni O). Receptores: F⁻, Cl⁻, Br⁻, I⁻ (grupo 17,
+  # val −1) y S²⁻, Se²⁻, Te²⁻ (grupo 16, val −2). Nomenclatura: "X-uro
+  # de Y".
+  - nombre: cloruro de sodio
+    familia: sales
+    formula: NaCl
+    dificultad: 1
+    pista: Sodio +1 y cloro −1. Uno de cada.
+
+  - nombre: cloruro de potasio
+    familia: sales
+    formula: KCl
+    dificultad: 1
+
+  - nombre: cloruro de calcio
+    familia: sales
+    formula: CaCl2
+    dificultad: 1
+    pista: El calcio es +2 y necesita dos cloros para compensarlo.
+
+  - nombre: bromuro de magnesio
+    familia: sales
+    formula: MgBr2
+    dificultad: 2
+
+  - nombre: fluoruro de aluminio
+    familia: sales
+    formula: AlF3
+    dificultad: 2
+    pista: Aluminio +3 pide tres fluoruros.
+
+  - nombre: sulfuro de sodio
+    familia: sales
+    formula: Na2S
+    dificultad: 2
+    pista: El azufre es −2 y pide dos sodios (+1).
+
+  - nombre: cloruro de hierro(II)
+    familia: sales
+    formula: FeCl2
+    dificultad: 3
+    pista: El hierro aquí usa su valencia +2, no +3.
+
+  - nombre: cloruro de hierro(III)
+    familia: sales
+    formula: FeCl3
+    dificultad: 3
+    pista: El hierro aquí usa su valencia +3, no +2.
+
+  - nombre: sulfuro de aluminio
+    familia: sales
+    formula: Al2S3
+    dificultad: 3
+    pista: Aluminio +3 y azufre −2. MCM(3,2) = 6.
 </script>
 
 <!-- js-yaml para parsear el dataset embebido. Mismo CDN que la tabla periodica. -->
@@ -436,21 +540,62 @@ let familiaSeleccionada = (function() {
   catch (e) { return 'oxidos'; }
 })();
 
-// Especificacion por familia: anion (receptor), su simbolo y su valencia
-// como receptor, y la frase corta para los copy adaptativos.
+// Especificacion por familia. Dos tipos:
+//  - Anion FIJO (oxidos, hidruros): el receptor es siempre el mismo
+//    elemento (O o H), con valencia conocida.
+//  - Anion VARIABLE (hidracidos, sales): el receptor cambia por reto. En
+//    hidracidos el H es el DONANTE (cation fijo +1), el receptor es un
+//    no-metal del grupo 16/17. En sales no hay cation fijo: metal donante,
+//    no-metal receptor, ambos variables.
 const SPEC_FAMILIA = {
-  oxidos:   { anionNum: 8, anionSym: 'O', anionVal: -2,
-              anionNombre: 'oxígeno',
-              hint: 'no forman óxidos en ESO',
-              hintBreve: 'no forma óxidos en formulación básica' },
-  hidruros: { anionNum: 1, anionSym: 'H', anionVal: -1,
-              anionNombre: 'hidrógeno',
-              hint: 'no forman hidruros metálicos en ESO',
-              hintBreve: 'no forma hidruros metálicos en formulación básica' },
+  oxidos:     { anionNum: 8, anionSym: 'O', anionVal: -2,
+                anionNombre: 'oxígeno',
+                hint: 'no forman óxidos en ESO',
+                hintBreve: 'no forma óxidos en formulación básica' },
+  hidruros:   { anionNum: 1, anionSym: 'H', anionVal: -1,
+                anionNombre: 'hidrógeno',
+                hint: 'no forman hidruros metálicos en ESO',
+                hintBreve: 'no forma hidruros metálicos en formulación básica' },
+  hidracidos: { anionVariable: true,
+                cationNum: 1, cationSym: 'H', cationVal: 1,
+                anionNombre: 'no-metal',
+                hint: 'no forman hidrácidos en ESO',
+                hintBreve: 'no forma hidrácidos en formulación básica' },
+  sales:      { anionVariable: true,
+                anionNombre: 'no-metal',
+                hint: 'no forman sales binarias en ESO',
+                hintBreve: 'no forma sales binarias en formulación básica' },
 };
-// CATS_METAL, EXCLUIDOS_HIDRURO y formaHidruroMetalico() vienen de
-// qui-datos.js (los mismos que usa Formulación). Ahi se filtran Sn/Pb y se
-// cap a +3, criterio acordado para hidruros metalicos en ESO/bach.
+// Helpers y constantes compartidas con Formulacion vienen de qui-datos.js:
+// CATS_METAL, EXCLUIDOS_HIDRURO, formaHidruroMetalico (hidruros con cap +3),
+// SAL_ANIONES, SAL_ANIONES_NUM, formaHidracido, formaSalBinariaMetal,
+// formaSalBinariaAnion. Reutilizarlos mantiene el lab y Formulacion
+// alineados sin duplicar criterios.
+
+// Receptor efectivo del reto: para familias con anion fijo devuelve el que
+// esta en SPEC_FAMILIA. Para hidracidos/sales infiere del YAML el no-metal
+// (F,Cl,Br,I con val -1; S,Se,Te con val -2). Null si no hay forma de
+// determinarlo (sin reto activo en familia variable).
+function receptorDeReto(reto) {
+  const fam = (reto && reto.familia) || familiaActual();
+  const spec = SPEC_FAMILIA[fam] || SPEC_FAMILIA.oxidos;
+  if (!spec.anionVariable) {
+    return { num: spec.anionNum, sym: spec.anionSym, val: spec.anionVal,
+             nombre: spec.anionNombre };
+  }
+  if (!reto) return null;
+  const cuenta = cuentaDeFormula(reto.formula);
+  for (const sym of (typeof SAL_ANIONES !== 'undefined' ? SAL_ANIONES : [])) {
+    if (cuenta[sym]) {
+      const num = SAL_ANIONES_NUM[sym];
+      // F,Cl,Br,I son grupo 17 (val -1). S,Se,Te son grupo 16 (val -2).
+      const val = (sym === 'S' || sym === 'Se' || sym === 'Te') ? -2 : -1;
+      const nombre = elMap[num] ? elMap[num][2].toLowerCase() : sym;
+      return { num, sym, val, nombre };
+    }
+  }
+  return null;
+}
 
 let retoActivo = null;                // objeto reto en curso
 let atomosEnMesa = [];                // [{id, num, donado, captado, enlaces}]
@@ -498,16 +643,32 @@ const ROWS = 10, COLS = 18;
 const ptable = document.getElementById('lab-table');
 ptable.style.gridTemplateRows = `repeat(${ROWS}, 1fr)`;
 
-// Que elementos puede picar el alumno en la despensa. Depende de la familia
-// activa: en oxidos vale cualquier donante con estado positivo + el O. En
-// hidruros metalicos reusamos formaHidruroMetalico() de qui-datos.js (solo
-// metales + estado <= +3 + sin Sn/Pb) para quedar alineado con Formulación.
+// Que elementos puede picar el alumno en la despensa. Depende de la
+// familia activa; reusamos los helpers de qui-datos.js (los mismos que usa
+// Formulacion) para que ambas vistas tengan el mismo criterio.
 function esIngredienteValido(num) {
-  const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
-  if (num === spec.anionNum) return true;         // H o O siempre validos
-  if (familiaActual() === 'hidruros') {
+  const fam = familiaActual();
+  const spec = SPEC_FAMILIA[fam] || SPEC_FAMILIA.oxidos;
+  // Cation fijo (hidrácidos: H siempre válido)
+  if (spec.cationNum && num === spec.cationNum) return true;
+  // Anion fijo (óxidos: O; hidruros: H)
+  if (!spec.anionVariable && num === spec.anionNum) return true;
+
+  if (fam === 'hidruros') {
     return typeof formaHidruroMetalico === 'function' && formaHidruroMetalico(num);
   }
+  if (fam === 'hidracidos') {
+    return typeof formaHidracido === 'function' && formaHidracido(num);
+  }
+  if (fam === 'sales') {
+    if (typeof formaSalBinariaMetal === 'function' && formaSalBinariaMetal(num)) return true;
+    const sym = elMap[num] && elMap[num][1];
+    if (sym && typeof SAL_ANIONES_NUM !== 'undefined' && SAL_ANIONES_NUM[sym] === num) {
+      return typeof formaSalBinariaAnion === 'function' && formaSalBinariaAnion(sym);
+    }
+    return false;
+  }
+  // Óxidos: cualquier donante con estado positivo.
   const estados = OXID[num];
   if (!estados || !estados.length) return false;  // gases nobles, sinteticos
   return estados.some(e => e > 0);
@@ -669,14 +830,23 @@ document.getElementById('lab-reiniciar').addEventListener('click', reiniciarEnla
 // el primer estado positivo como "defecto".
 function valenciaDeAtomo(num) {
   const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
-  if (num === spec.anionNum) return spec.anionVal;      // receptor fijo (O=-2, H=-1)
+  // Cation fijo (hidrácidos: H = +1)
+  if (spec.cationNum && num === spec.cationNum) return spec.cationVal;
+  // Anion fijo (óxidos: O = -2; hidruros: H = -1)
+  if (!spec.anionVariable && num === spec.anionNum) return spec.anionVal;
+
   const sym = elMap[num][1];
   if (modoActivo === 'recetario' && retoActivo) {
     const cuenta = cuentaDeFormula(retoActivo.formula);
     const subE = cuenta[sym] || 0;
-    const subA = cuenta[spec.anionSym] || 0;
-    // Carga del donante = (|val receptor| * subindice receptor) / subindice donante.
-    if (subE > 0 && subA > 0) return (Math.abs(spec.anionVal) * subA) / subE;
+    const receptor = receptorDeReto(retoActivo);
+    if (receptor) {
+      // Si yo soy el receptor en el reto activo, devuelvo su valencia.
+      if (num === receptor.num) return receptor.val;
+      // Si soy el donante: val_donante = |val_receptor| * subA / subD.
+      const subA = cuenta[receptor.sym] || 0;
+      if (subE > 0 && subA > 0) return (Math.abs(receptor.val) * subA) / subE;
+    }
   }
   const estados = OXID[num] || [];
   const pos = estados.find(e => e > 0);
@@ -686,7 +856,15 @@ function valenciaDeAtomo(num) {
 }
 function rolDeAtomo(num) {
   const spec = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
-  if (num === spec.anionNum) return 'receptor';
+  // Cation fijo (hidrácidos: H donante)
+  if (spec.cationNum && num === spec.cationNum) return 'donante';
+  // Anion fijo (óxidos: O; hidruros: H)
+  if (!spec.anionVariable && num === spec.anionNum) return 'receptor';
+  // Anion variable (hidrácidos/sales): cualquier SAL_ANIONES es receptor.
+  if (spec.anionVariable && typeof SAL_ANIONES_NUM !== 'undefined') {
+    const sym = elMap[num] && elMap[num][1];
+    if (sym && SAL_ANIONES_NUM[sym] === num) return 'receptor';
+  }
   const estados = OXID[num] || [];
   return estados.some(e => e > 0) ? 'donante' : 'receptor';
 }
@@ -1479,8 +1657,14 @@ function pintarFeedbackReceta() {
   }
   if (!todosLlenos()) {
     fb.className = 'lab-receta-feedback estado-match';
-    const specEnlace = SPEC_FAMILIA[familiaActual()] || SPEC_FAMILIA.oxidos;
-    fb.innerHTML = `<span aria-hidden="true">✅</span> Montado. Ahora conecta los enlaces: pulsa un metal y luego un ${specEnlace.anionNombre}.`;
+    const famFb = familiaActual();
+    const specEnlace = SPEC_FAMILIA[famFb] || SPEC_FAMILIA.oxidos;
+    // En hidrácidos el donante es el H (no un metal). El receptor en
+    // familias variables se nombra con el elemento concreto del reto.
+    const donanteTxt = famFb === 'hidracidos' ? 'hidrógeno' : 'metal';
+    const recept = receptorDeReto(retoActivo);
+    const anionTxt = (recept && recept.nombre) || specEnlace.anionNombre;
+    fb.innerHTML = `<span aria-hidden="true">✅</span> Montado. Ahora conecta los enlaces: pulsa un ${donanteTxt} y luego un ${anionTxt}.`;
     return;
   }
   // Preparado: proporciones + enlaces completos. (Evitamos "cocinado" por la

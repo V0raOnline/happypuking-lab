@@ -2249,12 +2249,46 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
 .lab-grid {
   display: grid;
   grid-template-areas:
-    "despensa despensa"
-    "mesa     panel";
+    "controles controles"
+    "despensa  despensa"
+    "mesa      panel";
   grid-template-columns: 1fr 340px;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   gap: 1rem;
   min-height: 60vh;
+}
+.lab-controles { grid-area: controles; }
+
+/* Barra de controles arriba: Familia + Nivel + Apoyo. Comparte la carcasa
+   de las otras zonas (surface + border + radius). Por defecto apila las
+   tres filas; a partir de ~1200px las pone en una sola linea. */
+.lab-controles {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.lab-controles .lab-familia-row,
+.lab-controles .lab-nivel-row,
+.lab-controles .lab-apoyo-row {
+  margin-bottom: 0;
+}
+@media (min-width: 1200px) {
+  .lab-controles {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    align-items: center;
+  }
+  .lab-controles .lab-familia-row,
+  .lab-controles .lab-nivel-row,
+  .lab-controles .lab-apoyo-row {
+    flex: 1 1 300px;
+    min-width: 0;
+  }
 }
 .lab-despensa { grid-area: despensa; }
 .lab-mesa     { grid-area: mesa; }
@@ -3381,6 +3415,7 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   .lab-wrap { padding: 0.5rem 1rem 1.5rem; }
   .lab-grid {
     grid-template-areas:
+      "controles"
       "despensa"
       "mesa"
       "panel";

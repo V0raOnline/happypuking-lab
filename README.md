@@ -123,8 +123,9 @@ una tira paso a paso de cómo cuadran las valencias.
 
 El **Lab** cierra el ciclo. Es un laboratorio manipulable: eliges ingredientes
 en la despensa, los llevas a la mesa, mueves electrones por paquetes y formas
-enlaces. En esta primera versión solo tenemos óxidos; la mecánica es la que
-irá heredando el resto de familias.
+enlaces. Cubre las cuatro familias binarias (óxidos, hidruros metálicos,
+hidrácidos y sales), con nivel de dificultad y de apoyo seleccionables para
+que el feedback acompañe sin resolver.
 
 ### 🔢 Matemáticas — la tabla pitagórica no es una lista
 
