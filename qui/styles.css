@@ -3273,6 +3273,24 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   text-align: center;
   font-size: 0.82rem;
 }
+/* Debrief del reto: una linea que convierte el gesto en principio.
+   Separada del mensaje de preparado por un borde discreto, con tono mas
+   serio que el "¡Preparado!" (que se celebra) para que lea como
+   explicacion y no como colofón. */
+.lab-reto-debrief {
+  margin-top: 0.65rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed color-mix(in srgb, var(--text) 20%, transparent);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: left;
+}
+.lab-reto-debrief strong {
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
 @keyframes cocinado-pop {
   0%   { transform: scale(0.9); opacity: 0; }
   60%  { transform: scale(1.03); opacity: 1; }
