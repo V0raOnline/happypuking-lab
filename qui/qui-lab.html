@@ -74,6 +74,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <div class="lab-intro" data-plegable>
     <p>Un laboratorio manipulable. En la <strong>despensa</strong> (arriba) están los elementos: pícalos y aterrizan en la <strong>mesa</strong>. El <strong>recetario</strong> (a la derecha) te propone compuestos para montar; el <strong>sandbox</strong> te deja construir libre.</p>
     <p>Elige familia en el panel: <strong>óxidos</strong>, <strong>hidruros metálicos</strong>, <strong>hidrácidos</strong> o <strong>sales binarias</strong>. El sandbox sigue limitado a óxidos; se irá ampliando por tandas.</p>
+    <p><strong>Un aviso sobre el modelo.</strong> Esta vista trata todos los enlaces como <em>transferencia completa</em> de electrones. En muchos compuestos reales — Cl₂O₇, CO₂, HCl — hay en realidad <em>compartición parcial</em> (covalencia). La fórmula cuadra igual, pero el mecanismo físico no es el mismo. Útil para formular en ESO; en Bachillerato lo verás con más detalle.</p>
   </div>
 
   <div class="lab-grid">
@@ -1015,13 +1016,16 @@ function marcarEstupefacto(id) {
 function chipDeAtomo(a) {
   const { rol, resto, val, movido } = cuposDeAtomo(a);
   if (resto <= 0) return { tipo: 'lleno', texto: '✓ enlazado' };
+  // Chip del atomo: "N e⁻ excedente(s)" o "N hueco(s)". Antes decia
+  // "sobran/faltan N e⁻", que antropomorfiza al atomo como si le faltara
+  // algo. El dato es el mismo; el tono, no.
   const plural = resto > 1;
   if (rol === 'donante') {
-    const v = plural ? 'sobran' : 'sobra';
-    return { tipo: 'sobra', texto: `${v} ${resto} e⁻` };
+    const palabra = plural ? 'excedentes' : 'excedente';
+    return { tipo: 'sobra', texto: `${resto} e⁻ ${palabra}` };
   }
-  const v = plural ? 'faltan' : 'falta';
-  return { tipo: 'falta', texto: `${v} ${resto} e⁻` };
+  const palabra = plural ? 'huecos' : 'hueco';
+  return { tipo: 'falta', texto: `${resto} ${palabra}` };
 }
 
 // ── Dibujo de un atomo-ficha en la mesa ──────────────────────────────────

@@ -75,6 +75,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <div class="formu-intro" data-plegable>
     <p id="formu-intro-p1"></p>
     <p>Los elementos atenuados no forman esta familia. ¿Tu libro usa estados distintos? En la <a href="./qui-tabla-periodica.html">tabla periódica</a> puedes cambiarlos con <strong>Editar oxidación</strong> — esta vista respeta ese dataset.</p>
+    <p><strong>Nota sobre el mecanismo.</strong> Los pasos modelan los enlaces como <em>transferencia</em> (metal cede, no-metal capta). En muchos compuestos reales — los covalentes — los átomos <em>comparten</em> en lugar de ceder. La fórmula sale igual; el mecanismo físico, no. En Bachillerato lo verás con más detalle.</p>
   </div>
 
   <div class="formu-familia">
@@ -264,7 +265,7 @@ const FAMILIAS = {
       if (num >= 104) return 'Los sintéticos no tienen estados de oxidación curados aquí.';
       return 'No tiene estados de oxidación positivos en el dataset activo.';
     },
-    narraPaso2: () => 'Al <strong>O</strong> le <strong>faltan 2 electrones</strong> para completar su &uacute;ltima capa. Todos los &aacute;tomos buscan lo mismo: dejar llena la &uacute;ltima capa (<em>regla del octeto</em>).',
+    narraPaso2: () => 'El <strong>O</strong> tiene <strong>2 huecos</strong> en su &uacute;ltima capa. La configuraci&oacute;n m&aacute;s estable completa esos huecos (<em>regla del octeto</em>).',
   },
   hidruros: {
     nombreCompuesto: 'hidruro',
@@ -294,7 +295,7 @@ const FAMILIAS = {
       if (num >= 104) return 'Los sintéticos no tienen estados de oxidación curados aquí.';
       return 'No tiene estados de oxidación positivos en el dataset activo (como mucho estados > +3, que no forman hidruro iónico).';
     },
-    narraPaso2: () => 'Al <strong>H</strong> le <strong>falta 1 electr&oacute;n</strong> para completar su &uacute;nica capa (K llena = 2). Todos los &aacute;tomos buscan lo mismo: dejar llena la &uacute;ltima capa.',
+    narraPaso2: () => 'El <strong>H</strong> tiene <strong>1 hueco</strong> en su &uacute;nica capa (K llena = 2). La configuraci&oacute;n m&aacute;s estable completa ese hueco.',
   },
   hidracidos: {
     // Hidracido: H + no-metal (grupos 16 y 17). AQUI SE INVIERTEN LOS ROLES:
@@ -332,7 +333,7 @@ const FAMILIAS = {
     },
     // En hidracidos el paso 2 habla del H que CEDE (el que se va a soltar
     // como H+ en agua). El resaltado va sobre su unico electron.
-    narraPaso2: () => 'El <strong>H</strong> es menos electronegativo que el no-metal: le <strong>sobra 1 electrón</strong> en su capa K. Lo cede y queda como <strong>H⁺</strong> (en agua se separa y por eso el compuesto es ácido).',
+    narraPaso2: () => 'El <strong>H</strong> es menos electronegativo que el no-metal: tiene <strong>1 electrón excedente</strong> en su capa K. Lo cede y queda como <strong>H⁺</strong> (en agua se separa y por eso el compuesto es ácido).',
   },
 };
 
@@ -357,8 +358,7 @@ function construyeFamiliaSales(anionSym) {
   const anionCarga = anionGrupo === 17 ? -1 : -2;
   const anionShells = EXTRA[anionNum][0];
   const faltanN = Math.abs(anionCarga);
-  const faltaV = faltanN > 1 ? 'faltan' : 'falta';
-  const eN = faltanN > 1 ? `${faltanN} electrones` : '1 electr&oacute;n';
+  const huecosFrase = faltanN > 1 ? `${faltanN} huecos` : '1 hueco';
   // Nombre del "uro" (cloruro, sulfuro) para los copies de ayuda.
   const raiz = RAIZ_HIDRACIDO[anionSym];
   const uroPlural = raiz ? raiz.uro + 's' : (anionNombre + 's');
@@ -391,7 +391,7 @@ function construyeFamiliaSales(anionSym) {
       if (num >= 104) return 'Los sintéticos no tienen estados de oxidación curados aquí.';
       return 'No tiene estados de oxidación positivos en el dataset activo.';
     },
-    narraPaso2: () => `Al <strong>${anionSym}</strong> le <strong>${faltaV} ${eN}</strong> para completar su &uacute;ltima capa. Es menos abundante que el oxígeno en los libros, pero el mecanismo es el mismo (<em>regla del octeto</em>).`,
+    narraPaso2: () => `El <strong>${anionSym}</strong> tiene <strong>${huecosFrase}</strong> en su &uacute;ltima capa. Es menos abundante que el oxígeno en los libros, pero el mecanismo es el mismo (<em>regla del octeto</em>).`,
   };
 }
 
@@ -620,19 +620,23 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
   const anSym = fam.anionSym;
   const elementoCede = fam.elementoCede !== false;
 
-  // Concordancia singular/plural para que lea natural en castellano.
-  const sobrarV = estadoAbs > 1 ? 'sobran' : 'sobra';
-  const faltarV = estadoAbs > 1 ? 'faltan' : 'falta';
-  const eElementos = estadoAbs > 1 ? `${estadoAbs} electrones` : '1 electr&oacute;n';
+  // Concordancia singular/plural para que lea natural en castellano. Evitamos
+  // "le sobran / le faltan" porque antropomorfizan al atomo (como si quisiera
+  // algo); usamos "tiene N excedentes / N huecos" para describir el estado
+  // sin atribuirle intencion.
+  const electronesExcedentes = estadoAbs > 1
+    ? `${estadoAbs} electrones excedentes`
+    : '1 electr&oacute;n excedente';
+  const huecosElemento = estadoAbs > 1 ? `${estadoAbs} huecos` : '1 hueco';
   const totalElectrones = nTransferidos > 1 ? `${nTransferidos} electrones` : '1 electr&oacute;n';
   const sonTotal = nTransferidos > 1 ? 'son' : 'es';
 
-  // Paso 1: habla del elemento clicado. Si cede (oxidos/hidruros) le sobran
-  // electrones; si capta (hidracidos) le faltan. Singular/plural segun N.
+  // Paso 1: habla del elemento clicado. Si cede (oxidos/hidruros) tiene
+  // excedentes; si capta (hidracidos) tiene huecos. Singular/plural segun N.
   const esElSon = estadoAbs > 1 ? 'son los que' : 'es el que';
   const paso1 = elementoCede
-    ? `${variosEstados ? 'En esta variante, al' : 'Al'} <strong>${sym}</strong> le <strong>${sobrarV} ${eElementos}</strong> en su &uacute;ltima capa — ${esElSon} puede <strong>ceder</strong>.`
-    : `Al <strong>${sym}</strong> le <strong>${faltarV} ${eElementos}</strong> para completar su &uacute;ltima capa — ${esElSon} necesita <strong>captar</strong>.`;
+    ? `${variosEstados ? 'En esta variante, el' : 'El'} <strong>${sym}</strong> tiene <strong>${electronesExcedentes}</strong> en su &uacute;ltima capa — ${esElSon} puede <strong>ceder</strong>.`
+    : `El <strong>${sym}</strong> tiene <strong>${huecosElemento}</strong> en su &uacute;ltima capa — ${esElSon} <strong>capta</strong> hasta completarla.`;
 
   const paso2 = fam.narraPaso2();
 
