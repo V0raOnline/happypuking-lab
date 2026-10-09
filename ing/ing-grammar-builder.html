@@ -663,6 +663,25 @@ button:focus-visible {
 .q-timer.apurado .q-timer-secs { color:var(--rojo-texto); }
 body.en-pausa .q-timer-fill { background: var(--muted2); }
 
+/* Botón reiniciar reloj — discreto, al lado del timer. Vale para los dos
+   modos: en calma resetea "en marcha" a 0; en reloj vuelve a 45s. */
+.btn-reloj-reset {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); background: transparent;
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  border-radius: 100px; padding: 0.3rem 0.75rem;
+  cursor: pointer; transition: all 0.2s; user-select: none; flex: none;
+}
+.btn-reloj-reset:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--cyan) 40%, transparent);
+  background: color-mix(in srgb, var(--cyan) 8%, transparent);
+}
+.btn-reloj-reset:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.btn-reloj-reset-icon { font-size: 0.85rem; line-height: 1; }
+
 .btn-pensar {
   display: none;
   font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800;
@@ -673,6 +692,96 @@ body.en-pausa .q-timer-fill { background: var(--muted2); }
 body.ritmo-reloj .btn-pensar { display: inline-block; }
 .btn-pensar:hover { background: color-mix(in srgb, var(--ambar) 16%, transparent); border-color: color-mix(in srgb, var(--ambar) 60%, transparent); }
 body.en-pausa .btn-pensar { color: var(--sobre-vivo); background: var(--ambar); border-color: var(--ambar); }
+
+/* ── TIEMPOS A REPASAR (plegable) ──────────────────────────────────────────
+   Filtro de tiempos verbales. Fila con el mismo peso visual que .ritmo-bar;
+   plegada deja solo el toggle con el resumen; expandida despliega los 11
+   tiempos agrupados por familia + botón "Activar todos". El último checkbox
+   marcado no se puede desmarcar: el estado 0 no existe para no romper
+   nextChallenge(). */
+.tenses-bar { margin: 0 0 1rem; }
+.tenses-toggle {
+  display: flex; align-items: center; gap: 0.6rem;
+  width: 100%; padding: 0.5rem 0.9rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-left: 3px solid var(--green-lab); border-radius: 10px;
+  color: var(--text); font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem; font-weight: 700; text-align: left;
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.tenses-toggle:hover { background: var(--surface3); }
+.tenses-toggle:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.tenses-label {
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted2); font-weight: 500;
+}
+.tenses-count { flex: 1; color:var(--green-lab-texto); font-size: 0.78rem; }
+.tenses-chevron { color: var(--muted); font-size: 0.8rem; transition: transform 0.2s; }
+.tenses-toggle[aria-expanded="true"] .tenses-chevron { transform: rotate(180deg); }
+
+.tenses-list {
+  margin-top: 0.5rem; padding: 0.9rem 1rem 0.75rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.tenses-groups {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.9rem 1.2rem;
+}
+.tenses-group {
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.tenses-group h4 {
+  margin: 0 0 0.15rem; font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--muted2);
+}
+.tenses-check {
+  display: flex; align-items: center; gap: 0.45rem;
+  padding: 0.3rem 0.1rem; font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem; color: var(--text); cursor: pointer;
+  user-select: none; border-radius: 6px; transition: background 0.15s;
+}
+.tenses-check:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
+.tenses-check input {
+  appearance: none; -webkit-appearance: none;
+  width: 16px; height: 16px; margin: 0; flex: none;
+  border: 1.5px solid color-mix(in srgb, var(--text) 35%, transparent);
+  border-radius: 4px; background: transparent; cursor: pointer;
+  transition: all 0.15s; position: relative;
+}
+.tenses-check input:checked {
+  background: var(--green-lab);
+  border-color: var(--green-lab);
+}
+.tenses-check input:checked::after {
+  content: '✓'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--sobre-vivo, #0b1221); font-size: 0.72rem; font-weight: 900;
+  line-height: 1;
+}
+.tenses-check input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.tenses-check.es-ultimo input {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.tenses-check.es-ultimo { cursor: default; }
+
+.tenses-actions {
+  margin-top: 0.75rem; padding-top: 0.6rem;
+  border-top: 1px dashed color-mix(in srgb, var(--text) 12%, transparent);
+  display: flex; justify-content: flex-end;
+}
+.tenses-all {
+  font-family: 'DM Mono', monospace; font-size: 0.64rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); background: transparent;
+  border: 1px solid var(--border); border-radius: 100px;
+  padding: 0.35rem 0.9rem; cursor: pointer; transition: all 0.2s;
+}
+.tenses-all:hover { color:var(--green-lab-texto); border-color: color-mix(in srgb, var(--green-lab) 40%, transparent); }
+.tenses-all:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
 .workspace { position: relative; }
 .pausa-overlay {
@@ -822,6 +931,37 @@ body.compacto header { padding-bottom: 0.4rem; }
     <div class="q-timer" id="q-timer">
       <div class="q-timer-track"><div class="q-timer-fill" id="q-timer-fill"></div></div>
       <span class="q-timer-secs" id="q-timer-secs">—</span>
+    </div>
+    <!-- REINICIAR RELOJ ─ Resetea el cronómetro del reto en curso (sin
+         cambiar de reto). En calma vuelve el "en marcha" a 0; en reloj
+         vuelve "restante" a 45s. Si estás pausado, el reloj se queda
+         preparado y en pausa — no te despausa por sorpresa. -->
+    <button type="button" class="btn-reloj-reset" id="btn-reloj-reset"
+            onclick="reiniciarReloj()" title="Reiniciar el reloj del reto actual">
+      <span class="btn-reloj-reset-icon" aria-hidden="true">↺</span>
+      <span class="btn-reloj-reset-text">Reiniciar reloj</span>
+    </button>
+  </div>
+
+  <!-- TIEMPOS A REPASAR (plegable) ─────────────────────────────────────────
+       Filtro opcional. Plegado por defecto; expandido muestra los 11 tiempos
+       agrupados en Pasado / Puente / Presente / Futuro / Condicional
+       (lectura temporal: la fila se lee como una línea de tiempo). El estado
+       persiste en localStorage y entra en nextChallenge() como filtro
+       adicional al "no repetir el último". -->
+  <div class="tenses-bar">
+    <button type="button" class="tenses-toggle" id="tenses-toggle"
+            aria-expanded="false" aria-controls="tenses-list"
+            onclick="toggleTensesPanel()">
+      <span class="tenses-label">Tiempos a repasar</span>
+      <span class="tenses-count" id="tenses-count">todos (11)</span>
+      <span class="tenses-chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="tenses-list" id="tenses-list" hidden>
+      <div class="tenses-groups" id="tenses-groups"></div>
+      <div class="tenses-actions">
+        <button type="button" class="tenses-all" onclick="activarTodosTiempos()">Activar todos</button>
+      </div>
     </div>
   </div>
 
@@ -1120,6 +1260,8 @@ let lastPersonId  = null;
 function init() {
   buildTrays();
   setupDropZone();
+  renderTensesList();
+  updateTensesCount();
   nextChallenge();
 }
 
@@ -1185,6 +1327,16 @@ function tiempoAgotado() {
   document.getElementById('assembly-track').classList.add('incorrect');
 }
 
+// Reinicia el cronómetro del reto en curso sin cambiar de reto. Si está
+// pausado preserva la pausa (reconstruye el interval pero el callback
+// detecta qPausado y no decrementa). Tras un tiempoAgotado también limpia
+// el estado visual rojo del assembly-track.
+function reiniciarReloj() {
+  qElapsed = 0;
+  startTimer();              // resetea qLeft a SEGUNDOS_RETO en modo reloj
+  document.getElementById('assembly-track').classList.remove('incorrect');
+}
+
 function marcaAcierto() { qSeguidos = 0; }
 function marcaFallo() {
   qSeguidos++;
@@ -1242,9 +1394,127 @@ function pintaRitmo() {
   ritmoReloj = g === 'reloj';
 })();
 
+// ── TIEMPOS A REPASAR (filtro de usuario) ─────────────────────────────────
+// Set<id> de tiempos activos. Default: todos. Persistido en localStorage.
+// Mínimo 1 marcado siempre: el estado 0 no existe para no romper
+// nextChallenge. Si el usuario intenta desmarcar el último, el checkbox
+// se queda marcado. La agrupación por familia es solo UI; para el motor
+// es un filtro adicional al "no repetir el último" en el pool.
+const TENSES_KEY = 'hpk-grammar-tiempos';
+// Agrupación TEMPORAL (no morfológica): la fila se lee como una línea de
+// tiempo de izquierda a derecha. Pasado (de lo más lejano a lo más próximo),
+// Puente (eco del pasado en el presente), Presente, Futuro, Condicional
+// (fuera del eje real, hipotético). Respeta los `tag` del propio array
+// TENSES, que ya clasificaban cada tiempo en una de estas 5 categorías.
+const TENSE_GROUPS = [
+  { label: 'Pasado',      ids: ['past-perfect', 'past-perfect-continuous', 'past-simple', 'past-continuous'] },
+  { label: 'Puente',      ids: ['present-perfect', 'present-perfect-continuous'] },
+  { label: 'Presente',    ids: ['present-simple', 'present-continuous'] },
+  { label: 'Futuro',      ids: ['future-going-to', 'future-will'] },
+  { label: 'Condicional', ids: ['second-conditional'] },
+];
+let tensesActivos = new Set();
+
+function loadTensesActivos() {
+  const allIds = new Set(TENSES.map(t => t.id));
+  try {
+    const raw = localStorage.getItem(TENSES_KEY);
+    if (raw) {
+      const stored = JSON.parse(raw);
+      if (Array.isArray(stored)) {
+        const valid = stored.filter(id => allIds.has(id));
+        if (valid.length > 0) { tensesActivos = new Set(valid); return; }
+      }
+    }
+  } catch (e) {}
+  tensesActivos = new Set(allIds);
+}
+
+function saveTensesActivos() {
+  try { localStorage.setItem(TENSES_KEY, JSON.stringify([...tensesActivos])); } catch (e) {}
+}
+
+function updateTensesCount() {
+  const el = document.getElementById('tenses-count');
+  if (!el) return;
+  const total = TENSES.length;
+  const n = tensesActivos.size;
+  el.textContent = n === total ? `todos (${total})` : `${n} de ${total}`;
+}
+
+function marcarUltimo() {
+  const checks = document.querySelectorAll('.tenses-check');
+  checks.forEach(label => {
+    const input = label.querySelector('input');
+    if (!input) return;
+    const isLast = tensesActivos.size === 1 && input.checked;
+    label.classList.toggle('es-ultimo', isLast);
+    input.setAttribute('aria-disabled', isLast ? 'true' : 'false');
+  });
+}
+
+function toggleTense(id, checked) {
+  if (checked) {
+    tensesActivos.add(id);
+  } else {
+    if (tensesActivos.size === 1) {
+      const input = document.querySelector(`.tenses-check input[data-tense="${id}"]`);
+      if (input) input.checked = true;
+      return;
+    }
+    tensesActivos.delete(id);
+  }
+  saveTensesActivos();
+  updateTensesCount();
+  marcarUltimo();
+}
+
+function activarTodosTiempos() {
+  tensesActivos = new Set(TENSES.map(t => t.id));
+  saveTensesActivos();
+  updateTensesCount();
+  renderTensesList();
+}
+
+function renderTensesList() {
+  const groups = document.getElementById('tenses-groups');
+  if (!groups) return;
+  const tenseById = Object.fromEntries(TENSES.map(t => [t.id, t]));
+  groups.innerHTML = TENSE_GROUPS.map(g => `
+    <div class="tenses-group">
+      <h4>${g.label}</h4>
+      ${g.ids.map(id => {
+        const t = tenseById[id];
+        if (!t) return '';
+        const checked = tensesActivos.has(id) ? 'checked' : '';
+        return `<label class="tenses-check">
+          <input type="checkbox" data-tense="${id}" ${checked} onchange="toggleTense('${id}', this.checked)">
+          <span>${t.name}</span>
+        </label>`;
+      }).join('')}
+    </div>
+  `).join('');
+  marcarUltimo();
+}
+
+function toggleTensesPanel() {
+  const toggle = document.getElementById('tenses-toggle');
+  const list = document.getElementById('tenses-list');
+  if (!toggle || !list) return;
+  const expanded = toggle.getAttribute('aria-expanded') === 'true';
+  toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  list.hidden = expanded;
+}
+
+loadTensesActivos();
+
 function nextChallenge() {
-  // Pick tense (avoid repeat)
-  let tensePool = TENSES.filter(t => t.id !== lastTenseId);
+  // Pick tense (filtered by user selection, avoid repeat)
+  let tensePool = TENSES.filter(t => tensesActivos.has(t.id) && t.id !== lastTenseId);
+  if (tensePool.length === 0) {
+    // Solo queda 1 tiempo activo; dejamos que se repita.
+    tensePool = TENSES.filter(t => tensesActivos.has(t.id));
+  }
   currentTense = tensePool[Math.floor(Math.random() * tensePool.length)];
   lastTenseId = currentTense.id;
 
