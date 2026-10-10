@@ -539,6 +539,48 @@ body.skin-arcade {
 
 /* Menú de pausa: ingrediente abierto pero sin coleccionar. */
 .mac-side.mac-side-pausa { border: 3px dashed var(--mac-gold); }
+
+/* Ayudita: el azul de Minou marca lo "ayudado" (el color de ninguna
+   familia). El borde discontinuo es la pista que no depende del color:
+   en la celda, en el panel mientras se pide y en la ficha. */
+.mac-side.mac-side-pausa.mac-side-ayuda { border-color: var(--mac-azure); }
+.mac-el.unlocked.ayudado { border: 2px dashed var(--mac-azure); }
+.mac-el.unlocked.ayudado:hover { border-color: var(--mac-gold); }
+.mac-card-ayuda {
+  display: inline-block; margin-top: 0.5rem; padding: 1px 8px;
+  border: 2px dashed var(--mac-azure); color: var(--mac-azure);
+  font-family: 'VT323', monospace; font-size: 1rem; letter-spacing: 0.03em;
+}
+.mac-toast-ayuda { color: var(--mac-azure); }
+
+/* Botón "Reintentar ayuditas" en el HUD de la vitrina. */
+.mac-hud { flex-wrap: wrap; }
+.mac-ayudas { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+.mac-ayudas[hidden] { display: none; }
+.mac-ayudas-txt { font-family: 'VT323', monospace; font-size: 1.05rem; color: var(--mac-ink); }
+.mac-ayudas-btn {
+  font-family: 'VT323', monospace; font-size: 1.05rem; letter-spacing: 0.04em;
+  padding: 2px 10px; cursor: pointer;
+  background: transparent; color: var(--mac-azure);
+  border: 2px dashed var(--mac-azure);
+}
+.mac-ayudas-btn:hover, .mac-ayudas-btn:focus-visible { background: var(--mac-azure); color: var(--mac-bg); outline: none; }
+.mac-ayuda {
+  position: relative; flex: 1; min-width: 0;
+  padding: 0.5rem 0.7rem; text-align: left;
+  background: var(--mac-cell); color: var(--mac-ink);
+  border: 3px solid var(--mac-azure); box-shadow: 3px 3px 0 var(--mac-shadow);
+  font-family: 'VT323', monospace; font-size: 1.1rem; line-height: 1.1;
+  margin-left: 6px;
+}
+.mac-ayuda::before {            /* rabito del bocadillo hacia Minou */
+  content: ''; position: absolute; left: -13px; top: 50%; margin-top: -6px;
+  border: 6px solid transparent; border-right-color: var(--mac-azure);
+}
+button.mac-ayuda { cursor: pointer; }
+button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-azure); color: var(--mac-bg); outline: none; }
+.mac-ayuda-dada { border-style: dashed; font-size: 1rem; }
+.mac-ayuda-dada strong { color: var(--mac-gold); font-weight: normal; }
 .mac-side-pausa .mac-quiz-sym { animation: mac-glow 1.6s steps(2, end) infinite; }
 @keyframes mac-glow { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 10px var(--mac-gold), 0 0 2px var(--mac-gold); } }
 .mac-quiz-pie {
@@ -596,6 +638,7 @@ body.skin-arcade {
 
   <div class="mac-hud">
     <span class="mac-hud-label">VITRINA</span>
+    <div class="mac-ayudas" id="mac-ayudas" hidden></div>
     <span class="mac-hud-score"><em id="mac-contador">0</em>/118</span>
   </div>
 
@@ -746,6 +789,28 @@ function saveColeccion() {
   try { localStorage.setItem(COL_KEY, JSON.stringify([...coleccion])); } catch (e) {}
 }
 
+// Ayudita (solo nivel Pinche): tras AYUDA_TRAS envíos fallidos del mismo
+// ingrediente, Minou ofrece enseñar el nombre. Si se acepta, el ingrediente
+// se colecciona igual pero queda anotado aparte como "ayudado": borde
+// discontinuo y nota en la ficha, para saber qué falta por afianzar. La
+// colección no cambia de formato: esto va en otra clave.
+const AYUDA_TRAS = 3;
+const AYUDA_NIVELES = ['pinche'];
+const AYU_KEY = 'hpk-macarons-ayudados';
+
+let ayudados = (function loadAyudados() {
+  try {
+    const raw = localStorage.getItem(AYU_KEY);
+    if (!raw) return new Set();
+    const nums = JSON.parse(raw);
+    if (!Array.isArray(nums)) return new Set();
+    return new Set(nums.filter(n => Number.isInteger(n) && coleccion.has(n)));
+  } catch (e) { return new Set(); }
+})();
+function saveAyudados() {
+  try { localStorage.setItem(AYU_KEY, JSON.stringify([...ayudados])); } catch (e) {}
+}
+
 let nivelActual = (function loadNivel() {
   try {
     const n = localStorage.getItem(NIV_KEY);
@@ -760,6 +825,8 @@ function saveNivel() {
 let filtro = null;
 let activo = null;
 let recien = null;   // ingrediente recién coleccionado: renderTabla le pone la animación
+const fallos = {};               // nº de ingrediente → envíos fallidos (solo esta visita)
+const ayudaPedida = new Set();   // ingredientes cuya ayudita se ha pedido y aún no se han coleccionado
 
 function catCount(cat) { return ELEMENTS.filter(e => e[4] === cat).length; }
 function catColeccionado(cat) { return ELEMENTS.filter(e => e[4] === cat && coleccion.has(e[0])).length; }
@@ -808,6 +875,47 @@ function renderContador() {
   document.getElementById('mac-contador').textContent = coleccion.size;
 }
 
+// "Reintentar ayuditas": devuelve a «?» los ingredientes coleccionados con
+// ayuda para volver a ganárselos. Baja el contador, así que pide
+// confirmación en línea (con NO como foco, para no tocarlo sin querer).
+let confirmandoAyudas = false;
+function renderAyudas(foco) {
+  const caja = document.getElementById('mac-ayudas');
+  const n = ayudados.size;
+  if (!n) { confirmandoAyudas = false; caja.hidden = true; caja.innerHTML = ''; return; }
+  caja.hidden = false;
+  caja.innerHTML = confirmandoAyudas
+    ? `<span class="mac-ayudas-txt">¿Devolver ${n} ${n === 1 ? 'ingrediente' : 'ingredientes'} a «?» para reintentar${n === 1 ? 'lo' : 'los'}?</span>` +
+      `<button type="button" class="mac-ayudas-btn" id="mac-ayudas-si" onclick="reiniciarAyudas()">SÍ</button>` +
+      `<button type="button" class="mac-ayudas-btn" id="mac-ayudas-no" onclick="cancelarReinicio()">NO</button>`
+    : `<button type="button" class="mac-ayudas-btn" id="mac-ayudas-pedir" onclick="pedirReinicio()">REINTENTAR AYUDITAS (${n})</button>`;
+  if (foco) { const b = document.getElementById(foco); if (b) b.focus(); }
+}
+function pedirReinicio() { confirmandoAyudas = true; renderAyudas('mac-ayudas-no'); }
+function cancelarReinicio() { confirmandoAyudas = false; renderAyudas('mac-ayudas-pedir'); }
+function reiniciarAyudas() {
+  const n = ayudados.size;
+  if (!n) return;
+  ayudados.forEach(num => {
+    coleccion.delete(num);
+    ayudaPedida.delete(num);
+    delete fallos[num];
+  });
+  ayudados.clear();
+  saveColeccion();
+  saveAyudados();
+  confirmandoAyudas = false;
+  renderTabla();
+  renderLeyenda();
+  renderContador();
+  renderAyudas();
+  if (activo !== null) abrirFicha(activo);   // si estaba abierto uno de ellos, vuelve a ser el formulario
+  toastMensaje('AYUDITAS REINICIADAS', `${n} ${n === 1 ? 'ingrediente vuelve' : 'ingredientes vuelven'} a la mesa. ¡A por ${n === 1 ? 'él' : 'ellos'}!`);
+}
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && confirmandoAyudas) cancelarReinicio();
+});
+
 const ROWS = 10;
 const COLS = 18;
 
@@ -846,13 +954,15 @@ function renderTabla() {
     btn.className = 'mac-el' + (collected ? ' unlocked' : '');
     if (filtro && cat !== filtro) btn.classList.add('dimmed');
     if (recien === num) btn.classList.add('recien');
+    const conAyuda = collected && ayudados.has(num);
+    if (conAyuda) btn.classList.add('ayudado');
     btn.style.setProperty('--sabor', SABOR_VAR[cat]);
     btn.dataset.num = num;
     btn.innerHTML = collected
       ? `${macaronImg(cat, 'mac-el-sprite')}<span class="mac-el-num">${num}</span><span class="mac-el-sym">${sym}</span>`
       : `<span class="mac-el-q">?</span>`;
     btn.setAttribute('aria-label', collected
-      ? `${name}, símbolo ${sym}, número ${num}, ${familiaCompleta(cat)}`
+      ? `${name}, símbolo ${sym}, número ${num}, ${familiaCompleta(cat)}${conAyuda ? ', coleccionado con ayuda' : ''}`
       : `Ingrediente número ${num} sin coleccionar`);
     btn.onclick = () => abrirFicha(num);
   });
@@ -865,6 +975,8 @@ function abrirFicha(num) {
   const side = document.getElementById('mac-side');
   // Sin coleccionar = "menú de pausa": borde discontinuo grueso.
   side.classList.toggle('mac-side-pausa', !coleccion.has(num));
+  // Con la ayudita pedida, el borde cambia de color (sigue discontinuo).
+  side.classList.toggle('mac-side-ayuda', ayudaPedida.has(num) && !coleccion.has(num));
 
   if (coleccion.has(num)) {
     side.innerHTML = `
@@ -875,6 +987,7 @@ function abrirFicha(num) {
           <span class="mac-card-sym">${sym}</span>
           <div class="mac-card-name">${name}</div>
           <div class="mac-card-fam">${familiaCompleta(cat)}</div>
+          ${ayudados.has(num) ? '<div class="mac-card-ayuda">Coleccionado con ayudita</div>' : ''}
         </div>
         <div class="mac-card-stats">
           <div class="mac-card-stat"><span class="lbl">MASA</span><span class="val">${mass}</span></div>
@@ -903,7 +1016,7 @@ function abrirFicha(num) {
     <button class="mac-quiz-submit" onclick="comprobar(${n})">COMPROBAR</button>
     <div id="mc-fb"></div>
     <p class="mac-quiz-pie">Pulsa COMPROBAR para desbloquear</p>
-    <div id="mc-foot" class="mac-minou-foot"></div>
+    <div id="mc-foot" class="mac-minou-foot" aria-live="polite"></div>
   `;
   minouReposo();
   const first = side.querySelector('input');
@@ -915,6 +1028,8 @@ function comprobar(num) {
   const nivel = NIVELES.find(x => x.key === nivelActual);
   const fb = document.getElementById('mc-fb');
   let ok = true;
+  // Un envío con todos los campos vacíos no cuenta como intento.
+  const intentado = nivel.fields.some(f => document.getElementById(`mc-${f}`).value.trim() !== '');
 
   nivel.fields.forEach(f => {
     const input = document.getElementById(`mc-${f}`);
@@ -926,18 +1041,24 @@ function comprobar(num) {
   });
 
   if (ok) {
+    const conAyuda = ayudaPedida.has(num);
     coleccion.add(num);
     saveColeccion();
-    fb.innerHTML = '<div class="mac-quiz-feedback ok">¡COLECCIONADO! +1 ingrediente a la vitrina.</div>';
+    if (conAyuda) { ayudados.add(num); saveAyudados(); }
+    ayudaPedida.delete(num);
+    delete fallos[num];
+    fb.innerHTML = `<div class="mac-quiz-feedback ok">¡COLECCIONADO${conAyuda ? ' CON AYUDITA' : ''}! +1 ingrediente a la vitrina.</div>`;
     recien = num;
     renderTabla();
     recien = null;
     renderLeyenda();
     renderContador();
+    renderAyudas();
     pulsarContador();
-    toastIngrediente(num);
+    toastIngrediente(num, conAyuda);
     setTimeout(() => { if (activo === num) abrirFicha(num); }, 650);
   } else {
+    if (intentado) fallos[num] = (fallos[num] || 0) + 1;
     fb.innerHTML = '<div class="mac-quiz-feedback error">Algo no cuadra · revisa los campos marcados.</div>';
     minouFoot('fallo', 'Oh là là!', 1500);
   }
@@ -981,7 +1102,31 @@ let minouFootTimer = null;
 function minouReposo() {
   clearTimeout(minouFootTimer);
   const slot = document.getElementById('mc-foot');
-  if (slot) slot.innerHTML = minouHTML('pensando', 'm96');
+  if (slot) slot.innerHTML = minouHTML('pensando', 'm96') + (activo !== null ? ayudaHTML(activo) : '');
+}
+
+// Bocadillo de la ayudita: la oferta (tras AYUDA_TRAS fallos en Pinche) o,
+// ya pedida, el nombre del ingrediente. Vacío si no toca.
+function ayudaDisponible(num) {
+  return AYUDA_NIVELES.includes(nivelActual) && (fallos[num] || 0) >= AYUDA_TRAS && !coleccion.has(num);
+}
+function ayudaHTML(num) {
+  if (ayudaPedida.has(num)) {
+    const name = ELEMENTS.find(e => e[0] === num)[2];
+    return `<div class="mac-ayuda mac-ayuda-dada">Este es <strong>${name}</strong>. Venga. Escríbelo tú... pero cuenta como ayudita.</div>`;
+  }
+  if (ayudaDisponible(num)) {
+    return `<button type="button" class="mac-ayuda" onclick="pedirAyuda(${num})">¿Necesitas una ayudita?</button>`;
+  }
+  return '';
+}
+function pedirAyuda(num) {
+  if (!ayudaDisponible(num)) return;
+  ayudaPedida.add(num);
+  document.getElementById('mac-side').classList.add('mac-side-ayuda');
+  minouReposo();
+  const first = document.querySelector('#mac-side .mac-quiz-field input');
+  if (first) { first.focus(); first.select(); }   // lo que escribas sustituye al intento fallido
 }
 function minouFoot(v, frase, ms) {
   const slot = document.getElementById('mc-foot');
@@ -993,7 +1138,7 @@ function minouFoot(v, frase, ms) {
 
 // Toast "+1 INGREDIENTE" arriba a la derecha, con Minou feliz. Se
 // retira solo; role=status para lectores de pantalla.
-function toastIngrediente(num) {
+function toastIngrediente(num, conAyuda) {
   const el = ELEMENTS.find(e => e[0] === num);
   const [, sym, name, , cat] = el;
   const caja = document.getElementById('mac-toasts');
@@ -1004,10 +1149,24 @@ function toastIngrediente(num) {
   t.innerHTML = minouHTML('feliz', '') +
     `<div><div class="mac-toast-tit">+1 INGREDIENTE</div>` +
     `<div class="mac-toast-sub">${name} (${sym}) · ${SABORES[cat]}</div>` +
+    (conAyuda ? `<div class="mac-toast-sub mac-toast-ayuda">con ayudita</div>` : '') +
     `<div class="mac-toast-sub mac-toast-fr">C'est magnifique!</div></div>` +
     macaronImg(cat, 'mac-toast-mac');
   caja.appendChild(t);
   setTimeout(() => t.remove(), 2300);
+}
+
+// Aviso breve sin ingrediente (mismo toast, Minou pensando). Los textos son
+// fijos del juego, nunca entrada del usuario.
+function toastMensaje(titulo, sub) {
+  const caja = document.getElementById('mac-toasts');
+  if (!caja) return;
+  const t = document.createElement('div');
+  t.className = 'mac-toast';
+  t.innerHTML = minouHTML('pensando', '') +
+    `<div><div class="mac-toast-tit">${titulo}</div><div class="mac-toast-sub">${sub}</div></div>`;
+  caja.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
 }
 
 // El contador de la vitrina da un saltito al subir.
@@ -1042,6 +1201,7 @@ renderNiveles();
 renderLeyenda();
 renderTabla();
 renderContador();
+renderAyudas();
 setMinou('mac-minou-head', 'idle', 'm64');
 setMinou('mac-minou-side', 'pensando', 'm96');
 minouDespertar();

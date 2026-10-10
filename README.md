@@ -142,6 +142,12 @@ nobles…) y se desbloquea demostrando que se conoce.
 
 - **Cuatro niveles de cocina** — Pinche pide solo el nombre; Cocinero añade la
   familia; 1er Oficial, el número atómico; Chef, también el periodo.
+- **Una ayudita en Pinche** — tras tres intentos fallidos con el mismo
+  ingrediente, Minou pregunta si se necesita una ayudita y, si se acepta,
+  enseña el nombre. El ingrediente se colecciona igual, pero con borde
+  discontinuo azul y la nota «con ayudita», para ver qué falta por afianzar.
+  Un botón en la vitrina («Reintentar ayuditas») devuelve esos ingredientes a
+  «?», previa confirmación, para volver a ganárselos sin ayuda.
 - **Chef Minou MiauMiau**, el gato pastelero, reacciona a cada acierto y a
   cada fallo, y se duerme si te quedas pensando demasiado.
 - **La vitrina se rellena sola** — el progreso y el nivel se guardan en el
@@ -338,6 +344,11 @@ amigos para siempre.
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
 Puedes usar, adaptar y compartir — siempre que sea sin fines comerciales y mantengas esta misma licencia.  
 Cita la fuente. Es lo mínimo.
+
+Las ilustraciones de Macarons de Mendeleyev (Chef Minou, macarons y sabores)
+se generaron con inteligencia artificial y se seleccionaron y prepararon para
+el proyecto. Los detalles están en
+[`assets/macarons/CREDITOS.md`](assets/macarons/CREDITOS.md).
 
 ---
 
