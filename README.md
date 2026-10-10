@@ -60,7 +60,12 @@ happypuking-lab/
 │   └── mat-tabla-pitagorica.html       # Tabla pitagórica — patrones y simetría
 ├── qui/                                # Química
 │   ├── qui-tabla-periodica.html        # Tabla periódica — 3 modos de lectura
-│   └── qui-elementos-tarjetas.html     # Quiz de elementos — práctica
+│   ├── qui-elementos-tarjetas.html     # Quiz de elementos — práctica
+│   ├── qui-formulador.html             # Formulación — óxidos, hidruros, hidrácidos y sales
+│   ├── qui-lab.html                    # Lab — compuestos con átomos y electrones
+│   └── qui-macarons.html               # Macarons de Mendeleyev — juego de colección
+├── assets/
+│   └── macarons/                       # Chef Minou, macarons y sabores (PNG) de Macarons
 ├── nd/                                 # Neurodivergencia
 │   ├── nd-carga-sensorial.html         # Modelo de Carga Sensorial (ES)
 │   └── nd-carga-sensorial-en.html      # Sensory Load Model (EN)
@@ -95,6 +100,7 @@ eso está el historial de git.
 | Quiz de Elementos         | Química              | ESO               | `qui/qui-elementos-tarjetas.html`     |
 | Formulación               | Química              | ESO               | `qui/qui-formulador.html`             |
 | Lab de Química            | Química              | ESO               | `qui/qui-lab.html`                    |
+| Macarons de Mendeleyev    | Química · Juego      | ESO               | `qui/qui-macarons.html`               |
 | El Reloj · The Clock      | Matemáticas · Tiempo | Primaria / ESO    | `trn/trn-reloj.html`                  |
 | Modelo de Carga Sensorial | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial.html`          |
 | Sensory Load Model (EN)   | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial-en.html`       |
@@ -127,6 +133,25 @@ enlaces. Cubre las cuatro familias binarias (óxidos, hidruros metálicos,
 hidrácidos y sales), con nivel de dificultad y de apoyo seleccionables para
 que el feedback acompañe sin resolver.
 
+### 🧁 Macarons de Mendeleyev — el patio de recreo
+
+Fuera de la secuencia, y para quien aún no se atreve con la química seria:
+una pastelería de 118 ingredientes. Cada elemento es un macaron de su familia
+(fresa para los alcalinos, menta para los metaloides, mora para los gases
+nobles…) y se desbloquea demostrando que se conoce.
+
+- **Cuatro niveles de cocina** — Pinche pide solo el nombre; Cocinero añade la
+  familia; 1er Oficial, el número atómico; Chef, también el periodo.
+- **Chef Minou MiauMiau**, el gato pastelero, reacciona a cada acierto y a
+  cada fallo, y se duerme si te quedas pensando demasiado.
+- **La vitrina se rellena sola** — el progreso y el nivel se guardan en el
+  propio navegador, así que recargar no pierde la colección.
+- Se juega con el ratón o con el teclado, y las animaciones respetan el ajuste
+  del sistema de reducir movimiento.
+
+El interior del juego lleva su propia paleta pixel, fija: el tema claro u
+oscuro solo cambia el marco.
+
 ### 🔢 Matemáticas — la tabla pitagórica no es una lista
 
 Tres modos sobre el mismo tablero, porque son tres cosas distintas:
@@ -150,7 +175,9 @@ Las herramientas de práctica tienen dos ritmos, y se elige antes de empezar:
 Además, tras tres fallos seguidos aparece un **respiro** automático, y hay una
 salida explícita —**«Me aburro»**— para dejarlo sin sensación de abandono.
 
-Ninguna herramienta guarda nada en ningún sitio ni pide una cuenta.
+Ninguna herramienta envía nada a ningún servidor ni pide una cuenta. Lo poco que
+recuerdan (el tema, el ritmo y, en Macarons, tu colección) vive en tu propio
+navegador.
 
 ### 🔗 Enlaces directos a un modo
 
@@ -236,7 +263,7 @@ Tipografía Unbounded · Diseño pensado para reducir fatiga visual y maximizar
 contraste en los dos temas (paletas didácticas reelegidas para papel sin
 perder la distinguibilidad entre familias).
 
-El color significa algo y siempre lo mismo, en las 16 herramientas:
+El color significa algo y siempre lo mismo, en las 17 herramientas:
 
 | Color       | Qué dice                                        |
 | ----------- | ----------------------------------------------- |
