@@ -556,6 +556,7 @@ retos:
 // ── Estado del lab ───────────────────────────────────────────────────────
 // Variables globales de estado. Vive aqui arriba porque esIngredienteValido
 // (que se llama al pintar la despensa, mas abajo) necesita familiaActual()
+// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // y SPEC_FAMILIA ya inicializados.
 let modoActivo = 'recetario';         // 'recetario' | 'sandbox'
 let nivelActivo = 1;                  // 1 | 2 | 3
@@ -1035,6 +1036,7 @@ function marcarMalColocado(a) {
 
 // Marca un atomo como "estupefacto" durante ~700ms. La clase CSS .estupefacto
 // hace el shake + colorea la carita. Pasado el timeout, volvemos a la carita
+// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // normal. Si el usuario lo vuelve a tocar antes, el renderMesa() siguiente
 // reinicia el estado.
 function marcarEstupefacto(id) {
@@ -1564,6 +1566,7 @@ function renderRecetario() {
       const nuevo = RETOS[idx];
       // Al cambiar de reto, limpiamos la mesa: evitamos arrastrar atomos del
       // reto anterior (que soltarian feedback confuso) y damos un punto de
+      // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
       // partida en blanco. Si se re-pulsa el mismo reto, no vaciamos para no
       // frustrar al alumno que esta en medio de montarlo.
       if (nuevo !== retoActivo) {

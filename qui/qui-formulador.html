@@ -309,6 +309,7 @@ const FAMILIAS = {
   hidracidos: {
     // Hidracido: H + no-metal (grupos 16 y 17). AQUI SE INVIERTEN LOS ROLES:
     // el no-metal (elemento clicado) CAPTA electrones y el H los CEDE. Esto
+    // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
     // hace que paso 1 hable de huecos y paso 2 de un electron que viaja.
     nombreCompuesto: 'hidrácido',
     nombreCompuestos: 'hidrácidos',
@@ -631,6 +632,7 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
 
   // Concordancia singular/plural para que lea natural en castellano. Evitamos
   // "le sobran / le faltan" porque antropomorfizan al atomo (como si quisiera
+  // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   // algo); usamos "tiene N excedentes / N huecos" para describir el estado
   // sin atribuirle intencion.
   const electronesExcedentes = estadoAbs > 1

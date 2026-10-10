@@ -74,6 +74,7 @@ body.skin-arcade {
 
   /* Sabor por familia — paleta pixel propia, saturada y hex puro. No
      reutiliza los tokens --metal-* del módulo técnico (que están
+     V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
      pensados para rigor científico): aquí mandan los sabores. */
   --sabor-alcalino:        #FF4D5E;
   --sabor-alcalinoterreo:  #FF9E4B;
@@ -671,6 +672,7 @@ function familiaCompleta(cat) {
 
 // Layout visual de la tabla periódica: [num, col, row]. Se queda aquí
 // (no en qui-datos.js) porque es cómo se dispone la vista, no un dato
+// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // de dominio compartido con las otras herramientas.
 const layout = [
   [[1,1,1],[2,18,1]],
@@ -947,6 +949,7 @@ function comprobar(num) {
 // variable --sabor-* (skin-arcade); Minou y los macarons son PNG.
 // ═══════════════════════════════════════════════════════════════════════
 // Macarons: un PNG por familia (assets/macarons/macaron-<familia>.png, 240×209,
+// V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // mismo lienzo y base). La clave sale de la categoría: "metal-alcalino" → "alcalino".
 const MACARON_DIR = '../assets/macarons/macaron-';
 function macaronImg(cat, clase) {
