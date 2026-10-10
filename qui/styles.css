@@ -943,32 +943,19 @@ header {
    que el layout es de una sola columna a cualquier ancho.
    V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678 */
 
-/* Search bar */
-.search-bar {
+/* Buscador: ver .qui-buscador-wrap más abajo (componente compartido entre
+   Lab, Formulación y Tabla). Las clases antiguas .search-bar y
+   .search-input se eliminaron cuando Tabla pasó al patrón compartido. */
+
+/* Fila que aloja el buscador justo encima del grid de la tabla periódica
+   grande. Da aire al buscador respecto del grid y lo alinea a la derecha
+   para que coincida con la posición del buscador en el Lab y en
+   Formulación (siempre a la derecha de la fila de encabezado). */
+.table-toolbar {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 1rem 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto 0.7rem;
-  position: relative; z-index: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-}
-
-.search-input {
-  flex: 1;
-  max-width: 320px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 0.5rem 1rem;
-  color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.85rem;
-  outline: none;
-  transition: border-color 0.2s;
+  justify-content: flex-end;
+  margin-bottom: 0.6rem;
 }
   .header-tagline {
     font-size: 0.66rem;
@@ -1736,6 +1723,11 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   padding: 1rem 1.2rem 1.2rem;
 }
 .formu-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
   font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
@@ -1964,6 +1956,44 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   color: var(--text);
 }
 .carga-op { opacity: 0.5; }
+
+/* ── Chip de tipo de enlace ──────────────────────────────────────────────
+   Marca iónico / covalente polar / covalente según ΔEN (umbrales ESO,
+   calculados en qui-datos.js). Reutiliza tokens ya cuidados en los dos
+   temas: --error (rojo) para iónico, --pista (ámbar) para polar y --cyan
+   para covalente. Vive donde haya un compuesto a la vista: cabecera del
+   formulador, ficha del lab, feedback cocinado. */
+.enlace-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: help;
+  user-select: none;
+  flex: none;
+}
+.enlace-chip.chip-ionico {
+  color: var(--error-texto);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
+}
+.enlace-chip.chip-covalente-polar {
+  color: var(--pista-texto);
+  background: color-mix(in srgb, var(--pista) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pista) 40%, transparent);
+}
+.enlace-chip.chip-covalente {
+  color: var(--cyan-texto);
+  background: color-mix(in srgb, var(--cyan) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cyan) 35%, transparent);
+}
 
 /* Cuerpo desplegable. Separador superior y layout de los pasos. */
 .compuesto-body {
@@ -2374,20 +2404,24 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   flex-wrap: wrap;
 }
 .lab-despensa-controles .lab-panel-hint { margin: 0; flex: 1; min-width: 160px; }
-.lab-buscador-wrap {
+/* Buscador compartido entre Lab, Formulación y Tabla. Siempre vive
+   justo encima del grid de la tabla periódica de cada herramienta.
+   Nació en el Lab (clases .lab-buscador*); al pasar a componente común
+   se renombró a .qui-buscador* para reflejar que ya no es solo del Lab. */
+.qui-buscador-wrap {
   position: relative;
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
 }
-.lab-buscador-icono {
+.qui-buscador-icono {
   position: absolute;
   left: 0.55rem;
   pointer-events: none;
   opacity: 0.6;
   font-size: 0.78rem;
 }
-.lab-buscador {
+.qui-buscador {
   padding: 0.4rem 0.6rem 0.4rem 1.9rem;
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -2398,8 +2432,8 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   min-width: 190px;
   transition: border-color 0.15s, background 0.15s;
 }
-.lab-buscador::placeholder { color: var(--muted); opacity: 0.75; }
-.lab-buscador:focus {
+.qui-buscador::placeholder { color: var(--muted); opacity: 0.75; }
+.qui-buscador:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--magenta) 55%, var(--border));
   background: color-mix(in srgb, var(--magenta) 5%, var(--surface2));
@@ -2569,6 +2603,67 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   color: var(--muted);
   margin-top: 0.1rem;
 }
+
+/* ── Chip de carga formal (solo en nivel Tutorial) ──────────────────────
+   Pill minúsculo "+2" o "−2" que dice la carga que va a adoptar el
+   átomo al enlazar. Mismo signo y formato que los chips de carga del
+   Formulador (Na +1, O −2). Visible solo cuando el alumno pide ayuda
+   extra (Tutorial); en Aprendiz y Experto se oculta para que tenga
+   que mirar el átomo y pensar qué carga trae.
+
+   Color: ámbar para donantes (concuerda con --oxid-pos-2 del tinte de
+   slot) y azul para receptores (concuerda con --oxid-neg-2). Vive
+   dentro de .lab-ficha-mini (bandeja) y de .lab-slot.ocupado (mesa). */
+.lab-atomo-carga, .mini-carga {
+  display: none;
+}
+body.apoyo-tutorial .mini-carga {
+  display: inline-flex;
+  margin-top: 0.15rem;
+  padding: 1px 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  border-radius: 100px;
+}
+.lab-ficha-mini[data-rol="donante"] .mini-carga {
+  color: var(--oxid-pos-2);
+  background: color-mix(in srgb, var(--oxid-pos-2) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--oxid-pos-2) 35%, transparent);
+}
+.lab-ficha-mini[data-rol="receptor"] .mini-carga {
+  color: var(--oxid-neg-2);
+  background: color-mix(in srgb, var(--oxid-neg-2) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--oxid-neg-2) 35%, transparent);
+}
+
+/* En la ficha ya colocada en slot, el chip va absoluto en la esquina
+   superior izquierda (el × ya ocupa la derecha). Reducido para no
+   competir con el símbolo. */
+body.apoyo-tutorial .lab-slot.ocupado .lab-atomo-carga {
+  display: inline-flex;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  padding: 1px 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+  line-height: 1.3;
+  border-radius: 100px;
+  z-index: 3;
+}
+.lab-slot.ocupado[data-rol="donante"] .lab-atomo-carga {
+  color: var(--oxid-pos-2);
+  background: color-mix(in srgb, var(--oxid-pos-2) 15%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--oxid-pos-2) 40%, transparent);
+}
+.lab-slot.ocupado[data-rol="receptor"] .lab-atomo-carga {
+  color: var(--oxid-neg-2);
+  background: color-mix(in srgb, var(--oxid-neg-2) 15%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--oxid-neg-2) 40%, transparent);
+}
 .lab-ficha-mini-remove {
   position: absolute;
   top: -4px;
@@ -2627,6 +2722,30 @@ button.legend-item, button.val-chip, button.oxid-tag-chip {
   border-color: var(--magenta);
   background: color-mix(in srgb, var(--magenta) 7%, transparent);
   transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* ── Tinte de rol en los slots vacíos ───────────────────────────────────
+   El slot "susurra" por detrás qué carga va a necesitar: amarillo/ámbar
+   si pide un donante (átomo +), azul si pide un receptor (átomo −).
+   Reutilizamos los tokens --oxid-pos-2 y --oxid-neg-2 que ya aprendió
+   el alumno en la Tabla periódica en modo Oxidación — no inventamos
+   semántica cromática nueva.
+
+   Gated por body:not(.apoyo-experto): en modo Experto desaparece el
+   susurro y la mesa queda limpia. En Tutorial y Aprendiz, siempre
+   visible. El :hover de magenta sobreescribe el tinte de rol para que
+   siga leyéndose como "esto es cliqueable". */
+body:not(.apoyo-experto) .lab-slot.vacio[data-rol="donante"] {
+  background: color-mix(in srgb, var(--oxid-pos-2) 10%, transparent);
+  border-color: color-mix(in srgb, var(--oxid-pos-2) 35%, var(--border));
+}
+body:not(.apoyo-experto) .lab-slot.vacio[data-rol="receptor"] {
+  background: color-mix(in srgb, var(--oxid-neg-2) 10%, transparent);
+  border-color: color-mix(in srgb, var(--oxid-neg-2) 35%, var(--border));
+}
+body:not(.apoyo-experto) .lab-slot.vacio[data-rol]:hover {
+  border-color: var(--magenta);
+  background: color-mix(in srgb, var(--magenta) 7%, transparent);
 }
 /* Fichas-átomo colocadas en slots: ya no fluyen en flex, van posicionadas.
    Compactamos a tope respecto al .lab-atomo original (130px) para que las

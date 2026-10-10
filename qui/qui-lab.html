@@ -74,7 +74,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <div class="lab-intro" data-plegable>
     <p>Un laboratorio manipulable. En la <strong>despensa</strong> (arriba) están los elementos: pícalos y aterrizan en la <strong>mesa</strong>. El <strong>recetario</strong> (a la derecha) te propone compuestos para montar; el <strong>sandbox</strong> te deja construir libre.</p>
     <p>Elige familia en el panel: <strong>óxidos</strong>, <strong>hidruros metálicos</strong>, <strong>hidrácidos</strong> o <strong>sales binarias</strong>. El sandbox sigue limitado a óxidos; se irá ampliando por tandas.</p>
-    <p><strong>Un aviso sobre el modelo.</strong> Esta vista trata todos los enlaces como <em>transferencia completa</em> de electrones. En muchos compuestos reales — Cl₂O₇, CO₂, HCl — hay en realidad <em>compartición parcial</em> (covalencia). La fórmula cuadra igual, pero el mecanismo físico no es el mismo. Útil para formular en ESO; en Bachillerato lo verás con más detalle.</p>
+    <p><strong>Un aviso sobre el modelo.</strong> Esta vista trata todos los enlaces como <em>transferencia completa</em> de electrones. En muchos compuestos reales — Cl₂O₇, CO₂, HCl — hay en realidad <em>compartición parcial</em> (covalencia). La fórmula cuadra igual, pero el mecanismo físico no es el mismo. Útil para formular en ESO; en Bachillerato lo verás con más detalle. Al lado del nombre de cada reto, un chip de color marca si es <strong>iónico</strong>, <strong>polar</strong> o <strong>covalente</strong> según los umbrales de aula (ESO); pasa el ratón para ver el valor y la convención.</p>
   </div>
 
   <div class="lab-grid">
@@ -148,9 +148,9 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       <div class="lab-panel-cuerpo" id="despensa-cuerpo">
         <div class="lab-despensa-controles">
           <p class="lab-panel-hint">Pica un elemento y aterriza en la mesa. Los apagados no forman óxidos en ESO.</p>
-          <label class="lab-buscador-wrap">
-            <span class="lab-buscador-icono" aria-hidden="true">🔍</span>
-            <input type="search" class="lab-buscador" id="lab-buscador"
+          <label class="qui-buscador-wrap">
+            <span class="qui-buscador-icono" aria-hidden="true">🔍</span>
+            <input type="search" class="qui-buscador" id="lab-buscador"
                    placeholder="Busca: Fe, hierro, 26…"
                    aria-label="Buscar elemento por símbolo, nombre o número atómico">
           </label>
@@ -750,24 +750,12 @@ ELEMENTS.forEach(e => {
 });
 
 // ── Buscador de la despensa ─────────────────────────────────────────────
-// Match por símbolo (prefijo), nombre (substring) o número atómico (exacto).
-// En vivo atenúa los no-matches; Enter añade a la mesa el primer válido.
-function matcheaElemento(num, query) {
-  if (!query) return true;
-  const el = elMap[num];
-  if (!el) return false;
-  const [n, sym, name] = el;
-  const q = query.toLowerCase().trim();
-  if (!q) return true;
-  return sym.toLowerCase().startsWith(q)
-      || name.toLowerCase().includes(q)
-      || String(n) === q;
-}
+// El filtro (matcheaElemento + filtrarTablaPorQuery) vive en qui-datos.js
+// como componente compartido con Formulación y Tabla. Aquí solo quedan
+// las cosas propias del Lab: cablear el input y manejar Enter como
+// "añadir a la mesa el primer válido". Esc limpia.
 function aplicarFiltroBuscador(q) {
-  document.querySelectorAll('button.lab-el').forEach(btn => {
-    const num = parseInt(btn.dataset.num, 10);
-    btn.classList.toggle('search-no-match', q && !matcheaElemento(num, q));
-  });
+  filtrarTablaPorQuery('#lab-table', q, { selector: 'button.lab-el' });
 }
 (function cablearBuscador() {
   const inp = document.getElementById('lab-buscador');
@@ -911,6 +899,17 @@ function cuposDeAtomo(a) {
   return { rol, val, movido, resto: val - movido };
 }
 function esLleno(a) { return cuposDeAtomo(a).resto <= 0; }
+
+// Carga formal del átomo escrita como "+2" o "−2" (guión Unicode, igual
+// que los chips de carga del Formulador). Sin verbos antropomórficos:
+// cede/capta se infieren del signo. Se pinta como chip pequeño en la
+// esquina de la ficha; el CSS lo muestra solo en nivel de apoyo Tutorial.
+function cargaFormalDeAtomo(a) {
+  const rol = rolDeAtomo(a.num);
+  const val = Math.abs(valenciaDeAtomo(a.num));
+  const signo = rol === 'donante' ? '+' : '−';
+  return signo + val;
+}
 
 // Click en una ficha. Hay dos fases que convive:
 //  - MONTAJE: fichas en bandeja esperando slot. Click en bandeja = activar;
@@ -1246,17 +1245,21 @@ function renderMesa() {
     const [num, sym, name, mass, cat] = el;
     const color = CATS[cat] ? CATS[cat].color : 'var(--cat-defecto)';
     const activo = atomoActivo === a.id;
+    const rol = rolDeAtomo(a.num);
+    const cargaStr = cargaFormalDeAtomo(a);
     // DIV con role=button (no <button>) para poder anidar el × dentro: HTML
     // no permite <button> dentro de <button> y el parser auto-cierra el
     // outer, dejando el remove como hermano. renderMesa buscaba el remove
     // como hijo con querySelector y crasheaba.
     return `
-      <div class="lab-ficha-mini ${activo ? 'activo' : ''}"
-           data-id="${a.id}" style="--atomo-color:${color}; color:${color}"
+      <div class="lab-ficha-mini rol-${rol} ${activo ? 'activo' : ''}"
+           data-id="${a.id}" data-rol="${rol}"
+           style="--atomo-color:${color}; color:${color}"
            role="button" tabindex="0"
-           aria-label="${name}. Pulsa para colocar en la mesa.">
+           aria-label="${name} (${rol}). Pulsa para colocar en la mesa.">
         <span class="mini-sym">${sym}</span>
         <span class="mini-num">${num}</span>
+        <span class="mini-carga" aria-hidden="true">${cargaStr}</span>
         <button type="button" class="lab-ficha-mini-remove"
                 aria-label="Descartar ${name}">×</button>
       </div>
@@ -1290,6 +1293,13 @@ function renderMesa() {
   atomosEnMesa.forEach(a => {
     if (a.ubicacion && a.ubicacion !== 'bandeja') porSlot[a.ubicacion] = a;
   });
+  // Rol que "pide" cada slot vacío: en el central va el rolCentral, en los
+  // radiales el opuesto. Lo pintamos como data-rol para que el CSS pueda
+  // tintar el fondo (amarillo/ámbar para donantes, azul para receptores)
+  // en todos los niveles de apoyo salvo Experto, siguiendo la paleta de
+  // --oxid-pos-*/--oxid-neg-* que ya se usa en la Tabla periódica.
+  const rolCentralSlot = decidirRolCentral(nDon, nRec);
+  const rolRadialSlot = rolCentralSlot === 'donante' ? 'receptor' : 'donante';
   slots.innerHTML = posiciones.map(p => {
     const a = porSlot[p.key];
     const esCentral = p.key.startsWith('c-');
@@ -1299,12 +1309,13 @@ function renderMesa() {
     const claseSlot = esCentral
       ? (nCentrales === 1 ? 'slot-centro' : 'slot-centro-multi')
       : 'slot-radial';
+    const rolSlot = esCentral ? rolCentralSlot : rolRadialSlot;
     if (!a) {
       return `
         <div class="lab-slot vacio ${claseSlot}"
-             data-slot="${p.key}"
+             data-slot="${p.key}" data-rol="${rolSlot}"
              style="left:${p.x}%; top:${p.y}%"
-             aria-label="Slot vacío ${esCentral ? 'central' : 'radial'}"></div>
+             aria-label="Slot vacío ${esCentral ? 'central' : 'radial'} (${rolSlot})"></div>
       `;
     }
     const el = elMap[a.num];
@@ -1320,8 +1331,10 @@ function renderMesa() {
     if (a.estupefacto) clases.push('estupefacto');
     if (a.malColocado) clases.push('malColocado');
     const carita = caritaDeAtomo(a);
+    const cargaStr = cargaFormalDeAtomo(a);
     return `
       <div class="${clases.join(' ')}" data-id="${a.id}" data-slot="${p.key}"
+           data-rol="${rol}"
            style="left:${p.x}%; top:${p.y}%; --atomo-color:${color}"
            tabindex="0" role="button"
            aria-label="${name} (${rol}, ${chip.texto}).">
@@ -1329,6 +1342,7 @@ function renderMesa() {
                 aria-label="Devolver ${name} a la bandeja">×</button>
         <canvas class="lab-atomo-canvas" width="110" height="110"
                 data-num="${num}" data-color="${color}"></canvas>
+        <div class="lab-atomo-carga" aria-hidden="true">${cargaStr}</div>
         <div class="lab-atomo-carita" aria-hidden="true">${carita}</div>
         <div class="lab-atomo-sym" style="color:${color}">${sym}</div>
         <div class="lab-atomo-chip chip-${chip.tipo}">${chip.texto}</div>
@@ -1438,6 +1452,16 @@ document.querySelectorAll('.lab-nivel-chip').forEach(c => {
 });
 
 // ── Panel: nivel de apoyo del feedback ───────────────────────────────────
+// El nivel se refleja también como clase en <body> (apoyo-tutorial /
+// apoyo-aprendiz / apoyo-experto) para que el CSS pueda modular desde
+// ahí qué se muestra: el tinte de rol de los slots se apaga en Experto,
+// el chip +/- en el átomo solo aparece en Tutorial.
+function syncApoyoBody() {
+  document.body.classList.remove('apoyo-tutorial', 'apoyo-aprendiz', 'apoyo-experto');
+  document.body.classList.add('apoyo-' + nivelApoyo);
+}
+syncApoyoBody();
+
 // Aplicar el estado guardado en localStorage al cargar.
 document.querySelectorAll('.lab-apoyo-chip').forEach(c => {
   const act = c.dataset.apoyo === nivelApoyo;
@@ -1450,6 +1474,7 @@ document.querySelectorAll('.lab-apoyo-chip').forEach(c => {
     if (nuevo === nivelApoyo) return;
     nivelApoyo = nuevo;
     try { localStorage.setItem('hpk-lab-apoyo', nivelApoyo); } catch (e) {}
+    syncApoyoBody();
     document.querySelectorAll('.lab-apoyo-chip').forEach(x => {
       const act = x.dataset.apoyo === nivelApoyo;
       x.classList.toggle('active', act);
@@ -1551,9 +1576,12 @@ function renderRecetario() {
   if (retoActivo && retosDelNivel(nivelActivo).includes(retoActivo)) {
     activa.hidden = false;
     // Solo el nombre, SIN la formula: queremos que el alumno repase los
-    // simbolos al construir, no que los copie de aqui.
+    // simbolos al construir, no que los copie de aqui. Al lado se marca
+    // el tipo de enlace (iónico / polar / covalente) para que el alumno
+    // sepa qué está practicando, aunque la mecánica del Lab sea siempre
+    // la de transferencia.
     document.getElementById('lab-receta-nombre').innerHTML =
-      `<strong>${retoActivo.nombre}</strong>`;
+      `<strong>${retoActivo.nombre}</strong>${chipEnlaceDeReto(retoActivo)}`;
     const pistaBox = document.getElementById('lab-receta-pista');
     const pistaBtn = document.getElementById('lab-pista-boton');
     pistaBox.hidden = true;
@@ -1575,6 +1603,24 @@ function cuentaDeFormula(formula) {
     out[m[1]] = (out[m[1]] || 0) + (m[2] ? parseInt(m[2], 10) : 1);
   }
   return out;
+}
+
+// Pinta el chip de tipo de enlace de un reto binario (todos los retos del
+// Lab lo son hoy: óxido, hidruro, hidrácido o sal). Si por lo que sea no
+// hay exactamente 2 elementos o falta algún dato de electronegatividad,
+// devuelve string vacío y el chip no aparece. Vive aquí (no en qui-datos)
+// porque usa el tipo "reto" del Lab, que no es dominio compartido.
+function chipEnlaceDeReto(reto) {
+  if (!reto || !reto.formula) return '';
+  const cuenta = cuentaDeFormula(reto.formula);
+  const syms = Object.keys(cuenta);
+  if (syms.length !== 2) return '';
+  const n1 = NUM_POR_SIMBOLO[syms[0]];
+  const n2 = NUM_POR_SIMBOLO[syms[1]];
+  if (n1 == null || n2 == null) return '';
+  const t = tipoEnlace(n1, n2);
+  if (!t) return '';
+  return ` <span class="enlace-chip chip-${t}" title="${enlaceTooltip(t, n1, n2)}">${ENLACE_META[t].chip}</span>`;
 }
 
 // Conteo de los atomos actualmente en la mesa, por simbolo.

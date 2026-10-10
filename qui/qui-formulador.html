@@ -75,7 +75,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <div class="formu-intro" data-plegable>
     <p id="formu-intro-p1"></p>
     <p>Los elementos atenuados no forman esta familia. ¿Tu libro usa estados distintos? En la <a href="./qui-tabla-periodica.html">tabla periódica</a> puedes cambiarlos con <strong>Editar oxidación</strong> — esta vista respeta ese dataset.</p>
-    <p><strong>Nota sobre el mecanismo.</strong> Los pasos modelan los enlaces como <em>transferencia</em> (metal cede, no-metal capta). En muchos compuestos reales — los covalentes — los átomos <em>comparten</em> en lugar de ceder. La fórmula sale igual; el mecanismo físico, no. En Bachillerato lo verás con más detalle.</p>
+    <p><strong>Nota sobre el mecanismo.</strong> Los pasos modelan los enlaces como <em>transferencia</em> (metal cede, no-metal capta). En muchos compuestos reales — los covalentes — los átomos <em>comparten</em> en lugar de ceder. La fórmula sale igual; el mecanismo físico, no. En Bachillerato lo verás con más detalle. En la cabecera de cada compuesto, un chip de color marca si es <strong>iónico</strong>, <strong>polar</strong> o <strong>covalente</strong> según los umbrales de aula (ESO); pasa el ratón para ver el valor y la convención.</p>
   </div>
 
   <div class="formu-familia">
@@ -124,7 +124,15 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   </div>
 
   <div class="formu-selector">
-    <div class="formu-label">Elige un elemento</div>
+    <div class="formu-label">
+      <span>Elige un elemento</span>
+      <label class="qui-buscador-wrap">
+        <span class="qui-buscador-icono" aria-hidden="true">🔍</span>
+        <input type="search" class="qui-buscador" id="formu-buscador"
+               placeholder="Busca: Fe, hierro, 26…"
+               aria-label="Buscar elemento por símbolo, nombre o número atómico">
+      </label>
+    </div>
     <div class="periodic-table formu-table" id="formu-table"></div>
   </div>
 
@@ -687,11 +695,21 @@ function tarjetaCompuesto(sym, color, comp, numElemento, fam) {
   // Carga del elemento en el chip: + para positivos, − unicode para negativos.
   const chipElCarga = comp.estado > 0 ? ('+' + comp.estado) : String(comp.estado).replace('-', '−');
 
+  // Chip de tipo de enlace (iónico/polar/covalente). Se calcula desde la
+  // diferencia de electronegatividad entre el elemento y el anión. Si
+  // falta algún EN (gases nobles, sintéticos sin dato) no se pinta.
+  const nAnion = NUM_POR_SIMBOLO[anSym];
+  const tipoEn = tipoEnlace(numElemento, nAnion);
+  const enlaceChipHtml = tipoEn
+    ? `<span class="enlace-chip chip-${tipoEn}" title="${enlaceTooltip(tipoEn, numElemento, nAnion)}">${ENLACE_META[tipoEn].chip}</span>`
+    : '';
+
   return `
     <details class="compuesto-card" style="--accent:${color}">
       <summary class="compuesto-head">
         <span class="compuesto-chevron" aria-hidden="true">▸</span>
         <span class="compuesto-formula">${comp.formula}</span>
+        ${enlaceChipHtml}
         <span class="compuesto-cargas">
           <span class="carga-chip"><span class="carga-sym">${sym}</span> ${chipElCarga}</span>
           <span class="carga-op">·</span>
@@ -813,6 +831,36 @@ function pintarCanvasCompuestos() {
   });
   const primero = conElemento()[0];
   if (primero) primero.tabIndex = 0;
+})();
+
+// ── Buscador de la mini-tabla ───────────────────────────────────────────
+// El filtro (matcheaElemento + filtrarTablaPorQuery) vive en qui-datos.js.
+// En vivo atenúa los que no matchean con la clase search-no-match; el
+// filtro no toca .dimmed (la clase que atenúa por "no forma esta familia"),
+// así que el contexto de familia se respeta: un elemento fuera de familia
+// que coincida con la query sigue atenuado, no se ilumina. Enter elige el
+// primer match que SÍ forma esta familia. Esc limpia.
+(function cablearBuscadorFormu() {
+  const inp = document.getElementById('formu-buscador');
+  if (!inp) return;
+  const aplicar = (q) => filtrarTablaPorQuery('#formu-table', q, { selector: '.formu-el' });
+  inp.addEventListener('input', () => aplicar(inp.value.trim()));
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { inp.value = ''; aplicar(''); return; }
+    if (e.key !== 'Enter') return;
+    const q = inp.value.trim();
+    if (!q) return;
+    const fam = famAct();
+    for (const el of document.querySelectorAll('#formu-table .formu-el')) {
+      const num = parseInt(el.dataset.num, 10);
+      if (matcheaElemento(num, q) && fam.forma(num)) {
+        elegirElemento(num);
+        inp.value = '';
+        aplicar('');
+        return;
+      }
+    }
+  });
 })();
 
 // ── FICHA FLOTANTE DEL FORMULADOR ─────────────────────────────────────

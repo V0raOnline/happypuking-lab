@@ -72,9 +72,10 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
   tienes, y aquí su forma es justo lo que hay que ver.
 </p>
 
-<div class="search-bar">
-  <input class="search-input" type="text" id="search" placeholder="🔍  Buscar elemento o símbolo...">
-</div>
+<!-- Antes aquí vivía la .search-bar con el buscador. Se movió DENTRO de
+     .table-wrap, justo encima de #ptable, para que el buscador quede
+     siempre en el mismo sitio relativo al grid de la tabla en las tres
+     herramientas (Lab, Formulación, Tabla). -->
 
 <div class="mode-toggle" role="radiogroup" aria-label="Cómo leer la tabla">
   <button class="mode-btn active" id="mode-cat" role="radio" aria-checked="true">Familias</button>
@@ -122,6 +123,14 @@ V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 
 <div class="main-wrap">
   <div class="table-wrap">
+    <div class="table-toolbar">
+      <label class="qui-buscador-wrap">
+        <span class="qui-buscador-icono" aria-hidden="true">🔍</span>
+        <input type="search" class="qui-buscador" id="search"
+               placeholder="Busca: Fe, hierro, 26…"
+               aria-label="Buscar elemento por símbolo, nombre o número atómico">
+      </label>
+    </div>
     <div class="periodic-table" id="ptable"></div>
   </div>
   <div class="info-card">
@@ -1314,27 +1323,27 @@ function volverADefaultOxid() {
 // tabla ya se dibuja arriba con los colores correctos (OXID ya mutado).
 if (contarDiferenciasConBase() > 0) mostrarBadgeUsuario();
 
-// Search
-document.getElementById('search').addEventListener('input', function() {
-  const q = this.value.toLowerCase().trim();
-  if (!q) {
-    document.querySelectorAll('.el[data-num]').forEach(e => e.classList.remove('dimmed'));
-    return;
-  }
-  document.querySelectorAll('.el[data-num]').forEach(el => {
-    const num = parseInt(el.dataset.num);
-    const e = elMap[num];
-    if (!e) return;
-    const match = e[1].toLowerCase().includes(q) || e[2].toLowerCase().includes(q) || String(e[0]).includes(q);
-    el.classList.toggle('dimmed', !match);
-    if (match && !el.classList.contains('dimmed')) {
-      // auto-select first match
-    }
+// Buscador: filtro compartido (qui-datos.js). Atenúa con la clase
+// search-no-match — NO con .dimmed, que ya la usan los modos para marcar
+// "sin dato" o "fuera de contexto" (en Oxidación, Valencia, etc.) y
+// pisarla rompería ese estado al teclear o borrar la query. Al escribir,
+// auto-selecciona el primer match: comportamiento específico de Tabla
+// que no se homogeneiza (Lab usa Enter, Formulación también).
+(function cablearBuscadorTabla() {
+  const inp = document.getElementById('search');
+  if (!inp) return;
+  const aplicar = (q) => filtrarTablaPorQuery('#ptable', q, { selector: '.el[data-num]' });
+  inp.addEventListener('input', function() {
+    const q = this.value.trim();
+    aplicar(q);
+    if (!q) return;
+    const first = ELEMENTS.find(e => matcheaElemento(e[0], q));
+    if (first) selectElement(first[0]);
   });
-  // Auto-select first match
-  const first = ELEMENTS.find(e => e[1].toLowerCase().includes(q) || e[2].toLowerCase().includes(q));
-  if (first) selectElement(first[0]);
-});
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { inp.value = ''; aplicar(''); }
+  });
+})();
 </script>
 
 <!-- El chasis compartido: conmutador de tema (y, mas adelante, de

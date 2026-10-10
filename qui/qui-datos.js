@@ -392,6 +392,87 @@ ELEMENTS.forEach(e => elMap[e[0]] = e);
 const NUM_POR_SIMBOLO = {};
 ELEMENTS.forEach(e => NUM_POR_SIMBOLO[e[1]] = e[0]);
 
+// ── Clasificación de enlace ─────────────────────────────────────────────
+// Devuelve 'ionico' | 'covalente-polar' | 'covalente' | null a partir de
+// la diferencia de electronegatividad entre dos elementos (números
+// atómicos). Umbrales de ESO: <0.5 covalente, 0.5-2.0 covalente polar,
+// >2.0 iónico. La convención química clásica (Pauling) baja los umbrales
+// a 0.4 y 1.7 — se eligió la de ESO porque la herramienta sirve a aula
+// de 3º-4º y alinea con el libro que el alumno tiene al lado. Las
+// variantes de UI incluyen ese matiz en su tooltip.
+function tipoEnlace(num1, num2) {
+  const en1 = EXTRA[num1] && EXTRA[num1][1];
+  const en2 = EXTRA[num2] && EXTRA[num2][1];
+  if (en1 == null || en2 == null) return null;
+  const dEN = Math.abs(en1 - en2);
+  if (dEN < 0.5) return 'covalente';
+  if (dEN <= 2.0) return 'covalente-polar';
+  return 'ionico';
+}
+
+const ENLACE_META = {
+  'ionico':          { label: 'iónico',          chip: 'IÓNICO' },
+  'covalente-polar': { label: 'covalente polar', chip: 'POLAR' },
+  'covalente':       { label: 'covalente',       chip: 'COVALENTE' },
+};
+
+// Texto para el atributo title del chip. Da el nombre, el valor de ΔEN y
+// recuerda que estos umbrales son los de aula (ESO), no los de la
+// convención química clásica. Para chavales, no para químicos.
+function enlaceTooltip(tipo, num1, num2) {
+  const en1 = EXTRA[num1] && EXTRA[num1][1];
+  const en2 = EXTRA[num2] && EXTRA[num2][1];
+  if (en1 == null || en2 == null || !ENLACE_META[tipo]) return '';
+  const dEN = Math.abs(en1 - en2).toFixed(2);
+  const label = ENLACE_META[tipo].label;
+  return `${label} (ΔEN = ${dEN}). Umbrales ESO: < 0,5 covalente, 0,5–2,0 polar, > 2,0 iónico. Convención química clásica (Pauling): 0,4 y 1,7.`;
+}
+
+// ── Buscador de elementos (filtro común) ────────────────────────────────
+// Las tres herramientas con tabla periódica (Lab, Formulación, Tabla)
+// comparten el mismo buscador: label + icono + input "Busca: Fe, hierro,
+// 26…". El matcher y el filtro viven aquí para que las tres atenúen con
+// el mismo criterio. Cada herramienta se queda con la lógica propia (lo
+// que pasa al pulsar Enter o seleccionar), que no es dominio compartido.
+//
+// matcheaElemento: match por símbolo (prefijo), nombre (substring,
+// insensible a caso) o número atómico (exacto). Query vacía siempre
+// matchea. El `startsWith` para símbolo evita falsos positivos (buscar
+// "Fe" no debe iluminar "Pb" por tener "e" al final); el `=== q` para
+// número es más estricto que includes (buscar "2" solo trae Helio, no
+// 2+12+20+21+22+…).
+function matcheaElemento(num, query) {
+  if (!query) return true;
+  const el = elMap[num];
+  if (!el) return false;
+  const [n, sym, name] = el;
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+  return sym.toLowerCase().startsWith(q)
+      || name.toLowerCase().includes(q)
+      || String(n) === q;
+}
+
+// filtrarTablaPorQuery: atenúa (añade clase) las celdas que no cumplen el
+// match. Las que sí matchean quedan limpias. Query vacía limpia todo.
+// `contenedor` puede ser el nodo DOM o un selector CSS. `options.selector`
+// elige qué celdas se consideran (default: cualquier `[data-num]`);
+// `options.dimClass` qué clase se usa para atenuar (default:
+// `search-no-match`, que es la clase ya cuidada por el CSS compartido).
+function filtrarTablaPorQuery(contenedor, query, options) {
+  options = options || {};
+  const sel = options.selector || '[data-num]';
+  const cls = options.dimClass || 'search-no-match';
+  const cont = typeof contenedor === 'string'
+    ? document.querySelector(contenedor)
+    : contenedor;
+  if (!cont) return;
+  cont.querySelectorAll(sel).forEach(el => {
+    const num = parseInt(el.dataset.num, 10);
+    el.classList.toggle(cls, Boolean(query) && !matcheaElemento(num, query));
+  });
+}
+
 // Dataset activo (mutable). Las herramientas leen SIEMPRE desde OXID,
 // nunca desde OXID_BASE: al cargar un YAML propio basta mutar OXID.
 function clonarOxid(src) {
