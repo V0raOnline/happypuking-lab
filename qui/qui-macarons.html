@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<!--
+  hAppYpUkIng — Lab  ·  https://v0raonline.github.io/happypuking-lab/
+  Copyright (c) 2024-2026 V0ra (v0raonline)
+  Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
+
+  MACARONS DE MENDELEYEV — el patio de recreo del bloque de química.
+  Juego de pastelería 16-bit donde coleccionas los 118 elementos como
+  ingredientes de la Pâtisserie. Motor absorbido de FeaturesLab/
+  (2026-10-05), rebase sobre qui-datos.js, DNA visual propio.
+
+  Tanda 1 (hoy): scaffolding + motor funcional + CSS 16-bit base.
+  Pendientes para tandas siguientes:
+    - Chef Minou y los 10 sprites de sabor-ingrediente.
+    - Panel lateral tipo "menú de pausa" RPG + toasts de desbloqueo.
+    - Nav links desde las otras 4 herramientas + tarjeta en index.
+    - Skin alternativo "Pâtisserie" (Fase 2 del juego).
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="V0ra (v0raonline)">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<title>Macarons de Mendeleyev — hAppYpUkIng Lab</title>
+<meta name="description" content="Pastelería 16-bit: colecciona los 118 ingredientes de la tabla periódica como macarons de sabores. Patio de recreo del bloque de química. Gratis y sin cuentas.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+<!-- Tema antes de pintar, mismo truco que las otras herramientas: así el
+     tema del repo (modo claro/oscuro) se aplica al chrome (header, nav,
+     footer) sin parpadeo. Las "entrañas" del juego llevan su propia
+     paleta pixel fija — no cambian con el tema. -->
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);
+document.body && document.body.classList.add('skin-arcade');}catch(e){}})();
+</script>
+<script src="./qui-datos.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   MACARONS — DNA 16-bit
+   Las clases .mac-* son locales al juego: no se exportan ni se reusan
+   fuera. Paleta fija por diseño (es un juego retro, no cambia con el
+   tema). Fonts arcade de Google Fonts. Cuando llegue Fase 2 (skin
+   Pâtisserie), estas reglas se agruparán bajo body.skin-arcade y se
+   añadirá un bloque body.skin-patisserie paralelo.
+   ═══════════════════════════════════════════════════════════════════════ */
+body.skin-arcade {
+  --mac-bg:        #0F1424;
+  --mac-shell:     #1A1F2E;
+  --mac-cell:      #2D3447;
+  --mac-cell-dim:  #1F2436;
+  --mac-ink:       #E8E4C9;
+  --mac-ink-dim:   #8B8F9E;
+  --mac-gold:      #F6B93B;
+  --mac-pink:      #FF6B9D;
+  --mac-mint:      #5BC9A8;
+  --mac-azure:     #5A9BC8;
+  --mac-red:       #FF4D5E;
+  --mac-shadow:    #000000;
+
+  /* Sabor por familia — paleta pixel propia, saturada y hex puro. No
+     reutiliza los tokens --metal-* del módulo técnico (que están
+     pensados para rigor científico): aquí mandan los sabores. */
+  --sabor-alcalino:        #FF4D5E;
+  --sabor-alcalinoterreo:  #FF9E4B;
+  --sabor-transicion:      #B57042;
+  --sabor-postransicion:   #F0D987;
+  --sabor-metaloide:       #5BC9A8;
+  --sabor-no-metal:        #D13F4E;
+  --sabor-halogeno:        #E8338B;
+  --sabor-gas-noble:       #6B4A9F;
+  --sabor-lantanido:       #A86BBE;
+  --sabor-actinido:        #F7D849;
+
+
+}
+
+.mac-shell {
+  margin: 1.5rem auto;
+  max-width: 1200px;
+  background: var(--mac-bg);
+  border: 4px solid var(--mac-gold);
+  padding: 1.2rem 1.4rem 1.5rem;
+  font-family: 'VT323', 'Courier New', monospace;
+  color: var(--mac-ink);
+  position: relative;
+  image-rendering: pixelated;
+}
+/* Esquinas tipo pixel art: pequeños cuadrados sin radius. Las esquinas
+   del shell llevan "clavos" dorados en los 4 vértices. */
+.mac-shell::before, .mac-shell::after,
+.mac-shell > .mac-corner-tr, .mac-shell > .mac-corner-br {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--mac-gold);
+}
+.mac-shell::before { top: -4px; left: -4px; }
+.mac-shell::after  { bottom: -4px; left: -4px; }
+.mac-shell > .mac-corner-tr { top: -4px; right: -4px; }
+.mac-shell > .mac-corner-br { bottom: -4px; right: -4px; }
+
+.mac-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 1rem;
+  background: var(--mac-shell);
+  border: 2px solid var(--mac-gold);
+}
+.mac-hud-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: var(--mac-gold);
+  letter-spacing: 0.1em;
+}
+.mac-hud-score {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  color: var(--mac-ink);
+  letter-spacing: 0.08em;
+}
+.mac-hud-score em {
+  font-style: normal;
+  color: var(--mac-mint);
+}
+
+.mac-nivel-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.mac-nivel-pill {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 0.9rem;
+  background: var(--mac-cell);
+  color: var(--mac-ink-dim);
+  border: 2px solid var(--mac-shell);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: transform 0.05s;
+}
+.mac-nivel-pill:hover { color: var(--mac-ink); border-color: var(--mac-gold); }
+.mac-nivel-pill:active { transform: translateY(1px); }
+.mac-nivel-pill.active {
+  background: var(--mac-gold);
+  color: var(--mac-bg);
+  border-color: var(--mac-ink);
+}
+
+.mac-leyenda {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+  margin-bottom: 1rem;
+  padding: 0.7rem;
+  background: var(--mac-shell);
+  border: 2px solid var(--mac-cell);
+}
+.mac-leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--mac-cell);
+  border: 3px solid transparent;
+  cursor: pointer;
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--mac-ink);
+  letter-spacing: 0.02em;
+}
+.mac-leyenda-item:hover, .mac-leyenda-item:focus-visible { border-color: var(--mac-gold); outline: none; }
+.mac-leyenda-item.active { border-color: var(--mac-gold); background: var(--mac-cell-dim); }
+.mac-leyenda-dot {
+  width: 14px; height: 14px;
+  flex: none;
+  box-shadow: 0 0 0 2px var(--mac-shadow);
+}
+.mac-leyenda-ico { width: 32px; height: 32px; flex: none; display: block; }
+.mac-leyenda-nombre { flex: 1; min-width: 0; font-size: 1.05rem; line-height: 1.1; }
+.mac-leyenda-sabor { font-family: 'VT323', monospace; font-size: 0.95rem; color: var(--mac-ink-dim); display: block; margin-top: 2px; letter-spacing: 0.02em; }
+.mac-leyenda-frac {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: var(--mac-gold);
+  flex: none;
+  letter-spacing: 0.06em;
+}
+
+.mac-main {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1rem;
+}
+@media (max-width: 900px) {
+  .mac-main { grid-template-columns: 1fr; }
+}
+
+.mac-ptable-wrap {
+  background: var(--mac-shell);
+  border: 2px solid var(--mac-cell);
+  padding: 0.8rem;
+  overflow-x: auto;
+}
+.mac-ptable {
+  display: grid;
+  grid-template-columns: repeat(18, minmax(42px, 1fr));
+  grid-template-rows: repeat(10, 1fr);
+  gap: 3px;
+  min-width: 760px;
+}
+.mac-el {
+  aspect-ratio: 1 / 1;
+  background: var(--mac-cell);
+  border: 2px solid var(--mac-cell-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  padding: 0;
+  color: var(--mac-ink-dim);
+  position: relative;
+  transition: transform 0.05s;
+}
+.mac-el:hover {
+  border-color: var(--mac-gold);
+  color: var(--mac-ink);
+  transform: translateY(-1px);
+}
+.mac-el:active { transform: translateY(1px); }
+.mac-el.el-empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+  pointer-events: none;
+}
+.mac-el .mac-el-q {
+  font-size: 1.1rem;
+  color: var(--mac-ink-dim);
+}
+/* Celda coleccionada: fondo oscuro teñido del sabor (si fuese el color
+   puro, la galleta del macaron se fundiría con él) y el macaron encima. */
+.mac-el.unlocked {
+  background: color-mix(in srgb, var(--sabor, var(--mac-cell)) 24%, var(--mac-bg));
+  color: var(--mac-ink);
+  border-color: var(--sabor, var(--mac-ink));
+}
+.mac-el.unlocked:hover { border-color: var(--mac-gold); }
+.mac-el-sprite {
+  position: absolute;
+  left: 3%; top: 9%;
+  width: 94%; height: auto;
+  pointer-events: none;
+}
+.mac-el .mac-el-sym, .mac-el .mac-el-num {
+  position: absolute;
+  color: var(--mac-ink);
+  text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
+}
+.mac-el .mac-el-sym { right: 3px; bottom: 2px; font-size: 0.55rem; letter-spacing: 0.02em; }
+.mac-el .mac-el-num { left: 3px; top: 3px; font-size: 0.36rem; }
+.mac-el.dimmed { opacity: 0.3; }
+
+.mac-side {
+  background: var(--mac-shell);
+  border: 2px solid var(--mac-cell);
+  padding: 1rem;
+  min-height: 300px;
+}
+.mac-side-empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+.mac-side-empty .mac-big {
+  font-size: 2.4rem;
+  color: var(--mac-gold);
+  font-family: 'Press Start 2P', monospace;
+  margin-bottom: 0.8rem;
+}
+.mac-side-empty p {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: var(--mac-ink-dim);
+  line-height: 1.4;
+}
+
+.mac-quiz-head {
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px dashed var(--mac-cell);
+}
+.mac-quiz-sym {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.8rem;
+  color: var(--mac-gold);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.mac-quiz-meta {
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--mac-ink-dim);
+  line-height: 1.3;
+}
+
+.mac-quiz-field { margin-bottom: 0.7rem; }
+.mac-quiz-field label {
+  display: block;
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--mac-gold);
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.03em;
+}
+.mac-quiz-field input {
+  width: 100%;
+  font-family: 'VT323', monospace;
+  font-size: 1.05rem;
+  background: var(--mac-bg);
+  border: 2px solid var(--mac-cell);
+  color: var(--mac-ink);
+  padding: 0.4rem 0.6rem;
+  outline: none;
+  box-sizing: border-box;
+}
+.mac-quiz-field input:focus { border-color: var(--mac-gold); }
+.mac-quiz-field input.field-ok { border-color: var(--mac-mint); background: color-mix(in srgb, var(--mac-mint) 15%, var(--mac-bg)); }
+.mac-quiz-field input.field-bad { border-color: var(--mac-red); background: color-mix(in srgb, var(--mac-red) 15%, var(--mac-bg)); }
+
+.mac-quiz-submit {
+  width: 100%;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  padding: 0.7rem;
+  background: var(--mac-gold);
+  color: var(--mac-bg);
+  border: 2px solid var(--mac-ink);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+}
+.mac-quiz-submit:hover { background: var(--mac-pink); color: var(--mac-ink); }
+.mac-quiz-submit:active { transform: translateY(1px); }
+
+.mac-quiz-feedback {
+  margin-top: 0.7rem;
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.7rem;
+  border: 2px solid;
+  text-align: center;
+}
+.mac-quiz-feedback.ok { color: var(--mac-mint); border-color: var(--mac-mint); background: color-mix(in srgb, var(--mac-mint) 12%, transparent); }
+.mac-quiz-feedback.error { color: var(--mac-red); border-color: var(--mac-red); background: color-mix(in srgb, var(--mac-red) 12%, transparent); }
+
+.mac-card {
+  padding: 0;
+}
+.mac-card-header { margin-bottom: 0.8rem; }
+.mac-card-macaron { display: block; width: 150px; height: auto; margin: 0 auto 0.6rem; }
+.mac-card-num {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: var(--mac-gold);
+  letter-spacing: 0.1em;
+}
+.mac-card-sym {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.8rem;
+  color: var(--sabor, var(--mac-ink));
+  margin: 0.3rem 0;
+  display: block;
+}
+.mac-card-name {
+  font-family: 'VT323', monospace;
+  font-size: 1.3rem;
+  color: var(--mac-ink);
+  line-height: 1.1;
+}
+.mac-card-fam {
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--sabor, var(--mac-ink-dim));
+  margin-top: 0.2rem;
+}
+.mac-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0.8rem 0;
+}
+.mac-card-stat {
+  background: var(--mac-cell);
+  border: 2px solid var(--mac-cell-dim);
+  padding: 0.4rem 0.6rem;
+  text-align: center;
+}
+.mac-card-stat .lbl {
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: var(--mac-gold);
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 1px;
+}
+.mac-card-stat .val {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: var(--mac-ink);
+}
+.mac-card-origen {
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--mac-ink-dim);
+  line-height: 1.4;
+  margin: 0.5rem 0;
+}
+.mac-card-aplic {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.mac-card-aplic li {
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--mac-ink);
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.4;
+}
+.mac-card-aplic li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: var(--mac-gold);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+}
+
+/* ── CHEF MINOU ────────────────────────────────────────────────────────
+   Ilustraciones PNG (assets/macarons/minou-*.png, 233×300). Todas están
+   recortadas con la misma caja y línea de suelo: al cambiar de variante
+   Minou no salta. Alto fijo por sitio; el ancho sale del aspect-ratio. */
+.mac-minou { display: inline-block; position: relative; height: 56px; aspect-ratio: 233 / 300; vertical-align: middle; flex: none; }
+.mac-minou.m64 { height: 72px; }
+.mac-minou.m96 { height: 150px; }
+.mac-minou img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; -webkit-user-drag: none; }
+
+/* Parpadeo: el fotograma de ojos cerrados solo se ve 120 ms de cada 4,5 s. */
+.mn-lids { opacity: 0; }
+.mn-blink .mn-eyes { animation: mn-eyes 4.5s steps(1, end) infinite; }
+.mn-blink .mn-lids { animation: mn-lids 4.5s steps(1, end) infinite; }
+@keyframes mn-eyes { 0%, 97.3% { opacity: 1; } 97.4%, 100% { opacity: 0; } }
+@keyframes mn-lids { 0%, 97.3% { opacity: 0; } 97.4%, 100% { opacity: 1; } }
+/* Dormido respira despacio; feliz da dos botecitos al aparecer. */
+.mn-dormido img { transform-origin: 50% 100%; animation: mn-resp 3s steps(3, end) infinite; }
+@keyframes mn-resp { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.03); } }
+.mn-feliz img { animation: mn-bote 0.5s steps(2, end) 2; }
+@keyframes mn-bote { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+.mac-minou-head { margin-right: 0.5rem; }
+.mac-side-empty .mac-minou { margin-bottom: 0.6rem; }
+/* "À table!" lleva tilde: VT323, no Press Start 2P. */
+.mac-side-empty .mac-big { font-family: 'VT323', monospace; font-size: 1.7rem; letter-spacing: 0.03em; }
+.mac-minou-frase { font-family: 'VT323', monospace; font-size: 1.15rem; color: var(--mac-gold); }
+
+/* ── TANDA 3 · interacción ─────────────────────────────────────────────
+   Toast de desbloqueo, temblor de inputs, "menú de pausa" del panel y
+   saltito del contador. Todo con steps() para que el movimiento sea de
+   pocos fotogramas, como en un juego de 16 bits. */
+.mac-toasts {
+  position: fixed; top: 12px; right: 12px; z-index: 1000;
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none; max-width: calc(100vw - 24px);
+}
+.mac-toast {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 16px 6px 8px;
+  background: var(--mac-shell);
+  border: 3px solid var(--sabor, var(--mac-gold));
+  box-shadow: 4px 4px 0 var(--mac-shadow);
+  color: var(--mac-ink);
+  animation: mac-toast-in 2.2s steps(1, end) forwards, mac-toast-flash 0.6s steps(3, end);
+}
+.mac-toast .mac-minou { flex: none; }
+.mac-toast .mac-toast-mac { flex: none; width: 64px; height: auto; }
+.mac-toast-tit { font-family: 'Press Start 2P', monospace; font-size: 0.6rem; letter-spacing: 0.08em; color: var(--sabor, var(--mac-gold)); margin-bottom: 4px; }
+.mac-toast-sub { font-family: 'VT323', monospace; font-size: 1.05rem; line-height: 1.1; }
+.mac-toast-fr  { color: var(--mac-gold); }
+@keyframes mac-toast-in {
+  0%   { transform: translateX(120%); }
+  8%   { transform: translateX(12px); }
+  12%  { transform: translateX(0); }
+  88%  { transform: translateX(0); opacity: 1; }
+  92%  { transform: translateX(0); opacity: 0.5; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+@keyframes mac-toast-flash { 0% { background: var(--sabor); } 100% { background: var(--mac-shell); } }
+
+/* Celda recién coleccionada: salta y deja un halo del color del sabor. */
+.mac-el.recien { animation: mac-pop 0.6s steps(4, end); z-index: 2; }
+@keyframes mac-pop {
+  0%   { transform: scale(1.4); box-shadow: 0 0 0 6px var(--sabor); }
+  60%  { transform: scale(1.1); box-shadow: 0 0 0 3px var(--sabor); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 0 transparent; }
+}
+
+.mac-hud-score em { display: inline-block; }
+.mac-hud-score em.bump { animation: mac-bump 0.4s steps(3, end); }
+@keyframes mac-bump { 0% { transform: translateY(0); } 33% { transform: translateY(-5px) scale(1.3); color: var(--mac-gold); } 100% { transform: translateY(0); } }
+
+/* Fallo: el input tiembla de lado a lado. */
+.mac-quiz-field input.shake { animation: mac-shake 0.4s steps(2, end); }
+@keyframes mac-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+
+/* Menú de pausa: ingrediente abierto pero sin coleccionar. */
+.mac-side.mac-side-pausa { border: 3px dashed var(--mac-gold); }
+.mac-side-pausa .mac-quiz-sym { animation: mac-glow 1.6s steps(2, end) infinite; }
+@keyframes mac-glow { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 10px var(--mac-gold), 0 0 2px var(--mac-gold); } }
+.mac-quiz-pie {
+  margin: 0.8rem 0 0; text-align: center;
+  font-family: 'VT323', monospace; font-size: 0.95rem; letter-spacing: 0.05em;
+  color: var(--mac-ink-dim); text-transform: uppercase;
+}
+.mac-quiz-pie::after { content: '_'; animation: mac-cursor 1s steps(1, end) infinite; }
+@keyframes mac-cursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mac-toast { animation: none; }
+  .mac-el.recien, .mac-hud-score em.bump, .mac-quiz-field input.shake,
+  .mac-side-pausa .mac-quiz-sym, .mac-quiz-pie::after { animation: none; }
+}
+.mac-minou-foot { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-top: 0.4rem; min-height: 150px; }
+.mac-minou-foot .mac-quiz-feedback { flex: 1; margin-top: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .mn-blink .mn-eyes, .mn-blink .mn-lids, .mn-dormido img, .mn-feliz img { animation: none; }
+}
+</style>
+</head>
+<body class="skin-arcade">
+
+<header>
+  <div class="header-topbar">
+    <a href="./../index.html">← inicio</a>
+    <span class="sep">·</span>
+    <span class="topbar-marca">hAppYpUkIng · Lab</span>
+    <span class="sep topbar-sep-claim">//</span>
+    <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
+  </div>
+  <h1 class="header-title"><span id="mac-minou-head" class="mac-minou-head" role="img" aria-label="Chef Minou MiauMiau, le chef de la tabla periódica"></span>Macarons de Mendeleyev</h1>
+  <p class="header-subtitle">Pastelería de 118 ingredientes · patio de recreo del bloque</p>
+  <nav class="header-nav">
+    <span class="nav-domain">Química →</span>
+    <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./qui-elementos-tarjetas.html">Quiz</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./qui-formulador.html">Formulación</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool" href="./qui-lab.html">Lab</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-tool active" href="#">Macarons</a>
+  </nav>
+</header>
+
+<p class="aviso-apaisado">
+  <span aria-hidden="true">📱↻</span>
+  Gira el móvil. La pastelería ocupa 18 columnas de ingredientes y aquí la cuadrícula se queda estrecha.
+</p>
+
+<div class="mac-toasts" id="mac-toasts" role="status" aria-live="polite"></div>
+
+<main class="mac-shell">
+  <span class="mac-corner-tr" aria-hidden="true"></span>
+  <span class="mac-corner-br" aria-hidden="true"></span>
+
+  <div class="mac-hud">
+    <span class="mac-hud-label">VITRINA</span>
+    <span class="mac-hud-score"><em id="mac-contador">0</em>/118</span>
+  </div>
+
+  <div class="mac-nivel-bar" role="radiogroup" aria-label="Nivel de cocina" id="mac-nivel-bar"></div>
+
+  <div class="mac-leyenda" id="mac-leyenda" role="toolbar" aria-label="Familias de ingredientes"></div>
+
+  <div class="mac-main">
+    <div class="mac-ptable-wrap">
+      <div class="mac-ptable" id="mac-ptable"></div>
+    </div>
+    <aside class="mac-side" id="mac-side" aria-label="Panel del ingrediente">
+      <div class="mac-side-empty" id="mac-side-empty">
+        <div id="mac-minou-side"></div>
+        <div class="mac-big">À table!</div>
+        <p>Pica un ingrediente<br>y demuestra que lo conoces<br>para añadirlo a tu vitrina.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-left">
+    CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a>
+  </div>
+  <div class="footer-right">hAppYpUkIng · Ix(A+H) = Expanded heart and brain!</div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// MACARONS DE MENDELEYEV — motor
+// Datos de química (CATS, ELEMENTS) vienen de qui-datos.js (cargado
+// antes). Lo específico del juego vive aquí: sabores, niveles, layout
+// visual de la tabla, estado persistido en localStorage.
+// ═══════════════════════════════════════════════════════════════════════
+
+// Sabores mnemotécnicos por familia. Se SUMAN al nombre técnico, nunca
+// lo sustituyen: K = Potasio = "Metal alcalino de fresa". Confirmados
+// por V0ra: menta/metaloides, mora/gases nobles, limón/actínidos. Los
+// otros 7 son propuesta inicial, pendiente de confirmar o cambiar.
+const SABORES = {
+  'metal-alcalino':       'Fresa',
+  'metal-alcalinoterreo': 'Melocotón',
+  'metal-transicion':     'Caramelo',
+  'metal-postransicion':  'Vainilla',
+  'metaloide':            'Menta',
+  'no-metal':             'Cereza',
+  'halogeno':             'Frambuesa',
+  'gas-noble':            'Mora',
+  'lantanido':            'Uva',
+  'actinido':             'Limón',
+};
+
+// Color de sabor por familia — mapea la var CSS que la celda pintará
+// como fondo cuando esté desbloqueada. Hex puro, "DNA 16-bit".
+const SABOR_VAR = {
+  'metal-alcalino':       'var(--sabor-alcalino)',
+  'metal-alcalinoterreo': 'var(--sabor-alcalinoterreo)',
+  'metal-transicion':     'var(--sabor-transicion)',
+  'metal-postransicion':  'var(--sabor-postransicion)',
+  'metaloide':            'var(--sabor-metaloide)',
+  'no-metal':             'var(--sabor-no-metal)',
+  'halogeno':             'var(--sabor-halogeno)',
+  'gas-noble':            'var(--sabor-gas-noble)',
+  'lantanido':            'var(--sabor-lantanido)',
+  'actinido':             'var(--sabor-actinido)',
+};
+
+function familiaCompleta(cat) {
+  return `${CATS[cat].label} de ${SABORES[cat]}`;
+}
+
+// Layout visual de la tabla periódica: [num, col, row]. Se queda aquí
+// (no en qui-datos.js) porque es cómo se dispone la vista, no un dato
+// de dominio compartido con las otras herramientas.
+const layout = [
+  [[1,1,1],[2,18,1]],
+  [[3,1,2],[4,2,2],[5,13,2],[6,14,2],[7,15,2],[8,16,2],[9,17,2],[10,18,2]],
+  [[11,1,3],[12,2,3],[13,13,3],[14,14,3],[15,15,3],[16,16,3],[17,17,3],[18,18,3]],
+  [[19,1,4],[20,2,4],[21,3,4],[22,4,4],[23,5,4],[24,6,4],[25,7,4],[26,8,4],[27,9,4],[28,10,4],[29,11,4],[30,12,4],[31,13,4],[32,14,4],[33,15,4],[34,16,4],[35,17,4],[36,18,4]],
+  [[37,1,5],[38,2,5],[39,3,5],[40,4,5],[41,5,5],[42,6,5],[43,7,5],[44,8,5],[45,9,5],[46,10,5],[47,11,5],[48,12,5],[49,13,5],[50,14,5],[51,15,5],[52,16,5],[53,17,5],[54,18,5]],
+  [[55,1,6],[56,2,6],[57,3,6],[72,4,6],[73,5,6],[74,6,6],[75,7,6],[76,8,6],[77,9,6],[78,10,6],[79,11,6],[80,12,6],[81,13,6],[82,14,6],[83,15,6],[84,16,6],[85,17,6],[86,18,6]],
+  [[87,1,7],[88,2,7],[89,3,7],[104,4,7],[105,5,7],[106,6,7],[107,7,7],[108,8,7],[109,9,7],[110,10,7],[111,11,7],[112,12,7],[113,13,7],[114,14,7],[115,15,7],[116,16,7],[117,17,7],[118,18,7]],
+  [[57,3,9],[58,4,9],[59,5,9],[60,6,9],[61,7,9],[62,8,9],[63,9,9],[64,10,9],[65,11,9],[66,12,9],[67,13,9],[68,14,9],[69,15,9],[70,16,9],[71,17,9]],
+  [[89,3,10],[90,4,10],[91,5,10],[92,6,10],[93,7,10],[94,8,10],[95,9,10],[96,10,10],[97,11,10],[98,12,10],[99,13,10],[100,14,10],[101,15,10],[102,16,10],[103,17,10]],
+];
+const positions = {};
+layout.forEach(period => {
+  period.forEach(([num, col, row]) => { positions[num] = { col, row }; });
+});
+
+// Niveles de cocina: a más rango, más campos pide el formulario para
+// coleccionar un ingrediente. Pinche como default (puerta amable).
+const NIVELES = [
+  { key: 'pinche',   label: 'Pinche',      fields: ['nombre'] },
+  { key: 'cocinero', label: 'Cocinero',    fields: ['nombre','familia'] },
+  { key: 'oficial',  label: '1er Oficial', fields: ['nombre','familia','atomico'] },
+  { key: 'chef',     label: 'Chef',        fields: ['nombre','familia','atomico','periodo'] },
+];
+const CAMPOS = {
+  nombre:  { label: 'Nombre del ingrediente', type: 'text' },
+  familia: { label: 'Familia (y sabor)',      type: 'text' },
+  atomico: { label: 'Nº atómico',             type: 'number' },
+  periodo: { label: 'Periodo',                type: 'number' },
+};
+
+function normalizar(s) {
+  return String(s).trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/-/g, ' ').replace(/\s+/g, ' ');
+}
+function respuestasFamilia(cat) {
+  const tecnico = normalizar(CATS[cat].label);
+  const sabor = normalizar(SABORES[cat]);
+  return [tecnico, sabor, `${tecnico} de ${sabor}`, `${tecnico} ${sabor}`];
+}
+function comprobarCampo(campo, valor, el) {
+  const [num, sym, name, mass, cat, group, period] = el;
+  if (valor === '' || valor === null || valor === undefined) return false;
+  switch (campo) {
+    case 'nombre':  return normalizar(valor) === normalizar(name);
+    case 'familia': return respuestasFamilia(cat).includes(normalizar(valor));
+    case 'atomico': return parseInt(valor, 10) === num;
+    case 'periodo': return parseInt(valor, 10) === period;
+    default: return false;
+  }
+}
+
+// Persistencia. La colección sobrevive al reload — en una herramienta
+// de "coleccionar", perder el progreso es un pecado capital.
+const COL_KEY = 'hpk-macarons-coleccion';
+const NIV_KEY = 'hpk-macarons-nivel';
+
+let coleccion = (function loadColeccion() {
+  try {
+    const raw = localStorage.getItem(COL_KEY);
+    if (!raw) return new Set();
+    const nums = JSON.parse(raw);
+    if (!Array.isArray(nums)) return new Set();
+    const valid = nums.filter(n => Number.isInteger(n) && n >= 1 && n <= 118);
+    return new Set(valid);
+  } catch (e) { return new Set(); }
+})();
+function saveColeccion() {
+  try { localStorage.setItem(COL_KEY, JSON.stringify([...coleccion])); } catch (e) {}
+}
+
+let nivelActual = (function loadNivel() {
+  try {
+    const n = localStorage.getItem(NIV_KEY);
+    if (n && NIVELES.some(x => x.key === n)) return n;
+  } catch (e) {}
+  return 'pinche';
+})();
+function saveNivel() {
+  try { localStorage.setItem(NIV_KEY, nivelActual); } catch (e) {}
+}
+
+let filtro = null;
+let activo = null;
+let recien = null;   // ingrediente recién coleccionado: renderTabla le pone la animación
+
+function catCount(cat) { return ELEMENTS.filter(e => e[4] === cat).length; }
+function catColeccionado(cat) { return ELEMENTS.filter(e => e[4] === cat && coleccion.has(e[0])).length; }
+
+function renderNiveles() {
+  document.getElementById('mac-nivel-bar').innerHTML = NIVELES.map(n => `
+    <button type="button" class="mac-nivel-pill ${nivelActual === n.key ? 'active' : ''}"
+            onclick="cambiarNivel('${n.key}')"
+            role="radio" aria-checked="${nivelActual === n.key}">
+      ${n.label}
+    </button>
+  `).join('');
+}
+function cambiarNivel(key) {
+  nivelActual = key;
+  saveNivel();
+  renderNiveles();
+  if (activo !== null && !coleccion.has(activo)) abrirFicha(activo);
+}
+
+// Icono de sabor de cada familia (assets/macarons/sabor-<familia>.png, 96×96).
+const SABOR_DIR = '../assets/macarons/sabor-';
+
+function renderLeyenda() {
+  document.getElementById('mac-leyenda').innerHTML = Object.keys(CATS).map(cat => `
+    <div class="mac-leyenda-item ${filtro === cat ? 'active' : ''}" onclick="toggleFiltro('${cat}')"
+         onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleFiltro('${cat}'); }"
+         role="button" tabindex="0" aria-pressed="${filtro === cat}">
+      <span class="mac-leyenda-dot" style="background:${SABOR_VAR[cat]}"></span>
+      <img class="mac-leyenda-ico" src="${SABOR_DIR}${cat.replace(/^metal-/, '')}.png" alt="" draggable="false">
+      <span class="mac-leyenda-nombre">
+        ${CATS[cat].label}
+        <span class="mac-leyenda-sabor">${SABORES[cat]}</span>
+      </span>
+      <span class="mac-leyenda-frac">${catColeccionado(cat)}/${catCount(cat)}</span>
+    </div>
+  `).join('');
+}
+function toggleFiltro(cat) {
+  filtro = filtro === cat ? null : cat;
+  renderLeyenda();
+  renderTabla();
+}
+
+function renderContador() {
+  document.getElementById('mac-contador').textContent = coleccion.size;
+}
+
+const ROWS = 10;
+const COLS = 18;
+
+function renderTabla() {
+  const ptable = document.getElementById('mac-ptable');
+  ptable.innerHTML = '';
+
+  const cells = {};
+  for (let row = 1; row <= ROWS; row++) {
+    for (let col = 1; col <= COLS; col++) {
+      const div = document.createElement('div');
+      div.style.gridColumn = col;
+      div.style.gridRow = row;
+      div.className = 'mac-el el-empty';
+      ptable.appendChild(div);
+      cells[`${row}-${col}`] = div;
+    }
+  }
+
+  ELEMENTS.forEach(e => {
+    const [num, sym, name, mass, cat] = e;
+    const pos = positions[num];
+    if (!pos) return;
+    const key = `${pos.row}-${pos.col}`;
+    const hueco = cells[key];
+    if (!hueco) return;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.gridColumn = hueco.style.gridColumn;
+    btn.style.gridRow = hueco.style.gridRow;
+    hueco.replaceWith(btn);
+    cells[key] = btn;
+
+    const collected = coleccion.has(num);
+    btn.className = 'mac-el' + (collected ? ' unlocked' : '');
+    if (filtro && cat !== filtro) btn.classList.add('dimmed');
+    if (recien === num) btn.classList.add('recien');
+    btn.style.setProperty('--sabor', SABOR_VAR[cat]);
+    btn.dataset.num = num;
+    btn.innerHTML = collected
+      ? `${macaronImg(cat, 'mac-el-sprite')}<span class="mac-el-num">${num}</span><span class="mac-el-sym">${sym}</span>`
+      : `<span class="mac-el-q">?</span>`;
+    btn.setAttribute('aria-label', collected
+      ? `${name}, símbolo ${sym}, número ${num}, ${familiaCompleta(cat)}`
+      : `Ingrediente número ${num} sin coleccionar`);
+    btn.onclick = () => abrirFicha(num);
+  });
+}
+
+function abrirFicha(num) {
+  activo = num;
+  const el = ELEMENTS.find(e => e[0] === num);
+  const [n, sym, name, mass, cat, group, period, origen, aplicaciones] = el;
+  const side = document.getElementById('mac-side');
+  // Sin coleccionar = "menú de pausa": borde discontinuo grueso.
+  side.classList.toggle('mac-side-pausa', !coleccion.has(num));
+
+  if (coleccion.has(num)) {
+    side.innerHTML = `
+      <div class="mac-card" style="--sabor:${SABOR_VAR[cat]}">
+        <div class="mac-card-header">
+          ${macaronImg(cat, 'mac-card-macaron')}
+          <div class="mac-card-num">Nº ${n}</div>
+          <span class="mac-card-sym">${sym}</span>
+          <div class="mac-card-name">${name}</div>
+          <div class="mac-card-fam">${familiaCompleta(cat)}</div>
+        </div>
+        <div class="mac-card-stats">
+          <div class="mac-card-stat"><span class="lbl">MASA</span><span class="val">${mass}</span></div>
+          <div class="mac-card-stat"><span class="lbl">PERIODO</span><span class="val">${period}</span></div>
+        </div>
+        <p class="mac-card-origen">${origen}</p>
+        <ul class="mac-card-aplic">${aplicaciones.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>
+    `;
+    return;
+  }
+
+  const nivel = NIVELES.find(x => x.key === nivelActual);
+  side.innerHTML = `
+    <div class="mac-quiz-head">
+      <span class="mac-quiz-sym">?</span>
+      <div class="mac-quiz-meta">Ingrediente nº ${n} · símbolo ${sym}</div>
+      <div class="mac-quiz-meta">Nivel ${nivel.label.toUpperCase()}</div>
+    </div>
+    ${nivel.fields.map(f => `
+      <div class="mac-quiz-field">
+        <label for="mc-${f}">${CAMPOS[f].label}</label>
+        <input id="mc-${f}" type="${CAMPOS[f].type}" data-campo="${f}" autocomplete="off">
+      </div>
+    `).join('')}
+    <button class="mac-quiz-submit" onclick="comprobar(${n})">COMPROBAR</button>
+    <div id="mc-fb"></div>
+    <p class="mac-quiz-pie">Pulsa COMPROBAR para desbloquear</p>
+    <div id="mc-foot" class="mac-minou-foot"></div>
+  `;
+  minouReposo();
+  const first = side.querySelector('input');
+  if (first) first.focus();
+}
+
+function comprobar(num) {
+  const el = ELEMENTS.find(e => e[0] === num);
+  const nivel = NIVELES.find(x => x.key === nivelActual);
+  const fb = document.getElementById('mc-fb');
+  let ok = true;
+
+  nivel.fields.forEach(f => {
+    const input = document.getElementById(`mc-${f}`);
+    const bien = comprobarCampo(f, input.value, el);
+    input.classList.remove('field-ok', 'field-bad', 'shake');
+    if (!bien) void input.offsetWidth;   // reflow: permite repetir el temblor
+    input.classList.add(bien ? 'field-ok' : 'field-bad');
+    if (!bien) { input.classList.add('shake'); ok = false; }
+  });
+
+  if (ok) {
+    coleccion.add(num);
+    saveColeccion();
+    fb.innerHTML = '<div class="mac-quiz-feedback ok">¡COLECCIONADO! +1 ingrediente a la vitrina.</div>';
+    recien = num;
+    renderTabla();
+    recien = null;
+    renderLeyenda();
+    renderContador();
+    pulsarContador();
+    toastIngrediente(num);
+    setTimeout(() => { if (activo === num) abrirFicha(num); }, 650);
+  } else {
+    fb.innerHTML = '<div class="mac-quiz-feedback error">Algo no cuadra · revisa los campos marcados.</div>';
+    minouFoot('fallo', 'Oh là là!', 1500);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CHEF MINOU + SPRITES DE SABOR
+// Sin motor: solo dibujo y cambio de variante. Los colores salen de las
+// variable --sabor-* (skin-arcade); Minou y los macarons son PNG.
+// ═══════════════════════════════════════════════════════════════════════
+// Macarons: un PNG por familia (assets/macarons/macaron-<familia>.png, 240×209,
+// mismo lienzo y base). La clave sale de la categoría: "metal-alcalino" → "alcalino".
+const MACARON_DIR = '../assets/macarons/macaron-';
+function macaronImg(cat, clase) {
+  return `<img class="${clase}" src="${MACARON_DIR}${cat.replace(/^metal-/, '')}.png" alt="" draggable="false">`;
+}
+Object.keys(CATS).forEach(c => { new Image().src = `${MACARON_DIR}${c.replace(/^metal-/, '')}.png`; });
+
+// Minou: una <img> por variante (idle lleva además el fotograma de ojos
+// cerrados para el parpadeo). v: idle | feliz | pensando | fallo | dormido.
+const MINOU_DIR = '../assets/macarons/minou-';
+const MINOU_FOTOGRAMAS = ['idle', 'idle-parpadeo', 'feliz', 'pensando', 'fallo', 'dormido'];
+function minouHTML(v, size) {
+  const img = (n, c) => `<img src="${MINOU_DIR}${n}.png" alt="" class="${c}" draggable="false">`;
+  const cls = 'mac-minou' + (size ? ' ' + size : '') + ' mn-' + v + (v === 'idle' ? ' mn-blink' : '');
+  const cuerpo = v === 'idle' ? img('idle', 'mn-eyes') + img('idle-parpadeo', 'mn-lids') : img(v, '');
+  return `<span class="${cls}" aria-hidden="true">${cuerpo}</span>`;
+}
+// Precarga: así el cambio de variante no parpadea en blanco.
+MINOU_FOTOGRAMAS.forEach(n => { new Image().src = `${MINOU_DIR}${n}.png`; });
+
+function setMinou(id, v, size) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = minouHTML(v, size);
+}
+
+// Pie del formulario: Minou pensando mientras escribes; si fallas, un
+// momento de "fallo" con frase y vuelve a pensando.
+let minouFootTimer = null;
+function minouReposo() {
+  clearTimeout(minouFootTimer);
+  const slot = document.getElementById('mc-foot');
+  if (slot) slot.innerHTML = minouHTML('pensando', 'm96');
+}
+function minouFoot(v, frase, ms) {
+  const slot = document.getElementById('mc-foot');
+  if (!slot) return;
+  slot.innerHTML = minouHTML(v, 'm96') + `<span class="mac-minou-frase">${frase}</span>`;
+  clearTimeout(minouFootTimer);
+  minouFootTimer = setTimeout(minouReposo, ms);
+}
+
+// Toast "+1 INGREDIENTE" arriba a la derecha, con Minou feliz. Se
+// retira solo; role=status para lectores de pantalla.
+function toastIngrediente(num) {
+  const el = ELEMENTS.find(e => e[0] === num);
+  const [, sym, name, , cat] = el;
+  const caja = document.getElementById('mac-toasts');
+  if (!caja) return;
+  const t = document.createElement('div');
+  t.className = 'mac-toast';
+  t.style.setProperty('--sabor', SABOR_VAR[cat]);
+  t.innerHTML = minouHTML('feliz', '') +
+    `<div><div class="mac-toast-tit">+1 INGREDIENTE</div>` +
+    `<div class="mac-toast-sub">${name} (${sym}) · ${SABORES[cat]}</div>` +
+    `<div class="mac-toast-sub mac-toast-fr">C'est magnifique!</div></div>` +
+    macaronImg(cat, 'mac-toast-mac');
+  caja.appendChild(t);
+  setTimeout(() => t.remove(), 2300);
+}
+
+// El contador de la vitrina da un saltito al subir.
+function pulsarContador() {
+  const c = document.getElementById('mac-contador');
+  c.classList.remove('bump');
+  void c.offsetWidth;
+  c.classList.add('bump');
+}
+
+// Header: idle → dormido tras 60 s sin pulsar nada; cualquier pulsación
+// lo despierta y reinicia la cuenta.
+let minouDormido = false, minouTimer = null;
+function minouDespertar() {
+  if (minouDormido) { minouDormido = false; setMinou('mac-minou-head', 'idle', 'm64'); }
+  clearTimeout(minouTimer);
+  minouTimer = setTimeout(() => { minouDormido = true; setMinou('mac-minou-head', 'dormido', 'm64'); }, 60000);
+}
+['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, minouDespertar, { passive: true }));
+
+// Enter en cualquier input dispara comprobar() del ingrediente activo.
+document.addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Enter') return;
+  if (!ev.target.matches('.mac-quiz-field input')) return;
+  if (activo !== null && !coleccion.has(activo)) {
+    ev.preventDefault();
+    comprobar(activo);
+  }
+});
+
+renderNiveles();
+renderLeyenda();
+renderTabla();
+renderContador();
+setMinou('mac-minou-head', 'idle', 'm64');
+setMinou('mac-minou-side', 'pensando', 'm96');
+minouDespertar();
+</script>
+<script src="../lab.js"></script>
+</body>
+</html>
