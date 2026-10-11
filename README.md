@@ -348,9 +348,9 @@ amigos para siempre.
 Puedes usar, adaptar y compartir — siempre que sea sin fines comerciales y mantengas esta misma licencia.  
 Cita la fuente. Es lo mínimo.
 
-Las ilustraciones de Macarons de Mendeleyev (Chef Minou, macarons y sabores)
-se generaron con inteligencia artificial y se seleccionaron y prepararon para
-el proyecto. Los detalles están en
+Las ilustraciones de la Pastelería de Mendeleyev (Chef Minou y Mikan, macarons,
+mochis y sabores) se generaron con inteligencia artificial y se seleccionaron y
+prepararon para el proyecto. Los detalles están en
 [`assets/macarons/CREDITOS.md`](assets/macarons/CREDITOS.md).
 
 ---

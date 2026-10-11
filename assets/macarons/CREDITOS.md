@@ -1,6 +1,9 @@
 # Créditos de recursos gráficos
 
-## Sprites de Minou e ingredientes de Macarons de Mendeleyev
+## Sprites de Minou y Mikan, e ingredientes de Macarons y Mochis de Mendeleyev
+
+Aplica a las imágenes de `assets/macarons/` y de `assets/mochis/`: las
+mascotas (Minou y Mikan), los macarons, los mochis y los iconos de sabor.
 
 Recursos gráficos generados mediante inteligencia artificial con
 ChatGPT/OpenAI y seleccionados para el proyecto Happypuking Lab.

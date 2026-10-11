@@ -71,6 +71,8 @@ body.skin-arcade {
   --mac-azure:     #5A9BC8;
   --mac-red:       #FF4D5E;
   --mac-shadow:    #000000;
+  --mac-sym:       var(--mac-ink);   /* número y símbolo sobre el sprite de la celda… */
+  --mac-sym-borde: #000000;          /* …y su contorno */
 
   /* Sabor por familia — paleta pixel propia, saturada y hex puro. No
      reutiliza los tokens --metal-* del módulo técnico (que están
@@ -89,6 +91,67 @@ body.skin-arcade {
 
 
 }
+
+/* ── Modo mochis: interior claro y kawaii ───────────────────────────────
+   Solo cambia el color del interior del juego (la forma pixel se queda). Los
+   textos y acentos están elegidos para ≥ 4,5:1 sobre los paneles (medido). Los
+   tonos pastel de familia (vainilla, limón…) no se leen como texto sobre fondo
+   claro, así que solo el símbolo grande (que pide 3:1) usa el color de la
+   familia, oscurecido; el nombre de familia y el título del aviso van en tinta
+   y el color lo llevan el macaron, el símbolo y el borde. Los colores de
+   familia de las celdas, de los chips y de los postres no cambian. */
+body.skin-arcade[data-modo="mochis"] {
+  --mac-bg:        #FFF8FB;   /* papel de arroz con un toque rosa */
+  --mac-shell:     #FFE8F0;   /* paneles: rosa chicle muy claro */
+  --mac-cell:      #FDD1C9;   /* celdas y chips: melocotón (antes lavanda #EADCF8) */
+  --mac-cell-dim:  #F5B8AC;   /* borde de celdas y fondo del chip activo: melocotón más oscuro */
+  --mac-ink:       #5A3552;   /* ciruela: texto */
+  --mac-ink-dim:   #72526C;   /* gris ciruela: ≥ 4,5 también sobre el melocotón */
+  --mac-gold:      #BD3870;   /* acento: fresa */
+  --mac-pink:      #FF6B9D;
+  --mac-mint:      #12664F;   /* ok/éxito: ≥ 4,5 incluso sobre su propio tinte */
+  --mac-azure:     #2A7231;   /* color de las ayuditas (el nombre viene del tema oscuro): verde hoja, misma luminosidad que el azul anterior #2A66A5 */
+  --mac-red:       #A82043;   /* error y vaciar: ídem */
+  --mac-shadow:    #6B3F63;
+  --mac-sym:       #FFFFFF;
+  --mac-sym-borde: #6B3F63;
+}
+body.skin-arcade[data-modo="mochis"] .mac-leyenda-item:not(.active):not(:hover):not(:focus-visible),
+body.skin-arcade[data-modo="mochis"] .mac-nivel-pill:not(.active):not(:hover):not(:focus-visible) { border-color: var(--mac-cell-dim); }   /* borde propio de los chips en reposo (familias, niveles y modos) */
+body.skin-arcade[data-modo="mochis"] .mac-leyenda-item.active .mac-leyenda-sabor { color: var(--mac-ink); }   /* el fondo del chip activo es más oscuro: el gris no llega a 4,5 */
+body.skin-arcade[data-modo="mochis"] .mac-card-sym {
+  color: color-mix(in srgb, var(--sabor, var(--mac-gold)) 40%, var(--mac-ink));
+}
+/* Esquinas redondeadas (prueba; para quitarlas, borrar este bloque). Solo el
+   mochi las lleva: es lo que lo separa de la recreativa de los macarons. */
+body.skin-arcade[data-modo="mochis"] .mac-shell { border-radius: 24px; }
+body.skin-arcade[data-modo="mochis"] .mac-shell::before,
+body.skin-arcade[data-modo="mochis"] .mac-shell::after,
+body.skin-arcade[data-modo="mochis"] .mac-shell > .mac-corner-tr,
+body.skin-arcade[data-modo="mochis"] .mac-shell > .mac-corner-br { display: none; }   /* los clavos cuadrados de las esquinas */
+body.skin-arcade[data-modo="mochis"] .mac-cartel,
+body.skin-arcade[data-modo="mochis"] .mac-hud,
+body.skin-arcade[data-modo="mochis"] .mac-leyenda,
+body.skin-arcade[data-modo="mochis"] .mac-ptable-wrap,
+body.skin-arcade[data-modo="mochis"] .mac-side,
+body.skin-arcade[data-modo="mochis"] .mac-toast { border-radius: 16px; }
+body.skin-arcade[data-modo="mochis"] .mac-leyenda-item,
+body.skin-arcade[data-modo="mochis"] .mac-quiz-field input,
+body.skin-arcade[data-modo="mochis"] .mac-quiz-submit,
+body.skin-arcade[data-modo="mochis"] .mac-quiz-feedback,
+body.skin-arcade[data-modo="mochis"] .mac-card-stat,
+body.skin-arcade[data-modo="mochis"] .mac-card-ayuda,
+body.skin-arcade[data-modo="mochis"] .mac-ayuda,
+body.skin-arcade[data-modo="mochis"] .mac-previa-aviso,
+body.skin-arcade[data-modo="mochis"] .mac-ayudas-btn,
+body.skin-arcade[data-modo="mochis"] .mac-vaciar-btn { border-radius: 10px; }
+body.skin-arcade[data-modo="mochis"] .mac-nivel-pill { border-radius: 999px; }
+body.skin-arcade[data-modo="mochis"] .mac-el { border-radius: 8px; }
+body.skin-arcade[data-modo="mochis"] .mac-leyenda-dot { border-radius: 50%; }
+
+body.skin-arcade[data-modo="mochis"] .mac-card-fam,
+body.skin-arcade[data-modo="mochis"] .mac-toast-tit,
+body.skin-arcade[data-modo="mochis"] .mac-leyenda-frac { color: var(--mac-ink); }   /* el contador del chip es muy pequeño: tinta, no acento */
 
 .mac-shell {
   margin: 1.5rem auto;
@@ -277,8 +340,8 @@ body.skin-arcade {
 }
 .mac-el .mac-el-sym, .mac-el .mac-el-num {
   position: absolute;
-  color: var(--mac-ink);
-  text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
+  color: var(--mac-sym);
+  text-shadow: 1px 0 0 var(--mac-sym-borde), -1px 0 0 var(--mac-sym-borde), 0 1px 0 var(--mac-sym-borde), 0 -1px 0 var(--mac-sym-borde);
 }
 .mac-el .mac-el-sym { right: 3px; bottom: 2px; font-size: 0.55rem; letter-spacing: 0.02em; }
 .mac-el .mac-el-num { left: 3px; top: 3px; font-size: 0.36rem; }
@@ -469,10 +532,10 @@ body.skin-arcade {
    Ilustraciones PNG (assets/macarons/minou-*.png, 233×300). Todas están
    recortadas con la misma caja y línea de suelo: al cambiar de variante
    Minou no salta. Alto fijo por sitio; el ancho sale del aspect-ratio. */
-.mac-minou { display: inline-block; position: relative; height: 56px; aspect-ratio: 233 / 300; vertical-align: middle; flex: none; }
+.mac-minou { display: inline-block; position: relative; height: 56px; aspect-ratio: var(--mascota-ratio, 233 / 300); vertical-align: middle; flex: none; }
 .mac-minou.m64 { height: 72px; }
 .mac-minou.m96 { height: 150px; }
-.mac-minou img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; -webkit-user-drag: none; }
+.mac-minou img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; -webkit-user-drag: none; }
 
 /* Parpadeo: el fotograma de ojos cerrados solo se ve 120 ms de cada 4,5 s. */
 .mn-lids { opacity: 0; }
@@ -512,6 +575,9 @@ body.skin-arcade {
   color: var(--mac-gold);
 }
 .mac-cartel-frase { margin: 0; font-family: 'VT323', monospace; font-size: 1.35rem; line-height: 1.15; color: var(--mac-ink); }
+/* Aviso de borrador: solo se ve en un modo en vista previa (?previa=…). */
+.mac-previa-aviso { display: inline-block; margin: 0.6rem 0 0; padding: 1px 10px; border: 2px dashed var(--mac-gold); color: var(--mac-gold); font-family: 'VT323', monospace; font-size: 1.1rem; letter-spacing: 0.03em; }
+.mac-previa-aviso[hidden] { display: none; }
 @media (max-width: 520px) { .mac-minou.mc { height: 72px; } .mac-cartel { gap: 0.7rem; padding: 0.5rem 0.7rem; } }
 .mac-side-empty .mac-minou { margin-bottom: 0.6rem; }
 /* "À table!" lleva tilde: VT323, no Press Start 2P. */
@@ -691,6 +757,7 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
     <div class="mac-cartel-texto">
       <h2 class="mac-cartel-titulo" id="mac-titulo">Macarons de Mendeleyev</h2>
       <p class="mac-cartel-frase" id="mac-frase">À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.</p>
+      <p class="mac-previa-aviso" id="mac-previa" role="note" hidden>Vista previa · pendiente de revisión</p>
     </div>
     <div class="mac-modos" id="mac-modos" role="radiogroup" aria-label="Pastelería" hidden></div>
   </div>
@@ -755,7 +822,7 @@ const MODOS = {
     titulo: 'Macarons de Mendeleyev',
     frase: 'À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
     voz: { mesa: 'À table!', fallo: 'Oh là là!', acierto: "C'est magnifique!" },
-    mascota: { nombre: 'Minou', prefijo: 'minou-', alt: 'Chef Minou MiauMiau, le chef de la tabla periódica' },
+    mascota: { nombre: 'Minou', prefijo: 'minou-', ratio: '233 / 300', alt: 'Chef Minou MiauMiau, le chef de la tabla periódica' },
     assets: { dir: '../assets/macarons/', postre: 'macaron-', sabor: 'sabor-' },
     sabores: {
       'metal-alcalino':       'Fresa',
@@ -779,8 +846,13 @@ const MODOS = {
     titulo: 'Mochis de Mendeleyev',
     frase: 'Itadakimasu! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
     voz: { mesa: 'Itadakimasu!', fallo: 'Mo ichido!', acierto: 'Sugoi!' },
-    mascota: { nombre: 'Mikan', prefijo: 'mikan-', alt: 'Mikan, gato artesano de wagashi de la tabla periódica' },
-    assets: { dir: '../assets/mochis/', postre: 'mochi-', sabor: 'sabor-' },
+    mascota: { nombre: 'Mikan', prefijo: 'mikan-', ratio: '264 / 300', alt: 'Mikan, gato artesano de wagashi de la tabla periódica' },
+    // `faltan`: tipos de imagen de este modo que aún no existen ('postre' y/o
+    // 'sabor'). La vista previa (?previa=mochis) usa para ellos los de
+    // `respaldo` (los del modo macarons). Hoy están todos, así que `faltan` va vacío.
+    assets: { dir: '../assets/mochis/', postre: 'mochi-', sabor: 'sabor-',
+              faltan: [],   // ya están los tres tipos (mascota, postres, iconos de sabor): sin respaldo
+              respaldo: { dir: '../assets/macarons/', postre: 'macaron-', sabor: 'sabor-' } },
     sabores: {
       'metal-alcalino':       'Ichigo',
       'metal-alcalinoterreo': 'Momo',
@@ -796,8 +868,35 @@ const MODOS = {
   },
 };
 const MODO_KEY = 'hpk-pasteleria-modo';
+// Vista previa de un modo todavía no publicado: ?previa=mochis. Enlace NO
+// LISTADO (no sale en el nav, el índice ni el sitemap) pensado para enseñar el
+// modo a quien lo revise; no es privado: el repositorio es público. Se marca
+// como borrador (título y aviso en el cartel), se pide a los buscadores que no
+// lo indexen y no se guarda como preferencia.
+// Solo vale el nombre de un modo PROPIO que aún no esté listo: cualquier otro
+// valor (otro texto, "constructor", un modo ya publicado…) se ignora.
+const PREVIA_PEDIDA = new URLSearchParams(location.search).get('previa');
+const PREVIA = (PREVIA_PEDIDA && Object.hasOwn(MODOS, PREVIA_PEDIDA) && !MODOS[PREVIA_PEDIDA].listo)
+  ? PREVIA_PEDIDA : null;
+if (PREVIA) {
+  MODOS[PREVIA].listo = true;
+  MODOS[PREVIA].previa = true;
+  const robots = document.createElement('meta');
+  robots.name = 'robots';
+  robots.content = 'noindex, nofollow';
+  document.head.appendChild(robots);
+}
 function modosListos() { return Object.keys(MODOS).filter(k => MODOS[k].listo); }
+// Prefijos de las rutas de imágenes de un modo (sabor, postre y mascota).
+function rutasModo(m) {
+  const a = m.assets;
+  // un tipo que falta se sustituye por el respaldo, pero solo en la vista previa
+  const de = tipo => (m.previa && a.respaldo && (a.faltan || []).includes(tipo))
+    ? a.respaldo.dir + a.respaldo[tipo] : a.dir + a[tipo];
+  return { sabor: de('sabor'), postre: de('postre'), mascota: a.dir + m.mascota.prefijo };
+}
 let modoActual = (function loadModo() {
+  if (PREVIA) return PREVIA;
   try {
     const m = localStorage.getItem(MODO_KEY);
     if (m && MODOS[m] && MODOS[m].listo) return m;
@@ -968,7 +1067,7 @@ function cambiarNivel(key) {
 
 // Icono de sabor de cada familia (<dir del modo>/sabor-<familia>.png, 96×96).
 // Las tres rutas de imágenes (sabor, postre y mascota) las fija aplicarModo().
-let SABOR_DIR = MODOS[modoActual].assets.dir + MODOS[modoActual].assets.sabor;
+let SABOR_DIR = rutasModo(MODOS[modoActual]).sabor;
 
 function renderLeyenda() {
   document.getElementById('mac-leyenda').innerHTML = Object.keys(CATS).map(cat => `
@@ -1258,14 +1357,14 @@ function comprobar(num) {
 // Macarons: un PNG por familia (assets/macarons/macaron-<familia>.png, 240×209,
 // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // mismo lienzo y base). La clave sale de la categoría: "metal-alcalino" → "alcalino".
-let MACARON_DIR = MODOS[modoActual].assets.dir + MODOS[modoActual].assets.postre;
+let MACARON_DIR = rutasModo(MODOS[modoActual]).postre;
 function macaronImg(cat, clase) {
   return `<img class="${clase}" src="${MACARON_DIR}${cat.replace(/^metal-/, '')}.png" alt="" draggable="false">`;
 }
 
 // Minou: una <img> por variante (idle lleva además el fotograma de ojos
 // cerrados para el parpadeo). v: idle | feliz | pensando | fallo | dormido.
-let MINOU_DIR = MODOS[modoActual].assets.dir + MODOS[modoActual].mascota.prefijo;
+let MINOU_DIR = rutasModo(MODOS[modoActual]).mascota;
 const MINOU_FOTOGRAMAS = ['idle', 'idle-parpadeo', 'feliz', 'pensando', 'pensando-2', 'fallo', 'dormido'];
 // Idle y pensando llevan un segundo fotograma de ojos cerrados: idle parpadea
 // rápido; pensando cierra los ojos más rato, como quien rumia (mn-lento).
@@ -1413,12 +1512,15 @@ function aplicarModo(id, inicial) {
   if (!m || !m.listo) return;
   modoActual = id;
   SABORES = m.sabores;
-  SABOR_DIR = m.assets.dir + m.assets.sabor;
-  MACARON_DIR = m.assets.dir + m.assets.postre;
-  MINOU_DIR = m.assets.dir + m.mascota.prefijo;
+  const rutas = rutasModo(m);
+  SABOR_DIR = rutas.sabor;
+  MACARON_DIR = rutas.postre;
+  MINOU_DIR = rutas.mascota;
   document.body.dataset.modo = id;
-  if (!inicial) { try { localStorage.setItem(MODO_KEY, id); } catch (e) {} }
-  document.getElementById('mac-titulo').textContent = m.titulo;
+  document.body.style.setProperty('--mascota-ratio', m.mascota.ratio);   // cada mascota tiene su proporción
+  if (!inicial && !m.previa) { try { localStorage.setItem(MODO_KEY, id); } catch (e) {} }
+  document.getElementById('mac-titulo').textContent = m.titulo + (m.previa ? ' (vista previa)' : '');
+  document.getElementById('mac-previa').hidden = !m.previa;
   document.getElementById('mac-frase').textContent = m.frase;
   const mesa = document.getElementById('mac-mesa');   // solo existe mientras el panel está vacío
   if (mesa) mesa.textContent = m.voz.mesa;
