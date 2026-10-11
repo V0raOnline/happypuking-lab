@@ -496,7 +496,11 @@ body.skin-arcade {
   background: var(--mac-shell); border: 2px solid var(--mac-gold);
 }
 .mac-minou.mc { height: 104px; }
-.mac-cartel-texto { min-width: 0; }
+.mac-cartel-texto { min-width: 0; flex: 1 1 240px; }   /* base 240: si no cabe junto al selector, este baja a su línea */
+.mac-cartel { flex-wrap: wrap; }
+/* Selector de pastelería: solo se muestra con 2 o más modos listos. */
+.mac-modos { display: flex; gap: 6px; flex-wrap: wrap; align-self: flex-start; margin-left: auto; }
+.mac-modos[hidden] { display: none; }
 .mac-cartel-titulo {
   margin: 0 0 0.5rem;
   font-family: 'Press Start 2P', monospace; font-weight: 400; text-transform: none;
@@ -665,6 +669,7 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
       <h2 class="mac-cartel-titulo" id="mac-titulo">Macarons de Mendeleyev</h2>
       <p class="mac-cartel-frase" id="mac-frase">À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.</p>
     </div>
+    <div class="mac-modos" id="mac-modos" role="radiogroup" aria-label="Pastelería" hidden></div>
   </div>
 
   <div class="mac-nivel-bar" role="radiogroup" aria-label="Nivel de cocina" id="mac-nivel-bar"></div>
@@ -684,7 +689,7 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
     <aside class="mac-side" id="mac-side" aria-label="Panel del ingrediente">
       <div class="mac-side-empty" id="mac-side-empty">
         <div id="mac-minou-side"></div>
-        <div class="mac-big">À table!</div>
+        <div class="mac-big" id="mac-mesa">À table!</div>
         <p>Pica un ingrediente<br>y demuestra que lo conoces<br>para añadirlo a tu vitrina.</p>
       </div>
     </aside>
@@ -708,22 +713,73 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
 // visual de la tabla, estado persistido en localStorage.
 // ═══════════════════════════════════════════════════════════════════════
 
+// ── MODOS DE PASTELERÍA ────────────────────────────────────────────────
+// Una sola vitrina (la colección es compartida) que se pinta de una u otra
+// pastelería. Cada modo declara lo que cambia: título, mascota, frase y voz
+// del chef, sabores por familia y carpeta de imágenes. `listo: false` oculta
+// el modo y el selector hasta que lleguen sus ilustraciones.
+//
 // Sabores mnemotécnicos por familia. Se SUMAN al nombre técnico, nunca
-// lo sustituyen: K = Potasio = "Metal alcalino de fresa". Confirmados
-// por V0ra: menta/metaloides, mora/gases nobles, limón/actínidos. Los
-// otros 7 son propuesta inicial, pendiente de confirmar o cambiar.
-const SABORES = {
-  'metal-alcalino':       'Fresa',
-  'metal-alcalinoterreo': 'Melocotón',
-  'metal-transicion':     'Caramelo',
-  'metal-postransicion':  'Vainilla',
-  'metaloide':            'Menta',
-  'no-metal':             'Cereza',
-  'halogeno':             'Frambuesa',
-  'gas-noble':            'Mora',
-  'lantanido':            'Uva',
-  'actinido':             'Limón',
+// lo sustituyen: K = Potasio = "Metal alcalino de fresa". En macarons,
+// confirmados por V0ra: menta/metaloides, mora/gases nobles, limón/actínidos;
+// los otros 7 se eligieron para que no se confundieran entre sí.
+const MODOS = {
+  macarons: {
+    listo: true,
+    etiqueta: 'Macarons',
+    titulo: 'Macarons de Mendeleyev',
+    frase: 'À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
+    voz: { mesa: 'À table!', fallo: 'Oh là là!', acierto: "C'est magnifique!" },
+    mascota: { prefijo: 'minou-', alt: 'Chef Minou MiauMiau, le chef de la tabla periódica' },
+    assets: { dir: '../assets/macarons/', postre: 'macaron-', sabor: 'sabor-' },
+    sabores: {
+      'metal-alcalino':       'Fresa',
+      'metal-alcalinoterreo': 'Melocotón',
+      'metal-transicion':     'Caramelo',
+      'metal-postransicion':  'Vainilla',
+      'metaloide':            'Menta',
+      'no-metal':             'Cereza',
+      'halogeno':             'Frambuesa',
+      'gas-noble':            'Mora',
+      'lantanido':            'Uva',
+      'actinido':             'Limón',
+    },
+  },
+  // PROVISIONAL: los sabores, la frase y la voz japonesa son propuesta;
+  // conviene que los valide alguien que sepa japonés antes de publicarlos.
+  // Sabores en ASCII (sin macrones) para que se puedan teclear.
+  mochis: {
+    listo: false,
+    etiqueta: 'Mochis',
+    titulo: 'Mochis de Mendeleyev',
+    frase: 'Itadakimasu! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
+    voz: { mesa: 'Itadakimasu!', fallo: 'Mo ichido!', acierto: 'Sugoi!' },
+    mascota: { prefijo: 'mikan-', alt: 'Mikan, gato artesano de wagashi de la tabla periódica' },
+    assets: { dir: '../assets/mochis/', postre: 'mochi-', sabor: 'sabor-' },
+    sabores: {
+      'metal-alcalino':       'Ichigo',
+      'metal-alcalinoterreo': 'Momo',
+      'metal-transicion':     'Kuromitsu',
+      'metal-postransicion':  'Kinako',
+      'metaloide':            'Matcha',
+      'no-metal':             'Sakura',
+      'halogeno':             'Ume',
+      'gas-noble':            'Murasaki imo',
+      'lantanido':            'Budo',
+      'actinido':             'Yuzu',
+    },
+  },
 };
+const MODO_KEY = 'hpk-pasteleria-modo';
+function modosListos() { return Object.keys(MODOS).filter(k => MODOS[k].listo); }
+let modoActual = (function loadModo() {
+  try {
+    const m = localStorage.getItem(MODO_KEY);
+    if (m && MODOS[m] && MODOS[m].listo) return m;
+  } catch (e) {}
+  return 'macarons';
+})();
+let SABORES = MODOS[modoActual].sabores;
 
 // Color de sabor por familia — mapea la var CSS que la celda pintará
 // como fondo cuando esté desbloqueada. Hex puro, "DNA 16-bit".
@@ -784,10 +840,16 @@ function normalizar(s) {
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/-/g, ' ').replace(/\s+/g, ' ');
 }
+// El nombre técnico, o el sabor de CUALQUIER modo listo (solo o con la
+// familia): quien juega en otro modo no pierde un acierto por el vocabulario.
 function respuestasFamilia(cat) {
   const tecnico = normalizar(CATS[cat].label);
-  const sabor = normalizar(SABORES[cat]);
-  return [tecnico, sabor, `${tecnico} de ${sabor}`, `${tecnico} ${sabor}`];
+  const out = [tecnico];
+  modosListos().forEach(k => {
+    const sabor = normalizar(MODOS[k].sabores[cat]);
+    out.push(sabor, `${tecnico} de ${sabor}`, `${tecnico} ${sabor}`);
+  });
+  return out;
 }
 function comprobarCampo(campo, valor, el) {
   const [num, sym, name, mass, cat, group, period] = el;
@@ -878,8 +940,9 @@ function cambiarNivel(key) {
   if (activo !== null && !coleccion.has(activo)) abrirFicha(activo);
 }
 
-// Icono de sabor de cada familia (assets/macarons/sabor-<familia>.png, 96×96).
-const SABOR_DIR = '../assets/macarons/sabor-';
+// Icono de sabor de cada familia (<dir del modo>/sabor-<familia>.png, 96×96).
+// Las tres rutas de imágenes (sabor, postre y mascota) las fija aplicarModo().
+let SABOR_DIR = MODOS[modoActual].assets.dir + MODOS[modoActual].assets.sabor;
 
 function renderLeyenda() {
   document.getElementById('mac-leyenda').innerHTML = Object.keys(CATS).map(cat => `
@@ -1091,7 +1154,7 @@ function comprobar(num) {
   } else {
     if (intentado) fallos[num] = (fallos[num] || 0) + 1;
     fb.innerHTML = '<div class="mac-quiz-feedback error">Algo no cuadra · revisa los campos marcados.</div>';
-    minouFoot('fallo', 'Oh là là!', 1500);
+    minouFoot('fallo', MODOS[modoActual].voz.fallo, 1500);
   }
 }
 
@@ -1103,15 +1166,14 @@ function comprobar(num) {
 // Macarons: un PNG por familia (assets/macarons/macaron-<familia>.png, 240×209,
 // V0-hpk 09ebf6c6-80eb-4383-b93c-5d8e1085c678
 // mismo lienzo y base). La clave sale de la categoría: "metal-alcalino" → "alcalino".
-const MACARON_DIR = '../assets/macarons/macaron-';
+let MACARON_DIR = MODOS[modoActual].assets.dir + MODOS[modoActual].assets.postre;
 function macaronImg(cat, clase) {
   return `<img class="${clase}" src="${MACARON_DIR}${cat.replace(/^metal-/, '')}.png" alt="" draggable="false">`;
 }
-Object.keys(CATS).forEach(c => { new Image().src = `${MACARON_DIR}${c.replace(/^metal-/, '')}.png`; });
 
 // Minou: una <img> por variante (idle lleva además el fotograma de ojos
 // cerrados para el parpadeo). v: idle | feliz | pensando | fallo | dormido.
-const MINOU_DIR = '../assets/macarons/minou-';
+let MINOU_DIR = MODOS[modoActual].assets.dir + MODOS[modoActual].mascota.prefijo;
 const MINOU_FOTOGRAMAS = ['idle', 'idle-parpadeo', 'feliz', 'pensando', 'pensando-2', 'fallo', 'dormido'];
 // Idle y pensando llevan un segundo fotograma de ojos cerrados: idle parpadea
 // rápido; pensando cierra los ojos más rato, como quien rumia (mn-lento).
@@ -1123,8 +1185,17 @@ function minouHTML(v, size) {
   const cuerpo = cerrados ? img(v, 'mn-eyes') + img(cerrados, 'mn-lids') : img(v, '');
   return `<span class="${cls}" aria-hidden="true">${cuerpo}</span>`;
 }
-// Precarga: así el cambio de variante no parpadea en blanco.
-MINOU_FOTOGRAMAS.forEach(n => { new Image().src = `${MINOU_DIR}${n}.png`; });
+// Precarga de las imágenes del modo activo: así el cambio de variante (y de
+// modo) no parpadea en blanco.
+function precargarModo() {
+  const pre = u => { new Image().src = u; };
+  MINOU_FOTOGRAMAS.forEach(n => pre(`${MINOU_DIR}${n}.png`));
+  Object.keys(CATS).forEach(c => {
+    const f = c.replace(/^metal-/, '');
+    pre(`${MACARON_DIR}${f}.png`);
+    pre(`${SABOR_DIR}${f}.png`);
+  });
+}
 
 function setMinou(id, v, size) {
   const el = document.getElementById(id);
@@ -1185,7 +1256,7 @@ function toastIngrediente(num, conAyuda) {
     `<div><div class="mac-toast-tit">+1 INGREDIENTE</div>` +
     `<div class="mac-toast-sub">${name} (${sym}) · ${SABORES[cat]}</div>` +
     (conAyuda ? `<div class="mac-toast-sub mac-toast-ayuda">con ayudita</div>` : '') +
-    `<div class="mac-toast-sub mac-toast-fr">C'est magnifique!</div></div>` +
+    `<div class="mac-toast-sub mac-toast-fr">${MODOS[modoActual].voz.acierto}</div></div>` +
     macaronImg(cat, 'mac-toast-mac');
   caja.appendChild(t);
   setTimeout(() => t.remove(), 2300);
@@ -1212,6 +1283,44 @@ function pulsarContador() {
   c.classList.add('bump');
 }
 
+// ── Cambio de modo de pastelería ───────────────────────────────────────
+// Repinta lo que depende del modo (textos del cartel, mascota, sabores e
+// imágenes). La colección, el nivel y las ayuditas no se tocan: son de la
+// vitrina, no del modo.
+function renderModos() {
+  const caja = document.getElementById('mac-modos');
+  const listos = modosListos();
+  if (listos.length < 2) { caja.hidden = true; caja.innerHTML = ''; return; }
+  caja.hidden = false;
+  caja.innerHTML = listos.map(k => `
+    <button type="button" class="mac-nivel-pill ${k === modoActual ? 'active' : ''}"
+            role="radio" aria-checked="${k === modoActual}" onclick="aplicarModo('${k}')">${MODOS[k].etiqueta}</button>
+  `).join('');
+}
+function aplicarModo(id, inicial) {
+  const m = MODOS[id];
+  if (!m || !m.listo) return;
+  modoActual = id;
+  SABORES = m.sabores;
+  SABOR_DIR = m.assets.dir + m.assets.sabor;
+  MACARON_DIR = m.assets.dir + m.assets.postre;
+  MINOU_DIR = m.assets.dir + m.mascota.prefijo;
+  document.body.dataset.modo = id;
+  if (!inicial) { try { localStorage.setItem(MODO_KEY, id); } catch (e) {} }
+  document.getElementById('mac-titulo').textContent = m.titulo;
+  document.getElementById('mac-frase').textContent = m.frase;
+  const mesa = document.getElementById('mac-mesa');   // solo existe mientras el panel está vacío
+  if (mesa) mesa.textContent = m.voz.mesa;
+  document.getElementById('mac-minou-head').setAttribute('aria-label', m.mascota.alt);
+  precargarModo();
+  renderModos();
+  renderLeyenda();
+  renderTabla();
+  setMinou('mac-minou-head', minouDormido ? 'dormido' : 'idle', 'mc');
+  setMinou('mac-minou-side', 'pensando', 'm96');
+  if (!inicial && activo !== null) abrirFicha(activo);   // la ficha y el pie llevan imágenes y voz del modo
+}
+
 // Header: idle → dormido tras 60 s sin pulsar nada; cualquier pulsación
 // lo despierta y reinicia la cuenta.
 let minouDormido = false, minouTimer = null;
@@ -1233,12 +1342,9 @@ document.addEventListener('keydown', (ev) => {
 });
 
 renderNiveles();
-renderLeyenda();
-renderTabla();
 renderContador();
 renderAyudas();
-setMinou('mac-minou-head', 'idle', 'mc');
-setMinou('mac-minou-side', 'pensando', 'm96');
+aplicarModo(modoActual, true);   // pinta leyenda, tabla, cartel y mascota según el modo guardado
 minouDespertar();
 </script>
 <script src="../lab.js"></script>
