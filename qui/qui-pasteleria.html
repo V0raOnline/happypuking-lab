@@ -4,7 +4,7 @@
   Copyright (c) 2024-2026 V0ra (v0raonline)
   Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
 
-  MACARONS DE MENDELEYEV — el patio de recreo del bloque de química.
+  PASTELERÍA DE MENDELEYEV — el patio de recreo del bloque de química.
   Juego de pastelería 16-bit donde coleccionas los 118 elementos como
   ingredientes de la Pâtisserie. Motor absorbido de FeaturesLab/
   (2026-10-05), rebase sobre qui-datos.js, DNA visual propio.
@@ -23,13 +23,13 @@
 <meta name="author" content="V0ra (v0raonline)">
 <meta name="copyright" content="CC BY-NC-SA 4.0">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-<title>Macarons de Mendeleyev — hAppYpUkIng Lab</title>
+<title>Pastelería de Mendeleyev — hAppYpUkIng Lab</title>
 <meta name="description" content="Pastelería pixel art: colecciona los 118 ingredientes de la tabla periódica como macarons de sabores, con el Chef Minou. Patio de recreo del bloque de química. Gratis y sin cuentas.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="hAppYpUkIng Lab">
 <meta property="og:locale" content="es_ES">
-<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/qui/qui-macarons.html">
-<meta property="og:title" content="Macarons de Mendeleyev: colecciona los 118 elementos">
+<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/qui/qui-pasteleria.html">
+<meta property="og:title" content="Pastelería de Mendeleyev: colecciona los 118 elementos">
 <meta property="og:description" content="Pastelería pixel art: cada elemento es un macaron de su familia. Demuestra que lo conoces para llenar la vitrina, con el Chef Minou. Gratis y sin cuentas.">
 <meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/readme-banner.png">
 <meta property="og:image:width" content="1200">
@@ -476,13 +476,35 @@ body.skin-arcade {
 .mn-blink .mn-lids { animation: mn-lids 4.5s steps(1, end) infinite; }
 @keyframes mn-eyes { 0%, 97.3% { opacity: 1; } 97.4%, 100% { opacity: 0; } }
 @keyframes mn-lids { 0%, 97.3% { opacity: 0; } 97.4%, 100% { opacity: 1; } }
+/* Pensando: ciclo de 5 s con los ojos cerrados casi 1 s, no 120 ms. */
+.mn-blink.mn-lento .mn-eyes { animation: mn-eyes-lento 5s steps(1, end) infinite; }
+.mn-blink.mn-lento .mn-lids { animation: mn-lids-lento 5s steps(1, end) infinite; }
+@keyframes mn-eyes-lento { 0%, 62% { opacity: 1; } 62.1%, 80% { opacity: 0; } 80.1%, 100% { opacity: 1; } }
+@keyframes mn-lids-lento { 0%, 62% { opacity: 0; } 62.1%, 80% { opacity: 1; } 80.1%, 100% { opacity: 0; } }
 /* Dormido respira despacio; feliz da dos botecitos al aparecer. */
 .mn-dormido img { transform-origin: 50% 100%; animation: mn-resp 3s steps(3, end) infinite; }
 @keyframes mn-resp { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.03); } }
 .mn-feliz img { animation: mn-bote 0.5s steps(2, end) 2; }
 @keyframes mn-bote { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
-.mac-minou-head { margin-right: 0.5rem; }
+.mac-minou-head { flex: none; }
+
+/* Cartel de la pastelería: mascota + nombre del modo + frase del chef. */
+.mac-cartel {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.6rem 1rem; margin-bottom: 1rem;
+  background: var(--mac-shell); border: 2px solid var(--mac-gold);
+}
+.mac-minou.mc { height: 104px; }
+.mac-cartel-texto { min-width: 0; }
+.mac-cartel-titulo {
+  margin: 0 0 0.5rem;
+  font-family: 'Press Start 2P', monospace; font-weight: 400; text-transform: none;
+  font-size: clamp(0.8rem, 2.2vw, 1.3rem); line-height: 1.4; letter-spacing: 0.03em;
+  color: var(--mac-gold);
+}
+.mac-cartel-frase { margin: 0; font-family: 'VT323', monospace; font-size: 1.35rem; line-height: 1.15; color: var(--mac-ink); }
+@media (max-width: 520px) { .mac-minou.mc { height: 72px; } .mac-cartel { gap: 0.7rem; padding: 0.5rem 0.7rem; } }
 .mac-side-empty .mac-minou { margin-bottom: 0.6rem; }
 /* "À table!" lleva tilde: VT323, no Press Start 2P. */
 .mac-side-empty .mac-big { font-family: 'VT323', monospace; font-size: 1.7rem; letter-spacing: 0.03em; }
@@ -599,7 +621,8 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
 .mac-minou-foot { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-top: 0.4rem; min-height: 150px; }
 .mac-minou-foot .mac-quiz-feedback { flex: 1; margin-top: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .mn-blink .mn-eyes, .mn-blink .mn-lids, .mn-dormido img, .mn-feliz img { animation: none; }
+  .mn-blink .mn-eyes, .mn-blink .mn-lids, .mn-blink.mn-lento .mn-eyes, .mn-blink.mn-lento .mn-lids,
+  .mn-dormido img, .mn-feliz img { animation: none; }
 }
 </style>
 </head>
@@ -613,15 +636,15 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
     <span class="sep topbar-sep-claim">//</span>
     <span class="topbar-claim">LEARN · EXPAND · VOMIT HAPPINESS</span>
   </div>
-  <h1 class="header-title"><span id="mac-minou-head" class="mac-minou-head" role="img" aria-label="Chef Minou MiauMiau, le chef de la tabla periódica"></span>Macarons de Mendeleyev</h1>
-  <p class="header-subtitle">Pastelería de 118 ingredientes · patio de recreo del bloque</p>
+  <h1 class="header-title">Pastelería</h1>
+  <p class="header-subtitle">Colecciona los 118 ingredientes de la tabla periódica · patio de recreo del bloque</p>
   <nav class="header-nav">
     <span class="nav-domain">Química →</span>
     <a class="nav-tool" href="./qui-tabla-periodica.html">Tabla Periódica</a>
     <a class="nav-tool" href="./qui-elementos-tarjetas.html">Quiz</a>
     <a class="nav-tool" href="./qui-formulador.html">Formulación</a>
     <a class="nav-tool" href="./qui-lab.html">Lab</a>
-    <a class="nav-tool active" href="#">Macarons</a>
+    <a class="nav-tool active" href="#">Pastelería</a>
   </nav>
 </header>
 
@@ -636,15 +659,23 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
   <span class="mac-corner-tr" aria-hidden="true"></span>
   <span class="mac-corner-br" aria-hidden="true"></span>
 
-  <div class="mac-hud">
-    <span class="mac-hud-label">VITRINA</span>
-    <div class="mac-ayudas" id="mac-ayudas" hidden></div>
-    <span class="mac-hud-score"><em id="mac-contador">0</em>/118</span>
+  <div class="mac-cartel">
+    <span id="mac-minou-head" class="mac-minou-head" role="img" aria-label="Chef Minou MiauMiau, le chef de la tabla periódica"></span>
+    <div class="mac-cartel-texto">
+      <h2 class="mac-cartel-titulo" id="mac-titulo">Macarons de Mendeleyev</h2>
+      <p class="mac-cartel-frase" id="mac-frase">À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.</p>
+    </div>
   </div>
 
   <div class="mac-nivel-bar" role="radiogroup" aria-label="Nivel de cocina" id="mac-nivel-bar"></div>
 
   <div class="mac-leyenda" id="mac-leyenda" role="toolbar" aria-label="Familias de ingredientes"></div>
+
+  <div class="mac-hud">
+    <span class="mac-hud-label">VITRINA</span>
+    <div class="mac-ayudas" id="mac-ayudas" hidden></div>
+    <span class="mac-hud-score"><em id="mac-contador">0</em>/118</span>
+  </div>
 
   <div class="mac-main">
     <div class="mac-ptable-wrap">
@@ -1081,11 +1112,15 @@ Object.keys(CATS).forEach(c => { new Image().src = `${MACARON_DIR}${c.replace(/^
 // Minou: una <img> por variante (idle lleva además el fotograma de ojos
 // cerrados para el parpadeo). v: idle | feliz | pensando | fallo | dormido.
 const MINOU_DIR = '../assets/macarons/minou-';
-const MINOU_FOTOGRAMAS = ['idle', 'idle-parpadeo', 'feliz', 'pensando', 'fallo', 'dormido'];
+const MINOU_FOTOGRAMAS = ['idle', 'idle-parpadeo', 'feliz', 'pensando', 'pensando-2', 'fallo', 'dormido'];
+// Idle y pensando llevan un segundo fotograma de ojos cerrados: idle parpadea
+// rápido; pensando cierra los ojos más rato, como quien rumia (mn-lento).
+const MINOU_PARPADEO = { idle: 'idle-parpadeo', pensando: 'pensando-2' };
 function minouHTML(v, size) {
   const img = (n, c) => `<img src="${MINOU_DIR}${n}.png" alt="" class="${c}" draggable="false">`;
-  const cls = 'mac-minou' + (size ? ' ' + size : '') + ' mn-' + v + (v === 'idle' ? ' mn-blink' : '');
-  const cuerpo = v === 'idle' ? img('idle', 'mn-eyes') + img('idle-parpadeo', 'mn-lids') : img(v, '');
+  const cerrados = MINOU_PARPADEO[v];
+  const cls = 'mac-minou' + (size ? ' ' + size : '') + ' mn-' + v + (cerrados ? ' mn-blink' : '') + (v === 'pensando' ? ' mn-lento' : '');
+  const cuerpo = cerrados ? img(v, 'mn-eyes') + img(cerrados, 'mn-lids') : img(v, '');
   return `<span class="${cls}" aria-hidden="true">${cuerpo}</span>`;
 }
 // Precarga: así el cambio de variante no parpadea en blanco.
@@ -1181,9 +1216,9 @@ function pulsarContador() {
 // lo despierta y reinicia la cuenta.
 let minouDormido = false, minouTimer = null;
 function minouDespertar() {
-  if (minouDormido) { minouDormido = false; setMinou('mac-minou-head', 'idle', 'm64'); }
+  if (minouDormido) { minouDormido = false; setMinou('mac-minou-head', 'idle', 'mc'); }
   clearTimeout(minouTimer);
-  minouTimer = setTimeout(() => { minouDormido = true; setMinou('mac-minou-head', 'dormido', 'm64'); }, 60000);
+  minouTimer = setTimeout(() => { minouDormido = true; setMinou('mac-minou-head', 'dormido', 'mc'); }, 60000);
 }
 ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, minouDespertar, { passive: true }));
 
@@ -1202,7 +1237,7 @@ renderLeyenda();
 renderTabla();
 renderContador();
 renderAyudas();
-setMinou('mac-minou-head', 'idle', 'm64');
+setMinou('mac-minou-head', 'idle', 'mc');
 setMinou('mac-minou-side', 'pensando', 'm96');
 minouDespertar();
 </script>

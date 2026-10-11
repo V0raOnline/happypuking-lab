@@ -63,7 +63,7 @@ happypuking-lab/
 │   ├── qui-elementos-tarjetas.html     # Quiz de elementos — práctica
 │   ├── qui-formulador.html             # Formulación — óxidos, hidruros, hidrácidos y sales
 │   ├── qui-lab.html                    # Lab — compuestos con átomos y electrones
-│   └── qui-macarons.html               # Macarons de Mendeleyev — juego de colección
+│   └── qui-pasteleria.html             # Pastelería de Mendeleyev — juego de colección
 ├── assets/
 │   └── macarons/                       # Chef Minou, macarons y sabores (PNG) de Macarons
 ├── nd/                                 # Neurodivergencia
@@ -100,7 +100,7 @@ eso está el historial de git.
 | Quiz de Elementos         | Química              | ESO               | `qui/qui-elementos-tarjetas.html`     |
 | Formulación               | Química              | ESO               | `qui/qui-formulador.html`             |
 | Lab de Química            | Química              | ESO               | `qui/qui-lab.html`                    |
-| Macarons de Mendeleyev    | Química · Juego      | ESO               | `qui/qui-macarons.html`               |
+| Pastelería de Mendeleyev  | Química · Juego      | ESO               | `qui/qui-pasteleria.html`             |
 | El Reloj · The Clock      | Matemáticas · Tiempo | Primaria / ESO    | `trn/trn-reloj.html`                  |
 | Modelo de Carga Sensorial | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial.html`          |
 | Sensory Load Model (EN)   | Neurodivergencia     | Divulgativo       | `nd/nd-carga-sensorial-en.html`       |
@@ -133,7 +133,7 @@ enlaces. Cubre las cuatro familias binarias (óxidos, hidruros metálicos,
 hidrácidos y sales), con nivel de dificultad y de apoyo seleccionables para
 que el feedback acompañe sin resolver.
 
-### 🧁 Macarons de Mendeleyev — el patio de recreo
+### 🧁 Pastelería de Mendeleyev — el patio de recreo
 
 Fuera de la secuencia, y para quien aún no se atreve con la química seria:
 una pastelería de 118 ingredientes. Cada elemento es un macaron de su familia
@@ -182,7 +182,7 @@ Además, tras tres fallos seguidos aparece un **respiro** automático, y hay una
 salida explícita —**«Me aburro»**— para dejarlo sin sensación de abandono.
 
 Ninguna herramienta envía nada a ningún servidor ni pide una cuenta. Lo poco que
-recuerdan (el tema, el ritmo y, en Macarons, tu colección) vive en tu propio
+recuerdan (el tema, el ritmo y, en la Pastelería, tu colección) vive en tu propio
 navegador.
 
 ### 🔗 Enlaces directos a un modo
