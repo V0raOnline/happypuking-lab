@@ -283,6 +283,9 @@ body.skin-arcade {
 .mac-el .mac-el-sym { right: 3px; bottom: 2px; font-size: 0.55rem; letter-spacing: 0.02em; }
 .mac-el .mac-el-num { left: 3px; top: 3px; font-size: 0.36rem; }
 .mac-el.dimmed { opacity: 0.3; }
+/* Ingrediente abierto en el panel: anillo dorado por fuera, para no pisar el
+   borde de la celda (color de familia, o azul discontinuo si fue ayudado). */
+.mac-el.seleccionado { outline: 3px solid var(--mac-gold); outline-offset: 1px; opacity: 1; z-index: 1; }
 
 .mac-side {
   background: var(--mac-shell);
@@ -321,24 +324,25 @@ body.skin-arcade {
 }
 .mac-quiz-meta {
   font-family: 'VT323', monospace;
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   color: var(--mac-ink-dim);
   line-height: 1.3;
 }
+.mac-quiz-meta:first-of-type { color: var(--mac-ink); }   /* "Ingrediente nº 31 · símbolo Ga" es lo que se está jugando */
 
 .mac-quiz-field { margin-bottom: 0.7rem; }
 .mac-quiz-field label {
   display: block;
   font-family: 'VT323', monospace;
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   color: var(--mac-gold);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
   letter-spacing: 0.03em;
 }
 .mac-quiz-field input {
   width: 100%;
   font-family: 'VT323', monospace;
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   background: var(--mac-bg);
   border: 2px solid var(--mac-cell);
   color: var(--mac-ink);
@@ -591,6 +595,21 @@ body.skin-arcade {
   border: 2px dashed var(--mac-azure);
 }
 .mac-ayudas-btn:hover, .mac-ayudas-btn:focus-visible { background: var(--mac-azure); color: var(--mac-bg); outline: none; }
+
+/* "Vaciar vitrina": al pie y apagado, lejos de lo que se pulsa jugando. El
+   rojo solo aparece al señalarlo o al pedir confirmación. */
+.mac-vaciar { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+.mac-vaciar[hidden] { display: none; }
+.mac-vaciar-aviso { font-family: 'VT323', monospace; font-size: 1.15rem; color: var(--mac-red); }
+.mac-vaciar-btn {
+  font-family: 'VT323', monospace; font-size: 1.05rem; letter-spacing: 0.04em;
+  padding: 2px 10px; cursor: pointer;
+  background: transparent; color: var(--mac-ink-dim);
+  border: 2px dashed var(--mac-cell);
+}
+.mac-vaciar-btn:hover, .mac-vaciar-btn:focus-visible { color: var(--mac-red); border-color: var(--mac-red); outline: none; }
+.mac-vaciar-si { color: var(--mac-red); border-style: solid; border-color: var(--mac-red); }
+.mac-vaciar-si:hover, .mac-vaciar-si:focus-visible { background: var(--mac-red); color: var(--mac-bg); }
 .mac-ayuda {
   position: relative; flex: 1; min-width: 0;
   padding: 0.5rem 0.7rem; text-align: left;
@@ -604,6 +623,10 @@ body.skin-arcade {
   border: 6px solid transparent; border-right-color: var(--mac-azure);
 }
 button.mac-ayuda { cursor: pointer; }
+/* La mascota como botón (ofrece la ayudita): sin marco, con un saltito al señalarla. */
+.mac-minou-btn { background: none; border: 0; padding: 0; cursor: pointer; line-height: 0; flex: none; }
+.mac-minou-btn:hover .mac-minou, .mac-minou-btn:focus-visible .mac-minou { transform: translateY(-4px); }
+.mac-minou-btn:focus-visible { outline: 2px dashed var(--mac-azure); outline-offset: 3px; }
 button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-azure); color: var(--mac-bg); outline: none; }
 .mac-ayuda-dada { border-style: dashed; font-size: 1rem; }
 .mac-ayuda-dada strong { color: var(--mac-gold); font-weight: normal; }
@@ -611,7 +634,7 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
 @keyframes mac-glow { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 10px var(--mac-gold), 0 0 2px var(--mac-gold); } }
 .mac-quiz-pie {
   margin: 0.8rem 0 0; text-align: center;
-  font-family: 'VT323', monospace; font-size: 0.95rem; letter-spacing: 0.05em;
+  font-family: 'VT323', monospace; font-size: 1.15rem; letter-spacing: 0.03em; line-height: 1.2;
   color: var(--mac-ink-dim); text-transform: uppercase;
 }
 .mac-quiz-pie::after { content: '_'; animation: mac-cursor 1s steps(1, end) infinite; }
@@ -694,6 +717,8 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
       </div>
     </aside>
   </div>
+
+  <div class="mac-vaciar" id="mac-vaciar" hidden></div>
 </main>
 
 <footer>
@@ -730,7 +755,7 @@ const MODOS = {
     titulo: 'Macarons de Mendeleyev',
     frase: 'À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
     voz: { mesa: 'À table!', fallo: 'Oh là là!', acierto: "C'est magnifique!" },
-    mascota: { prefijo: 'minou-', alt: 'Chef Minou MiauMiau, le chef de la tabla periódica' },
+    mascota: { nombre: 'Minou', prefijo: 'minou-', alt: 'Chef Minou MiauMiau, le chef de la tabla periódica' },
     assets: { dir: '../assets/macarons/', postre: 'macaron-', sabor: 'sabor-' },
     sabores: {
       'metal-alcalino':       'Fresa',
@@ -754,7 +779,7 @@ const MODOS = {
     titulo: 'Mochis de Mendeleyev',
     frase: 'Itadakimasu! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
     voz: { mesa: 'Itadakimasu!', fallo: 'Mo ichido!', acierto: 'Sugoi!' },
-    mascota: { prefijo: 'mikan-', alt: 'Mikan, gato artesano de wagashi de la tabla periódica' },
+    mascota: { nombre: 'Mikan', prefijo: 'mikan-', alt: 'Mikan, gato artesano de wagashi de la tabla periódica' },
     assets: { dir: '../assets/mochis/', postre: 'mochi-', sabor: 'sabor-' },
     sabores: {
       'metal-alcalino':       'Ichigo',
@@ -920,6 +945,7 @@ let activo = null;
 let recien = null;   // ingrediente recién coleccionado: renderTabla le pone la animación
 const fallos = {};               // nº de ingrediente → envíos fallidos (solo esta visita)
 const ayudaPedida = new Set();   // ingredientes cuya ayudita se ha pedido y aún no se han coleccionado
+const ayudaOfrecida = new Set(); // ingredientes donde se tocó a la mascota: la oferta sale sin esperar a los fallos
 
 function catCount(cat) { return ELEMENTS.filter(e => e[4] === cat).length; }
 function catColeccionado(cat) { return ELEMENTS.filter(e => e[4] === cat && coleccion.has(e[0])).length; }
@@ -985,7 +1011,11 @@ function renderAyudas(foco) {
     : `<button type="button" class="mac-ayudas-btn" id="mac-ayudas-pedir" onclick="pedirReinicio()">REINTENTAR AYUDITAS (${n})</button>`;
   if (foco) { const b = document.getElementById(foco); if (b) b.focus(); }
 }
-function pedirReinicio() { confirmandoAyudas = true; renderAyudas('mac-ayudas-no'); }
+function pedirReinicio() {
+  if (confirmandoVaciar) { confirmandoVaciar = false; renderVaciar(); }   // una sola confirmación abierta a la vez
+  confirmandoAyudas = true;
+  renderAyudas('mac-ayudas-no');
+}
 function cancelarReinicio() { confirmandoAyudas = false; renderAyudas('mac-ayudas-pedir'); }
 function reiniciarAyudas() {
   const n = ayudados.size;
@@ -993,6 +1023,7 @@ function reiniciarAyudas() {
   ayudados.forEach(num => {
     coleccion.delete(num);
     ayudaPedida.delete(num);
+    ayudaOfrecida.delete(num);
     delete fallos[num];
   });
   ayudados.clear();
@@ -1003,11 +1034,58 @@ function reiniciarAyudas() {
   renderLeyenda();
   renderContador();
   renderAyudas();
+  renderVaciar();
   if (activo !== null) abrirFicha(activo);   // si estaba abierto uno de ellos, vuelve a ser el formulario
   toastMensaje('AYUDITAS REINICIADAS', `${n} ${n === 1 ? 'ingrediente vuelve' : 'ingredientes vuelven'} a la mesa. ¡A por ${n === 1 ? 'él' : 'ellos'}!`);
 }
 document.addEventListener('keydown', (ev) => {
   if (ev.key === 'Escape' && confirmandoAyudas) cancelarReinicio();
+});
+
+// "Vaciar vitrina": borra TODA la colección y las ayuditas. Es lo más
+// destructivo del juego y no se puede deshacer, así que vive aparte, al pie
+// y discreto, y pide confirmación en línea diciendo cuánto se pierde (con NO
+// como foco, para no vaciarla sin querer). El nivel y el modo se conservan.
+let confirmandoVaciar = false;
+function renderVaciar(foco) {
+  const caja = document.getElementById('mac-vaciar');
+  const n = coleccion.size;
+  if (!n) { confirmandoVaciar = false; caja.hidden = true; caja.innerHTML = ''; return; }
+  caja.hidden = false;
+  caja.innerHTML = confirmandoVaciar
+    ? `<span class="mac-vaciar-aviso" role="alert">¿Vaciar la vitrina? Perderás ${n === 1 ? 'tu único ingrediente' : `los ${n} ingredientes`} y no se puede deshacer.</span>` +
+      `<button type="button" class="mac-vaciar-btn mac-vaciar-si" id="mac-vaciar-si" onclick="vaciarVitrina()">SÍ, VACIAR</button>` +
+      `<button type="button" class="mac-vaciar-btn" id="mac-vaciar-no" onclick="cancelarVaciar()">NO</button>`
+    : `<button type="button" class="mac-vaciar-btn" id="mac-vaciar-pedir" onclick="pedirVaciar()">VACIAR VITRINA</button>`;
+  if (foco) { const b = document.getElementById(foco); if (b) b.focus(); }
+}
+function pedirVaciar() {
+  if (confirmandoAyudas) { confirmandoAyudas = false; renderAyudas(); }   // una sola confirmación abierta a la vez
+  confirmandoVaciar = true;
+  renderVaciar('mac-vaciar-no');
+}
+function cancelarVaciar() { confirmandoVaciar = false; renderVaciar('mac-vaciar-pedir'); }
+function vaciarVitrina() {
+  const n = coleccion.size;
+  if (!n) return;
+  coleccion.clear();
+  ayudados.clear();
+  ayudaPedida.clear();
+  ayudaOfrecida.clear();
+  Object.keys(fallos).forEach(k => delete fallos[k]);
+  saveColeccion();
+  saveAyudados();
+  confirmandoVaciar = false;
+  renderTabla();
+  renderLeyenda();
+  renderContador();
+  renderAyudas();
+  renderVaciar();
+  if (activo !== null) abrirFicha(activo);   // si había una ficha abierta, vuelve a ser el formulario
+  toastMensaje('VITRINA VACÍA', 'Empezamos de cero. ¡Vamos a comernos la tabla otra vez!');
+}
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && confirmandoVaciar) cancelarVaciar();
 });
 
 const ROWS = 10;
@@ -1048,6 +1126,7 @@ function renderTabla() {
     btn.className = 'mac-el' + (collected ? ' unlocked' : '');
     if (filtro && cat !== filtro) btn.classList.add('dimmed');
     if (recien === num) btn.classList.add('recien');
+    if (activo === num) { btn.classList.add('seleccionado'); btn.setAttribute('aria-current', 'true'); }
     const conAyuda = collected && ayudados.has(num);
     if (conAyuda) btn.classList.add('ayudado');
     btn.style.setProperty('--sabor', SABOR_VAR[cat]);
@@ -1062,8 +1141,19 @@ function renderTabla() {
   });
 }
 
+// Marca en la tabla el ingrediente abierto en el panel (sin repintar la tabla).
+function marcarActivo() {
+  document.querySelectorAll('.mac-el.seleccionado').forEach(b => {
+    b.classList.remove('seleccionado');
+    b.removeAttribute('aria-current');
+  });
+  const b = document.querySelector(`.mac-el[data-num="${activo}"]`);
+  if (b) { b.classList.add('seleccionado'); b.setAttribute('aria-current', 'true'); }
+}
+
 function abrirFicha(num) {
   activo = num;
+  marcarActivo();
   const el = ELEMENTS.find(e => e[0] === num);
   const [n, sym, name, mass, cat, group, period, origen, aplicaciones] = el;
   const side = document.getElementById('mac-side');
@@ -1109,7 +1199,7 @@ function abrirFicha(num) {
     `).join('')}
     <button class="mac-quiz-submit" onclick="comprobar(${n})">COMPROBAR</button>
     <div id="mc-fb"></div>
-    <p class="mac-quiz-pie">Pulsa COMPROBAR para desbloquear</p>
+    <p class="mac-quiz-pie">Pulsa COMPROBAR para desbloquear${AYUDA_NIVELES.includes(nivel.key) ? `<br>¿Te atascas? Toca a ${MODOS[modoActual].mascota.nombre}` : ''}</p>
     <div id="mc-foot" class="mac-minou-foot" aria-live="polite"></div>
   `;
   minouReposo();
@@ -1140,14 +1230,16 @@ function comprobar(num) {
     saveColeccion();
     if (conAyuda) { ayudados.add(num); saveAyudados(); }
     ayudaPedida.delete(num);
+    ayudaOfrecida.delete(num);
     delete fallos[num];
-    fb.innerHTML = `<div class="mac-quiz-feedback ok">¡COLECCIONADO${conAyuda ? ' CON AYUDITA' : ''}! +1 ingrediente a la vitrina.</div>`;
+    fb.innerHTML =`<div class="mac-quiz-feedback ok">¡COLECCIONADO${conAyuda ? ' CON AYUDITA' : ''}! +1 ingrediente a la vitrina.</div>`;
     recien = num;
     renderTabla();
     recien = null;
     renderLeyenda();
     renderContador();
     renderAyudas();
+    renderVaciar();
     pulsarContador();
     toastIngrediente(num, conAyuda);
     setTimeout(() => { if (activo === num) abrirFicha(num); }, 650);
@@ -1208,13 +1300,32 @@ let minouFootTimer = null;
 function minouReposo() {
   clearTimeout(minouFootTimer);
   const slot = document.getElementById('mc-foot');
-  if (slot) slot.innerHTML = minouHTML('pensando', 'm96') + (activo !== null ? ayudaHTML(activo) : '');
+  if (!slot) return;
+  const minou = minouHTML('pensando', 'm96');
+  // En Pinche, mientras no haya oferta ni ayuda pedida, la mascota es un
+  // botón: tocarla hace que ofrezca la ayudita sin esperar a los fallos.
+  const tocable = activo !== null && AYUDA_NIVELES.includes(nivelActual) && !coleccion.has(activo)
+    && !ayudaPedida.has(activo) && !ayudaDisponible(activo);
+  const nombre = MODOS[modoActual].mascota.nombre;
+  slot.innerHTML = (tocable
+      ? `<button type="button" class="mac-minou-btn" onclick="ofrecerAyuda(${activo})" aria-label="Pedirle una ayudita a ${nombre}" title="¿Te atascas? Toca a ${nombre}">${minou}</button>`
+      : minou)
+    + (activo !== null ? ayudaHTML(activo) : '');
 }
 
-// Bocadillo de la ayudita: la oferta (tras AYUDA_TRAS fallos en Pinche) o,
-// ya pedida, el nombre del ingrediente. Vacío si no toca.
+// Bocadillo de la ayudita: la oferta (tras AYUDA_TRAS fallos en Pinche, o
+// al tocar a la mascota) o, ya pedida, el nombre del ingrediente. Vacío si
+// no toca.
 function ayudaDisponible(num) {
-  return AYUDA_NIVELES.includes(nivelActual) && (fallos[num] || 0) >= AYUDA_TRAS && !coleccion.has(num);
+  return AYUDA_NIVELES.includes(nivelActual) && !coleccion.has(num)
+    && ((fallos[num] || 0) >= AYUDA_TRAS || ayudaOfrecida.has(num));
+}
+function ofrecerAyuda(num) {
+  if (!AYUDA_NIVELES.includes(nivelActual) || coleccion.has(num)) return;
+  ayudaOfrecida.add(num);
+  minouReposo();
+  const oferta = document.querySelector('#mc-foot button.mac-ayuda');
+  if (oferta) oferta.focus();   // el foco sigue a lo que acaba de aparecer
 }
 function ayudaHTML(num) {
   if (ayudaPedida.has(num)) {
@@ -1344,6 +1455,7 @@ document.addEventListener('keydown', (ev) => {
 renderNiveles();
 renderContador();
 renderAyudas();
+renderVaciar();
 aplicarModo(modoActual, true);   // pinta leyenda, tabla, cartel y mascota según el modo guardado
 minouDespertar();
 </script>
