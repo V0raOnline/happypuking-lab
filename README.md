@@ -63,7 +63,7 @@ happypuking-lab/
 │   ├── qui-elementos-tarjetas.html     # Quiz de elementos — práctica
 │   ├── qui-formulador.html             # Formulación — óxidos, hidruros, hidrácidos y sales
 │   ├── qui-lab.html                    # Lab — compuestos con átomos y electrones
-│   └── qui-pasteleria.html             # Pastelería de Mendeleyev — juego de colección
+│   └── qui-pasteleria.html             # Pastelería de Mendeleyev — juego de la tabla periódica
 ├── assets/
 │   └── macarons/                       # Chef Minou, macarons y sabores (PNG) de Macarons
 ├── nd/                                 # Neurodivergencia
@@ -136,9 +136,10 @@ que el feedback acompañe sin resolver.
 ### 🧁 Pastelería de Mendeleyev — el patio de recreo
 
 Fuera de la secuencia, y para quien aún no se atreve con la química seria:
-una pastelería de 118 ingredientes. Cada elemento es un macaron de su familia
-(fresa para los alcalinos, menta para los metaloides, mora para los gases
-nobles…) y se desbloquea demostrando que se conoce.
+los 118 elementos de la tabla periódica convertidos en pequeñas piezas de
+repostería. Cada elemento es un macaron de su familia (fresa para los
+alcalinos, menta para los metaloides, mora para los gases nobles…) y se
+desbloquea demostrando que se conoce.
 
 - **Cuatro niveles de cocina** — Pinche pide solo el nombre; Cocinero añade la
   familia; 1er Oficial, el número atómico; Chef, también el periodo.
