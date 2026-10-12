@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<!--
+  hAppYpUkIng — Lab  ·  PseudoCoder
+  Copyright (c) 2024-2026 V0ra (v0raonline)
+  Licencia CC BY-NC-SA 4.0 — sin fines comerciales.
+
+  Modulo de fundamentos de programacion, agnostico del lenguaje.
+  Idea central: no solo decir "mal", sino POR QUE. El motor ejecuta el programa
+  tambien con malentendidos tipicos (MODELOS) y mira cual reproduce la respuesta
+  de quien lo intenta.
+
+  ── DONDE VIVE CADA COSA ────────────────────────────────────────────────
+  · MOTOR      Logica. No contiene ninguna frase: devuelve ids (+ parametros).
+  · TEXTOS     TODAS las frases de la interfaz, por idioma y registro.
+  · REGISTROS  Que ejercicios entran en cada curso.
+  · EJERCICIOS Solo el codigo y el tema; titulo/consigna/trampa estan en TEXTOS.
+  · APP        Pinta. Pide cada frase con t('clave', {huecos}).
+
+  ADAPTAR A UN CURSO: escribe en TEXTOS.es.<registro> SOLO las claves que cambian;
+  las que falten caen al registro base (eso). ?nivel=primaria|eso|bach
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="V0ra (v0raonline)">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<meta name="description" content="Aprende los fundamentos de la programación sin escribir código: monta el programa, predice qué hace y mira cómo lo ejecuta la máquina. Si te equivocas, te dice por qué. Gratis y sin cuentas.">
+<title>PseudoCoder: fundamentos de programación sin escribir código — hAppYpUkIng Lab</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hAppYpUkIng Lab">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/inf/inf-pseudocoder.html">
+<meta property="og:title" content="PseudoCoder: aprende a programar sin escribir código">
+<meta property="og:description" content="Variables, condicionales y bucles con CRT, un monitor de tubo: monta el programa, predice qué hace y, si te equivocas, descubre por qué. Gratis, sin cuentas y sin instalar nada.">
+<meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/crt/og-pseudocoder.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CRT, un monitor de tubo con patas y cable, sonríe junto a un trozo de pseudocódigo con un bucle «mientras» y el título PseudoCoder: fundamentos de programación.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://v0raonline.github.io/happypuking-lab/assets/crt/og-pseudocoder.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;900&family=VT323&display=swap" rel="stylesheet">
+<script>
+(function(){try{var t=localStorage.getItem('hpk-theme');
+if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<script>
+(function(){var r=document.documentElement,q=new URLSearchParams(location.search),s=q.get('skin'),f=q.get('fosforo');
+try{if(!s)s=localStorage.getItem('hpk-pseudocoder-skin');if(!f)f=localStorage.getItem('hpk-pseudocoder-fosforo');}catch(e){}
+r.dataset.skin=(s==='lab')?'lab':'crt';r.dataset.fosforo=(f==='ambar'||f==='cian')?f:'verde';})();
+</script>
+<style>
+:root {
+  --bg:#050408; --surface:#0e0c14; --surface2:#16131f;
+  --magenta:#e0007a; --magenta-glow:rgba(224,0,122,.25); --magenta-soft:rgba(224,0,122,.12);
+  --text:#f8f6ff; --muted:#8880a0; --border:rgba(255,255,255,.07);
+  --green:#39ff6a; --blue:#3B82F6; --amber:#F59E0B; --red:#EF4444; --purple:#8B5CF6;
+  --focus:#22D3EE;
+  --kw:#c4a7ff; --num:#ffc66b; --str:#7fe0a0; --com:#8880a0; --var:#7dd3fc;
+}
+:root[data-theme="light"] {
+  --bg:#e7e0d6; --surface:#f4ede3; --surface2:#e8ddd0;
+  --magenta:#9e1b5f; --magenta-glow:rgba(158,27,95,.16); --magenta-soft:rgba(158,27,95,.08);
+  --text:#3d3345; --muted:#695e6c; --border:rgba(58,33,52,.14);
+  --green:#117143; --blue:#275fb7; --amber:#90540e; --red:#ad3b41; --purple:#7656b8;
+  --focus:#0d6b84;
+  --kw:#6b3fb0; --num:#8a4d00; --str:#136b3b; --com:#695e6c; --var:#0a5a8f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,sans-serif;line-height:1.5}
+a{color:var(--focus)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.wrap{max-width:1100px;margin:0 auto;padding:1rem 16px 5rem}
+.topbar{font:.72rem 'DM Mono',monospace;letter-spacing:.06em;color:var(--muted);display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;padding:.3rem 0 1rem}
+.topbar a{color:var(--muted);text-decoration:none}.topbar a:hover{color:var(--text)}
+.pie{font:.67rem 'DM Mono',monospace;letter-spacing:.04em;color:var(--muted);text-align:center;margin:1.6rem 0 0}
+.pie a{color:var(--magenta);text-decoration:none}.pie a:hover{opacity:.75}
+h1{font:700 clamp(1.7rem,4.5vw,2.5rem)/1.1 'Space Grotesk',sans-serif;margin:.2rem 0 .3rem}
+.sub{color:var(--muted);margin:0 0 1.2rem}
+.barra{display:flex;gap:.5rem 1.2rem;margin-bottom:.9rem;flex-wrap:wrap;align-items:center}
+.modos{display:flex;gap:.5rem;flex-wrap:wrap}
+.nivel{display:flex;gap:.4rem;align-items:center;font:.8rem 'DM Mono',monospace;color:var(--muted)}
+.modo,.chip,.btn{font:600 .85rem 'Nunito',sans-serif;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:.45rem 1rem;cursor:pointer}
+.modo[aria-pressed="true"]{background:var(--magenta);border-color:var(--magenta);color:#fff}
+.btn.primario{background:var(--magenta);border-color:var(--magenta);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:hover:not(:disabled),.chip:hover{border-color:var(--magenta)}
+.temas{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.2rem}
+.tema{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.tema-n{font:.7rem 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:7.5rem}
+.chip{padding:.3rem .8rem;font-size:.8rem}
+.chip[aria-current="true"]{border-color:var(--magenta);background:var(--magenta-soft)}
+.chip.ok::after{content:" ✓";color:var(--green)}
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:1rem}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem}
+.panel h2{font:600 1.15rem 'Space Grotesk',sans-serif;margin:0 0 .2rem}
+.consigna{color:var(--muted);margin:.1rem 0 .8rem}
+.codigo{font:500 1rem/1.7 'DM Mono',monospace;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.6rem 0;overflow-x:auto;margin:0}
+.ln{display:flex;white-space:pre;padding-right:1rem}
+.ln i{font-style:normal;color:var(--muted);width:2.6rem;text-align:right;padding-right:.9rem;flex:none;user-select:none}
+.ln.activa{background:var(--magenta-soft);box-shadow:inset 3px 0 0 var(--magenta)}
+.k{color:var(--kw);font-weight:600}.n{color:var(--num)}.s{color:var(--str)}.c{color:var(--com);font-style:italic}.as{color:var(--magenta);font-weight:700}
+.mascota{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
+.cara{font:600 1.1rem 'DM Mono',monospace;background:var(--surface2);border:2px solid var(--border);border-radius:18px;padding:.5rem .8rem;min-width:7rem;text-align:center;transition:border-color .2s,background .2s}
+.cara[data-estado="feliz"]{border-color:var(--green)}
+.cara[data-estado="fallo"]{border-color:var(--red)}
+.cara[data-estado="pensando"]{border-color:var(--purple)}
+.cara[data-estado="dormido"]{opacity:.7}
+.mascota small{color:var(--muted)}
+label{font-weight:700;display:block;margin-bottom:.3rem}
+.fila{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+input[type=text]{font:500 1.05rem 'DM Mono',monospace;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:.55rem .8rem;flex:1;min-width:10rem}
+.hint{color:var(--muted);font-size:.85rem;margin:.3rem 0 .8rem}
+.fb{margin-top:.9rem;border-radius:12px;padding:.8rem 1rem;border:1px solid var(--border);background:var(--surface2)}
+.fb:empty{display:none}
+.fb.ok{border-color:var(--green)}.fb.mal{border-color:var(--red)}.fb.dx{border-color:var(--amber)}
+.fb strong{display:block;margin-bottom:.2rem}
+.fb .acciones{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.cajas{display:flex;gap:.6rem;flex-wrap:wrap;min-height:5rem;margin:.5rem 0 1rem}
+.caja{border:2px solid var(--border);border-radius:10px;background:var(--bg);padding:.3rem .8rem .5rem;text-align:center;min-width:4.2rem}
+.caja b{display:block;font:600 .75rem 'DM Mono',monospace;color:var(--muted);letter-spacing:.04em}
+.caja span{font:600 1.5rem 'DM Mono',monospace}
+.caja.cambia{border-color:var(--magenta);background:var(--magenta-soft)}
+.caja em{display:block;font:normal .65rem 'DM Mono',monospace;color:var(--amber)}
+@media(prefers-reduced-motion:no-preference){.caja.cambia{animation:pop .35s ease}}
+@keyframes pop{50%{transform:scale(1.07)}}
+.pantalla{font:500 1rem/1.5 'DM Mono',monospace;background:#0b0a10;color:#7fe0a0;border-radius:10px;padding:.6rem .9rem;min-height:3.2rem;margin:.4rem 0 1rem;white-space:pre-wrap}
+.sec{font:.7rem 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.nota{min-height:2.6rem;color:var(--text)}
+.aviso-modelo{border:1px dashed var(--amber);border-radius:10px;padding:.6rem .8rem;margin-bottom:.8rem;background:color-mix(in srgb,var(--amber) 8%,transparent)}
+select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:.4rem .6rem;max-width:100%}
+.err{color:var(--red)}
+/* ── CONSTRUIR (montar el programa con piezas) ── */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.montaje,.banco{display:flex;flex-direction:column;gap:.35rem;border-radius:10px;padding:.5rem}
+.montaje{min-height:7rem;background:var(--bg);border:2px dashed var(--border);margin:.4rem 0}
+.banco{min-height:4rem;background:var(--surface2);border:1px solid var(--border);margin:.4rem 0 .8rem}
+.montaje:empty::before{content:attr(data-vacio);color:var(--muted);font-size:.9rem;padding:.6rem}
+.montaje.sobre,.banco.sobre{border-color:var(--magenta)}
+.bloque{display:flex;flex-wrap:wrap;align-items:baseline;width:100%;text-align:left;font:500 .95rem/1.45 'DM Mono',monospace;background:var(--surface);color:var(--text);border:1px solid var(--border);border-left:4px solid var(--kw);border-radius:8px;padding:.35rem .7rem;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.bloque:hover{border-color:var(--magenta)}
+.bloque .nl{width:1.8rem;flex:none;color:var(--muted);font-size:.8rem}
+.bloque .cod{flex:1 1 5rem;min-width:0;padding-left:calc(var(--d,0) * 1.4rem);white-space:pre-wrap;overflow-wrap:anywhere}
+.bloque .lee{flex-basis:100%;padding-left:calc(1.8rem + var(--d,0) * 1.4rem);font:italic .78rem 'Nunito',sans-serif;color:var(--muted)}
+.banco .bloque .lee{padding-left:0}
+.bloque.arrastrando{opacity:.35}
+.bloque.mal{border-color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--surface))}
+.bloque.antes{box-shadow:0 -3px 0 var(--magenta)}
+.montaje.al-final{box-shadow:inset 0 -3px 0 var(--magenta)}
+.bloque.fantasma{position:fixed;z-index:100;pointer-events:none;opacity:.95;box-shadow:0 8px 22px var(--magenta-glow);width:auto;cursor:grabbing;margin:0}
+.lectura{display:flex;gap:.5rem;align-items:center;font-weight:600;font-size:.85rem;margin:.2rem 0 .8rem}
+/* CRT: sprite sin caja. En oscuro el contorno y el cable negros se pierden: halo claro fino. */
+.cara{background:none;border:0;padding:0;min-width:0;line-height:0}
+.cara img{display:block;height:120px;width:auto}
+:root:not([data-theme="light"]) .cara img{filter:drop-shadow(0 0 1px rgba(255,255,255,.7)) drop-shadow(0 0 3px rgba(255,255,255,.25))}
+/* ── HUD: nivel + XP (en los dos skins) ── */
+.hud{display:flex;gap:.6rem 1.4rem;align-items:center;flex-wrap:wrap;padding:.6rem .9rem;margin:0 0 .9rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.hud-nivel{display:flex;gap:.5rem;align-items:center;font:.8rem 'DM Mono',monospace;color:var(--muted)}
+.hud-nivel label{margin:0;font:inherit}
+.hud-xp{display:flex;gap:.7rem;align-items:center;flex:1 1 16rem;min-width:0}
+.xp-barra{flex:1 1 8rem;height:1rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.xp-barra i{display:block;height:100%;width:var(--p,0%);background:repeating-linear-gradient(90deg,var(--magenta) 0 9px,transparent 9px 12px)}
+@media(prefers-reduced-motion:no-preference){.xp-barra i{transition:width .5s ease}}
+#xp-txt{font:600 .85rem 'DM Mono',monospace;white-space:nowrap}
+.xp-rango{font:700 .72rem 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
+.xp-gana{font-weight:800;color:var(--green);margin-top:.5rem}
+
+/* ── Controles del monitor: encendido (skin) y fosforo ── */
+.crt-base{display:flex;gap:.8rem 1.2rem;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:1rem}
+.crt-marca{font:700 .7rem 'DM Mono',monospace;letter-spacing:.2em;color:var(--muted)}
+.crt-mandos{display:flex;gap:.9rem;align-items:center;flex-wrap:wrap}
+.crt-power{display:inline-flex;gap:.5rem;align-items:center;font:600 .75rem 'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;padding:.4rem .8rem;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer}
+.crt-power .led{width:.6rem;height:.6rem;border-radius:50%;background:#4a4a4a}
+.crt-power[aria-pressed="true"] .led{background:#6dff7a;box-shadow:0 0 6px #6dff7a}
+.crt-fosforo{display:flex;gap:.5rem;align-items:center}
+.knob{width:1.5rem;height:1.5rem;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;background:var(--c)}
+.knob[data-f="verde"]{--c:#5dff95}.knob[data-f="ambar"]{--c:#ffb833}.knob[data-f="cian"]{--c:#5ceaff}
+.knob[aria-pressed="true"]{outline:2px solid var(--focus);outline-offset:2px}
+:root[data-skin="lab"] .crt-fosforo{display:none}
+
+/* ═════════ SKIN CRT ═════════
+   Todo el juego dentro de un monitor de fosforo. Solo estetica: el skin «lab» (por defecto
+   antes) sigue intacto. El fosforo se elige con data-fosforo en <html>. */
+:root[data-skin="crt"]{--f:#5dff95;--fbg:#040c07;--fbg2:#08170e;--fglow:rgba(93,255,149,.5)}
+:root[data-skin="crt"][data-fosforo="ambar"]{--f:#ffb833;--fbg:#0e0902;--fbg2:#191003;--fglow:rgba(255,184,51,.5)}
+:root[data-skin="crt"][data-fosforo="cian"]{--f:#5ceaff;--fbg:#030a0e;--fbg2:#071720;--fglow:rgba(92,234,255,.5)}
+
+/* carcasa: plastico crema */
+:root[data-skin="crt"] .crt-bisel{background:linear-gradient(150deg,#dcd3c3,#bdb29f 55%,#a89e8b);border-radius:30px;padding:22px 22px 12px;box-shadow:0 22px 44px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.22)}
+:root[data-skin="crt"] .crt-marca{color:#3a3326}
+:root[data-skin="crt"] .crt-power{background:linear-gradient(#e6dccb,#c9bfac);color:#2c2720;border:2px solid;border-color:#fff7e6 #7d7464 #7d7464 #fff7e6;border-radius:4px}
+:root[data-skin="crt"] .crt-power:active{border-color:#7d7464 #fff7e6 #fff7e6 #7d7464;transform:translate(1px,1px)}
+:root[data-skin="crt"] .knob{border:2px solid #4b453a;box-shadow:inset 0 2px 3px rgba(255,255,255,.5),0 1px 0 #fff7e6}
+
+/* pantalla: cristal combado con scanlines y viñeta */
+:root[data-skin="crt"] .crt-pantalla{
+  --bg:var(--fbg);--surface:var(--fbg2);--surface2:color-mix(in srgb,var(--f) 9%,var(--fbg));
+  --text:var(--f);--muted:color-mix(in srgb,var(--f) 82%,var(--fbg));--border:color-mix(in srgb,var(--f) 32%,transparent);
+  --magenta:var(--f);--magenta-soft:color-mix(in srgb,var(--f) 15%,transparent);--magenta-glow:var(--fglow);
+  --red:#ff8579;--amber:#ffc65c;--green:#9dffb8;--purple:#c5a8ff;--focus:#ffffff;
+  --var:color-mix(in srgb,var(--f) 18%,#fff);--kw:color-mix(in srgb,var(--f) 60%,#fff);--num:color-mix(in srgb,var(--f) 40%,#ffd9a0);--str:color-mix(in srgb,var(--f) 55%,#d6ffe6);--com:var(--muted);
+  position:relative;overflow:hidden;border-radius:38px/32px;color:var(--text);
+  background:radial-gradient(ellipse at 50% 38%,var(--fbg2) 0%,var(--fbg) 85%);
+  box-shadow:inset 0 0 0 4px #000,inset 0 0 90px rgba(0,0,0,.8),0 0 0 6px #6f6657,0 0 0 8px #3b362d;
+  font-family:'VT323','DM Mono',monospace;font-size:1.22rem;line-height:1.3;text-shadow:0 0 5px var(--fglow)}
+:root[data-skin="crt"] .crt-pantalla::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:5;border-radius:inherit;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.2) 0,rgba(0,0,0,.2) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at center,transparent 62%,rgba(0,0,0,.5) 100%)}
+:root[data-skin="crt"] .crt-contenido{position:relative;z-index:1;padding:1.6rem 1.8rem 1.4rem}
+@media(max-width:600px){:root[data-skin="crt"] .crt-bisel{padding:10px 10px 8px;border-radius:20px}
+  :root[data-skin="crt"] .crt-pantalla{border-radius:24px/20px}:root[data-skin="crt"] .crt-contenido{padding:1rem .9rem}}
+
+/* tipografia de terminal */
+:root[data-skin="crt"] h1{font:400 clamp(2rem,6vw,3.2rem)/1.05 'VT323',monospace;text-transform:uppercase;letter-spacing:.04em;text-shadow:0 0 10px var(--fglow)}
+:root[data-skin="crt"] h1::after{content:"█";margin-left:.3rem;opacity:.9}
+@media(prefers-reduced-motion:no-preference){:root[data-skin="crt"] h1::after{animation:cursor 1.1s steps(1) infinite}}
+@keyframes cursor{50%{opacity:0}}
+:root[data-skin="crt"] .panel h2{font:400 1.6rem/1.1 'VT323',monospace;text-transform:uppercase;letter-spacing:.03em}
+:root[data-skin="crt"] .sub,:root[data-skin="crt"] .consigna,:root[data-skin="crt"] .hint,:root[data-skin="crt"] .leyenda,:root[data-skin="crt"] .glosario{font-size:1.1rem}
+:root[data-skin="crt"] label{font-weight:400}
+:root[data-skin="crt"] .hud,:root[data-skin="crt"] .panel{border-radius:6px;background:color-mix(in srgb,var(--f) 5%,var(--fbg))}
+:root[data-skin="crt"] .panel{border:1px solid var(--border)}
+:root[data-skin="crt"] .hud-nivel,:root[data-skin="crt"] #xp-txt,:root[data-skin="crt"] .xp-rango,:root[data-skin="crt"] .tema-n,:root[data-skin="crt"] .sec{font-family:'VT323',monospace;font-size:1.05rem;letter-spacing:.06em}
+:root[data-skin="crt"] .xp-barra{border:2px solid color-mix(in srgb,var(--f) 55%,transparent);border-radius:2px;background:#000}
+:root[data-skin="crt"] .xp-barra i{box-shadow:0 0 8px var(--fglow)}
+:root[data-skin="crt"] .pantalla{background:#000;color:var(--f);border:1px solid var(--border);border-radius:2px;text-shadow:0 0 6px var(--fglow)}
+:root[data-skin="crt"] .codigo{border-radius:2px}
+:root[data-skin="crt"] .caja{border-radius:2px}
+:root[data-skin="crt"] .fb{border-radius:4px}
+:root[data-skin="crt"] .montaje,:root[data-skin="crt"] .banco,:root[data-skin="crt"] .aviso-modelo{border-radius:2px}
+
+/* botones: teclas con relieve. Luz arriba/izquierda, sombra abajo/derecha; al pulsar se hunden. */
+:root[data-skin="crt"] .modo,:root[data-skin="crt"] .chip,:root[data-skin="crt"] .btn,:root[data-skin="crt"] select{
+  font-family:'VT323',monospace;font-size:1.15rem;font-weight:400;letter-spacing:.05em;text-transform:uppercase;line-height:1.1;
+  border:2px solid;border-radius:3px;padding:.3rem .8rem;color:var(--f);text-shadow:none;
+  background:color-mix(in srgb,var(--f) 17%,var(--fbg));
+  border-color:color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 62%,#fff);
+  box-shadow:1px 1px 0 #000}
+:root[data-skin="crt"] .chip{padding:.2rem .65rem;font-size:1.05rem}
+:root[data-skin="crt"] .modo:hover,:root[data-skin="crt"] .chip:hover,:root[data-skin="crt"] .btn:hover:not(:disabled){background:color-mix(in srgb,var(--f) 27%,var(--fbg))}
+:root[data-skin="crt"] .modo:active,:root[data-skin="crt"] .chip:active,:root[data-skin="crt"] .btn:active:not(:disabled){
+  border-color:color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 14%,#000);
+  transform:translate(1px,1px);box-shadow:none}
+/* hundidos: modo activo y chip actual */
+:root[data-skin="crt"] .modo[aria-pressed="true"],:root[data-skin="crt"] .chip[aria-current="true"]{
+  background:color-mix(in srgb,var(--f) 40%,var(--fbg));color:#fff;text-shadow:0 0 6px var(--fglow);
+  border-color:color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 14%,#000);
+  transform:translate(1px,1px);box-shadow:none}
+/* accion principal: tecla encendida */
+:root[data-skin="crt"] .btn.primario{background:var(--f);color:var(--fbg);font-weight:400;
+  border-color:color-mix(in srgb,var(--f) 40%,#fff) color-mix(in srgb,var(--f) 55%,#000) color-mix(in srgb,var(--f) 55%,#000) color-mix(in srgb,var(--f) 40%,#fff)}
+:root[data-skin="crt"] .btn.primario:hover:not(:disabled){background:color-mix(in srgb,var(--f) 82%,#fff)}
+:root[data-skin="crt"] .btn:disabled{opacity:.45}
+/* campos: hundidos */
+:root[data-skin="crt"] select,:root[data-skin="crt"] input[type=text]{background:#000;
+  border-color:color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 55%,#fff) color-mix(in srgb,var(--f) 55%,#fff) color-mix(in srgb,var(--f) 14%,#000);box-shadow:none}
+:root[data-skin="crt"] input[type=text]{font-family:'DM Mono',monospace;border:2px solid;border-radius:2px;color:var(--f);caret-color:var(--f);text-shadow:0 0 5px var(--fglow)}
+:root[data-skin="crt"] select option{background:var(--fbg);color:var(--f)}
+:root[data-skin="crt"] input[type=checkbox]{accent-color:var(--f)}
+/* piezas de Construir: teclas planas con borde interior */
+:root[data-skin="crt"] .bloque{border-radius:2px;box-shadow:inset 1px 1px 0 rgba(255,255,255,.16),inset -1px -1px 0 rgba(0,0,0,.6)}
+:root[data-skin="crt"] .bloque.fantasma{box-shadow:0 8px 22px var(--fglow)}
+:root[data-skin="crt"] .cara img{filter:drop-shadow(0 0 1px rgba(255,255,255,.7)) drop-shadow(0 0 4px var(--fglow))}
+.modos{margin-bottom:.9rem}
+/* una caja (variable) se pinta como una cajita; un valor (numero, texto) va suelto */
+.v{color:var(--var);background:color-mix(in srgb,var(--var) 13%,transparent);border:1px solid color-mix(in srgb,var(--var) 50%,transparent);border-radius:4px;padding:0 .28em;margin:0 .04em}
+.glosario{margin:.2rem 0 .6rem;border:1px dashed var(--border);border-radius:8px;padding:.35rem .75rem}
+.glosario summary{cursor:pointer;font-weight:700}
+.glosario p{margin:.45rem 0 .2rem}
+.glosario code,.leyenda .v,.leyenda .n,.leyenda .s,.glosario .v{font-family:'DM Mono',monospace;font-size:.9em}
+.leyenda{font-size:.85rem;color:var(--muted);margin:.2rem 0 .7rem}
+.ayudas{margin-top:1.1rem}
+.ayudas .sec{margin-bottom:.4rem}
+/* CRT es un boton: tocarlo reacciona (sorpresa, tristeza, enfado). Nunca reacciona a los errores de nadie. */
+.cara{cursor:pointer;color:inherit;font:inherit}
+.cara:focus-visible{outline:2px solid var(--focus);outline-offset:4px;border-radius:14px}
+@media(prefers-reduced-motion:no-preference){.cara img{transition:transform .15s ease}.cara:hover img{transform:translateY(-2px)}.cara:active img{transform:translateY(1px)}}
+/* ── Ayudas: reserva con casillas y pregunta de recarga ── */
+.hud-ay{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;flex-basis:100%}
+.hud-et{font:.8rem 'DM Mono',monospace;color:var(--muted)}
+.ay-casillas{display:flex;gap:.25rem}
+.ay-casillas i{width:1rem;height:1rem;border:1px solid var(--border);background:var(--bg);border-radius:3px}
+.ay-casillas i.on{background:var(--amber);border-color:var(--amber)}
+#ay-txt{font:.78rem 'DM Mono',monospace;color:var(--muted)}
+#b-recarga{padding:.25rem .8rem;font-size:.8rem}
+#quiz{width:min(36rem,92vw);border:2px solid var(--magenta);border-radius:12px;background:var(--surface);color:var(--text);padding:1.2rem 1.3rem}
+#quiz::backdrop{background:rgba(0,0,0,.68)}
+#quiz h3{margin:0 0 .3rem;font:600 1.15rem 'Space Grotesk',sans-serif}
+#quiz .codigo{margin:.5rem 0}
+.quiz-p{font-weight:700;margin:.6rem 0 .3rem}
+.quiz-op{display:block;width:100%;min-height:2.75rem;text-align:left;margin:.4rem 0;border-radius:10px}
+.quiz-op.acierto{border-color:var(--green)}.quiz-op.fallo{opacity:.7}.quiz-op.elegida{outline:2px solid var(--focus);outline-offset:2px}
+.quiz-op.acierto::before{content:"✓ ";font-weight:700;color:var(--green)}.quiz-op.fallo::before{content:"✗ ";font-weight:700}
+:root[data-skin="crt"] .hud-et,:root[data-skin="crt"] #ay-txt{font-family:'VT323',monospace;font-size:1.05rem}
+:root[data-skin="crt"] .ay-casillas i{border-radius:1px;border-color:color-mix(in srgb,var(--f) 40%,transparent);background:#000}
+:root[data-skin="crt"] .ay-casillas i.on{background:var(--amber);border-color:var(--amber);box-shadow:0 0 6px var(--fglow)}
+:root[data-skin="crt"] #quiz{border-radius:6px;background:var(--fbg2);box-shadow:0 0 0 3px #000,0 0 24px var(--fglow)}
+:root[data-skin="crt"] #quiz h3{font:400 1.5rem 'VT323',monospace;text-transform:uppercase}
+:root[data-skin="crt"] .quiz-op{border-radius:3px;text-transform:none}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="sr" id="anuncio" aria-live="polite"></div>
+<div class="wrap">
+  <div class="topbar">
+    <a href="../index.html">← inicio</a><span>·</span><span>hAppYpUkIng · Lab</span>
+  </div>
+  <div class="crt">
+   <div class="crt-bisel">
+    <div class="crt-pantalla">
+     <div class="crt-contenido">
+  <h1 data-t="titulo"></h1>
+  <p class="sub" data-th="subtitulo"></p>
+
+  <div class="hud">
+    <div class="hud-nivel">
+      <label for="sel-nivel" data-t="nivel.etiqueta"></label>
+      <select id="sel-nivel"></select>
+    </div>
+    <div class="hud-xp">
+      <div class="xp-barra" id="xp-barra" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="1" data-t-aria="xp.aria"><i></i></div>
+      <span id="xp-txt"></span>
+      <span class="xp-rango" id="xp-rango"></span>
+    </div>
+    <div class="hud-ay">
+      <span class="hud-et" data-t="ay.etiqueta"></span>
+      <div class="ay-casillas" id="ay-casillas" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="5" data-t-aria="ay.aria"></div>
+      <span id="ay-txt"></span>
+      <button type="button" class="btn" id="b-recarga" data-t="ay.recargar"></button>
+    </div>
+  </div>
+  <div class="modos" role="group" data-t-aria="modo.aria">
+    <button class="modo" id="m-construir" aria-pressed="true" data-t="modo.construir"></button>
+    <button class="modo" id="m-predecir" aria-pressed="false" data-t="modo.predecir"></button>
+    <button class="modo" id="m-mirar" aria-pressed="false" data-t="modo.mirar"></button>
+  </div>
+  <div class="temas" id="temas"></div>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="ej-titulo">
+      <h2 id="ej-titulo"></h2>
+      <p class="consigna" id="ej-consigna"></p>
+      <div class="codigo" id="codigo" role="group" data-t-aria="programa.aria"></div>
+      <p class="hint" id="err-codigo" role="alert" hidden></p>
+      <div id="montaje-wrap" hidden>
+        <p class="sec" data-t="cons.montaje"></p>
+        <div class="montaje" id="montaje" role="group" data-t-aria="cons.aria.montaje"></div>
+        <p class="hint" data-t="cons.instr"></p>
+      </div>
+      <div class="ayudas" id="ayudas">
+        <p class="sec" data-t="ayudas.titulo"></p>
+        <details class="glosario" id="glosario"><summary id="gl-titulo"></summary><p id="gl-texto"></p></details>
+        <details class="glosario" id="aclara"><summary data-t="ac.titulo"></summary><p data-th="ac.texto"></p></details>
+        <details class="glosario" id="nota-pseudo"><summary data-t="np.titulo"></summary><p data-th="np.texto"></p></details>
+      </div>
+    </section>
+
+    <section class="panel" id="lado">
+      <div class="mascota" id="mascota-fila"><button type="button" class="cara" id="cara" data-estado="idle" data-t-aria="crt.tocar"><img id="crt-img" alt="" width="119" height="120" data-pose="idle" src="../assets/crt/crt-idle.png"></button><small data-t="mascota.nota"></small></div>
+      <!-- PREDECIR -->
+      <div id="v-predecir">
+        <form id="form-pred" autocomplete="off">
+          <label for="resp" data-t="pred.pregunta"></label>
+          <div class="fila">
+            <input type="text" id="resp" inputmode="text" spellcheck="false" data-t-ph="pred.ph">
+            <button class="btn primario" type="submit" data-t="pred.comprobar"></button>
+          </div>
+          <p class="hint" data-t="pred.ayuda"></p>
+        </form>
+        <div class="fb" id="fb" role="status" aria-live="polite"></div>
+      </div>
+      <!-- CONSTRUIR -->
+      <div id="v-construir" hidden>
+        <p class="sec" data-t="cons.banco"></p>
+        <div class="banco" id="banco" role="group" data-t-aria="cons.aria.banco"></div>
+        <label class="lectura"><input type="checkbox" id="chk-lectura"><span data-t="cons.leer"></span></label>
+        <div class="fila">
+          <button class="btn primario" id="c-comprobar" data-t="cons.comprobar"></button>
+          <button class="btn" id="c-ayuda" data-ayuda data-t="cons.ayudita"></button>
+          <button class="btn" id="c-vaciar" data-t="cons.vaciar"></button>
+        </div>
+        <div class="fb" id="fb-c" role="status" aria-live="polite"></div>
+      </div>
+      <!-- MIRAR -->
+      <div id="v-mirar" hidden>
+        <div class="fila" style="margin-bottom:.7rem">
+          <label for="sel-modelo" style="margin:0" data-t="mirar.como"></label>
+          <select id="sel-modelo"></select>
+        </div>
+        <div class="aviso-modelo" id="aviso-modelo" hidden></div>
+        <p class="sec" data-t="mirar.vars"></p>
+        <div class="cajas" id="cajas" aria-live="polite"></div>
+        <p class="sec" data-t="mirar.pantalla"></p>
+        <div class="pantalla" id="pantalla" aria-live="polite"></div>
+        <p class="sec" data-t="mirar.pasa"></p>
+        <p class="nota" id="nota" aria-live="polite"></p>
+        <div class="fila">
+          <button class="btn" id="b-ant" data-t="b.ant"></button>
+          <button class="btn primario" id="b-sig" data-t="b.sig"></button>
+          <button class="btn" id="b-auto" data-t="b.auto"></button>
+          <button class="btn" id="b-reset" data-t="b.reset"></button>
+        </div>
+      </div>
+    </section>
+  </div>
+      <dialog id="quiz" aria-labelledby="quiz-t">
+        <h3 id="quiz-t" data-t="quiz.titulo"></h3>
+        <p class="hint" data-t="quiz.aviso"></p>
+        <div class="codigo" id="quiz-cod" hidden></div>
+        <p class="quiz-p" id="quiz-p"></p>
+        <div id="quiz-op" role="group" aria-labelledby="quiz-p"></div>
+        <div class="fb" id="quiz-res" role="status" aria-live="polite"></div>
+        <div class="fila" style="margin-top:.8rem">
+          <button type="button" class="btn" id="quiz-cerrar" data-t="quiz.ahoranov"></button>
+          <button type="button" class="btn primario" id="quiz-sig" hidden data-t="quiz.sig"></button>
+        </div>
+      </dialog>
+     </div>
+    </div>
+    <div class="crt-base">
+      <span class="crt-marca" data-t="crt.marca"></span>
+      <div class="crt-mandos">
+        <div class="crt-fosforo" role="group" data-t-aria="fosforo.aria">
+          <button type="button" class="knob" data-f="verde" aria-pressed="false" data-t-aria="fosforo.verde"></button>
+          <button type="button" class="knob" data-f="ambar" aria-pressed="false" data-t-aria="fosforo.ambar"></button>
+          <button type="button" class="knob" data-f="cian" aria-pressed="false" data-t-aria="fosforo.cian"></button>
+        </div>
+        <button type="button" class="crt-power" id="b-skin" aria-pressed="true" data-t-aria="skin.aria"><span class="led" aria-hidden="true"></span><span data-t="skin.boton"></span></button>
+      </div>
+    </div>
+   </div>
+  </div>
+  <p class="pie">CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a> · <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a> · <a href="https://github.com/V0raOnline/happypuking-lab/blob/main/assets/crt/CREDITOS.md">Créditos de CRT</a></p>
+</div>
+
+<!-- ═══════════════════════ MOTOR ═══════════════════════
+     Sin frases. Errores y notas de la traza salen como {id, p}; la app les busca el texto.
+     (Las palabras del pseudocodigo —mientras, si, verdadero…— son el LENGUAJE, no la
+     interfaz: son la unica excepcion, y se podran sacar a un LEXICO por idioma.) -->
+<script id="motor">
+/* ==MOTOR== */
+const MOTOR = (function () {
+  'use strict';
+  const LIMITE_PASOS = 500;
+  const KW = ['mientras','hacer','si','entonces','sino','fin','para','desde','hasta','mostrar','y','o','no'];
+  const COLGADO = { colgado: true };
+  const ID0 = /[A-Za-z_ÁÉÍÓÚáéíóúÑñÜü]/, IDN = /[A-Za-z_ÁÉÍÓÚáéíóúÑñÜü0-9]/;
+
+  function fallo(id, linea, p) { const e = new Error(id); e.id = id; e.p = p || {}; e.linea = linea; e.deMotor = true; return e; }
+  const errorDe = e => ({ id: e.id, p: e.p, linea: e.linea });
+
+  // ── Lexico ──────────────────────────────────────────────
+  function tokenizar(s, n) {
+    const t = []; let i = 0;
+    while (i < s.length) {
+      const c = s[i], d = s.slice(i, i + 2);
+      if (c === ' ' || c === '\t' || c === '\r') { i++; continue; }
+      if (c === '#' || d === '//') break;
+      if (c >= '0' && c <= '9') {
+        let j = i; while (j < s.length && ((s[j] >= '0' && s[j] <= '9') || s[j] === '.')) j++;
+        t.push({ t: 'num', v: parseFloat(s.slice(i, j)) }); i = j; continue;
+      }
+      if (c === '"') {
+        const j = s.indexOf('"', i + 1);
+        if (j < 0) throw fallo('comillas', n);
+        t.push({ t: 'str', v: s.slice(i + 1, j) }); i = j + 1; continue;
+      }
+      if (ID0.test(c)) {
+        let j = i; while (j < s.length && IDN.test(s[j])) j++;
+        const w = s.slice(i, j), l = w.toLowerCase();
+        if (l === 'verdadero' || l === 'falso') t.push({ t: 'num', v: l === 'verdadero' });
+        else t.push(KW.includes(l) ? { t: 'kw', v: l } : { t: 'id', v: w });
+        i = j; continue;
+      }
+      if (c === '←' || d === '<-' || d === ':=') { t.push({ t: 'asig' }); i += c === '←' ? 1 : 2; continue; }
+      if (d === '<=' || d === '>=' || d === '!=' || d === '==') { t.push({ t: 'cmp', v: d === '==' ? '=' : d }); i += 2; continue; }
+      if (c === '≤') { t.push({ t: 'cmp', v: '<=' }); i++; continue; }
+      if (c === '≥') { t.push({ t: 'cmp', v: '>=' }); i++; continue; }
+      if (c === '≠') { t.push({ t: 'cmp', v: '!=' }); i++; continue; }
+      if (c === '<' || c === '>' || c === '=') { t.push({ t: 'cmp', v: c }); i++; continue; }
+      if ('+-*/%'.includes(c)) { t.push({ t: 'op', v: c }); i++; continue; }
+      if (c === '(' || c === ')') { t.push({ t: 'par', v: c }); i++; continue; }
+      throw fallo('simbolo', n, { c });
+    }
+    // «y», «o» y «no» son operadores SOLO entre operandos; en cualquier otro
+    // sitio son nombres de variable (y es la variable mas comun en mates).
+    const cierra = x => x && (x.t === 'num' || x.t === 'str' || x.t === 'id' || (x.t === 'par' && x.v === ')'));
+    const abre = x => x && (x.t === 'num' || x.t === 'str' || x.t === 'id' || (x.t === 'par' && x.v === '(') ||
+      (x.t === 'op' && x.v === '-') || (x.t === 'kw' && x.v === 'no'));
+    t.forEach((x, k) => {
+      if (x.t !== 'kw' || (x.v !== 'y' && x.v !== 'o' && x.v !== 'no')) return;
+      const op = x.v === 'no' ? abre(t[k + 1]) && !cierra(t[k - 1]) : cierra(t[k - 1]) && abre(t[k + 1]);
+      if (!op) x.t = 'id';
+    });
+    return t;
+  }
+
+  // ── Expresiones ─────────────────────────────────────────
+  function parseExpr(t, n) {
+    let p = 0;
+    const es = (tipo, v) => t[p] && t[p].t === tipo && (v === undefined || t[p].v === v);
+    function eO() { let a = eY(); while (es('kw', 'o')) { p++; a = { k: 'bin', op: 'o', a, b: eY() }; } return a; }
+    function eY() { let a = eNo(); while (es('kw', 'y')) { p++; a = { k: 'bin', op: 'y', a, b: eNo() }; } return a; }
+    function eNo() { if (es('kw', 'no')) { p++; return { k: 'no', a: eNo() }; } return eCmp(); }
+    function eCmp() { const a = eSuma(); if (es('cmp')) { const op = t[p++].v; return { k: 'bin', op, a, b: eSuma() }; } return a; }
+    function eSuma() { let a = eProd(); while (es('op', '+') || es('op', '-')) { const op = t[p++].v; a = { k: 'bin', op, a, b: eProd() }; } return a; }
+    function eProd() { let a = eUn(); while (es('op', '*') || es('op', '/') || es('op', '%')) { const op = t[p++].v; a = { k: 'bin', op, a, b: eUn() }; } return a; }
+    function eUn() { if (es('op', '-')) { p++; return { k: 'un', a: eUn() }; } return eAtomo(); }
+    function eAtomo() {
+      const x = t[p++];
+      if (!x) throw fallo('expr-a-medias', n);
+      if (x.t === 'num') return { k: 'num', v: x.v };
+      if (x.t === 'str') return { k: 'str', v: x.v };
+      if (x.t === 'id') return { k: 'var', n: x.v };
+      if (x.t === 'par' && x.v === '(') {
+        const e = eO();
+        if (!es('par', ')')) throw fallo('falta-parentesis', n);
+        p++; return e;
+      }
+      throw fallo('no-esperaba', n, { x: x.v !== undefined ? x.v : '←' });
+    }
+    if (!t.length) throw fallo('falta-expr', n);
+    const e = eO();
+    if (p < t.length) throw fallo('sobra', n);
+    return e;
+  }
+
+  const PREC = { o: 1, y: 2, '=': 4, '!=': 4, '<': 4, '>': 4, '<=': 4, '>=': 4, '+': 5, '-': 5, '*': 6, '/': 6, '%': 6 };
+  function fmt(v) {
+    if (v === true) return 'verdadero';
+    if (v === false) return 'falso';
+    if (typeof v === 'number') return String(+v.toFixed(10));
+    return String(v);
+  }
+  function txt(e, prec) {
+    prec = prec || 0;
+    switch (e.k) {
+      case 'num': return fmt(e.v);
+      case 'str': return '"' + e.v + '"';
+      case 'var': return e.n;
+      case 'un': return '-' + txt(e.a, 7);
+      case 'no': return 'no ' + txt(e.a, 3);
+      default: {
+        const pr = PREC[e.op], s = txt(e.a, pr) + ' ' + e.op + ' ' + txt(e.b, pr + 1);
+        return pr < prec ? '(' + s + ')' : s;
+      }
+    }
+  }
+  function usaVars(e, set) {
+    set = set || new Set();
+    if (e.k === 'var') set.add(e.n);
+    else { if (e.a) usaVars(e.a, set); if (e.b) usaVars(e.b, set); }
+    return set;
+  }
+
+  // ── Sentencias ──────────────────────────────────────────
+  function parsear(codigo) {
+    const lineas = codigo.split('\n');
+    let pos = 0;
+    function bloque(abiertoEn) {
+      const out = [];
+      while (pos < lineas.length) {
+        const n = pos + 1, t = tokenizar(lineas[pos], n);
+        if (!t.length) { pos++; continue; }
+        const k = t[0].t === 'kw' ? t[0].v : null;
+        if (k === 'fin') { if (!abiertoEn) throw fallo('fin-suelto', n); return { out, cierre: 'fin' }; }
+        if (k === 'sino') { if (!abiertoEn) throw fallo('sino-suelto', n); return { out, cierre: 'sino' }; }
+        pos++;
+        const ultimo = t[t.length - 1], esKw = (x, v) => x && x.t === 'kw' && x.v === v;
+        if (k === 'mostrar') { out.push({ tipo: 'mostrar', linea: n, expr: parseExpr(t.slice(1), n) }); continue; }
+        if (k === 'mientras') {
+          if (!esKw(ultimo, 'hacer')) throw fallo('falta-hacer', n);
+          const cond = parseExpr(t.slice(1, -1), n), b = bloque(n);
+          if (b.cierre !== 'fin') throw fallo('mientras-sino', n);
+          pos++; out.push({ tipo: 'mientras', linea: n, cond, cuerpo: b.out }); continue;
+        }
+        if (k === 'si') {
+          if (!esKw(ultimo, 'entonces')) throw fallo('falta-entonces', n);
+          const cond = parseExpr(t.slice(1, -1), n), a = bloque(n); let sino = null;
+          if (a.cierre === 'sino') { pos++; const b = bloque(n); sino = b.out; }
+          pos++; out.push({ tipo: 'si', linea: n, cond, entonces: a.out, sino }); continue;
+        }
+        if (k === 'para') {
+          const iD = t.findIndex(x => esKw(x, 'desde')), iH = t.findIndex(x => esKw(x, 'hasta'));
+          if (t[1] && t[1].t !== 'id' || iD !== 2 || iH < 0 || !esKw(ultimo, 'hacer')) throw fallo('para-forma', n);
+          const desde = parseExpr(t.slice(3, iH), n), hasta = parseExpr(t.slice(iH + 1, -1), n), b = bloque(n);
+          if (b.cierre !== 'fin') throw fallo('para-sino', n);
+          pos++; out.push({ tipo: 'para', linea: n, v: t[1].v, desde, hasta, cuerpo: b.out }); continue;
+        }
+        if (t[0].t === 'id' && t[1] && t[1].t === 'asig') {
+          out.push({ tipo: 'asig', linea: n, nombre: t[0].v, expr: parseExpr(t.slice(2), n) }); continue;
+        }
+        if (t.length > 1 && t[1].t === 'asig') throw fallo('asig-izquierda', n);   // «7 ← edad»: la flecha va hacia la caja
+        throw fallo('linea-incomprensible', n);
+      }
+      if (abiertoEn) throw fallo('falta-fin', abiertoEn);
+      return { out, cierre: null };
+    }
+    return bloque(0).out;
+  }
+
+  // ── Ejecucion (con modelos mentales opcionales) ─────────
+  function correr(codigo, m) {
+    m = m || {};
+    let ast;
+    try { ast = parsear(codigo); }
+    catch (e) { if (e.deMotor) return { error: errorDe(e), pasos: [], salida: [] }; throw e; }
+    const ctx = { env: new Map(), out: [], pasos: [], prof: 0 };
+
+    function leer(n, linea) {
+      if (!ctx.env.has(n)) throw fallo('sin-valor', linea, { n });
+      const v = ctx.env.get(n);
+      if (v && v.formula) {
+        if (ctx.prof > 25) throw fallo('ciclo', linea);
+        ctx.prof++;
+        try { return ev(v.formula, linea); } finally { ctx.prof--; }
+      }
+      return v;
+    }
+    const LAXO = { '<': '<=', '<=': '<', '>': '>=', '>=': '>' };
+    function num(x, linea) { if (typeof x !== 'number') throw fallo('no-calculable', linea, { v: fmt(x) }); return x; }
+    function ev(e, linea) {
+      switch (e.k) {
+        case 'num': case 'str': return e.v;
+        case 'var': return leer(e.n, linea);
+        case 'un': return -num(ev(e.a, linea), linea);
+        case 'no': return !ev(e.a, linea);
+        default: {
+          let op = e.op;
+          if (m.limite && LAXO[op]) op = LAXO[op];
+          if (op === 'y') return ev(e.a, linea) && ev(e.b, linea);
+          if (op === 'o') return ev(e.a, linea) || ev(e.b, linea);
+          const a = ev(e.a, linea), b = ev(e.b, linea);
+          switch (op) {
+            case '+': return (typeof a === 'string' || typeof b === 'string') ? fmt(a) + fmt(b) : a + b;
+            case '-': return num(a, linea) - num(b, linea);
+            case '*': return num(a, linea) * num(b, linea);
+            case '/': if (num(b, linea) === 0) throw fallo('div-cero', linea); return num(a, linea) / b;
+            case '%': if (num(b, linea) === 0) throw fallo('div-cero', linea); return num(a, linea) % b;
+            case '=': return a === b;
+            case '!=': return a !== b;
+            case '<': return a < b;
+            case '>': return a > b;
+            case '<=': return a <= b;
+            case '>=': return a >= b;
+          }
+        }
+      }
+    }
+    function foto(linea, nota, cambia) {
+      if (ctx.pasos.length >= LIMITE_PASOS) throw COLGADO;
+      const vars = [];
+      ctx.env.forEach((v, nombre) => {
+        if (v && v.formula) {
+          let val; try { val = fmt(leer(nombre, linea)); } catch (_) { val = '?'; }
+          vars.push({ n: nombre, v: val, f: txt(v.formula) });
+        } else vars.push({ n: nombre, v: fmt(v), f: null });
+      });
+      ctx.pasos.push({ linea, vars, salida: ctx.out.slice(), nota, cambia: cambia || null });
+    }
+    function test(cond, linea) {
+      const r = ev(cond, linea);
+      if (typeof r !== 'boolean') throw fallo('cond-no-bool', linea);
+      foto(linea, { id: r ? 'test-si' : 'test-no', p: { c: txt(cond) } });
+      return r;
+    }
+    function bloque(lista) { for (const s of lista) sentencia(s); }
+    function sentencia(s) {
+      switch (s.tipo) {
+        case 'asig': {
+          const e = s.expr;
+          if (m.intercambia && e.k === 'var' && e.n !== s.nombre && ctx.env.has(e.n) && ctx.env.has(s.nombre)) {
+            const a = ctx.env.get(s.nombre); ctx.env.set(s.nombre, ctx.env.get(e.n)); ctx.env.set(e.n, a);
+            foto(s.linea, { id: 'intercambia', p: { a: s.nombre, b: e.n, va: fmt(leer(s.nombre, s.linea)), vb: fmt(leer(e.n, s.linea)) } }, s.nombre);
+            return;
+          }
+          if (m.formula) {
+            const us = usaVars(e);
+            if (us.size && !us.has(s.nombre)) {
+              ctx.env.set(s.nombre, { formula: e });
+              foto(s.linea, { id: 'formula', p: { n: s.nombre, e: txt(e) } }, s.nombre);
+              return;
+            }
+          }
+          const val = ev(e, s.linea);
+          ctx.env.set(s.nombre, val);
+          foto(s.linea, { id: 'asig', p: { n: s.nombre, e: txt(e), v: fmt(val) } }, s.nombre);
+          return;
+        }
+        case 'mostrar': {
+          const val = fmt(ev(s.expr, s.linea));
+          ctx.out.push(val);
+          foto(s.linea, { id: 'mostrar', p: { v: val } });
+          return;
+        }
+        case 'si': {
+          const t = test(s.cond, s.linea);
+          if (t) { bloque(s.entonces); if (m.sinoSiempre && s.sino) bloque(s.sino); }
+          else if (s.sino) bloque(s.sino);
+          return;
+        }
+        case 'mientras': {
+          if (m.alFinal) { let sigue; do { bloque(s.cuerpo); sigue = test(s.cond, s.linea); } while (sigue); }
+          else if (m.unaVez) { if (test(s.cond, s.linea)) bloque(s.cuerpo); }
+          else { while (test(s.cond, s.linea)) bloque(s.cuerpo); }
+          return;
+        }
+        case 'para': {
+          const a = num(ev(s.desde, s.linea), s.linea), b = num(ev(s.hasta, s.linea), s.linea);
+          for (let i = a; m.excluye ? i < b : i <= b; i++) {
+            ctx.env.set(s.v, i);
+            foto(s.linea, { id: 'para', p: { v: s.v, i: fmt(i) } }, s.v);
+            bloque(s.cuerpo);
+          }
+          return;
+        }
+      }
+    }
+    let colgado = false, error = null;
+    try { bloque(ast); }
+    catch (e) {
+      if (e === COLGADO) colgado = true;
+      else if (e.deMotor) error = errorDe(e);
+      else throw e;
+    }
+    return { pasos: ctx.pasos, salida: ctx.out, colgado, error };
+  }
+
+  // ── Malentendidos tipicos (el texto de cada uno vive en TEXTOS: mod.<id>.corto/.diag) ──
+  const MODELOS = [
+    { id: 'formula',     flags: { formula: true } },
+    { id: 'intercambia', flags: { intercambia: true } },
+    { id: 'unaVez',      flags: { unaVez: true } },
+    { id: 'alFinal',     flags: { alFinal: true } },
+    { id: 'limite',      flags: { limite: true } },
+    { id: 'excluye',     flags: { excluye: true } },
+    { id: 'sinoSiempre', flags: { sinoSiempre: true } }
+  ];
+
+  // ── Diagnostico ─────────────────────────────────────────
+  function norm(lista) {
+    return lista.map(x => String(x).trim().replace(/^"|"$/g, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+      .filter(x => x !== '').map(x => (/^-?\d+(\.\d+)?$/.test(x) ? String(+x) : x));
+  }
+  function trocear(texto) { return norm(String(texto).split(/[\s,;]+/)); }
+  const igual = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+
+  function diagnosticar(codigo, respuesta) {
+    const real = correr(codigo), esperado = norm(real.salida), dado = trocear(respuesta);
+    if (igual(esperado, dado)) return { correcta: true };
+    const causas = [];
+    for (const mod of MODELOS) {
+      const r = correr(codigo, mod.flags);
+      if (r.error || r.colgado) continue;
+      const s = norm(r.salida);
+      if (!igual(s, esperado) && igual(s, dado)) causas.push(mod);
+    }
+    const mismoConjunto = esperado.length === dado.length && JSON.stringify([...esperado].sort()) === JSON.stringify([...dado].sort());
+    return { correcta: false, causas, esperadoN: esperado.length, dadoN: dado.length, mismoConjunto };
+  }
+
+  // ── Construccion (problemas de Parsons) ─────────────────
+  // Lectura en voz alta de UNA linea: devuelve {id, p} y la app busca «lee.<id>».
+  function leerLinea(linea) {
+    try {
+      const t = tokenizar(linea, 1);
+      if (!t.length) return null;
+      const k = t[0].t === 'kw' ? t[0].v : null;
+      if (k === 'fin' || k === 'sino') return { id: k, p: {} };
+      if (k === 'mostrar') {
+        const e = parseExpr(t.slice(1), 1);
+        return { id: e.k === 'var' ? 'mostrar-caja' : e.k === 'str' ? 'mostrar-texto' : 'mostrar', p: { e: txt(e) } };
+      }
+      if (k === 'mientras' || k === 'si') return { id: k, p: { c: txt(parseExpr(t.slice(1, -1), 1)) } };
+      if (k === 'para') {
+        const iH = t.findIndex(x => x.t === 'kw' && x.v === 'hasta');
+        return { id: 'para', p: { v: t[1].v, a: txt(parseExpr(t.slice(3, iH), 1)), b: txt(parseExpr(t.slice(iH + 1, -1), 1)) } };
+      }
+      if (t[0].t === 'id' && t[1] && t[1].t === 'asig') {
+        const e = parseExpr(t.slice(2), 1);
+        return { id: e.k === 'var' ? 'asig-caja' : (e.k === 'num' || e.k === 'str') ? 'asig' : 'asig-calculo', p: { n: t[0].v, e: txt(e) } };
+      }
+    } catch (e) { if (!e.deMotor) throw e; }
+    return null;
+  }
+
+  // Comprueba un programa montado con piezas. Vale si SE COMPORTA como la solucion:
+  // misma salida y mismas cajas al final, con los datos del reto Y con otros datos
+  // (`entradas`: linea -> valores alternativos). Asi no cuela un programa que acierta
+  // por casualidad (p. ej. un «mostrar "frío"» suelto que solo coincide con 18 grados).
+  function comprobarConstruccion(solucion, lineas, entradas) {
+    if (!lineas.length) return { estado: 'vacio' };
+    if (lineas.length < solucion.length) return { estado: 'faltan', n: solucion.length };
+    const esp = correr(solucion.join('\n')), r = correr(lineas.join('\n'));
+    if (r.error) return { estado: 'error', error: r.error, pasos: r.pasos.length };
+    if (r.colgado) return { estado: 'colgado', pasos: r.pasos.length };
+    const pasos = r.pasos.length;
+    if (!igual(norm(r.salida), norm(esp.salida))) return { estado: 'distinta', mio: r.salida, esperado: esp.salida, pasos };
+
+    const finDe = res => { const m = {}; (res.pasos.length ? res.pasos[res.pasos.length - 1].vars : []).forEach(v => { m[v.n] = v.v; }); return m; };
+    const claves = Object.keys(entradas || {}), nEsc = claves.reduce((m, k) => Math.max(m, entradas[k].length), 0);
+    const escenarios = [{ datos: '', a: esp, b: r }];
+    for (let e = 0; e < nEsc; e++) {
+      const cambio = {};
+      claves.forEach(k => { const v = entradas[k]; cambio[k] = k.replace(/[-\d.]+\s*$/, String(v[e % v.length])); });
+      const aplica = l => (cambio[l.trim()] !== undefined ? cambio[l.trim()] : l);
+      escenarios.push({ datos: claves.map(k => cambio[k]).join(', '),
+        a: correr(solucion.map(aplica).join('\n')), b: correr(lineas.map(aplica).join('\n')) });
+    }
+    for (const sc of escenarios) {
+      if (sc.a.error || sc.a.colgado) continue;
+      if (!igual(norm(sc.b.salida), norm(sc.a.salida)) || sc.b.error || sc.b.colgado)
+        return { estado: 'coincide', datos: sc.datos, mio: sc.b.salida, esperado: sc.a.salida, pasos };
+      const fa = finDe(sc.a), fb = finDe(sc.b);
+      for (const nombre of Object.keys(fa))
+        if (fb[nombre] !== fa[nombre]) return { estado: 'estado', datos: sc.datos, nombre, esperado: fa[nombre], mio: fb[nombre], pasos };
+    }
+    const clave = l => l.map(x => x.trim()).sort().join('\n');
+    if (clave(lineas) !== clave(solucion)) return { estado: 'casi', pasos };
+    return { estado: 'ok', igualPlan: lineas.every((l, i) => l.trim() === solucion[i].trim()), pasos };
+  }
+
+  return { correr, diagnosticar, leerLinea, comprobarConstruccion, MODELOS, fmt };
+})();
+/* ==/MOTOR== */
+</script>
+
+<!-- ═══════════════════════ TEXTOS ═══════════════════════
+     TEXTOS[idioma][registro][clave]. El registro base es «eso»: esta completo.
+     Los demas registros solo escriben lo que cambia. Huecos: {nombre}.
+     Familias de claves:  titulo… (interfaz) · fb.* (comentarios) · nota.* (traza)
+                          err.* (errores del pseudocodigo) · mod.<id>.* (malentendidos)
+                          ej.<id>.* (ejercicios) · tema.* · nivel.*                       -->
+<script id="textos">
+const LANG = 'es';
+const BASE = 'eso';
+const TEXTOS = { es: {
+
+  /* ════════ ESO — completo ════════ */
+  eso: {
+    'titulo': 'Piensa como una máquina',
+    'subtitulo': 'Monta el programa, predice qué hace y mira cómo lo ejecuta la máquina. Si te equivocas, te decimos <em>por qué</em>, no solo «mal».',
+    'np.titulo': 'Sobre cómo se escribe: el pseudocódigo',
+    'np.texto': 'El pseudocódigo no es un lenguaje real: es una forma de escribir ideas que se entiende desde cualquier lenguaje. Aquí usamos <code>←</code> para <b>asignar</b> (guardar un valor en una variable) y <code>=</code> solo para <b>comparar</b> (<code>si x = 5</code>). Es una convención didáctica para no mezclar las dos cosas. Los lenguajes reales lo escriben a su manera: Python, JavaScript y C asignan con <code>=</code> y comparan con <code>==</code>; Pascal asigna con <code>:=</code>. Cada lenguaje tiene su dialecto, pero la idea de fondo es la misma.',
+    'ayudas.titulo': 'Ayudas',
+    'ac.titulo': '¿variable o "variable"?',
+    'ac.texto': 'Sin comillas, <span class="v">edad</span> es una variable: se usa el valor que guarda. Entre comillas, <span class="s">"edad"</span> es un texto literal: se usa tal cual. Y <span class="n">7</span> es un número. Por eso <code>mostrar edad</code> y <code>mostrar "edad"</code> hacen cosas distintas.',
+    'gl.variables.titulo': '¿Qué es una variable?',
+    'gl.variables.texto': 'Una variable es un nombre al que le asignas un valor. Al escribir <code>edad ← 7</code>, el nombre <span class="v">edad</span> pasa a guardar un 7, y puedes cambiarlo cuando quieras asignándole otro.',
+    'gl.condicionales.titulo': '¿Qué es un condicional?',
+    'gl.condicionales.texto': 'Un condicional ejecuta un bloque solo si se cumple una condición, algo que puede ser verdadero o falso. En <code>si condición entonces … sino … fin</code>, si la condición se cumple se ejecuta el primer bloque y, si no, el del <code>sino</code> (si lo hay). Nunca se ejecutan los dos.',
+    'gl.bucles.titulo': '¿Qué es un bucle?',
+    'gl.bucles.texto': 'Un bucle repite un bloque de instrucciones. <code>mientras condición hacer … fin</code> comprueba la condición ANTES de cada vuelta y repite mientras sea verdadera. <code>para i desde a hasta b</code> cuenta de a hasta b, con los dos extremos incluidos. Dentro tiene que cambiar algo para que la condición deje de cumplirse; si no, el bucle no termina nunca.',
+    'modo.aria': 'Modo', 'modo.predecir': 'Predecir', 'modo.mirar': 'Mirar paso a paso', 'modo.construir': 'Construir',
+    'nivel.etiqueta': 'Nivel',
+    'nivel.primaria': 'LVL 1 · BOOT', 'nivel.eso': 'LVL 2 · DEBUG', 'nivel.bach': 'LVL 3 · ROOT',
+    'nivel.primaria.ayuda': 'Primeros pasos · pensado para primaria',
+    'nivel.eso.ayuda': 'Pensado para ESO',
+    'nivel.bach.ayuda': 'Pensado para Bachillerato',
+    'xp.txt': '{a} / {b} XP', 'xp.aria': 'Progreso en este nivel',
+    'xp.ganas': '+{n} XP', 'xp.ya': 'Sin XP nuevo: ya tenías esta puntuación o más.',
+    'ay.etiqueta': 'Ayuditas',
+    'ay.aria': 'Ayuditas disponibles',
+    'ay.txt': '{n} / {max}',
+    'ay.proxima': 'próxima en {xp} XP o {t}',
+    'ay.llena': 'al completo',
+    'ay.recargar': 'Recargar con una pregunta',
+    'ay.sin': 'No te quedan ayuditas. Se recargan al ganar XP, con el tiempo o respondiendo una pregunta.',
+    'quiz.titulo': 'Pregunta para recargar',
+    'quiz.aviso': 'Mientras la pregunta está abierta no se pueden consultar las ayudas. Si prefieres, pulsa «Ahora no».',
+    'quiz.ahoranov': 'Ahora no',
+    'quiz.sig': 'Seguir',
+    'quiz.ok': '¡Correcto! Ganas una ayudita.',
+    'quiz.mal': 'Esta vez no. Esta pregunta no se repite, pero ya has visto la respuesta.',
+    'q.v1.p': '¿Qué es una variable?',
+    'q.v1.ok': 'Un nombre al que le asignas un valor, y que puede cambiar',
+    'q.v1.x1': 'Un número que nunca cambia',
+    'q.v1.x2': 'Un texto escrito entre comillas',
+    'q.v1.e': 'Una variable es un nombre que guarda un valor. Puedes cambiarlo asignándole otro.',
+    'q.v2.p': '¿Cuánto vale x al final?',
+    'q.v2.ok': '8',
+    'q.v2.x1': '3',
+    'q.v2.x2': '11',
+    'q.v2.e': 'Asignar sustituye el valor anterior: la variable se queda con lo último, el 8. No se suman.',
+    'q.v3.p': '¿Qué escribe la pantalla?',
+    'q.v3.ok': 'La palabra edad',
+    'q.v3.x1': 'El número 7',
+    'q.v3.x2': 'Nada',
+    'q.v3.e': 'Entre comillas es un texto literal y se muestra tal cual. Sin comillas, mostrar edad mostraría el valor 7.',
+    'q.c1.p': '¿Para qué sirve un «si»?',
+    'q.c1.ok': 'Para hacer algo solo si se cumple una condición',
+    'q.c1.x1': 'Para repetir algo varias veces',
+    'q.c1.x2': 'Para guardar un valor',
+    'q.c1.e': 'Un «si» ejecuta su bloque solo cuando la condición es verdadera.',
+    'q.c2.p': 'La condición de un «si» no se cumple y hay un «sino». ¿Qué pasa?',
+    'q.c2.ok': 'Se hace lo del «sino»',
+    'q.c2.x1': 'Se hacen las dos cosas',
+    'q.c2.x2': 'No se hace nada',
+    'q.c2.e': 'Es uno o el otro: si no se cumple el «si», se ejecuta el «sino».',
+    'q.c3.p': '¿Qué escribe la pantalla?',
+    'q.c3.ok': 'Nada',
+    'q.c3.x1': 'calor',
+    'q.c3.x2': 'Da un error',
+    'q.c3.e': 'Como 20 no es mayor que 20, la condición no se cumple y, al no haber «sino», no se hace nada.',
+    'q.b1.p': '¿Qué es un bucle?',
+    'q.b1.ok': 'Un bloque que se repite',
+    'q.b1.x1': 'Una variable con un número',
+    'q.b1.x2': 'Una pregunta de sí o no',
+    'q.b1.e': 'Un bucle repite un bloque de instrucciones, mientras se cumpla una condición o un número de veces.',
+    'q.b2.p': '¿Cuántas veces se repite lo de dentro del «mientras»?',
+    'q.b2.ok': 'Ninguna',
+    'q.b2.x1': 'Una',
+    'q.b2.x2': 'Tres',
+    'q.b2.e': '«Mientras» comprueba antes de entrar: n vale 5, así que 5 < 3 es falso desde el principio.',
+    'q.b3.p': '¿Qué pasa si dentro de un «mientras» nada hace que la condición deje de cumplirse?',
+    'q.b3.ok': 'El bucle no termina nunca',
+    'q.b3.x1': 'Se detiene solo tras diez vueltas',
+    'q.b3.x2': 'El programa avisa de un error antes de empezar',
+    'q.b3.e': 'Si nada cambia, la condición sigue siendo verdadera y el bucle se repite sin fin.',
+    'rango.0': 'Sin señal', 'rango.1': 'Zumbido', 'rango.2': 'Sintonizando', 'rango.3': 'Nítido', 'rango.4': 'Fósforo puro',
+    'skin.boton': 'Skin CRT', 'skin.aria': 'Activar o desactivar el skin CRT',
+    'fosforo.aria': 'Color del fósforo', 'fosforo.verde': 'Fósforo verde', 'fosforo.ambar': 'Fósforo ámbar', 'fosforo.cian': 'Fósforo cian',
+    'crt.marca': 'HPK · CRT-1',
+    'tema.variables': 'Variables', 'tema.condicionales': 'Condicionales', 'tema.bucles': 'Bucles',
+    'programa.aria': 'Programa',
+    'mascota.nota': 'CRT',
+    'crt.tocar': 'Tocar a CRT',
+    'crt.r1': 'CRT se sorprende',
+    'crt.r2': 'CRT se pone triste',
+    'crt.r3': 'CRT se enfada y te da la espalda',
+
+    'pred.pregunta': '¿Qué muestra este programa?',
+    'pred.ph': 'p. ej.  1 2 3',
+    'pred.comprobar': 'Comprobar',
+    'pred.ayuda': 'Escribe lo que aparecería en pantalla, en orden, separado por espacios. Si no muestra nada, déjalo vacío.',
+
+    'fb.ok': '¡Exacto!',
+    'fb.sig': 'Siguiente ejercicio →',
+    'fb.ver': 'Ver cómo lo ejecuta la máquina',
+    'fb.casi': 'Casi. Y creo saber por qué.',
+    'fb.tambien': 'También podría ser que hayas pensado {lista}.',
+    'fb.o': ' o ',
+    'fb.nosale': 'No sale lo que dices.',
+    'fb.cuantos.uno': 'Has escrito 1 valor. Revisa cuántas veces se ejecuta «mostrar» y vuelve a probar.',
+    'fb.cuantos.varios': 'Has escrito {n} valores. Revisa cuántas veces se ejecuta «mostrar» y vuelve a probar.',
+    'fb.mismo': 'Has escrito la cantidad correcta de valores, pero alguno no es el que sale. Sigue el programa línea a línea, anotando cuánto vale cada variable.',
+    'fb.orden': 'Tienes los valores correctos, pero en otro orden. Se muestran uno detrás de otro, en el orden en que el programa los va mostrando, de arriba abajo.',
+    'fb.reint': 'Probar de nuevo',
+    'fb.modelo': 'Ver cómo lo habrías ejecutado tú',
+    'fb.ayuda': 'Ver paso a paso (ayudita)',
+
+    'mirar.como': 'Ejecutar como…',
+    'mirar.real': 'Como lo ejecuta de verdad la máquina',
+    'mirar.modelo': 'Como lo ejecutaría quien cree {creencia}',
+    'mirar.aviso': 'Ojo: esto es un malentendido, no lo que hace la máquina.',
+    'mirar.vars': 'Variables (cajas)',
+    'mirar.pantalla': 'Pantalla',
+    'mirar.pasa': 'Qué acaba de pasar',
+    'mirar.inicio': 'Pulsa «Siguiente» para ejecutar la primera línea.',
+    'b.ant': '← Anterior', 'b.sig': 'Siguiente →', 'b.auto': '▶ Auto', 'b.pausa': '⏸ Pausa', 'b.reset': '↺ Reiniciar',
+    'fin.ok': 'Fin del programa.',
+    'fin.colgado': '⚠ Esto no acaba nunca: se corta aquí.',
+
+    'nota.asig': '{n} ← {e}  →  {n} vale {v}',
+    'nota.intercambia': '{a} ← {b}  →  se intercambian: {a} = {va}, {b} = {vb}',
+    'nota.formula': '{n} ← {e}  →  {n} recuerda la fórmula «{e}» y la recalcula cada vez',
+    'nota.mostrar': 'Se muestra en pantalla: {v}',
+    'nota.test-si': '¿{c}?  →  sí, se cumple',
+    'nota.test-no': '¿{c}?  →  no se cumple',
+    'nota.para': '{v} toma el valor {i}',
+
+    'err.linea': 'Línea {n}: {msg}',
+    'err.comillas': 'Falta cerrar las comillas.',
+    'err.simbolo': 'No entiendo el símbolo «{c}».',
+    'err.expr-a-medias': 'La expresión se queda a medias.',
+    'err.falta-parentesis': 'Falta cerrar el paréntesis.',
+    'err.no-esperaba': 'No esperaba «{x}» aquí.',
+    'err.falta-expr': 'Falta una expresión.',
+    'err.sobra': 'Sobra algo al final de la expresión.',
+    'err.fin-suelto': 'Este «fin» no cierra nada.',
+    'err.sino-suelto': 'Este «sino» no tiene su «si».',
+    'err.falta-hacer': 'Falta «hacer» al final de esta línea.',
+    'err.falta-entonces': 'Falta «entonces» al final de esta línea.',
+    'err.mientras-sino': 'Un «mientras» no lleva «sino».',
+    'err.para-sino': 'Un «para» no lleva «sino».',
+    'err.para-forma': 'Se escribe así: para i desde 1 hasta 5 hacer',
+    'err.linea-incomprensible': 'No entiendo esta línea.',
+    'err.asig-izquierda': 'A la izquierda de la flecha tiene que ir el nombre de una variable, la que recibe el valor. La flecha va del valor hacia la variable.',
+    'err.falta-fin': 'Falta un «fin» para cerrar lo que empieza aquí.',
+    'err.sin-valor': '«{n}» todavía no tiene valor: hay que dárselo antes de usarla.',
+    'err.ciclo': 'Se queda dando vueltas sobre sí misma.',
+    'err.no-calculable': 'Esto no se puede calcular con «{v}».',
+    'err.div-cero': 'No se puede dividir entre cero.',
+    'err.cond-no-bool': 'La condición tiene que salir «verdadero» o «falso».',
+
+    'mod.formula.corto': 'que «y ← x» guarda la fórmula y se actualiza sola',
+    'mod.formula.diag': 'Parece que has leído «y ← x» como «y es siempre lo que valga x». No: guarda el valor que tenía x justo en ese momento, como una foto. Después, cambiar x no mueve a y.',
+    'mod.intercambia.corto': 'que «a ← b» intercambia a y b',
+    'mod.intercambia.diag': 'Parece que has leído «a ← b» como un intercambio. Solo copia: a recibe el valor de b, y b se queda como estaba. Para intercambiar hace falta una tercera caja.',
+    'mod.unaVez.corto': 'que «mientras» funciona como un «si»',
+    'mod.unaVez.diag': 'Parece que has tratado «mientras» como un «si»: comprobar una vez y seguir. «Mientras» vuelve a comprobar la condición después de cada vuelta.',
+    'mod.alFinal.corto': 'que «mientras» entra una vez antes de comprobar',
+    'mod.alFinal.diag': 'Parece que has entrado en el bucle sin comprobar antes. «Mientras» comprueba ANTES de entrar: si no se cumple a la primera, el cuerpo no se ejecuta ni una vez.',
+    'mod.limite.corto': 'que «<» incluye el límite (o «<=» no)',
+    'mod.limite.diag': 'Parece que has confundido el límite: «<» NO incluye el valor del extremo y «<=» SÍ lo incluye. Mira qué pasa justo en el último valor.',
+    'mod.excluye.corto': 'que «hasta» no incluye el último valor',
+    'mod.excluye.diag': 'Parece que «hasta 4» ha dejado fuera el 4. En «para … hasta», el último valor SÍ se ejecuta.',
+    'mod.sinoSiempre.corto': 'que el «sino» se ejecuta también tras el «si»',
+    'mod.sinoSiempre.diag': 'Parece que has ejecutado el «sino» después del «si». Es uno o el otro, nunca los dos.',
+
+    'cons.montaje': 'Tu programa',
+    'cons.vacio': 'Arrastra aquí las líneas, en orden. La sangría se pone sola.',
+    'cons.instr': 'Arrastra las líneas de abajo hasta aquí, o púlsalas para añadirlas. Puedes reordenarlas arrastrando. Con teclado: Intro añade o quita una línea y Alt + flechas la mueve.',
+    'cons.banco': 'Piezas disponibles',
+    'cons.leer': 'Leer cada línea en voz alta',
+    'cons.comprobar': 'Comprobar',
+    'cons.vaciar': 'Empezar de nuevo',
+    'cons.ayudita': 'Ayudita (cuenta como ayuda)',
+    'cons.ver': 'Ver mi programa paso a paso',
+    'cons.sig': 'Siguiente reto →',
+    'cons.nada': '(nada)',
+    'cons.vacia': '(nada: está vacía)',
+    'cons.aria.montaje': 'Tu programa, en orden',
+    'cons.aria.banco': 'Piezas disponibles',
+    'cons.an.puesta': 'Línea colocada en la posición {n}',
+    'cons.an.movida': 'Línea movida a la posición {n}',
+    'cons.an.quitada': 'Línea devuelta a las piezas',
+    'cons.ayuda.puesta': 'Te he colocado la siguiente línea que toca. Lo que estaba mal puesto vuelve a las piezas.',
+    'cons.ayuda.nada': 'Ya está todo en su sitio: comprueba el programa.',
+    'cons.fb.vacio': 'Todavía no has colocado ninguna línea.',
+    'cons.fb.faltan': 'Aún te faltan líneas: el programa completo tiene {n}.',
+    'cons.fb.error': 'Tu programa se rompe en la línea {n}: {msg}',
+    'cons.fb.colgado': 'Tu programa no acaba nunca: se queda dando vueltas. Mira qué cambia dentro del bucle y si alguna vez deja de cumplirse la condición.',
+    'cons.fb.distinta': 'Tu programa muestra: {mio}. Lo que se pide: {esperado}.',
+    'cons.fb.sobra': 'Fíjate: puede que alguna de las líneas que has puesto no haga falta.',
+    'cons.fb.casi': 'Tu programa muestra lo que se pide, pero no usa las piezas previstas: alguna que has puesto sobra, o te falta otra.',
+    'cons.fb.coincide': 'Con estos datos sale lo pedido, pero con otros no. Si empezamos con {datos}, tu programa muestra {mio} y debería mostrar {esperado}.',
+    'cons.fb.estado': 'Sale lo pedido, pero las cajas no acaban bien. Con {datos}, la caja {nombre} acaba valiendo {mio} y debería valer {esperado}.',
+    'cons.fb.estado0': 'Sale lo pedido, pero las cajas no acaban bien: la caja {nombre} acaba valiendo {mio} y debería valer {esperado}.',
+    'cons.fb.ok': '¡Funciona!',
+    'cons.fb.otro': 'Lo has resuelto con otro orden, y también vale.',
+
+    'lee.asig': 'Guarda {e} en {n}',
+    'lee.asig-caja': 'Copia el valor de {e} en {n}',
+    'lee.mostrar-caja': 'Muestra el valor de {e}',
+    'lee.mostrar-texto': 'Muestra el texto {e}',
+    'lee.asig-calculo': 'Calcula {e} y guárdalo en {n}',
+    'lee.mostrar': 'Muestra {e} en pantalla',
+    'lee.mientras': 'Mientras {c}, repite lo de dentro',
+    'lee.si': 'Si {c}, haz lo de dentro',
+    'lee.sino': 'Si no, haz esto otro',
+    'lee.fin': 'Aquí termina el bloque',
+    'lee.para': 'Para {v} desde {a} hasta {b}, repite lo de dentro',
+
+    'cons.crear.titulo': 'Crea una variable',
+    'cons.crear.consigna': 'Crea una variable llamada edad que valga 7.',
+    'cons.crear.trampa': 'Al asignar «edad ← 7», el nombre «edad» pasa a guardar un 7. La flecha va del valor hacia la variable.',
+    'cons.caja.titulo': 'Guarda y usa valores',
+    'cons.caja.consigna': 'Guarda el número 7 en una caja llamada edad y muéstrala por pantalla.',
+    'cons.caja.trampa': 'Las líneas se ejecutan de arriba abajo, una cada vez: hay que guardar el valor ANTES de usarlo. Y «mostrar edad» muestra lo que hay dentro de la caja; «mostrar "edad"» muestra la palabra.',
+    'cons.doble.titulo': 'Duplica el valor',
+    'cons.doble.consigna': 'x vale 5 al principio. Duplica su valor y muéstralo: debe salir 10.',
+    'cons.doble.trampa': '«x ← x * 2» primero calcula con el x de ahora y después guarda el resultado en x. No hay contradicción: es una orden, no una ecuación.',
+    'cons.cambiar.titulo': 'Intercambia valores',
+    'cons.cambiar.consigna': 'a vale 3 y b vale 5. Intercámbialos y muestra a y luego b: debe salir 5 3.',
+    'cons.cambiar.trampa': 'Hace falta una caja de ayuda (aux): guarda uno de los valores antes de pisarlo. Con solo «a ← b» y «b ← a» los dos acaban valiendo lo mismo.',
+    'cons.clima.titulo': 'Frío o calor',
+    'cons.clima.consigna': 'Si la temperatura es 25 o más, muestra «calor»; si no, «frío». Hoy hay 18 grados.',
+    'cons.clima.trampa': 'El «sino» lleva a un camino alternativo, y «fin» cierra todo el bloque «si». Solo se recorre uno de los dos caminos.',
+    'cons.cuenta.titulo': 'Cuenta atrás',
+    'cons.cuenta.consigna': 'Con un bucle, muestra 3, 2, 1.',
+    'cons.cuenta.trampa': 'Dentro del bucle hace falta algo que acerque la condición a dejar de cumplirse (restar 1). Y el orden importa: mostrar antes de restar.',
+    'cons.suma.titulo': 'Sumar de 1 a 4',
+    'cons.suma.consigna': 'Suma los números del 1 al 4 y muestra el total: debe salir 10.',
+    'cons.suma.trampa': 'El total se va acumulando dentro del bucle, y se muestra UNA vez, fuera, cuando el bucle ha terminado.',
+    'cons.pares.titulo': 'Solo los pares',
+    'cons.pares.consigna': 'Muestra los números pares del 1 al 6.',
+    'cons.pares.trampa': 'Un bloque dentro de otro: el «si» vive dentro del «para», y cada uno necesita su propio «fin».',
+
+    'ej.foto.titulo': 'Una foto, no un enlace',
+    'ej.foto.consigna': '¿Qué valor se muestra al final?',
+    'ej.foto.trampa': '«y ← x» copia el valor que x tiene en ese instante. Después, cambiar x no toca a y.',
+    'ej.intercambio.titulo': '¿Se intercambian?',
+    'ej.intercambio.consigna': 'Muestra a, luego b. ¿Qué valores salen?',
+    'ej.intercambio.trampa': 'Tras «a ← b», a y b valen lo mismo; el valor viejo de a se perdió. Por eso para intercambiar hace falta una caja extra.',
+    'ej.precio.titulo': 'El precio que cambió',
+    'ej.precio.consigna': '¿Cuánto vale total al final?',
+    'ej.precio.trampa': 'total se calculó con el precio de ANTES. Una variable guarda un resultado, no una receta.',
+    'ej.justo.titulo': 'Justo en el límite',
+    'ej.justo.consigna': '¿Qué mensaje sale?',
+    'ej.justo.trampa': '«>=» incluye el 20; «>» no. El caso del borde es donde se esconden los fallos.',
+    'ej.unootro.titulo': 'Uno o el otro',
+    'ej.unootro.consigna': '¿Qué mensajes salen y en qué orden?',
+    'ej.unootro.trampa': 'Si el «si» se cumple, el «sino» se salta entero. Nunca se ejecutan los dos.',
+    'ej.vueltas.titulo': 'Contar vueltas',
+    'ej.vueltas.consigna': '¿Qué números se muestran?',
+    'ej.vueltas.trampa': 'Con «<» el 4 se queda fuera: cuando n llega a 4 la condición ya no se cumple.',
+    'ej.noentra.titulo': '¿Y si no entra ni una vez?',
+    'ej.noentra.consigna': '¿Qué se muestra?',
+    'ej.noentra.trampa': '«Mientras» comprueba antes de entrar. Con n ← 5 la condición falla de entrada y el cuerpo no corre ni una vez.',
+    'ej.cuenta.titulo': 'Cuenta atrás',
+    'ej.cuenta.consigna': '¿Qué números se muestran?',
+    'ej.cuenta.trampa': 'Con «> 0» el 0 no entra. Si querías incluirlo habría que escribir «>= 0».',
+    'ej.suma.titulo': 'La suma de 1 a 4',
+    'ej.suma.consigna': '¿Cuánto vale total al final?',
+    'ej.suma.trampa': 'En «para … hasta 4», el 4 también cuenta: son cuatro vueltas, no tres.',
+    'ej.pares.titulo': 'Solo los pares',
+    'ej.pares.consigna': '¿Qué números se muestran?',
+    'ej.pares.trampa': '«i % 2 = 0» significa «el resto de dividir i entre 2 es 0», o sea, i es par. Y el 6 también entra.'
+  },
+
+  /* ════════ PRIMARIA — solo lo que cambia (muestra) ════════ */
+  primaria: {
+    'tema.variables': 'Cajas con nombre', 'tema.condicionales': 'Decidir', 'tema.bucles': 'Repetir',
+    'subtitulo': 'Construye, predice y observa cómo lo hace la máquina. Aquí los errores hablan.',
+    'np.titulo': '¿Por qué una flecha ←?',
+    'np.texto': 'Para meter algo en una caja usamos una flecha: <code>edad ← 7</code> se lee «mete el 7 en la caja edad» y la flecha apunta hacia la caja. El signo <code>=</code> lo guardamos para <b>preguntar</b> si dos cosas son iguales. Cuando programes con lenguajes de verdad, verás que muchos usan <code>=</code> para meter cosas en la caja. Aquí la flecha nos ayuda a no confundirlo con mates.',
+    'ac.titulo': '¿caja o "caja"?',
+    'ac.texto': 'Fíjate en cómo se ven. <span class="v">edad</span> es una caja: una palabra con cosas dentro. <span class="n">7</span> es un número. <span class="s">"edad"</span>, entre comillas, es un texto: la palabra escrita tal cual, sin nada dentro. Si escribes <code>mostrar edad</code>, la pantalla enseña lo que hay dentro de la caja. Si escribes <code>mostrar "edad"</code>, enseña la palabra edad.',
+    'gl.variables.titulo': '¿Qué es una caja?',
+    'gl.variables.texto': 'Una caja es una palabra a la que puedes meter cosas dentro: un número o un texto. Si escribes <code>edad ← 7</code>, la palabra <span class="v">edad</span> se convierte en una caja que guarda un 7. Después puedes <b>cambiar lo que hay dentro</b> metiendo otra cosa: la caja se queda con lo último que metiste.',
+    'gl.condicionales.titulo': '¿Qué es un condicional?',
+    'gl.condicionales.texto': 'A veces el programa tiene que <b>decidir</b>. Con <code>si</code> le haces una pregunta: si la respuesta es «sí, es verdad», hace lo que va dentro; si no, hace lo que va después de <code>sino</code>. Es como decir: «si llueve, coge el paraguas; si no, ponte las gafas de sol». Solo se hace una de las dos cosas, nunca las dos.',
+    'gl.bucles.titulo': '¿Qué es un bucle?',
+    'gl.bucles.texto': 'Un bucle es una repetición: el programa hace lo mismo varias veces sin que tengas que escribirlo una y otra vez. <code>mientras</code> repite mientras algo siga siendo verdad. <code>para</code> repite contando, de un número a otro. Cuidado: dentro tiene que haber algo que haga que alguna vez deje de ser verdad, o no acaba nunca.',
+    'pred.pregunta': '¿Qué escribe la pantalla?',
+    'pred.ayuda': 'Escribe lo que saldría en la pantalla, uno detrás de otro, con un espacio en medio. Si no sale nada, déjalo vacío.',
+    'fb.ok': '¡Bien hecho!',
+    'fb.casi': 'Casi. Creo que sé dónde se ha colado el error.',
+    'fb.nosale': 'Esa no es la respuesta.',
+    'fb.cuantos.uno': 'Has escrito 1 cosa. Cuenta cuántas veces escribe la pantalla y prueba otra vez.',
+    'fb.cuantos.varios': 'Has escrito {n} cosas. Cuenta cuántas veces escribe la pantalla y prueba otra vez.',
+    'fb.mismo': 'Has escrito la cantidad justa de cosas, pero alguna no es la que sale en la pantalla. Sigue el programa con el dedo, línea a línea, y apunta qué hay en cada caja.',
+    'fb.orden': 'Tienes las cosas que son, pero en otro orden. La pantalla las escribe una detrás de otra, en el orden en que las manda el programa.',
+    'fb.modelo': 'Ver cómo lo has pensado tú',
+    'mirar.vars': 'Cajas con nombre',
+    'mirar.modelo': 'Como lo haría quien piensa {creencia}',
+    'mirar.aviso': 'Cuidado: así NO funciona la máquina. Es una idea equivocada.',
+    'mirar.inicio': 'Pulsa «Siguiente» y la máquina ejecutará la primera instrucción.',
+    'b.sig': 'Siguiente paso →',
+    'nota.asig': '{n} ← {e}  →  la caja {n} ahora guarda {v}',
+    'nota.mostrar': 'La pantalla escribe: {v}',
+    'nota.test-si': '¿{c}?  →  sí, es verdad',
+    'nota.test-no': '¿{c}?  →  no, no es verdad',
+    'err.sin-valor': 'La caja «{n}» está vacía: guárdale algo antes de usarla.',
+    'err.asig-izquierda': 'A la izquierda de la flecha va el nombre de una caja, no un número ni un texto. La flecha apunta hacia la caja: va de lo que metes a donde lo metes.',
+    'mod.formula.corto': 'que «y ← x» deja a y pegada a x, como con un hilo',
+    'mod.formula.diag': 'Creo que has pensado que «y ← x» pega y a x con un hilo. No: y copia lo que había en x en ese momento, como una foto. Si luego x cambia, y no se entera.',
+    'mod.intercambia.corto': 'que «a ← b» cambia las cajas de sitio',
+    'mod.intercambia.diag': 'Creo que has pensado que «a ← b» cambia las dos cajas de sitio. Pero solo copia: a se queda con lo de b, y b no cambia. Para cambiarlas hace falta una caja de ayuda.',
+    'mod.unaVez.corto': 'que «mientras» solo mira una vez',
+    'mod.unaVez.diag': 'Creo que has pensado que «mientras» mira una vez y ya está. Pero mira otra vez después de cada vuelta, hasta que deje de ser verdad.',
+    'mod.alFinal.corto': 'que «mientras» entra siempre una vez',
+    'mod.alFinal.diag': 'Creo que has entrado sin mirar antes. «Mientras» mira ANTES de entrar: si no es verdad desde el principio, no entra ni una vez.',
+    'mod.limite.corto': 'que «<» también cuenta el número del final',
+    'mod.limite.diag': 'Creo que te has liado con el final. «<» NO cuenta el número del final; «<=» SÍ lo cuenta. Mira qué pasa justo con el último número.',
+    'mod.excluye.corto': 'que «hasta» no cuenta el último número',
+    'mod.excluye.diag': 'Creo que «hasta 4» se ha dejado el 4 fuera. En «para … hasta» el último número también se hace.',
+    'mod.sinoSiempre.corto': 'que se hacen las dos cosas, la del «si» y la del «sino»',
+    'mod.sinoSiempre.diag': 'Creo que has hecho las dos cosas, la del «si» y la del «sino». Es una o la otra, nunca las dos.',
+    'cons.vacio': 'Arrastra aquí las líneas, una debajo de otra. Los huecos se ponen solos.',
+    'cons.banco': 'Piezas',
+    'cons.leer': 'Que me lea cada línea',
+    'cons.ayudita': 'Ayudita',
+    'cons.ver': 'Ver mi programa paso a paso',
+    'cons.fb.vacio': 'Todavía no hay ninguna línea puesta.',
+    'cons.fb.faltan': 'Faltan líneas: el programa completo tiene {n}.',
+    'cons.fb.error': 'Tu programa se atasca en la línea {n}: {msg}',
+    'cons.fb.colgado': 'Tu programa no termina nunca: da vueltas sin parar. Mira qué pasa dentro de la repetición: ¿alguna vez deja de ser verdad?',
+    'cons.fb.distinta': 'Tu programa escribe: {mio}. Tenía que escribir: {esperado}.',
+    'cons.fb.sobra': 'Mira bien: quizá alguna línea que has puesto no hace falta.',
+    'cons.fb.coincide': 'Con estos números sale lo que toca, pero con otros no. Si empezamos con {datos}, tu programa escribe {mio} y tenía que escribir {esperado}.',
+    'cons.fb.estado': 'La pantalla sale bien, pero las cajas no acaban bien. Con {datos}, la caja {nombre} acaba con {mio} y tenía que acabar con {esperado}.',
+    'cons.fb.estado0': 'La pantalla sale bien, pero las cajas no acaban bien: la caja {nombre} acaba con {mio} y tenía que acabar con {esperado}.',
+    'cons.fb.ok': '¡Lo has conseguido!',
+    'cons.fb.otro': 'Lo has hecho en otro orden, y también vale.',
+    'cons.cambiar.trampa': 'Hace falta una caja de ayuda (aux): guarda el valor anterior antes de pisarlo. Con solo «a ← b» y «b ← a» los dos acaban valiendo lo mismo.',
+    'cons.ayuda.puesta': 'Te he colocado la siguiente línea que toca. Lo que estaba mal puesto vuelve a la caja de piezas.',
+    'ej.intercambio.consigna': 'La pantalla escribe a y luego b. ¿Qué números salen?',
+    'ej.intercambio.trampa': 'Después de «a ← b», las dos cajas valen lo mismo: el 3 que había en a se perdió. Para cambiarlas de sitio hace falta una caja de ayuda.',
+    'ej.precio.trampa': 'La caja total se calculó con el precio de ANTES (10 × 3). Cambiar la caja precio después no cambia el valor de total: una caja guarda una foto, no un atajo.',
+    'ej.justo.consigna': '¿Qué palabra escribe la pantalla?',
+    'ej.justo.trampa': 'Con «>=» el 20 también cuenta; con «>» no. Los números que caen justo en el borde son los que más engañan.',
+    'ej.unootro.consigna': '¿Qué palabras escribe la pantalla, y en qué orden?',
+    'ej.noentra.consigna': '¿Qué escribe la pantalla?',
+    'ej.noentra.trampa': '«Mientras» mira antes de entrar. Como n vale 5 desde el principio, la condición no es verdad ni a la primera: lo de dentro no se hace ni una vez.',
+    'cons.fb.casi': 'Tu programa escribe lo que se pide, pero no usa las piezas que tocaban: alguna sobra o falta.',
+    'nota.formula': '{n} ← {e}  →  la caja {n} no guarda un número: guarda cómo calcular «{e}» y lo calcula cada vez',
+    'nota.para': 'la caja {v} ahora guarda {i}',
+    'err.ciclo': 'Una caja espera a otra que espera a la primera: dan vueltas sin parar.',
+    'ay.sin': 'No te quedan ayuditas. Se recargan al ganar XP, con el tiempo o contestando una pregunta.',
+    'quiz.ok': '¡Bien! Ganas una ayudita.',
+    'quiz.mal': 'Esta vez no. Esta pregunta no vuelve a salir, pero ya has visto la respuesta.',
+    'q.v1.p': '¿Qué es una caja?',
+    'q.v1.ok': 'Una palabra a la que le metes un valor',
+    'q.v1.x1': 'Un número',
+    'q.v1.e': 'Una caja es una palabra en la que metes valores que puedes cambiar.',
+    'q.v2.p': '¿Qué hay dentro de la caja x al final?',
+    'q.v2.e': 'La caja se queda con lo último que metiste: el 8.',
+    'q.v3.e': 'Si está entre comillas es un texto: se escribe tal cual. Sin comillas sería una caja, y mostrar edad escribiría lo que hay dentro de la caja: el 7.',
+    'q.c1.ok': 'Para hacer algo solo si algo es verdad',
+    'q.c1.e': 'Un «si» hace lo de dentro solo cuando lo que preguntas es verdad.',
+    'q.c2.p': 'El «si» no es verdad y hay un «sino». ¿Qué pasa?',
+    'q.c3.e': 'El 20 no es mayor que 20, así que no es verdad y, como no hay «sino», no se hace nada.',
+    'q.b1.ok': 'Algo que se repite varias veces',
+    'q.b1.x1': 'Una caja con un número',
+    'q.b1.e': 'Un bucle es una repetición: el programa hace lo mismo varias veces.',
+    'q.b2.e': '«Mientras» mira antes de entrar: n vale 5, y 5 < 3 no es verdad desde el principio.',
+    'q.b3.p': '¿Qué pasa si dentro de un «mientras» nada hace que deje de ser verdad?',
+    'q.b3.e': 'Si nada cambia, sigue siendo verdad y se repite sin parar: por eso dentro tiene que haber algo que haga que la condición deje de cumplirse.',
+    'lee.asig': 'Mete {e} en la caja {n}',
+    'lee.asig-caja': 'Copia lo que hay en la caja {e} dentro de la caja {n}',
+    'lee.mostrar-caja': 'Escribe en la pantalla lo que hay dentro de la caja {e}',
+    'lee.mostrar-texto': 'Escribe en la pantalla el texto {e}, tal cual',
+    'lee.asig-calculo': 'Haz la cuenta {e} y mete el resultado en la caja {n}',
+    'lee.mostrar': 'Escribe {e} en la pantalla',
+    'lee.mientras': 'Mientras {c}, repite lo de dentro',
+    'lee.si': 'Si {c}, haz lo de dentro',
+    'lee.sino': 'Si no, haz esto otro',
+    'lee.fin': 'Aquí se acaba esta parte',
+    'lee.para': 'Para {v}, desde {a} hasta {b}, repite lo de dentro',
+    'cons.crear.titulo': 'Crea una caja con nombre',
+    'cons.crear.consigna': 'Crea una caja que se llame edad y mete dentro el número 7.',
+    'cons.crear.trampa': 'Al escribir «edad ← 7», la palabra «edad» se convierte en una caja con un 7 dentro. La flecha va hacia la caja: de lo que metes a donde lo metes.',
+    'cons.caja.titulo': 'Guarda cosas en cajas y úsalas',
+    'cons.caja.consigna': 'Mete el 7 en la caja edad y haz que la pantalla escriba lo que hay dentro de la caja.',
+    'cons.doble.titulo': 'Duplica el valor de una caja',
+    'cons.cambiar.titulo': 'Intercambia valores en cajas',
+    'cons.doble.consigna': 'La caja x guarda un 5. Haz que valga el doble y que la pantalla lo escriba: tiene que salir 10.',
+    'cons.cambiar.consigna': 'La caja a guarda un 3 y la b un 5. Intercambia sus valores y escribe a y luego b: tiene que salir 5 3.',
+    'cons.clima.consigna': 'Si hay 25 grados o más, escribe «calor»; si no, escribe «frío». Hoy hay 18 grados.',
+    'cons.cuenta.consigna': 'Con una repetición, escribe 3, 2, 1.',
+    'cons.suma.consigna': 'Suma los números del 1 al 4 y escribe el total: tiene que salir 10.',
+    'ej.foto.titulo': 'Una foto, no un hilo',
+    'ej.foto.consigna': '¿Qué número sale en la pantalla?',
+    'ej.foto.trampa': 'Cuando escribes «y ← x», y se guarda el número que tiene x en ese momento. Si después x cambia, y se queda como estaba.',
+    'ej.precio.consigna': '¿Cuánto vale la caja total al final?',
+    'ej.vueltas.consigna': '¿Qué números salen en la pantalla?',
+    'ej.cuenta.consigna': '¿Qué números salen en la pantalla?',
+    'ej.suma.consigna': '¿Cuánto vale la caja total al final?'
+  },
+
+  /* ════════ BACHILLERATO — solo lo que cambia (muestra) ════════ */
+  bach: {
+    'tema.variables': 'Variables y asignación', 'tema.condicionales': 'Selección', 'tema.bucles': 'Iteración',
+    'subtitulo': 'Construye el programa, predice su salida y obsérvalo ejecutarse. Si te equivocas, identificamos <em>qué modelo mental</em> produce tu respuesta.',
+    'np.titulo': 'Nota sobre notación',
+    'np.texto': 'Convención de este módulo: <code>←</code> es asignación y <code>=</code> es comparación de igualdad, como en la tradición del pseudocódigo. No es universal: Python, JavaScript y C asignan con <code>=</code> y comparan con <code>==</code>; Pascal asigna con <code>:=</code>. Las palabras reservadas (<code>mientras</code>, <code>si</code>, <code>fin</code>) también son convención y varían entre lenguajes.',
+    'ac.titulo': '¿identificador o literal?',
+    'ac.texto': 'Sin comillas, <span class="v">x</span> es un identificador: se evalúa a su valor. Entre comillas, <span class="s">"x"</span> es un literal de cadena. <span class="n">7</span> es un literal numérico. <code>mostrar x</code> y <code>mostrar "x"</code> producen salidas distintas.',
+    'gl.variables.titulo': 'Variables y asignación',
+    'gl.variables.texto': 'Una variable es un identificador asociado a un valor en memoria. La asignación <code>x ← expr</code> evalúa la expresión y almacena el resultado, sustituyendo el valor anterior.',
+    'gl.condicionales.titulo': 'Selección',
+    'gl.condicionales.texto': 'Estructura de selección: se evalúa una expresión booleana y se ejecuta una rama u otra. La condición se evalúa una sola vez y las ramas son mutuamente excluyentes.',
+    'gl.bucles.titulo': 'Iteración',
+    'gl.bucles.texto': 'Estructuras de iteración. <code>mientras</code> es de condición inicial: puede no ejecutarse ninguna vez. <code>para</code> usa un contador y, en esta notación, sus límites son inclusivos. Hay que garantizar la terminación: algo dentro debe acercar la condición a ser falsa.',
+    'pred.pregunta': 'Salida del programa',
+    'pred.ayuda': 'Valores mostrados, en orden, separados por espacios. Si no hay salida, deja el campo vacío.',
+    'mirar.vars': 'Estado (variables)',
+    'mirar.aviso': 'Atención: ejecución bajo un modelo mental erróneo, no la semántica real.',
+    'nota.asig': '{n} ← {e}  →  {n} = {v}',
+    'nota.test-si': '{c}  →  verdadero',
+    'nota.test-no': '{c}  →  falso',
+    'mod.formula.diag': 'Interpretas «y ← x» como una ligadura (y se evalúa de forma perezosa) en lugar de una asignación por valor: y recibe el valor de x en el instante de ejecutar la sentencia, no una referencia a x.',
+    'mod.unaVez.diag': 'Tratas «mientras» como una selección simple. Es una iteración: la condición se reevalúa tras cada ejecución del cuerpo, hasta que resulta falsa.',
+    'mod.alFinal.diag': 'Modelas «mientras» como un bucle con la condición al final (hacer…mientras). Aquí la condición se evalúa antes de la primera iteración, así que el cuerpo puede ejecutarse cero veces.',
+    'mod.limite.diag': 'Confundes desigualdad estricta y no estricta: «<» excluye el extremo y «<=» lo incluye. Comprueba el comportamiento en el valor frontera.'
+  }
+} };
+
+/* Que ejercicios entran en cada curso. Primaria deja fuera lo que usa «%». */
+const TODOS = ['foto', 'intercambio', 'precio', 'justo', 'unootro', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares'];
+const RETOS = ['crear', 'caja', 'doble', 'cambiar', 'clima', 'cuenta', 'suma', 'pares'];
+const REGISTROS = {
+  primaria: { ejercicios: TODOS.filter(x => x !== 'pares'), construcciones: RETOS.filter(x => x !== 'pares'), lectura: true },
+  eso:      { ejercicios: TODOS, construcciones: RETOS, lectura: false },
+  bach:     { ejercicios: TODOS, construcciones: RETOS, lectura: false }
+};
+
+/* t('clave', {huecos}): registro activo → base. Si falta en ambos, se ve ⟦clave⟧ y avisa. */
+let REG = 'eso';
+function t(clave, vars) {
+  const d = TEXTOS[LANG];
+  let s = d[REG] && d[REG][clave];
+  if (s === undefined) s = d[BASE][clave];
+  if (s === undefined) { console.warn('Falta el texto: ' + clave); return '⟦' + clave + '⟧'; }
+  return vars ? s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m)) : s;
+}
+</script>
+
+<!-- ═══════════════════════ EJERCICIOS ═══════════════════════
+     Solo estructura y codigo. Titulo, consigna y trampa: TEXTOS ej.<id>.* -->
+<script id="ejercicios">
+const EJERCICIOS = {
+  foto:        { tema: 'variables',     codigo: 'x ← 4\ny ← x\nx ← 10\nmostrar y' },
+  intercambio: { tema: 'variables',     codigo: 'a ← 3\nb ← 5\na ← b\nb ← a\nmostrar a\nmostrar b' },
+  precio:      { tema: 'variables',     codigo: 'precio ← 10\ntotal ← precio * 3\nprecio ← 20\nmostrar total' },
+  justo:       { tema: 'condicionales', codigo: 't ← 20\nsi t >= 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin' },
+  unootro:     { tema: 'condicionales', codigo: 't ← 25\nsi t > 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin\nmostrar "listo"' },
+  vueltas:     { tema: 'bucles',        codigo: 'n ← 1\nmientras n < 4 hacer\n  mostrar n\n  n ← n + 1\nfin' },
+  noentra:     { tema: 'bucles',        codigo: 'n ← 5\nmientras n < 3 hacer\n  mostrar n\n  n ← n + 1\nfin\nmostrar "fin"' },
+  cuenta:      { tema: 'bucles',        codigo: 'vidas ← 3\nmientras vidas > 0 hacer\n  mostrar vidas\n  vidas ← vidas - 1\nfin' },
+  suma:        { tema: 'bucles',        codigo: 'total ← 0\npara i desde 1 hasta 4 hacer\n  total ← total + i\nfin\nmostrar total' },
+  pares:       { tema: 'bucles',        codigo: 'para i desde 1 hasta 6 hacer\n  si i % 2 = 0 entonces\n    mostrar i\n  fin\nfin' }
+};
+Object.keys(EJERCICIOS).forEach(id => { EJERCICIOS[id].id = id; });
+</script>
+
+<!-- ═══════════════════════ CONSTRUCCIONES ═══════════════════════
+     Retos de montar el programa. «solucion» va en orden y SIN sangria (la pone la app);
+     «distractores» son lineas plausibles que sobran. Titulo/consigna/trampa: TEXTOS cons.<id>.* -->
+<script id="construcciones">
+const CONSTRUCCIONES = {
+  crear:   { tema: 'variables',     entradas: { 'edad ← 7': [9, 2] }, solucion: ['edad ← 7'], distractores: ['peso ← 7', 'edad ← 8', '7 ← edad'] },
+  caja:    { tema: 'variables',     entradas: { 'edad ← 7': [9, 12] }, solucion: ['edad ← 7', 'mostrar edad'], distractores: ['mostrar "edad"'] },
+  doble:   { tema: 'variables',     entradas: { 'x ← 5': [2, 11] }, solucion: ['x ← 5', 'x ← x * 2', 'mostrar x'], distractores: ['x ← x + 2'] },
+  cambiar: { tema: 'variables',     entradas: { 'a ← 3': [8, 1], 'b ← 5': [6, 9] }, solucion: ['a ← 3', 'b ← 5', 'aux ← a', 'a ← b', 'b ← aux', 'mostrar a', 'mostrar b'], distractores: ['b ← a'] },
+  clima:   { tema: 'condicionales', entradas: { 't ← 18': [30, 25, 10, 24] }, solucion: ['t ← 18', 'si t >= 25 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin'], distractores: ['mostrar "templado"', 'si t <= 25 entonces'] },
+  cuenta:  { tema: 'bucles',        entradas: { 'n ← 3': [5, 1, 0] }, solucion: ['n ← 3', 'mientras n > 0 hacer', 'mostrar n', 'n ← n - 1', 'fin'], distractores: ['n ← n + 1'] },
+  suma:    { tema: 'bucles',        solucion: ['total ← 0', 'para i desde 1 hasta 4 hacer', 'total ← total + i', 'fin', 'mostrar total'], distractores: ['total ← i'] },
+  pares:   { tema: 'bucles',        solucion: ['para i desde 1 hasta 6 hacer', 'si i % 2 = 0 entonces', 'mostrar i', 'fin', 'fin'], distractores: ['si i % 2 = 1 entonces'] }
+};
+Object.keys(CONSTRUCCIONES).forEach(id => { CONSTRUCCIONES[id].id = id; });
+</script>
+
+<!-- ═══════════════════════ JUEGO ═══════════════════════
+     Reglas puras de la reserva de ayuditas (sin DOM, para poder probarlas) y banco de preguntas.
+     Cada nivel tiene su reserva. Se recarga con XP, con el tiempo o acertando una pregunta.
+     Textos de las preguntas: TEXTOS q.<id>.{p,ok,x1,x2,e}  (ok = correcta, x1/x2 = trampas, e = explicacion). -->
+<script id="juego">
+const AY = {
+  MAX: 5,                      // casillas de la reserva
+  XP_POR: 20,                  // XP ganados que recargan una casilla
+  MS_POR: 4 * 60 * 1000,       // una casilla cada 4 minutos (red de seguridad: nunca hay bloqueo total)
+  nuevo: ahora => ({ n: 5, t: ahora, xp: 0 }),
+  recargarTiempo(e, ahora) {
+    if (e.n >= AY.MAX) { e.t = ahora; return e; }
+    const k = Math.floor((ahora - e.t) / AY.MS_POR);
+    if (k > 0) { e.n = Math.min(AY.MAX, e.n + k); e.t = e.n >= AY.MAX ? ahora : e.t + k * AY.MS_POR; }
+    return e;
+  },
+  gastar(e, ahora) { if (e.n >= AY.MAX) e.t = ahora; e.n = Math.max(0, e.n - 1); return e; },
+  ganarXP(e, xp, ahora) {
+    e.xp += xp;
+    while (e.xp >= AY.XP_POR && e.n < AY.MAX) { e.n++; e.xp -= AY.XP_POR; if (e.n >= AY.MAX) e.t = ahora; }
+    if (e.n >= AY.MAX) e.xp = 0;
+    return e;
+  },
+  recargaQuiz(e, ahora) { if (e.n < AY.MAX) { e.n++; if (e.n >= AY.MAX) { e.t = ahora; e.xp = 0; } } return e; },
+  proxima(e, ahora) { return { xp: AY.XP_POR - e.xp, ms: Math.max(0, AY.MS_POR - (ahora - e.t)) }; }
+};
+
+const PREGUNTAS = [
+  { id: 'v1', tema: 'variables' },
+  { id: 'v2', tema: 'variables', codigo: 'x ← 3\nx ← 8' },
+  { id: 'v3', tema: 'variables', codigo: 'edad ← 7\nmostrar "edad"' },
+  { id: 'c1', tema: 'condicionales' },
+  { id: 'c2', tema: 'condicionales' },
+  { id: 'c3', tema: 'condicionales', codigo: 't ← 20\nsi t > 20 entonces\n  mostrar "calor"\nfin' },
+  { id: 'b1', tema: 'bucles' },
+  { id: 'b2', tema: 'bucles', codigo: 'n ← 5\nmientras n < 3 hacer\n  mostrar n\n  n ← n + 1\nfin' },
+  { id: 'b3', tema: 'bucles' }
+];
+/* Elige la pregunta: la primera sin responder del tema que se esta viendo; si no hay, de otro tema. */
+function elegirPregunta(tema, respondidas) {
+  const pend = PREGUNTAS.filter(q => !respondidas.includes(q.id));
+  return pend.find(q => q.tema === tema) || pend[0] || null;
+}
+</script>
+
+<!-- ═══════════════════════ APP ═══════════════════════ -->
+<script id="app">
+(function () {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const CLAVE_XP = 'hpk-pseudocoder-xp', CLAVE_NIVEL = 'hpk-pseudocoder-nivel';
+  // E: estado de la interfaz.  C: el reto de construir que hay abierto.
+  const E = { modo: 'construir', lista: [], listaC: [], i: 0, c: 0, paso: -1, modelo: '', traza: null,
+              xp: {}, fallosP: 0, ayudaP: false, timer: null, dormir: null, codigoMirar: null, lectura: false };
+  const C = { id: null, bloques: new Map(), banco: [], montaje: [], malLinea: -1, ayudas: 0, fallos: 0 };
+  try { Object.assign(E.xp, JSON.parse(localStorage.getItem(CLAVE_XP) || '{}')); } catch (_) {}
+  const guardar = () => { try { localStorage.setItem(CLAVE_XP, JSON.stringify(E.xp)); } catch (_) {} };
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const ej = () => E.lista[E.i], ret = () => E.listaC[E.c];
+  const tej = campo => t('ej.' + ej().id + '.' + campo);
+  const tcon = campo => t('cons.' + ret().id + '.' + campo);
+  // «Reto» = lo que se esta mirando viene de Construir (o es el programa montado por la persona)
+  const esReto = () => E.modo === 'construir' || (E.modo === 'mirar' && E.codigoMirar !== null);
+  const codigoActual = () => E.codigoMirar !== null ? E.codigoMirar : ej().codigo;
+  const anunciar = (clave, vars) => { $('#anuncio').textContent = t(clave, vars); };
+
+  // ── XP: cada nivel es una partida distinta (la clave lleva el nivel) ──
+  const claveXP = (modo, id) => REG + ':' + modo + ':' + id;
+  const XP_PRED = 10, XP_CONS = 15;
+  // base menos 2 por fallo y 5 por ayudita, sin bajar de un tercio de la base
+  const puntos = (base, fallos, ayudas) => Math.max(Math.ceil(base / 3), base - 2 * fallos - 5 * ayudas);
+  function otorgar(modo, id, base, fallos, ayudas) {
+    const k = claveXP(modo, id), nuevo = puntos(base, fallos, ayudas), antes = E.xp[k] || 0;
+    if (nuevo > antes) { E.xp[k] = nuevo; guardar(); }
+    const ganado = Math.max(0, nuevo - antes);
+    if (ganado > 0) ayGanarXP(ganado);
+    pintarXP();
+    return ganado;
+  }
+  const xpHtml = g => '<div class="xp-gana">' + esc(g > 0 ? t('xp.ganas', { n: g }) : t('xp.ya')) + '</div>';
+  function pintarXP() {
+    let a = 0;
+    E.lista.forEach(x => { a += E.xp[claveXP('p', x.id)] || 0; });
+    E.listaC.forEach(x => { a += E.xp[claveXP('c', x.id)] || 0; });
+    const b = E.lista.length * XP_PRED + E.listaC.length * XP_CONS, p = b ? a / b : 0;
+    const r = p >= 1 ? 4 : p >= 0.67 ? 3 : p >= 0.34 ? 2 : p > 0 ? 1 : 0;
+    const bar = $('#xp-barra');
+    bar.style.setProperty('--p', Math.round(p * 100) + '%');
+    bar.setAttribute('aria-valuenow', a); bar.setAttribute('aria-valuemax', b);
+    bar.setAttribute('aria-valuetext', t('xp.txt', { a, b }) + ' · ' + t('rango.' + r));
+    $('#xp-txt').textContent = t('xp.txt', { a, b }); $('#xp-rango').textContent = t('rango.' + r);
+  }
+
+  // ── AYUDITAS: una reserva por nivel (las reglas puras estan en AY, arriba) ──
+  const CLAVE_AY = 'hpk-pseudocoder-ay', CLAVE_PREG = 'hpk-pseudocoder-preguntas';
+  let ayTodo = {}, pregTodo = {};
+  try { ayTodo = JSON.parse(localStorage.getItem(CLAVE_AY) || '{}'); pregTodo = JSON.parse(localStorage.getItem(CLAVE_PREG) || '{}'); } catch (_) {}
+  const guardarAy = () => { try { localStorage.setItem(CLAVE_AY, JSON.stringify(ayTodo)); localStorage.setItem(CLAVE_PREG, JSON.stringify(pregTodo)); } catch (_) {} };
+  function ayAct() {
+    if (!ayTodo[REG]) ayTodo[REG] = AY.nuevo(Date.now());
+    return AY.recargarTiempo(ayTodo[REG], Date.now());
+  }
+  const mmss = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  function gastarAyudita() {
+    const e = ayAct();
+    if (e.n < 1) return false;
+    AY.gastar(e, Date.now()); guardarAy(); pintarAy();
+    return true;
+  }
+  function ayGanarXP(g) { AY.ganarXP(ayAct(), g, Date.now()); guardarAy(); pintarAy(); }
+  function pintarAy() {
+    const e = ayAct(), bar = $('#ay-casillas'), sin = e.n < 1;
+    bar.innerHTML = Array.from({ length: AY.MAX }, (_, k) => '<i class="' + (k < e.n ? 'on' : '') + '"></i>').join('');
+    bar.setAttribute('aria-valuenow', e.n); bar.setAttribute('aria-valuemax', AY.MAX);
+    bar.setAttribute('aria-valuetext', t('ay.txt', { n: e.n, max: AY.MAX }));
+    const p = AY.proxima(e, Date.now());
+    $('#ay-txt').textContent = t('ay.txt', { n: e.n, max: AY.MAX }) + ' · ' + (e.n >= AY.MAX ? t('ay.llena') : t('ay.proxima', { xp: p.xp, t: mmss(p.ms) }));
+    $('#b-recarga').hidden = e.n >= AY.MAX;
+    $('#b-recarga').disabled = !elegirPregunta('variables', pregTodo[REG] || []);
+    document.querySelectorAll('[data-ayuda]').forEach(b => { b.disabled = sin; });     // los botones de ayudita se apagan sin reserva
+  }
+  setInterval(pintarAy, 1000);                       // cuenta atras y recarga por tiempo
+
+  // ── la pregunta de recarga: ventana modal, asi que no se pueden consultar las ayudas mientras esta abierta ──
+  function abrirQuiz() {
+    const q = elegirPregunta((esReto() ? ret() : ej()).tema, pregTodo[REG] || []);
+    if (!q) return;
+    $('#quiz').dataset.q = q.id;
+    $('#quiz-p').textContent = t('q.' + q.id + '.p');
+    $('#quiz-cod').hidden = !q.codigo;
+    if (q.codigo) $('#quiz-cod').innerHTML = q.codigo.split('\n').map((l, k) => '<div class="ln"><i>' + (k + 1) + '</i><span>' + resaltar(l) + '</span></div>').join('');
+    // el orden de las opciones cambia cada vez: la correcta no esta siempre en el mismo sitio
+    const ops = [['ok', true], ['x1', false], ['x2', false]].sort(() => Math.random() - 0.5);
+    $('#quiz-op').innerHTML = ops.map(([c, ok]) => '<button type="button" class="btn quiz-op" data-ok="' + ok + '">' + esc(t('q.' + q.id + '.' + c)) + '</button>').join('');
+    $('#quiz-res').className = 'fb'; $('#quiz-res').innerHTML = '';
+    $('#quiz-cerrar').hidden = false; $('#quiz-sig').hidden = true;
+    $('#quiz').showModal();
+  }
+  $('#b-recarga').onclick = abrirQuiz;
+  $('#quiz-op').addEventListener('click', ev => {
+    const b = ev.target.closest('.quiz-op'); if (!b || b.disabled) return;
+    const q = $('#quiz').dataset.q, ok = b.dataset.ok === 'true';
+    document.querySelectorAll('.quiz-op').forEach(x => { x.disabled = true; x.classList.add(x.dataset.ok === 'true' ? 'acierto' : 'fallo'); });
+    b.classList.add('elegida');
+    (pregTodo[REG] = pregTodo[REG] || []).push(q);              // una sola oportunidad por pregunta, acierte o no
+    if (ok) AY.recargaQuiz(ayAct(), Date.now());
+    guardarAy(); pintarAy();
+    $('#quiz-res').className = 'fb ' + (ok ? 'ok' : 'mal');
+    $('#quiz-res').innerHTML = '<strong>' + esc(t(ok ? 'quiz.ok' : 'quiz.mal')) + '</strong>' + esc(t('q.' + q + '.e'));
+    anunciar(ok ? 'quiz.ok' : 'quiz.mal');
+    $('#quiz-cerrar').hidden = true; $('#quiz-sig').hidden = false; $('#quiz-sig').focus();
+  });
+  $('#quiz-cerrar').onclick = () => $('#quiz').close();
+  $('#quiz-sig').onclick = () => $('#quiz').close();
+
+  // ── textos estaticos del HTML ───────────────────────────
+  function pintarTextos() {
+    document.querySelectorAll('[data-t]').forEach(n => { n.textContent = t(n.dataset.t); });
+    document.querySelectorAll('[data-th]').forEach(n => { n.innerHTML = t(n.dataset.th); });   // texto nuestro, de confianza
+    document.querySelectorAll('[data-t-ph]').forEach(n => { n.placeholder = t(n.dataset.tPh); });
+    document.querySelectorAll('[data-t-aria]').forEach(n => { n.setAttribute('aria-label', t(n.dataset.tAria)); });
+    $('#montaje').dataset.vacio = t('cons.vacio');
+    $('#chk-lectura').checked = E.lectura;
+    $('#sel-nivel').innerHTML = Object.keys(REGISTROS).map(r => '<option value="' + r + '" title="' + esc(t('nivel.' + r + '.ayuda')) + '"' + (r === REG ? ' selected' : '') + '>' + esc(t('nivel.' + r)) + '</option>').join('');
+  }
+
+  // ── mascota (provisional) ───────────────────────────────
+  // CRT: un sprite por pose. «idle» parpadea de vez en cuando y «pensando» alterna sus dos fotogramas.
+  const POSES = ['idle', 'idle-parpadeo', 'fallo', 'feliz', 'pensando', 'pensando-2', 'dormido', 'sorpresa', 'tristeza', 'enfado'];
+  const RUTA = p => '../assets/crt/crt-' + p + '.png';
+  POSES.forEach(p => { new Image().src = RUTA(p); });
+  const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)');
+  let animCRT = null, baseCRT = 'idle', toques = 0, tToque = null;
+  function ponerPose(p) { const im = $('#crt-img'); if (im.dataset.pose !== p) { im.dataset.pose = p; im.src = RUTA(p); } }
+  function mascota(estado) {
+    const c = $('#cara'); c.dataset.estado = estado; baseCRT = estado;
+    clearTimeout(tToque); toques = 0;                     // un estado de la app corta cualquier reaccion
+    clearInterval(animCRT); animCRT = null; ponerPose(estado);
+    if (!sinMovimiento.matches) {
+      if (estado === 'idle') animCRT = setInterval(() => { ponerPose('idle-parpadeo'); setTimeout(() => { if (c.dataset.estado === 'idle') ponerPose('idle'); }, 140); }, 4500);
+      if (estado === 'pensando') { let k = 0; animCRT = setInterval(() => ponerPose(++k % 2 ? 'pensando-2' : 'pensando'), 1200); }
+    }
+    clearTimeout(E.dormir);
+    if (estado !== 'dormido') E.dormir = setTimeout(() => mascota('dormido'), 60000);
+  }
+  ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, () => { if ($('#cara').dataset.estado === 'dormido') mascota('idle'); }));
+  // Tocar a CRT: 1 clic sorpresa, 2 tristeza, 3 o mas enfado (te da la espalda). Dura poco y vuelve a lo que hacia.
+  const REACCIONES = ['sorpresa', 'tristeza', 'enfado'];
+  $('#cara').addEventListener('click', () => {
+    toques = Math.min(toques + 1, REACCIONES.length);
+    const pose = REACCIONES[toques - 1], c = $('#cara');
+    clearInterval(animCRT); animCRT = null;               // se pausan el parpadeo y el pensando
+    c.dataset.estado = pose; ponerPose(pose); anunciar('crt.r' + toques);
+    clearTimeout(tToque); tToque = setTimeout(() => { toques = 0; mascota(baseCRT); }, 2600);
+  });
+
+  // ── resaltado del codigo ────────────────────────────────
+  // Cada palabra se pinta segun lo que ES: palabra del lenguaje, caja (variable) o valor (numero / texto).
+  const PALABRAS = new Set(['mientras', 'hacer', 'si', 'entonces', 'sino', 'fin', 'para', 'desde', 'hasta', 'mostrar']);
+  const TOK = /("[^"]*")|([A-Za-zÁÉÍÓÚáéíóúÑñÜü_][A-Za-zÁÉÍÓÚáéíóúÑñÜü_0-9]*)|(\d+(?:\.\d+)?)|(←|<-|:=)|(\s+)|([\s\S])/g;
+  function resaltar(linea) {
+    const ci = linea.search(/#|\/\//);
+    const cod = ci >= 0 ? linea.slice(0, ci) : linea, com = ci >= 0 ? linea.slice(ci) : '';
+    const toks = []; let m; TOK.lastIndex = 0;
+    while ((m = TOK.exec(cod))) toks.push(m[1] ? { t: 's', v: m[1] } : m[2] ? { t: 'w', v: m[2] } : m[3] ? { t: 'n', v: m[3] } : m[4] ? { t: 'as', v: m[4] } : m[5] ? { t: 'sp', v: m[5] } : { t: 'o', v: m[6] });
+    const vecino = (k, d) => { for (let j = k + d; j >= 0 && j < toks.length; j += d) if (toks[j].t !== 'sp') return toks[j]; return null; };
+    const esValor = x => x && (x.t === 's' || x.t === 'n' || (x.t === 'w' && !PALABRAS.has(x.v.toLowerCase())));
+    const abre = x => esValor(x) || (x && x.t === 'o' && (x.v === '(' || x.v === '-')) || (x && x.t === 'w' && x.v.toLowerCase() === 'no');
+    const cierra = x => esValor(x) || (x && x.t === 'o' && x.v === ')');
+    // y / o / no son operadores solo entre operandos (igual que en el motor); en otro sitio son nombres de caja
+    const html = toks.map((x, k) => {
+      switch (x.t) {
+        case 's': return '<span class="s">' + esc(x.v) + '</span>';
+        case 'n': return '<span class="n">' + esc(x.v) + '</span>';
+        case 'as': return '<span class="as">' + esc(x.v) + '</span>';
+        case 'w': {
+          const l = x.v.toLowerCase();
+          if (l === 'verdadero' || l === 'falso') return '<span class="n">' + esc(x.v) + '</span>';
+          const logico = (l === 'y' || l === 'o') ? cierra(vecino(k, -1)) && abre(vecino(k, 1))
+            : l === 'no' ? abre(vecino(k, 1)) && !cierra(vecino(k, -1)) : false;
+          return PALABRAS.has(l) || logico ? '<span class="k">' + esc(x.v) + '</span>' : '<span class="v">' + esc(x.v) + '</span>';
+        }
+        default: return esc(x.v);
+      }
+    }).join('');
+    return html + (com ? '<span class="c">' + esc(com) + '</span>' : '');
+  }
+  function pintarCodigo(activa) {
+    $('#codigo').innerHTML = codigoActual().split('\n').map((l, k) =>
+      '<div class="ln' + (k + 1 === activa ? ' activa' : '') + '"' + (k + 1 === activa ? ' aria-current="step"' : '') + '><i>' + (k + 1) + '</i><span>' + resaltar(l) + '</span></div>').join('');
+  }
+
+  // ── nivel (registro) ────────────────────────────────────
+  function fijarNivel(r, idEj, idC) {
+    REG = r; try { localStorage.setItem(CLAVE_NIVEL, r); } catch (_) {}
+    document.documentElement.dataset.nivel = r;
+    E.lista = REGISTROS[r].ejercicios.map(id => EJERCICIOS[id]);
+    E.listaC = REGISTROS[r].construcciones.map(id => CONSTRUCCIONES[id]);
+    E.lectura = !!REGISTROS[r].lectura;
+    const k = idEj ? E.lista.findIndex(x => x.id === idEj) : -1, kc = idC ? E.listaC.findIndex(x => x.id === idC) : -1;
+    E.i = k >= 0 ? k : 0; E.c = kc >= 0 ? kc : 0;
+    E.paso = -1; E.modelo = ''; E.codigoMirar = null; C.id = null;
+    pintarTextos(); limpiarPred(); vista(); mascota('idle');
+  }
+  $('#sel-nivel').onchange = ev => { pararAuto(); fijarNivel(ev.target.value, ej() && ej().id, ret() && ret().id); };
+
+  // ── lista de ejercicios / retos ─────────────────────────
+  function pintarLista() {
+    const reto = esReto(), lista = reto ? E.listaC : E.lista, sel = reto ? E.c : E.i, pre = reto ? 'cons.' : 'ej.';
+    const temas = [...new Set(lista.map(x => x.tema))];
+    $('#temas').innerHTML = temas.map(tm => '<div class="tema"><span class="tema-n">' + esc(t('tema.' + tm)) + '</span>' +
+      lista.map((x, k) => x.tema === tm ? '<button class="chip' + (E.xp[claveXP(reto ? 'c' : 'p', x.id)] !== undefined ? ' ok' : '') + '" data-k="' + k + '"' + (k === sel ? ' aria-current="true"' : '') + '>' + esc(t(pre + x.id + '.titulo')) + '</button>' : '').join('') + '</div>').join('');
+  }
+  $('#temas').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (esReto()) cargarC(+b.dataset.k); else cargar(+b.dataset.k); });
+
+  function limpiarPred() { $('#resp').value = ''; $('#fb').className = 'fb'; $('#fb').innerHTML = ''; }
+  function cargar(i, modo) {
+    E.i = i; E.paso = -1; E.modelo = ''; E.codigoMirar = null; E.fallosP = 0; E.ayudaP = false; pararAuto(); limpiarPred();
+    $('#glosario').open = esPrimeroDelTema(E.lista, i);
+    if (modo) E.modo = modo;
+    vista(); mascota('idle');
+  }
+  function cargarC(i) {
+    E.c = i; E.modo = 'construir'; E.codigoMirar = null; C.id = null; pararAuto(); $('#glosario').open = esPrimeroDelTema(E.listaC, i);
+    vista(); mascota('idle');
+  }
+
+  // ── modos ───────────────────────────────────────────────
+  // El glosario explica el concepto del tema del reto que se esta mirando.
+  function pintarGlosario() {
+    const tema = (esReto() ? ret() : ej()).tema;
+    $('#gl-titulo').textContent = t('gl.' + tema + '.titulo');
+    $('#gl-texto').innerHTML = t('gl.' + tema + '.texto');           // texto nuestro, de confianza
+  }
+  // se abre solo en el primero de cada tema; despues cada cual lo abre si lo necesita
+  const esPrimeroDelTema = (lista, i) => lista.length > 0 && lista.findIndex(x => x.tema === lista[i].tema) === i;
+  function pintarCabecera() {
+    const reto = esReto();
+    $('#ej-titulo').textContent = reto ? tcon('titulo') : tej('titulo');
+    $('#ej-consigna').textContent = reto ? tcon('consigna') : tej('consigna');
+  }
+  function vista() {
+    const m = E.modo;
+    $('#v-predecir').hidden = m !== 'predecir'; $('#v-mirar').hidden = m !== 'mirar'; $('#v-construir').hidden = m !== 'construir';
+    $('#mascota-fila').hidden = m === 'mirar';
+    $('#montaje-wrap').hidden = m !== 'construir'; $('#codigo').hidden = m === 'construir';
+    ['predecir', 'mirar', 'construir'].forEach(x => $('#m-' + x).setAttribute('aria-pressed', String(x === m)));
+    pintarCabecera(); pintarGlosario(); pintarLista(); pintarXP(); pintarAy();
+    if (m === 'construir') prepararC();
+    else if (m === 'mirar') prepararMirar();
+    else { pintarCodigo(0); $('#err-codigo').hidden = true; }
+  }
+  $('#m-predecir').onclick = () => { pararAuto(); E.modo = 'predecir'; E.codigoMirar = null; vista(); };
+  $('#m-mirar').onclick = () => { E.modo = 'mirar'; E.paso = -1; E.codigoMirar = null; vista(); };
+  $('#m-construir').onclick = () => { pararAuto(); E.modo = 'construir'; E.codigoMirar = null; vista(); };
+
+  // ── PREDECIR ────────────────────────────────────────────
+  $('#resp').addEventListener('input', () => { if ($('#cara').dataset.estado !== 'pensando') mascota('pensando'); });
+  $('#form-pred').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const fb = $('#fb'), r = MOTOR.diagnosticar(ej().codigo, $('#resp').value);
+    if (r.correcta) {
+      const gan = otorgar('p', ej().id, XP_PRED, E.fallosP, E.ayudaP ? 1 : 0); pintarLista(); mascota('feliz');
+      const hay = E.i < E.lista.length - 1;
+      fb.className = 'fb ok';
+      fb.innerHTML = '<strong>' + esc(t('fb.ok')) + '</strong>' + esc(tej('trampa')) + xpHtml(gan) + '<div class="acciones">' +
+        (hay ? '<button class="btn primario" id="a-sig">' + esc(t('fb.sig')) + '</button>' : '') +
+        '<button class="btn" id="a-ver">' + esc(t('fb.ver')) + '</button></div>';
+      const s = $('#a-sig'); if (s) s.onclick = () => cargar(E.i + 1);
+      $('#a-ver').onclick = () => { E.modo = 'mirar'; E.paso = -1; E.modelo = ''; vista(); };
+      return;
+    }
+    mascota('fallo'); E.fallosP++;
+    let cuerpo;
+    if (r.causas.length) {
+      cuerpo = '<strong>' + esc(t('fb.casi')) + '</strong>' + esc(t('mod.' + r.causas[0].id + '.diag'));
+      if (r.causas.length > 1) cuerpo += '<br><br>' + esc(t('fb.tambien', { lista: r.causas.slice(1).map(c => t('mod.' + c.id + '.corto')).join(t('fb.o')) }));
+    } else if (r.dadoN !== r.esperadoN) {
+      cuerpo = '<strong>' + esc(t('fb.nosale')) + '</strong>' + esc(r.dadoN === 1 ? t('fb.cuantos.uno') : t('fb.cuantos.varios', { n: r.dadoN }));
+    } else if (r.mismoConjunto) {
+      cuerpo = '<strong>' + esc(t('fb.nosale')) + '</strong>' + esc(t('fb.orden'));
+    } else {
+      cuerpo = '<strong>' + esc(t('fb.nosale')) + '</strong>' + esc(t('fb.mismo'));
+    }
+    fb.className = 'fb ' + (r.causas.length ? 'dx' : 'mal');
+    fb.innerHTML = cuerpo + '<div class="acciones"><button class="btn" id="a-reint">' + esc(t('fb.reint')) + '</button>' +
+      (r.causas.length ? '<button class="btn" id="a-modelo">' + esc(t('fb.modelo')) + '</button>' : '') +
+      '<button class="btn" id="a-ver">' + esc(t('fb.ayuda')) + '</button></div>';
+    $('#a-reint').onclick = () => { $('#resp').focus(); $('#resp').select(); mascota('pensando'); };
+    if (r.causas.length) $('#a-modelo').onclick = () => { E.modo = 'mirar'; E.paso = -1; E.modelo = r.causas[0].id; vista(); };
+    $('#a-ver').dataset.ayuda = '1';
+    if (ayAct().n < 1) { $('#a-ver').disabled = true; fb.insertAdjacentHTML('beforeend', '<p class="hint">' + esc(t('ay.sin')) + '</p>'); }
+    $('#a-ver').onclick = () => { if (!gastarAyudita()) return; E.ayudaP = true; E.modo = 'mirar'; E.paso = -1; E.modelo = ''; vista(); };
+  });
+
+  // ── CONSTRUIR ───────────────────────────────────────────
+  // La sangria no se arrastra: sale sola de mientras/si/para … fin.
+  function indentaciones(textos) {
+    let d = 0;
+    return textos.map(tx => {
+      const m = /^\s*([a-záéíóúñü]+)/i.exec(tx), k = m ? m[1].toLowerCase() : '';
+      if (k === 'fin') { d = Math.max(0, d - 1); return d; }
+      if (k === 'sino') return Math.max(0, d - 1);
+      const s = d; if (k === 'mientras' || k === 'si' || k === 'para') d++;
+      return s;
+    });
+  }
+  function mezclar(uids, solUids) {
+    const a = uids.slice();
+    for (let n = 0; n < 30; n++) {
+      for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; }
+      if (a.filter(u => solUids.includes(u)).join() !== solUids.join()) break;   // que no salga ya resuelto
+    }
+    return a;
+  }
+  function iniciarC() {
+    const r = ret();
+    C.id = r.id; C.bloques = new Map(); C.malLinea = -1; C.ayudas = 0; C.fallos = 0; C.montaje = [];
+    const sol = r.solucion.map((x, k) => ({ uid: r.id + ':s' + k, texto: x, req: true }));
+    const dis = r.distractores.map((x, k) => ({ uid: r.id + ':d' + k, texto: x, req: false }));
+    [...sol, ...dis].forEach(b => C.bloques.set(b.uid, b));
+    C.banco = mezclar([...sol, ...dis].map(b => b.uid), sol.map(b => b.uid));
+    C.banco.forEach((u, k) => { C.bloques.get(u).orden = k; });
+    $('#fb-c').className = 'fb'; $('#fb-c').innerHTML = '';
+  }
+  function prepararC() { if (C.id !== ret().id) iniciarC(); pintarC(); }
+  function htmlBloque(b, num, d, mal) {
+    const lee = E.lectura ? MOTOR.leerLinea(b.texto) : null;
+    return '<button type="button" class="bloque' + (mal ? ' mal' : '') + '" data-uid="' + b.uid + '" style="--d:' + d + '">' +
+      (num ? '<span class="nl">' + num + '</span>' : '') + '<span class="cod">' + resaltar(b.texto) + '</span>' +
+      (lee ? '<span class="lee">' + esc(t('lee.' + lee.id, lee.p)) + '</span>' : '') + '</button>';
+  }
+  function pintarC(foco) {
+    const sang = indentaciones(C.montaje.map(u => C.bloques.get(u).texto));
+    $('#montaje').innerHTML = C.montaje.map((u, k) => htmlBloque(C.bloques.get(u), k + 1, sang[k], k === C.malLinea)).join('');
+    $('#banco').innerHTML = C.banco.map(u => htmlBloque(C.bloques.get(u), 0, 0, false)).join('');
+    if (foco) { const el = document.querySelector('.bloque[data-uid="' + foco + '"]'); if (el) el.focus(); }
+  }
+  function sacar(uid) {
+    C.montaje = C.montaje.filter(u => u !== uid); C.banco = C.banco.filter(u => u !== uid);
+  }
+  function colocar(uid, idx) {
+    sacar(uid);
+    const i = idx === undefined ? C.montaje.length : Math.max(0, Math.min(idx, C.montaje.length));
+    C.montaje.splice(i, 0, uid); C.malLinea = -1;
+    anunciar('cons.an.puesta', { n: i + 1 }); mascota('pensando'); pintarC(uid);
+  }
+  function devolver(uid) {
+    const k = C.montaje.indexOf(uid);
+    sacar(uid); C.banco.push(uid); C.banco.sort((a, b) => C.bloques.get(a).orden - C.bloques.get(b).orden);
+    C.malLinea = -1; anunciar('cons.an.quitada');
+    pintarC(C.montaje[Math.min(k, C.montaje.length - 1)] || uid);
+  }
+  function mover(uid, delta) {
+    const k = C.montaje.indexOf(uid), n = k + delta;
+    if (k < 0 || n < 0 || n >= C.montaje.length) return;
+    C.montaje.splice(k, 1); C.montaje.splice(n, 0, uid); C.malLinea = -1;
+    anunciar('cons.an.movida', { n: n + 1 }); pintarC(uid);
+  }
+  const accionBloque = uid => { if (C.montaje.includes(uid)) devolver(uid); else colocar(uid); };
+
+  // Arrastre con puntero (raton y tactil con el mismo codigo). Un toque sin mover = pulsar.
+  let arr = null;
+  function destino(x, y) {
+    const bajo = document.elementFromPoint(x, y), zona = bajo && bajo.closest('#montaje, #banco');
+    document.querySelectorAll('.sobre,.al-final,.antes').forEach(n => n.classList.remove('sobre', 'al-final', 'antes'));
+    arr.zona = zona; arr.idx = undefined;
+    if (!zona) return;
+    zona.classList.add('sobre');
+    if (zona.id === 'montaje') {
+      const els = [...zona.querySelectorAll('.bloque')].filter(e => e.dataset.uid !== arr.uid);
+      arr.idx = els.filter(e => { const r = e.getBoundingClientRect(); return r.top + r.height / 2 < y; }).length;
+      if (arr.idx < els.length) els[arr.idx].classList.add('antes'); else zona.classList.add('al-final');
+    }
+  }
+  function terminarArrastre() {
+    if (!arr) return;
+    if (arr.ghost) arr.ghost.remove();
+    arr.el.classList.remove('arrastrando');
+    document.querySelectorAll('.sobre,.al-final,.antes').forEach(n => n.classList.remove('sobre', 'al-final', 'antes'));
+  }
+  document.addEventListener('pointerdown', ev => {
+    if (E.modo !== 'construir' || (ev.pointerType === 'mouse' && ev.button !== 0)) return;
+    const b = ev.target.closest('.bloque[data-uid]'); if (!b) return;
+    const r = b.getBoundingClientRect();
+    arr = { uid: b.dataset.uid, el: b, x: ev.clientX, y: ev.clientY, dx: ev.clientX - r.left, dy: ev.clientY - r.top, w: r.width, mov: false, ghost: null, id: ev.pointerId, zona: null, idx: undefined };
+  });
+  document.addEventListener('pointermove', ev => {
+    if (!arr || ev.pointerId !== arr.id) return;
+    if (!arr.mov) {
+      if (Math.hypot(ev.clientX - arr.x, ev.clientY - arr.y) < 6) return;
+      arr.mov = true;
+      arr.ghost = arr.el.cloneNode(true); arr.ghost.classList.add('fantasma'); arr.ghost.removeAttribute('data-uid'); arr.ghost.style.width = arr.w + 'px';
+      document.body.appendChild(arr.ghost); arr.el.classList.add('arrastrando');
+    }
+    arr.ghost.style.left = (ev.clientX - arr.dx) + 'px'; arr.ghost.style.top = (ev.clientY - arr.dy) + 'px';
+    destino(ev.clientX, ev.clientY);
+  });
+  document.addEventListener('pointerup', ev => {
+    if (!arr || ev.pointerId !== arr.id) return;
+    const a = arr; terminarArrastre(); arr = null;
+    if (!a.mov) { accionBloque(a.uid); return; }
+    if (a.zona && a.zona.id === 'montaje') colocar(a.uid, a.idx);
+    else if (a.zona && a.zona.id === 'banco' && C.montaje.includes(a.uid)) devolver(a.uid);
+  });
+  document.addEventListener('pointercancel', () => { terminarArrastre(); arr = null; });
+  // Teclado: un «click» con detail 0 es Intro/Espacio (el raton y el tactil ya se gestionan arriba).
+  document.addEventListener('click', ev => {
+    if (E.modo !== 'construir' || ev.detail !== 0) return;
+    const b = ev.target.closest && ev.target.closest('.bloque[data-uid]'); if (b) accionBloque(b.dataset.uid);
+  });
+  addEventListener('keydown', ev => {
+    if (E.modo !== 'construir') return;
+    const b = ev.target.closest && ev.target.closest('.bloque[data-uid]'); if (!b) return;
+    const uid = b.dataset.uid;
+    if (!C.montaje.includes(uid)) return;
+    if (ev.altKey && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown')) { ev.preventDefault(); mover(uid, ev.key === 'ArrowUp' ? -1 : 1); }
+    else if (ev.key === 'Delete' || ev.key === 'Backspace') { ev.preventDefault(); devolver(uid); }
+  });
+
+  $('#chk-lectura').onchange = ev => { E.lectura = ev.target.checked; pintarC(); };
+  $('#c-vaciar').onclick = () => { const f = C.fallos, a = C.ayudas; C.id = null; iniciarC(); C.fallos = f; C.ayudas = a; pintarC(); mascota('idle'); };
+  $('#c-ayuda').onclick = () => {
+    const sol = ret().solucion; let k = 0;
+    while (k < C.montaje.length && k < sol.length && C.bloques.get(C.montaje[k]).texto === sol[k]) k++;
+    const fb = $('#fb-c');
+    if (k >= sol.length && C.montaje.length === sol.length) { fb.className = 'fb'; fb.textContent = t('cons.ayuda.nada'); return; }
+    if (!gastarAyudita()) { fb.className = 'fb mal'; fb.textContent = t('ay.sin'); return; }
+    C.montaje.splice(k).forEach(u => C.banco.push(u));
+    C.banco.sort((a, b) => C.bloques.get(a).orden - C.bloques.get(b).orden);
+    const u = C.banco.find(x => C.bloques.get(x).req && C.bloques.get(x).texto === sol[k]);
+    sacar(u); C.montaje.push(u); C.ayudas++; C.malLinea = -1;
+    fb.className = 'fb'; fb.textContent = t('cons.ayuda.puesta');
+    pintarC(u);
+  };
+  $('#c-comprobar').onclick = () => {
+    const r = ret(), lineas = C.montaje.map(u => C.bloques.get(u).texto), fb = $('#fb-c');
+    const res = MOTOR.comprobarConstruccion(r.solucion, lineas, r.entradas);
+    const botones = res.pasos > 0 && res.estado !== 'ok' ? '<button class="btn" id="c-ver">' + esc(t('cons.ver')) + '</button>' : '';
+    const ver = () => { const b = $('#c-ver'); if (b) b.onclick = () => { E.codigoMirar = lineas.join('\n'); E.modo = 'mirar'; E.paso = -1; E.modelo = ''; vista(); }; };
+    C.malLinea = res.estado === 'error' && res.error.linea ? res.error.linea - 1 : -1;
+    if (res.estado === 'ok') {
+      const gan = otorgar('c', r.id, XP_CONS, C.fallos, C.ayudas); mascota('feliz');
+      const hay = E.c < E.listaC.length - 1;
+      fb.className = 'fb ok';
+      fb.innerHTML = '<strong>' + esc(t('cons.fb.ok')) + '</strong>' + (res.igualPlan ? '' : esc(t('cons.fb.otro')) + ' ') + esc(tcon('trampa')) + xpHtml(gan) +
+        '<div class="acciones">' + (hay ? '<button class="btn primario" id="c-sig">' + esc(t('cons.sig')) + '</button>' : '') +
+        '<button class="btn" id="c-ver2">' + esc(t('cons.ver')) + '</button></div>';
+      const s = $('#c-sig'); if (s) s.onclick = () => cargarC(E.c + 1);
+      $('#c-ver2').onclick = () => { E.codigoMirar = lineas.join('\n'); E.modo = 'mirar'; E.paso = -1; E.modelo = ''; vista(); };
+      pintarLista(); pintarC();
+      return;
+    }
+    let msg;
+    switch (res.estado) {
+      case 'vacio': msg = t('cons.fb.vacio'); break;
+      case 'faltan': msg = t('cons.fb.faltan', { n: res.n }); break;
+      case 'error': msg = t('cons.fb.error', { n: res.error.linea, msg: t('err.' + res.error.id, res.error.p) }); break;
+      case 'colgado': msg = t('cons.fb.colgado'); break;
+      case 'distinta':
+        msg = t('cons.fb.distinta', { mio: res.mio.join(' ') || t('cons.nada'), esperado: res.esperado.join(' ') || t('cons.nada') });
+        if (C.montaje.some(u => !C.bloques.get(u).req)) msg += ' ' + t('cons.fb.sobra');
+        break;
+      case 'coincide':
+        msg = t('cons.fb.coincide', { datos: res.datos, mio: res.mio.join(' ') || t('cons.nada'), esperado: res.esperado.join(' ') || t('cons.nada') });
+        break;
+      case 'estado':
+        msg = t(res.datos ? 'cons.fb.estado' : 'cons.fb.estado0', { datos: res.datos, nombre: res.nombre, mio: res.mio === undefined ? t('cons.vacia') : res.mio, esperado: res.esperado });
+        break;
+      default: msg = t('cons.fb.casi');
+    }
+    mascota('fallo'); C.fallos++;
+    fb.className = 'fb mal';
+    fb.innerHTML = esc(msg) + (botones ? '<div class="acciones">' + botones + '</div>' : '');
+    ver(); pintarC();
+  };
+
+  // ── MIRAR ───────────────────────────────────────────────
+  function prepararMirar() {
+    const sel = $('#sel-modelo');
+    sel.innerHTML = '<option value="">' + esc(t('mirar.real')) + '</option>' +
+      MOTOR.MODELOS.map(m => '<option value="' + m.id + '">' + esc(t('mirar.modelo', { creencia: t('mod.' + m.id + '.corto') })) + '</option>').join('');
+    sel.value = E.modelo;
+    recalcular();
+  }
+  function recalcular() {
+    const m = MOTOR.MODELOS.find(x => x.id === E.modelo);
+    E.traza = MOTOR.correr(codigoActual(), m ? m.flags : {});
+    const av = $('#aviso-modelo');
+    av.hidden = !m;
+    if (m) av.innerHTML = '<strong>' + esc(t('mirar.aviso')) + '</strong> ' + esc(t('mod.' + m.id + '.diag'));
+    pintarMirar();
+  }
+  const textoNota = n => t('nota.' + n.id, n.p);
+  function pintarMirar() {
+    const tr = E.traza, p = E.paso >= 0 ? tr.pasos[E.paso] : null, e = $('#err-codigo');
+    pintarCodigo(p ? p.linea : 0);
+    $('#cajas').innerHTML = p ? p.vars.map(v => '<div class="caja' + (v.n === p.cambia ? ' cambia' : '') + '"><b>' + esc(v.n) + '</b><span>' + esc(v.v) + '</span>' + (v.f ? '<em>ƒ ' + esc(v.f) + '</em>' : '') + '</div>').join('') : '';
+    $('#pantalla').textContent = p ? p.salida.join('\n') : '';
+    const fin = E.paso >= tr.pasos.length - 1;
+    let nota = p ? textoNota(p.nota) : t('mirar.inicio');
+    if (p && fin) nota += tr.colgado ? '  ' + t('fin.colgado') : tr.error ? '' : '  ·  ' + t('fin.ok');
+    $('#nota').textContent = nota;
+    if (tr.error && (fin || !tr.pasos.length)) {
+      e.hidden = false; e.className = 'hint err';
+      e.textContent = t('err.linea', { n: tr.error.linea, msg: t('err.' + tr.error.id, tr.error.p) });
+    } else e.hidden = true;
+    $('#b-ant').disabled = E.paso < 0; $('#b-sig').disabled = fin;
+  }
+  const sig = () => { if (E.paso < E.traza.pasos.length - 1) { E.paso++; pintarMirar(); } else pararAuto(); };
+  $('#b-sig').onclick = () => { pararAuto(); sig(); };
+  $('#b-ant').onclick = () => { pararAuto(); if (E.paso >= 0) { E.paso--; pintarMirar(); } };
+  $('#b-reset').onclick = () => { pararAuto(); E.paso = -1; pintarMirar(); };
+  $('#sel-modelo').onchange = ev => { pararAuto(); E.modelo = ev.target.value; E.paso = -1; recalcular(); };
+  function pararAuto() { if (E.timer) { clearInterval(E.timer); E.timer = null; } $('#b-auto').textContent = t('b.auto'); }
+  $('#b-auto').onclick = () => {
+    if (E.timer) { pararAuto(); return; }
+    if (E.paso >= E.traza.pasos.length - 1) { E.paso = -1; pintarMirar(); }
+    $('#b-auto').textContent = t('b.pausa');
+    E.timer = setInterval(sig, 900);
+  };
+  addEventListener('keydown', ev => {
+    if (E.modo !== 'mirar' || /INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)) return;
+    if (ev.key === 'ArrowRight') { pararAuto(); sig(); }
+    if (ev.key === 'ArrowLeft') { pararAuto(); if (E.paso >= 0) { E.paso--; pintarMirar(); } }
+  });
+
+  // skin (CRT / lab) y fosforo: solo estetica. El boton de encendido del monitor alterna el skin.
+  const guardarPref = (k, v) => { try { localStorage.setItem('hpk-pseudocoder-' + k, v); } catch (_) {} };
+  function pintarSkin() {
+    const r = document.documentElement;
+    $('#b-skin').setAttribute('aria-pressed', String(r.dataset.skin === 'crt'));
+    document.querySelectorAll('.knob').forEach(k => k.setAttribute('aria-pressed', String(k.dataset.f === r.dataset.fosforo)));
+  }
+  $('#b-skin').onclick = () => { const r = document.documentElement; r.dataset.skin = r.dataset.skin === 'crt' ? 'lab' : 'crt'; guardarPref('skin', r.dataset.skin); pintarSkin(); };
+  document.querySelectorAll('.knob').forEach(k => { k.onclick = () => { document.documentElement.dataset.fosforo = k.dataset.f; guardarPref('fosforo', k.dataset.f); pintarSkin(); }; });
+  pintarSkin();
+
+  // arranque:  ?nivel=primaria|eso|bach   ?modo=predecir|mirar|construir   ?ej=N
+  const q = new URLSearchParams(location.search);
+  let r0 = q.get('nivel'); try { if (!r0) r0 = localStorage.getItem(CLAVE_NIVEL); } catch (_) {}
+  if (!r0 || !Object.hasOwn(REGISTROS, r0)) r0 = BASE;
+  fijarNivel(r0);
+  const m0 = ['predecir', 'mirar'].includes(q.get('modo')) ? q.get('modo') : 'construir';
+  const n0 = parseInt(q.get('ej') || '1', 10) - 1;
+  E.modo = m0;
+  if (m0 === 'construir') E.c = n0 >= 0 && n0 < E.listaC.length ? n0 : 0;
+  else E.i = n0 >= 0 && n0 < E.lista.length ? n0 : 0;
+  vista();
+  $('#glosario').open = E.modo === 'construir' ? esPrimeroDelTema(E.listaC, E.c) : esPrimeroDelTema(E.lista, E.i);
+  window.__E = E; window.__C = C;
+})();
+</script>
+<script src="../lab.js"></script>
+</body>
+</html>

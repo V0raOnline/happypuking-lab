@@ -48,6 +48,8 @@ happypuking-lab/
 │   ├── bio-invertebrados-mapa.html     # Invertebrados — mapa de los 6 grupos
 │   ├── bio-invertebrados-tarjetas.html # Invertebrados — tarjetas
 │   └── bio-reino-plantas.html          # Reino de las Plantas — explorador e historia
+├── inf/                                # Computación
+│   └── inf-pseudocoder.html            # PseudoCoder — fundamentos de programación
 ├── ing/                                # Inglés
 │   ├── ing-verbos-irregulares.html     # Familias fonológicas de verbos irregulares
 │   ├── ing-verbos-quiz.html            # Quiz de verbos — con banco de frases en YAML
@@ -65,6 +67,7 @@ happypuking-lab/
 │   ├── qui-lab.html                    # Lab — compuestos con átomos y electrones
 │   └── qui-pasteleria.html             # Pastelería de Mendeleyev — juego de la tabla periódica
 ├── assets/
+│   ├── crt/                            # CRT, el monitor de tubo de PseudoCoder, y su tarjeta (PNG)
 │   └── macarons/                       # Chef Minou, macarons y sabores (PNG) de Macarons
 ├── nd/                                 # Neurodivergencia
 │   ├── nd-carga-sensorial.html         # Modelo de Carga Sensorial (ES)
@@ -94,6 +97,7 @@ eso está el historial de git.
 | Grammar Builder           | Inglés               | ESO               | `ing/ing-grammar-builder.html`        |
 | Timeline de Tiempos       | Inglés               | ESO               | `ing/ing-timeline.html`               |
 | Sing & Learn              | Inglés               | ESO               | `ing/ing-sing-and-learn.html`         |
+| PseudoCoder               | Computación          | Primaria / ESO / Bach | `inf/inf-pseudocoder.html`        |
 | Morfosintaxis             | Lengua Castellana    | ESO               | `len/len-morfosintaxis.html`          |
 | Tabla Pitagórica          | Matemáticas          | Primaria / ESO    | `mat/mat-tabla-pitagorica.html`       |
 | Tabla Periódica           | Química              | ESO               | `qui/qui-tabla-periodica.html`        |
@@ -161,6 +165,34 @@ desbloquea demostrando que se conoce.
 
 El interior del juego lleva su propia paleta pixel, fija: el tema claro u
 oscuro solo cambia el marco.
+
+### 💻 Computación — PseudoCoder
+
+Fundamentos de programación (variables, condicionales y bucles) sin escribir
+una línea de código y sin atarse a un lenguaje: un pseudocódigo propio, con su
+intérprete dentro de la página. Lo que lo distingue: cuando la respuesta es
+incorrecta, no se queda en «mal». El intérprete vuelve a ejecutar el programa
+con los malentendidos típicos (una caja que guarda una foto y no un atajo, un
+«mientras» que funciona como un «si»…) y busca cuál reproduce lo que respondió quien
+lo intenta. Así puede decir *por qué* se ha equivocado.
+
+- **Tres modos** — *Construir* (arrastra las piezas hasta formar el programa;
+  se comprueba por comportamiento, no por orden exacto), *Predecir* (qué
+  mostrará este programa) y *Mirar* (ver cómo lo ejecuta la máquina, paso a paso,
+  con las cajas y sus valores).
+- **Tres niveles de lenguaje** — `?nivel=primaria`, `eso` o `bach`: mismos
+  ejercicios, con las frases adaptadas. Todos los textos viven en un solo sitio
+  del fichero, para poder reescribirlos sin tocar el motor.
+- **Ayuditas con reserva** — una ayudita enseña un paso, resta XP y gasta una
+  de las cinco casillas de la reserva. Se recargan con XP, con el tiempo o
+  contestando una pregunta (sin poder consultar las ayudas mientras se
+  responde).
+- **CRT**, el monitor de tubo que acompaña, reacciona a cada acierto, fallo o
+  toque. Todo el juego es un monitor de fósforo (verde, ámbar o cian); si
+  prefieres la apariencia del laboratorio hay un interruptor.
+- Se juega con el ratón, el dedo o el teclado. El progreso se guarda solo en el
+  propio navegador, y las animaciones respetan el ajuste del sistema de
+  reducir movimiento.
 
 ### 🔢 Matemáticas — la tabla pitagórica no es una lista
 
@@ -353,6 +385,10 @@ Las ilustraciones de la Pastelería de Mendeleyev (Chef Minou y Mikan, macarons,
 mochis y sabores) se generaron con inteligencia artificial y se seleccionaron y
 prepararon para el proyecto. Los detalles están en
 [`assets/macarons/CREDITOS.md`](assets/macarons/CREDITOS.md).
+
+Igual con CRT, la mascota de PseudoCoder: sus ilustraciones se generaron con
+inteligencia artificial y se seleccionaron y prepararon para el proyecto
+([`assets/crt/CREDITOS.md`](assets/crt/CREDITOS.md)).
 
 ---
 
