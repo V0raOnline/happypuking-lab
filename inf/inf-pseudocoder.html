@@ -299,6 +299,80 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 :root[data-skin="crt"] #quiz{border-radius:6px;background:var(--fbg2);box-shadow:0 0 0 3px #000,0 0 24px var(--fglow)}
 :root[data-skin="crt"] #quiz h3{font:400 1.5rem 'VT323',monospace;text-transform:uppercase}
 :root[data-skin="crt"] .quiz-op{border-radius:3px;text-transform:none}
+/* ── Pantalla estrecha: recorrido guiado Elegir → Reto ──
+   En pantalla ancha no cambia nada (dos columnas, todo a la vista). En estrecha hay dos pantallas:
+   ELEGIR (nivel, XP, modos y lista de retos) y RETO (consigna, programa, piezas y botones juntos).
+   La estructura es la misma: solo cambia lo que se ve, segun html[data-pantalla]. */
+.crt-contenido{position:relative}
+.tira,.plegar,.ayudas-btn{display:none}
+@media(max-width:700px){
+  :root{--tap:2.75rem}
+  /* ── plegar el subtitulo (misma idea y preferencia, hpk-compacto, que la tabla periodica) ── */
+  :root[data-pantalla="elegir"] .plegar{display:inline-flex;align-items:center;justify-content:center;position:absolute;top:.7rem;right:.7rem;z-index:2;
+    min-width:2.2rem;min-height:2.2rem;padding:0;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer;font-size:.85rem}
+  :root[data-pantalla="elegir"] h1{padding-right:2.8rem}
+  :root[data-compacto="si"][data-pantalla="elegir"] .sub{display:none}
+  :root[data-compacto="si"] .plegar{transform:none}
+  /* ── ELEGIR: la lista de retos, una fila por reto ── */
+  :root[data-pantalla="elegir"] .grid{display:none}
+  :root[data-pantalla="elegir"] .modo{flex:1 1 auto;min-height:var(--tap)}
+  :root[data-pantalla="elegir"] .temas{gap:.2rem;margin-bottom:.4rem}
+  :root[data-pantalla="elegir"] .tema{flex-direction:column;align-items:stretch;gap:.35rem;margin-bottom:.5rem}
+  :root[data-pantalla="elegir"] .tema-n{min-width:0}
+  :root[data-pantalla="elegir"] .chip{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:var(--tap);text-align:left;padding-left:.8rem;padding-right:.8rem}
+  :root[data-pantalla="elegir"] .chip.ok::after{margin-left:auto;padding-left:.6rem}
+  /* ── RETO: lo de uso inmediato, junto ── */
+  :root[data-pantalla="reto"] .topbar,:root[data-pantalla="reto"] h1,:root[data-pantalla="reto"] .sub,:root[data-pantalla="reto"] .modos,
+  :root[data-pantalla="reto"] .temas,:root[data-pantalla="reto"] .hud-nivel,:root[data-pantalla="reto"] .plegar,
+  :root[data-pantalla="reto"] #xp-rango,:root[data-pantalla="reto"] #ay-txt,:root[data-pantalla="reto"] .hud-et{display:none}
+  :root[data-pantalla="reto"] .wrap{padding-top:.6rem}
+  :root[data-pantalla="reto"] .tira{display:flex;align-items:center;gap:.5rem;margin:0 0 .5rem}
+  :root[data-pantalla] .tira .btn{min-height:2.5rem;padding:.2rem .55rem;font-size:1rem;white-space:nowrap}
+  :root[data-pantalla="reto"] #v-construir .fila .btn{flex:1 1 auto;min-height:var(--tap)}
+  :root[data-pantalla="reto"] #v-construir .fila .primario{flex:1 1 100%}
+  .tira-n{flex:1;text-align:center;font:.78rem 'DM Mono',monospace;color:var(--muted);white-space:nowrap}
+  :root[data-skin="crt"] .tira-n{font-family:'VT323',monospace;font-size:1.05rem;letter-spacing:.05em}
+  .tira-modo{position:relative}
+  .tira-menu{position:absolute;right:0;top:calc(100% + .3rem);z-index:6;display:flex;flex-direction:column;gap:.3rem;padding:.4rem;min-width:12rem;
+    background:var(--surface);border:1px solid var(--magenta);border-radius:8px}
+  :root[data-skin="crt"] .tira-menu{background:var(--fbg2);border-radius:3px;box-shadow:0 0 0 2px #000,0 0 14px var(--fglow)}
+  .tira-menu .btn{width:100%;text-align:left;min-height:var(--tap)}
+  .tira-menu .btn[aria-pressed="true"]{border-color:var(--magenta);background:var(--magenta-soft)}
+  :root[data-pantalla="reto"] .hud{padding:.35rem .6rem;margin:0 0 .5rem;gap:.3rem .8rem}
+  :root[data-pantalla="reto"] .hud-xp{flex:1 1 9rem}
+  :root[data-pantalla="reto"] .hud-ay{flex-basis:auto}
+  /* la tarjeta del reto es la rejilla entera; sus dos paneles se aplanan para poder reordenarlos */
+  :root[data-pantalla="reto"] .grid{display:flex;flex-direction:column;position:relative;padding:.8rem .9rem;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+  :root[data-skin="crt"][data-pantalla="reto"] .grid{border-radius:6px;background:color-mix(in srgb,var(--f) 5%,var(--fbg))}
+  :root[data-pantalla="reto"] .grid>.panel,:root[data-pantalla="reto"] #montaje-wrap{display:contents}
+  /* CRT va en la esquina; el titulo le deja el sitio y la consigna queda debajo, a todo el ancho */
+  :root[data-pantalla="reto"] #ej-titulo{order:1;padding-right:5.8rem;min-height:4.4rem}
+  :root[data-pantalla="reto"] #ej-consigna{order:2;margin-bottom:.6rem}
+  :root[data-pantalla="reto"] #codigo,:root[data-pantalla="reto"] #err-codigo{order:3}
+  :root[data-pantalla="reto"] #montaje-wrap>.sec,:root[data-pantalla="reto"] #montaje{order:4}
+  :root[data-pantalla="reto"] #montaje{min-height:5rem}
+  :root[data-pantalla="reto"] #v-predecir,:root[data-pantalla="reto"] #v-construir{order:5}
+  /* Mirar: los botones de paso van pegados al programa; lo que cambia (cajas, pantalla, nota) cuelga debajo */
+  :root[data-pantalla="reto"] #v-mirar{display:contents}
+  :root[data-pantalla="reto"] #v-mirar>*{order:6}
+  :root[data-pantalla="reto"] #aviso-modelo{order:4}
+  :root[data-pantalla="reto"] #v-mirar>.fila:last-child{order:5;display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.2rem 0 .6rem}
+  :root[data-pantalla="reto"] #v-mirar>.fila:last-child .btn{min-height:var(--tap);padding-left:.4rem;padding-right:.4rem}
+  :root[data-pantalla="reto"] #v-mirar>.fila:first-child{order:7;margin-top:.8rem}
+  :root[data-pantalla="reto"] #montaje-wrap>.hint{order:7;margin:.6rem 0 0}
+  :root[data-pantalla="reto"] #ayudas{order:9}
+  :root[data-pantalla="reto"] #mascota-fila{position:absolute;top:.4rem;right:.5rem;margin:0}
+  :root[data-pantalla="reto"] .cara img{height:80px}
+  :root[data-pantalla="reto"] .mascota small{display:none}
+  /* ── Ayudas: un boton plegado debajo del trabajo ── */
+  :root[data-pantalla="reto"] .ayudas-btn{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:var(--tap);text-align:left;text-transform:none}
+  :root[data-pantalla="reto"] .ayudas{margin-top:.8rem}
+  :root[data-pantalla="reto"] #ayudas-cuerpo{display:none;margin-top:.5rem}
+  :root[data-pantalla="reto"] .ayudas.abierto #ayudas-cuerpo{display:block}
+  :root[data-pantalla="reto"] #ayudas-cuerpo>.sec{display:none}
+  .ayudas-dot{color:var(--amber)}
+  [tabindex="-1"]:focus{outline:none}
+}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -312,6 +386,19 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
    <div class="crt-bisel">
     <div class="crt-pantalla">
      <div class="crt-contenido">
+  <button type="button" class="plegar" id="b-plegar" aria-expanded="true" aria-label="">▲</button>
+  <div class="tira" id="tira">
+    <button type="button" class="btn" id="b-elegir" data-t="tira.elegir"></button>
+    <span class="tira-n" id="tira-n"></span>
+    <span class="tira-modo">
+      <button type="button" class="btn" id="b-modo" aria-haspopup="true" aria-expanded="false"></button>
+      <div class="tira-menu" id="tira-menu" role="group" data-t-aria="modo.aria" hidden>
+        <button type="button" class="btn" data-m="construir" data-t="modo.construir"></button>
+        <button type="button" class="btn" data-m="predecir" data-t="modo.predecir"></button>
+        <button type="button" class="btn" data-m="mirar" data-t="modo.mirar"></button>
+      </div>
+    </span>
+  </div>
   <h1 data-t="titulo"></h1>
   <p class="sub" data-th="subtitulo"></p>
 
@@ -351,10 +438,13 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
         <p class="hint" data-t="cons.instr"></p>
       </div>
       <div class="ayudas" id="ayudas">
-        <p class="sec" data-t="ayudas.titulo"></p>
-        <details class="glosario" id="glosario"><summary id="gl-titulo"></summary><p id="gl-texto"></p></details>
-        <details class="glosario" id="aclara"><summary data-t="ac.titulo"></summary><p data-th="ac.texto"></p></details>
-        <details class="glosario" id="nota-pseudo"><summary data-t="np.titulo"></summary><p data-th="np.texto"></p></details>
+        <button type="button" class="btn ayudas-btn" id="b-ayudas" aria-expanded="false" aria-controls="ayudas-cuerpo"></button>
+        <div id="ayudas-cuerpo">
+          <p class="sec" data-t="ayudas.titulo"></p>
+          <details class="glosario" id="glosario"><summary id="gl-titulo"></summary><p id="gl-texto"></p></details>
+          <details class="glosario" id="aclara"><summary data-t="ac.titulo"></summary><p data-th="ac.texto"></p></details>
+          <details class="glosario" id="nota-pseudo"><summary data-t="np.titulo"></summary><p data-th="np.texto"></p></details>
+        </div>
       </div>
     </section>
 
@@ -846,6 +936,9 @@ const TEXTOS = { es: {
     'np.titulo': 'Sobre cómo se escribe: el pseudocódigo',
     'np.texto': 'El pseudocódigo no es un lenguaje real: es una forma de escribir ideas que se entiende desde cualquier lenguaje. Aquí usamos <code>←</code> para <b>asignar</b> (guardar un valor en una variable) y <code>=</code> solo para <b>comparar</b> (<code>si x = 5</code>). Es una convención didáctica para no mezclar las dos cosas. Los lenguajes reales lo escriben a su manera: Python, JavaScript y C asignan con <code>=</code> y comparan con <code>==</code>; Pascal asigna con <code>:=</code>. Cada lenguaje tiene su dialecto, pero la idea de fondo es la misma.',
     'ayudas.titulo': 'Ayudas',
+    'ayudas.primero': 'lee esto primero',
+    'tira.elegir': '← Elegir', 'tira.mirar': 'Mirar', 'tira.reto': 'Reto {n} de {m}', 'tira.modo': '{m}: cambiar de modo',
+    'plegar.cierra': 'Plegar el subtítulo', 'plegar.abre': 'Desplegar el subtítulo',
     'ac.titulo': '¿variable o "variable"?',
     'ac.texto': 'Sin comillas, <span class="v">edad</span> es una variable: se usa el valor que guarda. Entre comillas, <span class="s">"edad"</span> es un texto literal: se usa tal cual. Y <span class="n">7</span> es un número. Por eso <code>mostrar edad</code> y <code>mostrar "edad"</code> hacen cosas distintas.',
     'gl.variables.titulo': '¿Qué es una variable?',
@@ -1579,18 +1672,18 @@ function elegirPregunta(tema, respondidas) {
     $('#temas').innerHTML = temas.map(tm => '<div class="tema"><span class="tema-n">' + esc(t('tema.' + tm)) + '</span>' +
       lista.map((x, k) => x.tema === tm ? '<button class="chip' + (E.xp[claveXP(reto ? 'c' : 'p', x.id)] !== undefined ? ' ok' : '') + '" data-k="' + k + '"' + (k === sel ? ' aria-current="true"' : '') + '>' + esc(t(pre + x.id + '.titulo')) + '</button>' : '').join('') + '</div>').join('');
   }
-  $('#temas').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (esReto()) cargarC(+b.dataset.k); else cargar(+b.dataset.k); });
+  $('#temas').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (esReto()) cargarC(+b.dataset.k); else cargar(+b.dataset.k); irAReto(); });
 
   function limpiarPred() { $('#resp').value = ''; $('#fb').className = 'fb'; $('#fb').innerHTML = ''; }
   function cargar(i, modo) {
     E.i = i; E.paso = -1; E.modelo = ''; E.codigoMirar = null; E.fallosP = 0; E.ayudaP = false; pararAuto(); limpiarPred();
     $('#glosario').open = esPrimeroDelTema(E.lista, i);
     if (modo) E.modo = modo;
-    vista(); mascota('idle');
+    vista(); mascota('idle'); arriba();
   }
   function cargarC(i) {
     E.c = i; E.modo = 'construir'; E.codigoMirar = null; C.id = null; pararAuto(); $('#glosario').open = esPrimeroDelTema(E.listaC, i);
-    vista(); mascota('idle');
+    vista(); mascota('idle'); arriba();
   }
 
   // ── modos ───────────────────────────────────────────────
@@ -1613,7 +1706,7 @@ function elegirPregunta(tema, respondidas) {
     $('#mascota-fila').hidden = m === 'mirar';
     $('#montaje-wrap').hidden = m !== 'construir'; $('#codigo').hidden = m === 'construir';
     ['predecir', 'mirar', 'construir'].forEach(x => $('#m-' + x).setAttribute('aria-pressed', String(x === m)));
-    pintarCabecera(); pintarGlosario(); pintarLista(); pintarXP(); pintarAy();
+    pintarCabecera(); pintarGlosario(); pintarLista(); pintarXP(); pintarAy(); pintarTira();
     if (m === 'construir') prepararC();
     else if (m === 'mirar') prepararMirar();
     else { pintarCodigo(0); $('#err-codigo').hidden = true; }
@@ -1893,6 +1986,67 @@ function elegirPregunta(tema, respondidas) {
     if (ev.key === 'ArrowLeft') { pararAuto(); if (E.paso >= 0) { E.paso--; pintarMirar(); } }
   });
 
+  // ── RECORRIDO POR PANTALLAS (solo en pantalla estrecha): Elegir → Reto ──
+  // En pantalla ancha todo sigue a la vista; aqui solo se decide cual de las dos se muestra (html[data-pantalla]).
+  // El historial del navegador sigue el recorrido, asi que «atras» en el movil vuelve a Elegir en vez de salir.
+  const ESTRECHO = matchMedia('(max-width:700px)');
+  let pantalla = 'elegir', ayClave = '';
+  const arriba = () => { if (ESTRECHO.matches) window.scrollTo(0, 0); };
+  function aplicarPantalla(p, foco) {
+    pantalla = p; document.documentElement.dataset.pantalla = p;
+    if (!ESTRECHO.matches) return;
+    window.scrollTo(0, 0);
+    if (foco) { const el = p === 'reto' ? $('#ej-titulo') : $('h1'); el.tabIndex = -1; el.focus({ preventScroll: true }); }
+  }
+  function irAReto() {
+    if (!ESTRECHO.matches || pantalla === 'reto') return;
+    try { history.pushState({ p: 'reto' }, ''); } catch (_) {}
+    aplicarPantalla('reto', true);
+  }
+  function arrancarPantalla(directo) {
+    try { history.replaceState({ p: 'elegir' }, ''); } catch (_) {}
+    aplicarPantalla('elegir', false);
+    if (directo) irAReto();                       // un enlace directo (?ej=, ?modo=) entra directo al reto
+  }
+  $('#b-elegir').onclick = () => { if (history.state && history.state.p === 'reto') history.back(); else aplicarPantalla('elegir', true); };
+  addEventListener('popstate', ev => aplicarPantalla(ev.state && ev.state.p === 'reto' ? 'reto' : 'elegir', true));
+
+  // cambiar de modo sin volver a Elegir
+  const cierraMenu = () => { $('#tira-menu').hidden = true; $('#b-modo').setAttribute('aria-expanded', 'false'); };
+  $('#b-modo').onclick = () => { const abrir = $('#tira-menu').hidden; $('#tira-menu').hidden = !abrir; $('#b-modo').setAttribute('aria-expanded', String(abrir)); };
+  $('#tira-menu').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if (!b) return; cierraMenu(); $('#m-' + b.dataset.m).click(); $('#b-modo').focus(); });
+  document.addEventListener('click', e => { if (!e.target.closest('.tira-modo')) cierraMenu(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#tira-menu').hidden) { cierraMenu(); $('#b-modo').focus(); } });
+
+  // ayudas plegadas: en el primer reto de cada tema avisa de que hay algo que leer
+  function pintarAyBtn() {
+    const reto = esReto(), lista = reto ? E.listaC : E.lista, i = reto ? E.c : E.i;
+    const ab = $('#ayudas').classList.contains('abierto'), primero = esPrimeroDelTema(lista, i);
+    $('#b-ayudas').setAttribute('aria-expanded', String(ab));
+    $('#b-ayudas').innerHTML = '<span>' + esc(t('ayudas.titulo')) + (primero && !ab ? ' <span class="ayudas-dot">● ' + esc(t('ayudas.primero')) + '</span>' : '') +
+      '</span><span aria-hidden="true">' + (ab ? '▴' : '▾') + '</span>';
+  }
+  $('#b-ayudas').onclick = () => { $('#ayudas').classList.toggle('abierto'); pintarAyBtn(); };
+  function pintarTira() {
+    const reto = esReto(), lista = reto ? E.listaC : E.lista, i = reto ? E.c : E.i;
+    $('#tira-n').textContent = t('tira.reto', { n: i + 1, m: lista.length });
+    $('#b-modo').textContent = (E.modo === 'mirar' ? t('tira.mirar') : t('modo.' + E.modo)) + ' ▾'; $('#b-modo').setAttribute('aria-label', t('tira.modo', { m: t('modo.' + E.modo) }));
+    document.querySelectorAll('#tira-menu [data-m]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === E.modo)));
+    const k = E.modo + ':' + i + ':' + (E.codigoMirar !== null);
+    if (k !== ayClave) { ayClave = k; $('#ayudas').classList.remove('abierto'); }
+    pintarAyBtn(); pintarPlegar(compacto);
+  }
+
+  // subtitulo plegable (preferencia compartida con el resto del laboratorio)
+  function pintarPlegar(c) {
+    document.documentElement.dataset.compacto = c ? 'si' : 'no';
+    const b = $('#b-plegar');
+    b.setAttribute('aria-expanded', String(!c)); b.setAttribute('aria-label', t(c ? 'plegar.abre' : 'plegar.cierra')); b.textContent = c ? '▼' : '▲';
+  }
+  let compacto = false; try { compacto = localStorage.getItem('hpk-compacto') === 'si'; } catch (_) {}
+  $('#b-plegar').onclick = () => { compacto = !compacto; try { localStorage.setItem('hpk-compacto', compacto ? 'si' : 'no'); } catch (_) {} pintarPlegar(compacto); };
+
+
   // skin (CRT / lab) y fosforo: solo estetica. El boton de encendido del monitor alterna el skin.
   const guardarPref = (k, v) => { try { localStorage.setItem('hpk-pseudocoder-' + k, v); } catch (_) {} };
   function pintarSkin() {
@@ -1915,6 +2069,7 @@ function elegirPregunta(tema, respondidas) {
   if (m0 === 'construir') E.c = n0 >= 0 && n0 < E.listaC.length ? n0 : 0;
   else E.i = n0 >= 0 && n0 < E.lista.length ? n0 : 0;
   vista();
+  arrancarPantalla(q.has('ej') || q.has('modo'));
   $('#glosario').open = E.modo === 'construir' ? esPrimeroDelTema(E.listaC, E.c) : esPrimeroDelTema(E.lista, E.i);
   window.__E = E; window.__C = C;
 })();
