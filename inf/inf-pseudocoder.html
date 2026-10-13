@@ -118,7 +118,7 @@ input[type=text]{font:500 1.05rem 'DM Mono',monospace;background:var(--bg);color
 .fb:empty{display:none}
 .fb.ok{border-color:var(--green)}.fb.mal{border-color:var(--red)}.fb.dx{border-color:var(--amber)}
 .fb strong{display:block;margin-bottom:.2rem}
-.fb .acciones{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.fb .acciones,.aviso-modelo .acciones{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
 .cajas{display:flex;gap:.6rem;flex-wrap:wrap;min-height:5rem;margin:.5rem 0 1rem}
 .caja{border:2px solid var(--border);border-radius:10px;background:var(--bg);padding:.3rem .8rem .5rem;text-align:center;min-width:4.2rem}
 .caja b{display:block;font:600 .75rem 'DM Mono',monospace;color:var(--muted);letter-spacing:.04em}
@@ -476,7 +476,10 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
       </div>
       <!-- MIRAR -->
       <div id="v-mirar" hidden>
-        <div class="fila" style="margin-bottom:.7rem">
+        <!-- Selector manual de malentendidos DESACTIVADO (2026-10-13): sin la premisa propia (una respuesta tuya
+             que lo explique) la reduccion al absurdo confunde. Se llega a un malentendido SOLO desde Predecir,
+             y el aviso trae el boton para volver a la ejecucion real. Ver PENDIENTES-pseudocoder.md. -->
+        <div class="fila" style="margin-bottom:.7rem" hidden>
           <label for="sel-modelo" style="margin:0" data-t="mirar.como"></label>
           <select id="sel-modelo"></select>
         </div>
@@ -1049,6 +1052,7 @@ const TEXTOS = { es: {
     'mirar.real': 'Como lo ejecuta de verdad la máquina',
     'mirar.modelo': 'Como lo ejecutaría quien cree {creencia}',
     'mirar.aviso': 'Ojo: esto es un malentendido, no lo que hace la máquina.',
+    'mirar.volver': 'Ver cómo lo hace la máquina de verdad',
     'mirar.vars': 'Variables (cajas)',
     'mirar.pantalla': 'Pantalla',
     'mirar.pasa': 'Qué acaba de pasar',
@@ -1712,7 +1716,7 @@ function elegirPregunta(tema, respondidas) {
     else { pintarCodigo(0); $('#err-codigo').hidden = true; }
   }
   $('#m-predecir').onclick = () => { pararAuto(); E.modo = 'predecir'; E.codigoMirar = null; vista(); };
-  $('#m-mirar').onclick = () => { E.modo = 'mirar'; E.paso = -1; E.codigoMirar = null; vista(); };
+  $('#m-mirar').onclick = () => { E.modo = 'mirar'; E.paso = -1; E.modelo = ''; E.codigoMirar = null; vista(); };
   $('#m-construir').onclick = () => { pararAuto(); E.modo = 'construir'; E.codigoMirar = null; vista(); };
 
   // ── PREDECIR ────────────────────────────────────────────
@@ -1949,7 +1953,11 @@ function elegirPregunta(tema, respondidas) {
     E.traza = MOTOR.correr(codigoActual(), m ? m.flags : {});
     const av = $('#aviso-modelo');
     av.hidden = !m;
-    if (m) av.innerHTML = '<strong>' + esc(t('mirar.aviso')) + '</strong> ' + esc(t('mod.' + m.id + '.diag'));
+    if (m) {
+      av.innerHTML = '<strong>' + esc(t('mirar.aviso')) + '</strong> ' + esc(t('mod.' + m.id + '.diag')) +
+        '<div class="acciones"><button type="button" class="btn" id="b-real">' + esc(t('mirar.volver')) + '</button></div>';
+      $('#b-real').onclick = () => { pararAuto(); E.modelo = ''; E.paso = -1; $('#sel-modelo').value = ''; recalcular(); };
+    }
     pintarMirar();
   }
   const textoNota = n => t('nota.' + n.id, n.p);
