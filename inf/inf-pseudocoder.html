@@ -942,6 +942,32 @@ const TEXTOS = { es: {
     'ayudas.primero': 'lee esto primero',
     'tira.elegir': '← Elegir', 'tira.mirar': 'Mirar', 'tira.reto': 'Reto {n} de {m}', 'tira.modo': '{m}: cambiar de modo',
     'plegar.cierra': 'Plegar el subtítulo', 'plegar.abre': 'Desplegar el subtítulo',
+    /* ── KORU (capa silenciosa: aun sin interfaz) ── */
+    'koru.rol': 'Actúa como tutor o tutora de fundamentos de programación para alumnado de {nivel}. Habla con sencillez, usa ejemplos cercanos y no des la solución directamente: guía con preguntas.',
+    'koru.contexto': 'Contexto: la persona usa PseudoCoder, una herramienta que enseña programación con un pseudocódigo en español, sin ningún lenguaje real. La flecha ← guarda un valor en una «caja» (variable) y «mostrar» lo escribe en la pantalla. El motor de la herramienta ejecuta el programa de verdad y también con malentendidos típicos, y dice cuál reproduce lo que respondió la persona.',
+    'koru.reto': 'Reto: «{titulo}». Modo: {modo}.',
+    'koru.modo.predecir': 'Predecir (adivinar qué escribe el programa)',
+    'koru.modo.construir': 'Construir (montar el programa con piezas)',
+    'koru.modo.mirar': 'Mirar (ver la ejecución paso a paso)',
+    'koru.l.nivel': 'Nivel', 'koru.l.modo': 'Modo', 'koru.l.codigo': 'Programa', 'koru.l.montaje': 'Programa montado por la persona',
+    'koru.l.respuesta': 'Respuesta de la persona', 'koru.l.esperado': 'Lo que escribe la máquina de verdad',
+    'koru.l.obtenido': 'Lo que escribe el programa montado', 'koru.l.correcta': '¿Es correcto?', 'koru.l.fallos': 'Intentos fallidos',
+    'koru.l.ayudas': 'Ayudas usadas', 'koru.l.xp': 'XP del reto',
+    'koru.nada': '(nada)',
+    'koru.diag': 'Lo que ha detectado el motor:',
+    'koru.idea': 'La respuesta coincide con la idea de {corto}.',
+    'koru.mirando': 'La persona está viendo la ejecución con la idea de {corto}, que no es lo que hace la máquina.',
+    'koru.estado.vacio': 'No ha colocado ninguna pieza.',
+    'koru.estado.faltan': 'Faltan piezas para llegar al programa pedido.',
+    'koru.estado.error': 'El programa montado da un error al ejecutarse.',
+    'koru.estado.colgado': 'El programa montado no termina nunca.',
+    'koru.estado.distinta': 'El programa montado escribe algo distinto de lo pedido.',
+    'koru.estado.coincide': 'El programa montado acierta con los datos del reto, pero falla con otros datos.',
+    'koru.estado.estado': 'El programa montado escribe lo correcto, pero deja alguna caja con un valor distinto.',
+    'koru.estado.casi': 'El programa montado se comporta bien, pero le sobra o le falta alguna línea.',
+    'koru.pide.explicar': 'Pide: explica por qué la persona puede haber llegado a esa respuesta y ayúdala a descubrirlo por sí misma, sin decirle la respuesta.',
+    'koru.pide.siguiente': 'Pide: propón dos o tres ejercicios cortos, con otro contexto, para practicar esta misma idea, de menos a más difíciles y sin resolverlos.',
+    'koru.pide.libre': 'Pregunta de la persona: {pregunta}',
     'ac.titulo': '¿variable o "variable"?',
     'ac.texto': 'Sin comillas, <span class="v">edad</span> es una variable: se usa el valor que guarda. Entre comillas, <span class="s">"edad"</span> es un texto literal: se usa tal cual. Y <span class="n">7</span> es un número. Por eso <code>mostrar edad</code> y <code>mostrar "edad"</code> hacen cosas distintas.',
     'gl.variables.titulo': '¿Qué es una variable?',
@@ -1468,6 +1494,80 @@ function elegirPregunta(tema, respondidas) {
 }
 </script>
 
+<!-- ═══════════════════════ KORU ═══════════════════════
+     Puente hacia una IA (o hacia quien enseña), igual que el KORU de ARKINESIS: la herramienta expone un
+     ESTADO estructurado con la misma forma (module, simulation, inputs, outputs, activeInsights,
+     activeConnections) y de el salen prompts con contexto que alguien COPIA y lleva donde quiera.
+     Nada se envia a ningun sitio.
+
+     ESTA CAPA ES SILENCIOSA: no hay boton ni panel. Cuando llegue la interfaz solo tiene que llamar a
+         window.exportState()                      → el estado del reto que hay abierto
+         KORU.prompt('explicar'|'siguiente'|'libre', estado, pregunta)   → texto listo para copiar
+     Es codigo puro (sin DOM): la app le pasa una «instantanea» del momento y el la convierte.
+     Las frases viven en TEXTOS (claves koru.*), como todo lo demas.
+     Nota: el diagnostico (causas de un malentendido) es lo que hace valioso este estado: es el contexto que
+     una IA casi nunca tiene. No es una funcion para ninos: la interfaz tendra que mantenerla escondida. -->
+<script id="koru">
+const KORU = (function () {
+  'use strict';
+  const NIVELES = { primaria: 'primaria', eso: 'ESO', bach: 'bachillerato' };
+  const campo = (label, value, unit) => ({ label, value, unit: unit || '' });
+  // la salida de un programa como texto («3 2 1»); null si el programa no se puede ejecutar
+  function salidaDe(codigo) {
+    if (!codigo) return null;
+    try { const r = MOTOR.correr(codigo); return r.error ? null : r.salida.map(String).join(' '); } catch (_) { return null; }
+  }
+  const unaLinea = a => (Array.isArray(a) ? a : [a]).map(String).join(' ');
+
+  // instantanea → estado con la forma de ARKINESIS
+  function estado(s) {
+    if (!s) return null;
+    const u = s.ultimo || null, pred = s.tipo === 'predecir';
+    const inputs = { nivel: campo(t('koru.l.nivel'), s.nivel), modo: campo(t('koru.l.modo'), s.modo) };
+    if (s.codigo) inputs.codigo = campo(t('koru.l.codigo'), s.codigo);
+    if (s.montaje && s.montaje.length) inputs.montaje = campo(t('koru.l.montaje'), s.montaje.join('\n'));
+    if (u && u.respuesta !== undefined) inputs.respuesta = campo(t('koru.l.respuesta'), u.respuesta.trim() || t('koru.nada'));
+    const outputs = {};
+    const esperado = salidaDe(pred ? s.codigo : s.solucion);
+    if (esperado !== null) outputs.esperado = campo(t('koru.l.esperado'), esperado || t('koru.nada'));
+    if (u && u.mio !== undefined) outputs.obtenido = campo(t('koru.l.obtenido'), unaLinea(u.mio) || t('koru.nada'));
+    if (u) outputs.correcta = campo(t('koru.l.correcta'), !!(u.correcta || u.estado === 'ok'));
+    outputs.fallos = campo(t('koru.l.fallos'), s.fallos || 0);
+    outputs.ayudas = campo(t('koru.l.ayudas'), s.ayudas || 0);
+    if (s.xp !== undefined) outputs.xp = campo(t('koru.l.xp'), s.xp, 'XP');
+    const activeInsights = [];
+    if (u && u.causas) u.causas.forEach(id => activeInsights.push(t('koru.idea', { corto: t('mod.' + id + '.corto') })));
+    if (u && u.estado && u.estado !== 'ok') activeInsights.push(t('koru.estado.' + u.estado));
+    if (s.modelo) activeInsights.push(t('koru.mirando', { corto: t('mod.' + s.modelo + '.corto') }));
+    return { module: 'informatica', simulation: s.titulo, inputs, outputs, activeInsights, activeConnections: [] };
+  }
+
+  // estado → texto para pegar en una IA. situaciones: explicar | siguiente | libre (esta pide `pregunta`)
+  const SITUACIONES = ['explicar', 'siguiente', 'libre'];
+  function prompt(situacion, st, pregunta) {
+    if (!SITUACIONES.includes(situacion)) throw new Error('KORU.prompt: situación desconocida «' + situacion + '»');
+    if (!st) throw new Error('KORU.prompt: no hay estado (¿hay un reto abierto?)');
+    if (situacion === 'libre' && !String(pregunta || '').trim()) throw new Error('KORU.prompt: falta la pregunta');
+    const v = k => (st.inputs[k] ? st.inputs[k].value : null), o = k => (st.outputs[k] ? st.outputs[k].value : null);
+    const nivel = NIVELES[v('nivel')] || v('nivel');
+    const linea = (k, valor) => t('koru.l.' + k) + ': ' + valor;
+    const bloque = (k, codigo) => t('koru.l.' + k) + ':\n```\n' + codigo + '\n```';
+    const partes = [t('koru.rol', { nivel }), t('koru.contexto'), '',
+      t('koru.reto', { titulo: st.simulation, modo: t('koru.modo.' + v('modo')) })];
+    if (v('codigo')) partes.push(bloque('codigo', v('codigo')));
+    if (v('montaje')) partes.push(bloque('montaje', v('montaje')));
+    if (v('respuesta') !== null) partes.push(linea('respuesta', v('respuesta')));
+    if (o('obtenido') !== null) partes.push(linea('obtenido', o('obtenido')));
+    if (o('esperado') !== null) partes.push(linea('esperado', o('esperado')));
+    partes.push(linea('fallos', o('fallos')) + ' · ' + linea('ayudas', o('ayudas')));
+    if (st.activeInsights.length) partes.push('', t('koru.diag'), ...st.activeInsights.map(x => '- ' + x));
+    partes.push('', t('koru.pide.' + situacion, { pregunta: String(pregunta || '').trim() }));
+    return partes.join('\n');
+  }
+  return { estado, prompt, SITUACIONES };
+})();
+</script>
+
 <!-- ═══════════════════════ APP ═══════════════════════ -->
 <script id="app">
 (function () {
@@ -1476,7 +1576,7 @@ function elegirPregunta(tema, respondidas) {
   const CLAVE_XP = 'hpk-pseudocoder-xp', CLAVE_NIVEL = 'hpk-pseudocoder-nivel';
   // E: estado de la interfaz.  C: el reto de construir que hay abierto.
   const E = { modo: 'construir', lista: [], listaC: [], i: 0, c: 0, paso: -1, modelo: '', traza: null,
-              xp: {}, fallosP: 0, ayudaP: false, timer: null, dormir: null, codigoMirar: null, lectura: false };
+              xp: {}, fallosP: 0, ayudaP: false, timer: null, dormir: null, codigoMirar: null, lectura: false, ultimo: null };
   const C = { id: null, bloques: new Map(), banco: [], montaje: [], malLinea: -1, ayudas: 0, fallos: 0 };
   try { Object.assign(E.xp, JSON.parse(localStorage.getItem(CLAVE_XP) || '{}')); } catch (_) {}
   const guardar = () => { try { localStorage.setItem(CLAVE_XP, JSON.stringify(E.xp)); } catch (_) {} };
@@ -1664,7 +1764,7 @@ function elegirPregunta(tema, respondidas) {
     E.lectura = !!REGISTROS[r].lectura;
     const k = idEj ? E.lista.findIndex(x => x.id === idEj) : -1, kc = idC ? E.listaC.findIndex(x => x.id === idC) : -1;
     E.i = k >= 0 ? k : 0; E.c = kc >= 0 ? kc : 0;
-    E.paso = -1; E.modelo = ''; E.codigoMirar = null; C.id = null;
+    E.paso = -1; E.modelo = ''; E.codigoMirar = null; E.ultimo = null; C.id = null;
     pintarTextos(); limpiarPred(); vista(); mascota('idle');
   }
   $('#sel-nivel').onchange = ev => { pararAuto(); fijarNivel(ev.target.value, ej() && ej().id, ret() && ret().id); };
@@ -1680,13 +1780,13 @@ function elegirPregunta(tema, respondidas) {
 
   function limpiarPred() { $('#resp').value = ''; $('#fb').className = 'fb'; $('#fb').innerHTML = ''; }
   function cargar(i, modo) {
-    E.i = i; E.paso = -1; E.modelo = ''; E.codigoMirar = null; E.fallosP = 0; E.ayudaP = false; pararAuto(); limpiarPred();
+    E.i = i; E.paso = -1; E.modelo = ''; E.codigoMirar = null; E.ultimo = null; E.fallosP = 0; E.ayudaP = false; pararAuto(); limpiarPred();
     $('#glosario').open = esPrimeroDelTema(E.lista, i);
     if (modo) E.modo = modo;
     vista(); mascota('idle'); arriba();
   }
   function cargarC(i) {
-    E.c = i; E.modo = 'construir'; E.codigoMirar = null; C.id = null; pararAuto(); $('#glosario').open = esPrimeroDelTema(E.listaC, i);
+    E.c = i; E.modo = 'construir'; E.codigoMirar = null; E.ultimo = null; C.id = null; pararAuto(); $('#glosario').open = esPrimeroDelTema(E.listaC, i);
     vista(); mascota('idle'); arriba();
   }
 
@@ -1724,6 +1824,7 @@ function elegirPregunta(tema, respondidas) {
   $('#form-pred').addEventListener('submit', ev => {
     ev.preventDefault();
     const fb = $('#fb'), r = MOTOR.diagnosticar(ej().codigo, $('#resp').value);
+    E.ultimo = { id: ej().id, respuesta: $('#resp').value, correcta: !!r.correcta, causas: (r.causas || []).map(c => c.id) };
     if (r.correcta) {
       const gan = otorgar('p', ej().id, XP_PRED, E.fallosP, E.ayudaP ? 1 : 0); pintarLista(); mascota('feliz');
       const hay = E.i < E.lista.length - 1;
@@ -1901,6 +2002,7 @@ function elegirPregunta(tema, respondidas) {
   $('#c-comprobar').onclick = () => {
     const r = ret(), lineas = C.montaje.map(u => C.bloques.get(u).texto), fb = $('#fb-c');
     const res = MOTOR.comprobarConstruccion(r.solucion, lineas, r.entradas);
+    E.ultimo = { id: r.id, estado: res.estado, mio: res.mio, correcta: res.estado === 'ok' };
     const botones = res.pasos > 0 && res.estado !== 'ok' ? '<button class="btn" id="c-ver">' + esc(t('cons.ver')) + '</button>' : '';
     const ver = () => { const b = $('#c-ver'); if (b) b.onclick = () => { E.codigoMirar = lineas.join('\n'); E.modo = 'mirar'; E.paso = -1; E.modelo = ''; vista(); }; };
     C.malLinea = res.estado === 'error' && res.error.linea ? res.error.linea - 1 : -1;
@@ -2079,6 +2181,20 @@ function elegirPregunta(tema, respondidas) {
   vista();
   arrancarPantalla(q.has('ej') || q.has('modo'));
   $('#glosario').open = E.modo === 'construir' ? esPrimeroDelTema(E.listaC, E.c) : esPrimeroDelTema(E.lista, E.i);
+  // KORU (capa silenciosa): la instantanea del reto abierto; KORU.estado() la convierte en estado de la herramienta.
+  function instantanea() {
+    const reto = esReto(), r = reto ? ret() : ej();
+    if (!r) return null;
+    const u = E.ultimo && E.ultimo.id === r.id ? E.ultimo : null;
+    return { nivel: REG, modo: E.modo, tipo: reto ? 'construir' : 'predecir', id: r.id, tema: r.tema,
+      titulo: reto ? tcon('titulo') : tej('titulo'),
+      codigo: reto ? E.codigoMirar : codigoActual(),
+      solucion: reto ? r.solucion.join('\n') : null,
+      montaje: reto && E.modo === 'construir' && C.id === r.id ? C.montaje.map(x => C.bloques.get(x).texto) : null,
+      fallos: reto ? C.fallos : E.fallosP, ayudas: reto ? C.ayudas : (E.ayudaP ? 1 : 0),
+      xp: E.xp[claveXP(reto ? 'c' : 'p', r.id)] || 0, modelo: E.modelo, ultimo: u };
+  }
+  window.exportState = () => KORU.estado(instantanea());
   window.__E = E; window.__C = C;
 })();
 </script>
