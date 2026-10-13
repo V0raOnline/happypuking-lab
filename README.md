@@ -68,6 +68,7 @@ happypuking-lab/
 │   └── qui-pasteleria.html             # Pastelería de Mendeleyev — juego de la tabla periódica
 ├── assets/
 │   ├── crt/                            # CRT, el monitor de tubo de PseudoCoder, y su tarjeta (PNG)
+│   ├── qui/                            # Tarjetas para compartir de la Tabla periódica, la Formulación y el Lab (PNG)
 │   └── macarons/                       # Chef Minou, macarons y sabores (PNG) de Macarons
 ├── nd/                                 # Neurodivergencia
 │   ├── nd-carga-sensorial.html         # Modelo de Carga Sensorial (ES)
