@@ -58,7 +58,7 @@ r.dataset.skin=(s==='lab')?'lab':'crt';r.dataset.fosforo=(f==='ambar'||f==='cian
   --text:#f8f6ff; --muted:#8880a0; --border:rgba(255,255,255,.07);
   --green:#39ff6a; --blue:#3B82F6; --amber:#F59E0B; --red:#EF4444; --purple:#8B5CF6;
   --focus:#22D3EE;
-  --kw:#c4a7ff; --num:#ffc66b; --str:#7fe0a0; --com:#8880a0; --var:#7dd3fc;
+  --kw:#c4a7ff; --num:#ffc66b; --str:#7fe0a0; --com:#8880a0; --var:#7dd3fc; --asig:#ff5cb0;
 }
 :root[data-theme="light"] {
   --bg:#e7e0d6; --surface:#f4ede3; --surface2:#e8ddd0;
@@ -66,7 +66,7 @@ r.dataset.skin=(s==='lab')?'lab':'crt';r.dataset.fosforo=(f==='ambar'||f==='cian
   --text:#3d3345; --muted:#695e6c; --border:rgba(58,33,52,.14);
   --green:#117143; --blue:#275fb7; --amber:#90540e; --red:#ad3b41; --purple:#7656b8;
   --focus:#0d6b84;
-  --kw:#6b3fb0; --num:#8a4d00; --str:#136b3b; --com:#695e6c; --var:#0a5a8f;
+  --kw:#6b3fb0; --num:#8a4d00; --str:#136b3b; --com:#695e6c; --var:#0a5a8f; --asig:#9e1b5f;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,sans-serif;line-height:1.5}
@@ -74,9 +74,11 @@ a{color:var(--focus)}
 :focus-visible{outline:2px solid var(--focus);outline-offset:3px}
 .wrap{max-width:1100px;margin:0 auto;padding:1rem 16px 5rem}
 .topbar{font:.72rem 'DM Mono',monospace;letter-spacing:.06em;color:var(--muted);display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;padding:.3rem 0 1rem}
-.topbar a{color:var(--muted);text-decoration:none}.topbar a:hover{color:var(--text)}
+.topbar a{color:var(--muted);text-decoration:none;display:inline-block;padding:.35rem 0}.topbar a:hover{color:var(--text)}
+.salto{position:absolute;left:.5rem;top:-4rem;z-index:80;background:var(--surface);color:var(--text);border:2px solid var(--focus);border-radius:6px;padding:.5rem .8rem;font:600 .85rem 'Nunito',sans-serif;text-decoration:none}
+.salto:focus{top:.5rem}
 .pie{font:.67rem 'DM Mono',monospace;letter-spacing:.04em;color:var(--muted);text-align:center;margin:1.6rem 0 0}
-.pie a{color:var(--magenta);text-decoration:none}.pie a:hover{opacity:.75}
+.pie a{color:var(--text);text-decoration:underline;text-underline-offset:.2em;display:inline-block;padding:.45rem .3rem}.pie a:hover{text-decoration-thickness:2px}
 h1{font:700 clamp(1.7rem,4.5vw,2.5rem)/1.1 'Space Grotesk',sans-serif;margin:.2rem 0 .3rem}
 .sub{color:var(--muted);margin:0 0 1.2rem}
 .barra{display:flex;gap:.5rem 1.2rem;margin-bottom:.9rem;flex-wrap:wrap;align-items:center}
@@ -102,7 +104,7 @@ h1{font:700 clamp(1.7rem,4.5vw,2.5rem)/1.1 'Space Grotesk',sans-serif;margin:.2r
 .ln{display:flex;white-space:pre;padding-right:1rem}
 .ln i{font-style:normal;color:var(--muted);width:2.6rem;text-align:right;padding-right:.9rem;flex:none;user-select:none}
 .ln.activa{background:var(--magenta-soft);box-shadow:inset 3px 0 0 var(--magenta)}
-.k{color:var(--kw);font-weight:600}.n{color:var(--num)}.s{color:var(--str)}.c{color:var(--com);font-style:italic}.as{color:var(--magenta);font-weight:700}
+.k{color:var(--kw);font-weight:600}.n{color:var(--num)}.s{color:var(--str)}.c{color:var(--com);font-style:italic}.as{color:var(--asig,var(--magenta));font-weight:700}
 .mascota{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
 .cara{font:600 1.1rem 'DM Mono',monospace;background:var(--surface2);border:2px solid var(--border);border-radius:18px;padding:.5rem .8rem;min-width:7rem;text-align:center;transition:border-color .2s,background .2s}
 .cara[data-estado="feliz"]{border-color:var(--green)}
@@ -152,6 +154,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 .montaje.al-final{box-shadow:inset 0 -3px 0 var(--magenta)}
 .bloque.fantasma{position:fixed;z-index:100;pointer-events:none;opacity:.95;box-shadow:0 8px 22px var(--magenta-glow);width:auto;cursor:grabbing;margin:0}
 .lectura{display:flex;gap:.5rem;align-items:center;font-weight:600;font-size:.85rem;margin:.2rem 0 .8rem}
+.lectura input{width:1.6rem;height:1.6rem;flex:none}
 /* CRT: sprite sin caja. En oscuro el contorno y el cable negros se pierden: halo claro fino. */
 .cara{background:none;border:0;padding:0;min-width:0;line-height:0}
 .cara img{display:block;height:120px;width:auto}
@@ -176,7 +179,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 .crt-power .led{width:.6rem;height:.6rem;border-radius:50%;background:#4a4a4a}
 .crt-power[aria-pressed="true"] .led{background:#6dff7a;box-shadow:0 0 6px #6dff7a}
 .crt-fosforo{display:flex;gap:.5rem;align-items:center}
-.knob{width:1.5rem;height:1.5rem;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;background:var(--c)}
+.knob{width:1.75rem;height:1.75rem;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;background:var(--c)}
 .knob[data-f="verde"]{--c:#5dff95}.knob[data-f="ambar"]{--c:#ffb833}.knob[data-f="cian"]{--c:#5ceaff}
 .knob[aria-pressed="true"]{outline:2px solid var(--focus);outline-offset:2px}
 :root[data-skin="lab"] .crt-fosforo{display:none}
@@ -201,7 +204,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   --text:var(--f);--muted:color-mix(in srgb,var(--f) 82%,var(--fbg));--border:color-mix(in srgb,var(--f) 32%,transparent);
   --magenta:var(--f);--magenta-soft:color-mix(in srgb,var(--f) 15%,transparent);--magenta-glow:var(--fglow);
   --red:#ff8579;--amber:#ffc65c;--green:#9dffb8;--purple:#c5a8ff;--focus:#ffffff;
-  --var:color-mix(in srgb,var(--f) 18%,#fff);--kw:color-mix(in srgb,var(--f) 60%,#fff);--num:color-mix(in srgb,var(--f) 40%,#ffd9a0);--str:color-mix(in srgb,var(--f) 55%,#d6ffe6);--com:var(--muted);
+  --var:color-mix(in srgb,var(--f) 18%,#fff);--kw:color-mix(in srgb,var(--f) 60%,#fff);--num:color-mix(in srgb,var(--f) 40%,#ffd9a0);--str:color-mix(in srgb,var(--f) 55%,#d6ffe6);--com:var(--muted);--asig:var(--f);
   position:relative;overflow:hidden;border-radius:38px/32px;color:var(--text);
   background:radial-gradient(ellipse at 50% 38%,var(--fbg2) 0%,var(--fbg) 85%);
   box-shadow:inset 0 0 0 4px #000,inset 0 0 90px rgba(0,0,0,.8),0 0 0 6px #6f6657,0 0 0 8px #3b362d;
@@ -214,7 +217,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 
 /* tipografia de terminal */
 :root[data-skin="crt"] h1{font:400 clamp(2rem,6vw,3.2rem)/1.05 'VT323',monospace;text-transform:uppercase;letter-spacing:.04em;text-shadow:0 0 10px var(--fglow)}
-:root[data-skin="crt"] h1::after{content:"█";margin-left:.3rem;opacity:.9}
+:root[data-skin="crt"] h1::after{content:"█";content:"█" / "";margin-left:.3rem;opacity:.9}
 @media(prefers-reduced-motion:no-preference){:root[data-skin="crt"] h1::after{animation:cursor 1.1s steps(1) infinite}}
 @keyframes cursor{50%{opacity:0}}
 :root[data-skin="crt"] .panel h2{font:400 1.6rem/1.1 'VT323',monospace;text-transform:uppercase;letter-spacing:.03em}
@@ -267,7 +270,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 /* una caja (variable) se pinta como una cajita; un valor (numero, texto) va suelto */
 .v{color:var(--var);background:color-mix(in srgb,var(--var) 13%,transparent);border:1px solid color-mix(in srgb,var(--var) 50%,transparent);border-radius:4px;padding:0 .28em;margin:0 .04em}
 .glosario{margin:.2rem 0 .6rem;border:1px dashed var(--border);border-radius:8px;padding:.35rem .75rem}
-.glosario summary{cursor:pointer;font-weight:700}
+.glosario summary{cursor:pointer;font-weight:700;padding:.25rem 0}
 .glosario p{margin:.45rem 0 .2rem}
 .glosario code,.leyenda .v,.leyenda .n,.leyenda .s,.glosario .v{font-family:'DM Mono',monospace;font-size:.9em}
 .leyenda{font-size:.85rem;color:var(--muted);margin:.2rem 0 .7rem}
@@ -314,7 +317,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   :root[data-compacto="si"][data-pantalla="elegir"] .sub{display:none}
   :root[data-compacto="si"] .plegar{transform:none}
   /* ── ELEGIR: la lista de retos, una fila por reto ── */
-  :root[data-pantalla="elegir"] .grid{display:none}
+  :root[data-pantalla="elegir"] .grid,:root[data-pantalla="elegir"] .salto{display:none}
   :root[data-pantalla="elegir"] .modo{flex:1 1 auto;min-height:var(--tap)}
   :root[data-pantalla="elegir"] .temas{gap:.2rem;margin-bottom:.4rem}
   :root[data-pantalla="elegir"] .tema{flex-direction:column;align-items:stretch;gap:.35rem;margin-bottom:.5rem}
@@ -322,9 +325,10 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   :root[data-pantalla="elegir"] .chip{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:var(--tap);text-align:left;padding-left:.8rem;padding-right:.8rem}
   :root[data-pantalla="elegir"] .chip.ok::after{margin-left:auto;padding-left:.6rem}
   /* ── RETO: lo de uso inmediato, junto ── */
-  :root[data-pantalla="reto"] .topbar,:root[data-pantalla="reto"] h1,:root[data-pantalla="reto"] .sub,:root[data-pantalla="reto"] .modos,
+  :root[data-pantalla="reto"] .topbar,:root[data-pantalla="reto"] .sub,:root[data-pantalla="reto"] .modos,
   :root[data-pantalla="reto"] .temas,:root[data-pantalla="reto"] .hud-nivel,:root[data-pantalla="reto"] .plegar,
   :root[data-pantalla="reto"] #xp-rango,:root[data-pantalla="reto"] #ay-txt,:root[data-pantalla="reto"] .hud-et{display:none}
+  :root[data-pantalla="reto"] h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   :root[data-pantalla="reto"] .wrap{padding-top:.6rem}
   :root[data-pantalla="reto"] .tira{display:flex;align-items:center;gap:.5rem;margin:0 0 .5rem}
   :root[data-pantalla] .tira .btn{min-height:2.5rem;padding:.2rem .55rem;font-size:1rem;white-space:nowrap}
@@ -371,6 +375,13 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   :root[data-pantalla="reto"] .ayudas.abierto #ayudas-cuerpo{display:block}
   :root[data-pantalla="reto"] #ayudas-cuerpo>.sec{display:none}
   .ayudas-dot{color:var(--amber)}
+  /* movil muy estrecho (320 px): la tira del reto tiene que caber sin salirse */
+  @media(max-width:360px){
+    :root[data-pantalla] .tira{gap:.25rem}
+    :root[data-pantalla] .tira .btn{padding:.2rem .35rem;font-size:.88rem;letter-spacing:.02em}
+    .tira-n{font-size:.66rem;letter-spacing:0;min-width:0;overflow:hidden}
+    :root[data-skin="crt"] .tira-n{font-size:.88rem;letter-spacing:0}
+  }
   [tabindex="-1"]:focus{outline:none}
 }
 [hidden]{display:none!important}
@@ -378,10 +389,12 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 </head>
 <body>
 <div class="sr" id="anuncio" aria-live="polite"></div>
+<a class="salto" href="#ej-titulo" data-t="salto.reto"></a>
 <div class="wrap">
-  <div class="topbar">
-    <a href="../index.html">← inicio</a><span>·</span><span>hAppYpUkIng · Lab</span>
-  </div>
+  <nav class="topbar" aria-label="hAppYpUkIng Lab">
+    <a href="../index.html">← inicio</a><span aria-hidden="true">·</span><span>hAppYpUkIng · Lab</span>
+  </nav>
+  <main id="contenido">
   <div class="crt">
    <div class="crt-bisel">
     <div class="crt-pantalla">
@@ -428,9 +441,9 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 
   <div class="grid">
     <section class="panel" aria-labelledby="ej-titulo">
-      <h2 id="ej-titulo"></h2>
+      <h2 id="ej-titulo" tabindex="-1"></h2>
       <p class="consigna" id="ej-consigna"></p>
-      <div class="codigo" id="codigo" role="group" data-t-aria="programa.aria"></div>
+      <div class="codigo" id="codigo" role="group" tabindex="0" data-t-aria="programa.aria"></div>
       <p class="hint" id="err-codigo" role="alert" hidden></p>
       <div id="montaje-wrap" hidden>
         <p class="sec" data-t="cons.montaje"></p>
@@ -485,9 +498,9 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
         </div>
         <div class="aviso-modelo" id="aviso-modelo" hidden></div>
         <p class="sec" data-t="mirar.vars"></p>
-        <div class="cajas" id="cajas" aria-live="polite"></div>
+        <div class="cajas" id="cajas"></div>
         <p class="sec" data-t="mirar.pantalla"></p>
-        <div class="pantalla" id="pantalla" aria-live="polite"></div>
+        <div class="pantalla" id="pantalla"></div>
         <p class="sec" data-t="mirar.pasa"></p>
         <p class="nota" id="nota" aria-live="polite"></p>
         <div class="fila">
@@ -526,7 +539,8 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
     </div>
    </div>
   </div>
-  <p class="pie">CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a> · <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a> · <a href="https://github.com/V0raOnline/happypuking-lab/blob/main/assets/crt/CREDITOS.md">Créditos de CRT</a></p>
+  </main>
+  <footer class="pie">CC BY-NC-SA 4.0 · <a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a> · <a href="https://github.com/V0raOnline/happypuking-lab">GitHub</a> · <a href="https://github.com/V0raOnline/happypuking-lab/blob/main/assets/crt/CREDITOS.md">Créditos de CRT</a></footer>
 </div>
 
 <!-- ═══════════════════════ MOTOR ═══════════════════════
@@ -770,6 +784,15 @@ const MOTOR = (function () {
             foto(s.linea, { id: 'intercambia', p: { a: s.nombre, b: e.n, va: fmt(leer(s.nombre, s.linea)), vb: fmt(leer(e.n, s.linea)) } }, s.nombre);
             return;
           }
+          if (m.acumula && ctx.env.has(s.nombre) && !usaVars(e).has(s.nombre)) {
+            const antes = ctx.env.get(s.nombre), nuevo = ev(e, s.linea);
+            if (typeof antes === 'number' && typeof nuevo === 'number') {
+              const val = antes + nuevo;
+              ctx.env.set(s.nombre, val);
+              foto(s.linea, { id: 'acumula', p: { n: s.nombre, e: txt(e), antes: fmt(antes), v: fmt(val) } }, s.nombre);
+              return;
+            }
+          }
           if (m.formula) {
             const us = usaVars(e);
             if (us.size && !us.has(s.nombre)) {
@@ -830,7 +853,8 @@ const MOTOR = (function () {
     { id: 'alFinal',     flags: { alFinal: true } },
     { id: 'limite',      flags: { limite: true } },
     { id: 'excluye',     flags: { excluye: true } },
-    { id: 'sinoSiempre', flags: { sinoSiempre: true } }
+    { id: 'sinoSiempre', flags: { sinoSiempre: true } },
+    { id: 'acumula',     flags: { acumula: true } }
   ];
 
   // ── Diagnostico ─────────────────────────────────────────
@@ -940,18 +964,19 @@ const TEXTOS = { es: {
     'np.texto': 'El pseudocódigo no es un lenguaje real: es una forma de escribir ideas que se entiende desde cualquier lenguaje. Aquí usamos <code>←</code> para <b>asignar</b> (guardar un valor en una variable) y <code>=</code> solo para <b>comparar</b> (<code>si x = 5</code>). Es una convención didáctica para no mezclar las dos cosas. Los lenguajes reales lo escriben a su manera: Python, JavaScript y C asignan con <code>=</code> y comparan con <code>==</code>; Pascal asigna con <code>:=</code>. Cada lenguaje tiene su dialecto, pero la idea de fondo es la misma.',
     'ayudas.titulo': 'Ayudas',
     'ayudas.primero': 'lee esto primero',
+    'salto.reto': 'Saltar al reto',
     'tira.elegir': '← Elegir', 'tira.mirar': 'Mirar', 'tira.reto': 'Reto {n} de {m}', 'tira.modo': '{m}: cambiar de modo',
     'plegar.cierra': 'Plegar el subtítulo', 'plegar.abre': 'Desplegar el subtítulo',
     /* ── KORU (capa silenciosa: aun sin interfaz) ── */
     'koru.rol': 'Actúa como tutor o tutora de fundamentos de programación para alumnado de {nivel}. Habla con sencillez, usa ejemplos cercanos y no des la solución directamente: guía con preguntas.',
-    'koru.contexto': 'Contexto: la persona usa PseudoCoder, una herramienta que enseña programación con un pseudocódigo en español, sin ningún lenguaje real. La flecha ← guarda un valor en una «caja» (variable) y «mostrar» lo escribe en la pantalla. El motor de la herramienta ejecuta el programa de verdad y también con malentendidos típicos, y dice cuál reproduce lo que respondió la persona.',
+    'koru.contexto': 'Contexto: la persona usa PseudoCoder, una herramienta que enseña programación con un pseudocódigo en español, sin ningún lenguaje real. La flecha ← guarda un valor en una «caja» (variable) y «mostrar» lo muestra en la pantalla. El motor de la herramienta ejecuta el programa de verdad y también con malentendidos típicos, y dice cuál reproduce lo que respondió la persona.',
     'koru.reto': 'Reto: «{titulo}». Modo: {modo}.',
-    'koru.modo.predecir': 'Predecir (adivinar qué escribe el programa)',
+    'koru.modo.predecir': 'Predecir (adivinar qué muestra el programa)',
     'koru.modo.construir': 'Construir (montar el programa con piezas)',
     'koru.modo.mirar': 'Mirar (ver la ejecución paso a paso)',
     'koru.l.nivel': 'Nivel', 'koru.l.modo': 'Modo', 'koru.l.codigo': 'Programa', 'koru.l.montaje': 'Programa montado por la persona',
-    'koru.l.respuesta': 'Respuesta de la persona', 'koru.l.esperado': 'Lo que escribe la máquina de verdad',
-    'koru.l.obtenido': 'Lo que escribe el programa montado', 'koru.l.correcta': '¿Es correcto?', 'koru.l.fallos': 'Intentos fallidos',
+    'koru.l.respuesta': 'Respuesta de la persona', 'koru.l.esperado': 'Lo que muestra la máquina de verdad',
+    'koru.l.obtenido': 'Lo que muestra el programa montado', 'koru.l.correcta': '¿Es correcto?', 'koru.l.fallos': 'Intentos fallidos',
     'koru.l.ayudas': 'Ayudas usadas', 'koru.l.xp': 'XP del reto',
     'koru.nada': '(nada)',
     'koru.diag': 'Lo que ha detectado el motor:',
@@ -961,9 +986,9 @@ const TEXTOS = { es: {
     'koru.estado.faltan': 'Faltan piezas para llegar al programa pedido.',
     'koru.estado.error': 'El programa montado da un error al ejecutarse.',
     'koru.estado.colgado': 'El programa montado no termina nunca.',
-    'koru.estado.distinta': 'El programa montado escribe algo distinto de lo pedido.',
+    'koru.estado.distinta': 'El programa montado muestra algo distinto de lo pedido.',
     'koru.estado.coincide': 'El programa montado acierta con los datos del reto, pero falla con otros datos.',
-    'koru.estado.estado': 'El programa montado escribe lo correcto, pero deja alguna caja con un valor distinto.',
+    'koru.estado.estado': 'El programa montado muestra lo correcto, pero deja alguna caja con un valor distinto.',
     'koru.estado.casi': 'El programa montado se comporta bien, pero le sobra o le falta alguna línea.',
     'koru.pide.explicar': 'Pide: explica por qué la persona puede haber llegado a esa respuesta y ayúdala a descubrirlo por sí misma, sin decirle la respuesta.',
     'koru.pide.siguiente': 'Pide: propón dos o tres ejercicios cortos, con otro contexto, para practicar esta misma idea, de menos a más difíciles y sin resolverlos.',
@@ -1007,7 +1032,7 @@ const TEXTOS = { es: {
     'q.v2.x1': '3',
     'q.v2.x2': '11',
     'q.v2.e': 'Asignar sustituye el valor anterior: la variable se queda con lo último, el 8. No se suman.',
-    'q.v3.p': '¿Qué escribe la pantalla?',
+    'q.v3.p': '¿Qué muestra la pantalla?',
     'q.v3.ok': 'La palabra edad',
     'q.v3.x1': 'El número 7',
     'q.v3.x2': 'Nada',
@@ -1022,7 +1047,7 @@ const TEXTOS = { es: {
     'q.c2.x1': 'Se hacen las dos cosas',
     'q.c2.x2': 'No se hace nada',
     'q.c2.e': 'Es uno o el otro: si no se cumple el «si», se ejecuta el «sino».',
-    'q.c3.p': '¿Qué escribe la pantalla?',
+    'q.c3.p': '¿Qué muestra la pantalla?',
     'q.c3.ok': 'Nada',
     'q.c3.x1': 'calor',
     'q.c3.x2': 'Da un error',
@@ -1090,6 +1115,7 @@ const TEXTOS = { es: {
     'nota.asig': '{n} ← {e}  →  {n} vale {v}',
     'nota.intercambia': '{a} ← {b}  →  se intercambian: {a} = {va}, {b} = {vb}',
     'nota.formula': '{n} ← {e}  →  {n} recuerda la fórmula «{e}» y la recalcula cada vez',
+    'nota.acumula': '{n} ← {e}  →  se suma al {antes} que había: {n} vale {v}',
     'nota.mostrar': 'Se muestra en pantalla: {v}',
     'nota.test-si': '¿{c}?  →  sí, se cumple',
     'nota.test-no': '¿{c}?  →  no se cumple',
@@ -1131,6 +1157,8 @@ const TEXTOS = { es: {
     'mod.limite.diag': 'Parece que has confundido el límite: «<» NO incluye el valor del extremo y «<=» SÍ lo incluye. Mira qué pasa justo en el último valor.',
     'mod.excluye.corto': 'que «hasta» no incluye el último valor',
     'mod.excluye.diag': 'Parece que «hasta 4» ha dejado fuera el 4. En «para … hasta», el último valor SÍ se ejecuta.',
+    'mod.acumula.corto': 'que la variable suma lo nuevo a lo que ya tenía',
+    'mod.acumula.diag': 'Parece que has sumado el valor nuevo al que ya había. No: una variable guarda un solo valor, y asignar lo sustituye por el nuevo.',
     'mod.sinoSiempre.corto': 'que el «sino» se ejecuta también tras el «si»',
     'mod.sinoSiempre.diag': 'Parece que has ejecutado el «sino» después del «si». Es uno o el otro, nunca los dos.',
 
@@ -1203,6 +1231,15 @@ const TEXTOS = { es: {
     'cons.pares.consigna': 'Muestra los números pares del 1 al 6.',
     'cons.pares.trampa': 'Un bloque dentro de otro: el «si» vive dentro del «para», y cada uno necesita su propio «fin».',
 
+    'ej.dentro.titulo': 'Mostrar una variable',
+    'ej.dentro.consigna': '¿Qué valor se muestra?',
+    'ej.dentro.trampa': 'Al mostrar una variable se muestra el valor que contiene, no su nombre.',
+    'ej.ultimo.titulo': 'El último valor',
+    'ej.ultimo.consigna': '¿Qué valor se muestra al final?',
+    'ej.ultimo.trampa': 'Asignar sustituye el valor anterior: la variable guarda solo el último, no se suman.',
+    'ej.dos.titulo': 'Dos variables',
+    'ej.dos.consigna': 'Se muestra b y luego a. ¿Qué valores salen?',
+    'ej.dos.trampa': 'Cada variable guarda lo suyo. La pantalla muestra en el orden en que se pide, no en el orden en que se asignó.',
     'ej.foto.titulo': 'Una foto, no un enlace',
     'ej.foto.consigna': '¿Qué valor se muestra al final?',
     'ej.foto.trampa': '«y ← x» copia el valor que x tiene en ese instante. Después, cambiar x no toca a y.',
@@ -1249,15 +1286,15 @@ const TEXTOS = { es: {
     'gl.condicionales.texto': 'A veces el programa tiene que <b>decidir</b>. Con <code>si</code> le haces una pregunta: si la respuesta es «sí, es verdad», hace lo que va dentro; si no, hace lo que va después de <code>sino</code>. Es como decir: «si llueve, coge el paraguas; si no, ponte las gafas de sol». Solo se hace una de las dos cosas, nunca las dos.',
     'gl.bucles.titulo': '¿Qué es un bucle?',
     'gl.bucles.texto': 'Un bucle es una repetición: el programa hace lo mismo varias veces sin que tengas que escribirlo una y otra vez. <code>mientras</code> repite mientras algo siga siendo verdad. <code>para</code> repite contando, de un número a otro. Cuidado: dentro tiene que haber algo que haga que alguna vez deje de ser verdad, o no acaba nunca.',
-    'pred.pregunta': '¿Qué escribe la pantalla?',
+    'pred.pregunta': '¿Qué muestra la pantalla?',
     'pred.ayuda': 'Escribe lo que saldría en la pantalla, uno detrás de otro, con un espacio en medio. Si no sale nada, déjalo vacío.',
     'fb.ok': '¡Bien hecho!',
     'fb.casi': 'Casi. Creo que sé dónde se ha colado el error.',
     'fb.nosale': 'Esa no es la respuesta.',
-    'fb.cuantos.uno': 'Has escrito 1 cosa. Cuenta cuántas veces escribe la pantalla y prueba otra vez.',
-    'fb.cuantos.varios': 'Has escrito {n} cosas. Cuenta cuántas veces escribe la pantalla y prueba otra vez.',
+    'fb.cuantos.uno': 'Has escrito 1 cosa. Cuenta cuántas veces muestra algo la pantalla y prueba otra vez.',
+    'fb.cuantos.varios': 'Has escrito {n} cosas. Cuenta cuántas veces muestra algo la pantalla y prueba otra vez.',
     'fb.mismo': 'Has escrito la cantidad justa de cosas, pero alguna no es la que sale en la pantalla. Sigue el programa con el dedo, línea a línea, y apunta qué hay en cada caja.',
-    'fb.orden': 'Tienes las cosas que son, pero en otro orden. La pantalla las escribe una detrás de otra, en el orden en que las manda el programa.',
+    'fb.orden': 'Tienes las cosas que son, pero en otro orden. La pantalla las muestra una detrás de otra, en el orden en que las manda el programa.',
     'fb.modelo': 'Ver cómo lo has pensado tú',
     'mirar.vars': 'Cajas con nombre',
     'mirar.modelo': 'Como lo haría quien piensa {creencia}',
@@ -1265,7 +1302,7 @@ const TEXTOS = { es: {
     'mirar.inicio': 'Pulsa «Siguiente» y la máquina ejecutará la primera instrucción.',
     'b.sig': 'Siguiente paso →',
     'nota.asig': '{n} ← {e}  →  la caja {n} ahora guarda {v}',
-    'nota.mostrar': 'La pantalla escribe: {v}',
+    'nota.mostrar': 'La pantalla muestra: {v}',
     'nota.test-si': '¿{c}?  →  sí, es verdad',
     'nota.test-no': '¿{c}?  →  no, no es verdad',
     'err.sin-valor': 'La caja «{n}» está vacía: guárdale algo antes de usarla.',
@@ -1282,6 +1319,8 @@ const TEXTOS = { es: {
     'mod.limite.diag': 'Creo que te has liado con el final. «<» NO cuenta el número del final; «<=» SÍ lo cuenta. Mira qué pasa justo con el último número.',
     'mod.excluye.corto': 'que «hasta» no cuenta el último número',
     'mod.excluye.diag': 'Creo que «hasta 4» se ha dejado el 4 fuera. En «para … hasta» el último número también se hace.',
+    'mod.acumula.corto': 'que la caja suma lo nuevo a lo que ya había',
+    'mod.acumula.diag': 'Creo que has sumado el número nuevo al que ya estaba en la caja. Pero una caja guarda un solo valor: cuando metes uno nuevo, el de antes desaparece.',
     'mod.sinoSiempre.corto': 'que se hacen las dos cosas, la del «si» y la del «sino»',
     'mod.sinoSiempre.diag': 'Creo que has hecho las dos cosas, la del «si» y la del «sino». Es una o la otra, nunca las dos.',
     'cons.vacio': 'Arrastra aquí las líneas, una debajo de otra. Los huecos se ponen solos.',
@@ -1293,25 +1332,26 @@ const TEXTOS = { es: {
     'cons.fb.faltan': 'Faltan líneas: el programa completo tiene {n}.',
     'cons.fb.error': 'Tu programa se atasca en la línea {n}: {msg}',
     'cons.fb.colgado': 'Tu programa no termina nunca: da vueltas sin parar. Mira qué pasa dentro de la repetición: ¿alguna vez deja de ser verdad?',
-    'cons.fb.distinta': 'Tu programa escribe: {mio}. Tenía que escribir: {esperado}.',
+    'cons.fb.distinta': 'Tu programa muestra: {mio}. Tenía que mostrar: {esperado}.',
     'cons.fb.sobra': 'Mira bien: quizá alguna línea que has puesto no hace falta.',
-    'cons.fb.coincide': 'Con estos números sale lo que toca, pero con otros no. Si empezamos con {datos}, tu programa escribe {mio} y tenía que escribir {esperado}.',
+    'cons.fb.coincide': 'Con estos números sale lo que toca, pero con otros no. Si empezamos con {datos}, tu programa muestra {mio} y tenía que mostrar {esperado}.',
     'cons.fb.estado': 'La pantalla sale bien, pero las cajas no acaban bien. Con {datos}, la caja {nombre} acaba con {mio} y tenía que acabar con {esperado}.',
     'cons.fb.estado0': 'La pantalla sale bien, pero las cajas no acaban bien: la caja {nombre} acaba con {mio} y tenía que acabar con {esperado}.',
     'cons.fb.ok': '¡Lo has conseguido!',
     'cons.fb.otro': 'Lo has hecho en otro orden, y también vale.',
     'cons.cambiar.trampa': 'Hace falta una caja de ayuda (aux): guarda el valor anterior antes de pisarlo. Con solo «a ← b» y «b ← a» los dos acaban valiendo lo mismo.',
     'cons.ayuda.puesta': 'Te he colocado la siguiente línea que toca. Lo que estaba mal puesto vuelve a la caja de piezas.',
-    'ej.intercambio.consigna': 'La pantalla escribe a y luego b. ¿Qué números salen?',
+    'ej.intercambio.consigna': 'La pantalla muestra a y luego b. ¿Qué números salen?',
     'ej.intercambio.trampa': 'Después de «a ← b», las dos cajas valen lo mismo: el 3 que había en a se perdió. Para cambiarlas de sitio hace falta una caja de ayuda.',
     'ej.precio.trampa': 'La caja total se calculó con el precio de ANTES (10 × 3). Cambiar la caja precio después no cambia el valor de total: una caja guarda una foto, no un atajo.',
-    'ej.justo.consigna': '¿Qué palabra escribe la pantalla?',
+    'ej.justo.consigna': '¿Qué palabra muestra la pantalla?',
     'ej.justo.trampa': 'Con «>=» el 20 también cuenta; con «>» no. Los números que caen justo en el borde son los que más engañan.',
-    'ej.unootro.consigna': '¿Qué palabras escribe la pantalla, y en qué orden?',
-    'ej.noentra.consigna': '¿Qué escribe la pantalla?',
+    'ej.unootro.consigna': '¿Qué palabras muestra la pantalla, y en qué orden?',
+    'ej.noentra.consigna': '¿Qué muestra la pantalla?',
     'ej.noentra.trampa': '«Mientras» mira antes de entrar. Como n vale 5 desde el principio, la condición no es verdad ni a la primera: lo de dentro no se hace ni una vez.',
-    'cons.fb.casi': 'Tu programa escribe lo que se pide, pero no usa las piezas que tocaban: alguna sobra o falta.',
+    'cons.fb.casi': 'Tu programa muestra lo que se pide, pero no usa las piezas que tocaban: alguna sobra o falta.',
     'nota.formula': '{n} ← {e}  →  la caja {n} no guarda un número: guarda cómo calcular «{e}» y lo calcula cada vez',
+    'nota.acumula': '{n} ← {e}  →  se suma al {antes} que ya había: la caja {n} guarda {v}',
     'nota.para': 'la caja {v} ahora guarda {i}',
     'err.ciclo': 'Una caja espera a otra que espera a la primera: dan vueltas sin parar.',
     'ay.sin': 'No te quedan ayuditas. Se recargan al ganar XP, con el tiempo o contestando una pregunta.',
@@ -1323,7 +1363,7 @@ const TEXTOS = { es: {
     'q.v1.e': 'Una caja es una palabra en la que metes valores que puedes cambiar.',
     'q.v2.p': '¿Qué hay dentro de la caja x al final?',
     'q.v2.e': 'La caja se queda con lo último que metiste: el 8.',
-    'q.v3.e': 'Si está entre comillas es un texto: se escribe tal cual. Sin comillas sería una caja, y mostrar edad escribiría lo que hay dentro de la caja: el 7.',
+    'q.v3.e': 'Si está entre comillas es un texto: se muestra tal cual. Sin comillas sería una caja, y mostrar edad mostraría lo que hay dentro de la caja: el 7.',
     'q.c1.ok': 'Para hacer algo solo si algo es verdad',
     'q.c1.e': 'Un «si» hace lo de dentro solo cuando lo que preguntas es verdad.',
     'q.c2.p': 'El «si» no es verdad y hay un «sino». ¿Qué pasa?',
@@ -1336,10 +1376,10 @@ const TEXTOS = { es: {
     'q.b3.e': 'Si nada cambia, sigue siendo verdad y se repite sin parar: por eso dentro tiene que haber algo que haga que la condición deje de cumplirse.',
     'lee.asig': 'Mete {e} en la caja {n}',
     'lee.asig-caja': 'Copia lo que hay en la caja {e} dentro de la caja {n}',
-    'lee.mostrar-caja': 'Escribe en la pantalla lo que hay dentro de la caja {e}',
-    'lee.mostrar-texto': 'Escribe en la pantalla el texto {e}, tal cual',
+    'lee.mostrar-caja': 'Muestra en la pantalla lo que hay dentro de la caja {e}',
+    'lee.mostrar-texto': 'Muestra en la pantalla el texto {e}, tal cual',
     'lee.asig-calculo': 'Haz la cuenta {e} y mete el resultado en la caja {n}',
-    'lee.mostrar': 'Escribe {e} en la pantalla',
+    'lee.mostrar': 'Muestra {e} en la pantalla',
     'lee.mientras': 'Mientras {c}, repite lo de dentro',
     'lee.si': 'Si {c}, haz lo de dentro',
     'lee.sino': 'Si no, haz esto otro',
@@ -1349,14 +1389,23 @@ const TEXTOS = { es: {
     'cons.crear.consigna': 'Crea una caja que se llame edad y mete dentro el número 7.',
     'cons.crear.trampa': 'Al escribir «edad ← 7», la palabra «edad» se convierte en una caja con un 7 dentro. La flecha va hacia la caja: de lo que metes a donde lo metes.',
     'cons.caja.titulo': 'Guarda cosas en cajas y úsalas',
-    'cons.caja.consigna': 'Mete el 7 en la caja edad y haz que la pantalla escriba lo que hay dentro de la caja.',
+    'cons.caja.consigna': 'Mete el 7 en la caja edad y haz que la pantalla muestre lo que hay dentro de la caja.',
     'cons.doble.titulo': 'Duplica el valor de una caja',
     'cons.cambiar.titulo': 'Intercambia valores en cajas',
-    'cons.doble.consigna': 'La caja x guarda un 5. Haz que valga el doble y que la pantalla lo escriba: tiene que salir 10.',
-    'cons.cambiar.consigna': 'La caja a guarda un 3 y la b un 5. Intercambia sus valores y escribe a y luego b: tiene que salir 5 3.',
-    'cons.clima.consigna': 'Si hay 25 grados o más, escribe «calor»; si no, escribe «frío». Hoy hay 18 grados.',
-    'cons.cuenta.consigna': 'Con una repetición, escribe 3, 2, 1.',
-    'cons.suma.consigna': 'Suma los números del 1 al 4 y escribe el total: tiene que salir 10.',
+    'cons.doble.consigna': 'La caja x guarda un 5. Haz que valga el doble y que la pantalla lo muestre: tiene que salir 10.',
+    'cons.cambiar.consigna': 'La caja a guarda un 3 y la b un 5. Intercambia sus valores y muestra a y luego b: tiene que salir 5 3.',
+    'cons.clima.consigna': 'Si hay 25 grados o más, muestra «calor»; si no, muestra «frío». Hoy hay 18 grados.',
+    'cons.cuenta.consigna': 'Con una repetición, muestra 3, 2, 1.',
+    'cons.suma.consigna': 'Suma los números del 1 al 4 y muestra el total: tiene que salir 10.',
+    'ej.dentro.titulo': '¿Qué hay en la caja?',
+    'ej.dentro.consigna': '¿Qué número se muestra en pantalla?',
+    'ej.dentro.trampa': 'La caja edad guarda el 7. Cuando escribes «mostrar edad», la pantalla muestra lo que hay dentro de la caja, no la palabra.',
+    'ej.ultimo.titulo': 'Lo último que metiste',
+    'ej.ultimo.consigna': '¿Qué número muestra la pantalla al final?',
+    'ej.ultimo.trampa': 'Esta caja guarda solo un valor a la vez. Si metes uno nuevo, el de antes desaparece: ni se suman ni se acumulan.',
+    'ej.dos.titulo': 'Dos cajas',
+    'ej.dos.consigna': 'La pantalla muestra b y luego a. ¿Qué números salen?',
+    'ej.dos.trampa': 'Cada caja guarda lo suyo. La pantalla muestra en el orden en que se lo pides, no en el orden en que metiste los números.',
     'ej.foto.titulo': 'Una foto, no un hilo',
     'ej.foto.consigna': '¿Qué número sale en la pantalla?',
     'ej.foto.trampa': 'Cuando escribes «y ← x», y se guarda el número que tiene x en ese momento. Si después x cambia, y se queda como estaba.',
@@ -1395,12 +1444,14 @@ const TEXTOS = { es: {
 } };
 
 /* Que ejercicios entran en cada curso. Primaria deja fuera lo que usa «%». */
-const TODOS = ['foto', 'intercambio', 'precio', 'justo', 'unootro', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares'];
+const TODOS = ['dentro', 'ultimo', 'dos', 'foto', 'intercambio', 'precio', 'justo', 'unootro', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares'];
+// los tres primeros son la rampa de entrada (primaria); ESO y bach empiezan en «foto»
+const FACILES = ['dentro', 'ultimo', 'dos'];
 const RETOS = ['crear', 'caja', 'doble', 'cambiar', 'clima', 'cuenta', 'suma', 'pares'];
 const REGISTROS = {
   primaria: { ejercicios: TODOS.filter(x => x !== 'pares'), construcciones: RETOS.filter(x => x !== 'pares'), lectura: true },
-  eso:      { ejercicios: TODOS, construcciones: RETOS, lectura: false },
-  bach:     { ejercicios: TODOS, construcciones: RETOS, lectura: false }
+  eso:      { ejercicios: TODOS.filter(x => !FACILES.includes(x)), construcciones: RETOS, lectura: false },
+  bach:     { ejercicios: TODOS.filter(x => !FACILES.includes(x)), construcciones: RETOS, lectura: false }
 };
 
 /* t('clave', {huecos}): registro activo → base. Si falta en ambos, se ve ⟦clave⟧ y avisa. */
@@ -1418,6 +1469,9 @@ function t(clave, vars) {
      Solo estructura y codigo. Titulo, consigna y trampa: TEXTOS ej.<id>.* -->
 <script id="ejercicios">
 const EJERCICIOS = {
+  dentro:      { tema: 'variables',     codigo: 'edad ← 7\nmostrar edad' },
+  ultimo:      { tema: 'variables',     codigo: 'x ← 3\nx ← 8\nmostrar x' },
+  dos:         { tema: 'variables',     codigo: 'a ← 4\nb ← 9\nmostrar b\nmostrar a' },
   foto:        { tema: 'variables',     codigo: 'x ← 4\ny ← x\nx ← 10\nmostrar y' },
   intercambio: { tema: 'variables',     codigo: 'a ← 3\nb ← 5\na ← b\nb ← a\nmostrar a\nmostrar b' },
   precio:      { tema: 'variables',     codigo: 'precio ← 10\ntotal ← precio * 3\nprecio ← 20\nmostrar total' },
