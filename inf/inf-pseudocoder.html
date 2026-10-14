@@ -87,6 +87,8 @@ h1{font:700 clamp(1.7rem,4.5vw,2.5rem)/1.1 'Space Grotesk',sans-serif;margin:.2r
 .modo,.chip,.btn{font:600 .85rem 'Nunito',sans-serif;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:.45rem 1rem;cursor:pointer}
 .modo[aria-pressed="true"],.tab[aria-selected="true"]{background:var(--magenta);border-color:var(--magenta);color:#fff}
 .bloques{display:flex;gap:.5rem;flex-wrap:wrap;margin:0 0 .8rem}
+.sinsel{display:none;margin:.8rem 0}
+@media(min-width:701px){:root[data-sinsel="1"] .grid{display:none}:root[data-sinsel="1"] .sinsel{display:block}}
 .bloques:empty{display:none}
 .tab{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;text-align:center}
 .tab .prog{margin-top:.1rem;font-weight:700;font-size:.85em;white-space:nowrap}
@@ -122,6 +124,7 @@ label{font-weight:700;display:block;margin-bottom:.3rem}
 .fila{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
 input[type=text]{font:500 1.05rem 'DM Mono',monospace;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:.55rem .8rem;flex:1;min-width:10rem}
 .hint{color:var(--muted);font-size:.85rem;margin:.3rem 0 .8rem}
+.fb .pista{margin:.7rem 0 0}
 .fb{margin-top:.9rem;border-radius:12px;padding:.8rem 1rem;border:1px solid var(--border);background:var(--surface2)}
 .fb:empty{display:none}
 .fb.ok{border-color:var(--green)}.fb.mal{border-color:var(--red)}.fb.dx{border-color:var(--amber)}
@@ -133,6 +136,8 @@ input[type=text]{font:500 1.05rem 'DM Mono',monospace;background:var(--bg);color
 .caja span{font:600 1.5rem 'DM Mono',monospace}
 .caja.cambia{border-color:var(--magenta);background:var(--magenta-soft)}
 .caja.const{border-style:double;border-width:4px}
+.caja em.tipo{color:var(--muted)}
+.entrada{margin:0 0 .8rem;padding:.4rem .8rem;border:1px dashed var(--amber);border-radius:8px;font:500 .95rem 'DM Mono',monospace;color:var(--text)}
 .caja em{display:block;font:normal .65rem 'DM Mono',monospace;color:var(--amber)}
 @media(prefers-reduced-motion:no-preference){.caja.cambia{animation:pop .35s ease}}
 @keyframes pop{50%{transform:scale(1.07)}}
@@ -361,6 +366,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   /* CRT va en la esquina; el titulo le deja el sitio y la consigna queda debajo, a todo el ancho */
   :root[data-pantalla="reto"] #ej-titulo{order:1;padding-right:5.8rem;min-height:4.4rem}
   :root[data-pantalla="reto"] #ej-consigna{order:2;margin-bottom:.6rem}
+  :root[data-pantalla="reto"] #entrada{order:2}
   :root[data-pantalla="reto"] #codigo,:root[data-pantalla="reto"] #err-codigo{order:3}
   :root[data-pantalla="reto"] #montaje-wrap>.sec,:root[data-pantalla="reto"] #montaje{order:4}
   :root[data-pantalla="reto"] #montaje{min-height:5rem}
@@ -368,7 +374,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   /* Mirar: los botones de paso van pegados al programa; lo que cambia (cajas, pantalla, nota) cuelga debajo */
   :root[data-pantalla="reto"] #v-mirar{display:contents}
   :root[data-pantalla="reto"] #v-mirar>*{order:6}
-  :root[data-pantalla="reto"] #aviso-modelo{order:4}
+  :root[data-pantalla="reto"] #aviso-modelo,:root[data-pantalla="reto"] #pista-mirar{order:4}
   :root[data-pantalla="reto"] #v-mirar>.fila:last-child{order:5;display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.2rem 0 .6rem}
   :root[data-pantalla="reto"] #v-mirar>.fila:last-child .btn{min-height:var(--tap);padding-left:.4rem;padding-right:.4rem}
   :root[data-pantalla="reto"] #v-mirar>.fila:first-child{order:7;margin-top:.8rem}
@@ -448,11 +454,13 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   </div>
   <div class="bloques" id="bloques" role="tablist" data-t-aria="bloques.aria"></div>
   <div class="temas" id="temas"></div>
+  <p class="hint sinsel" id="sinsel" data-t="sinsel.texto"></p>
 
   <div class="grid">
     <section class="panel" aria-labelledby="ej-titulo">
       <h2 id="ej-titulo" tabindex="-1"></h2>
       <p class="consigna" id="ej-consigna"></p>
+      <p class="entrada" id="entrada" hidden></p>
       <div class="codigo" id="codigo" role="group" tabindex="0" data-t-aria="programa.aria"></div>
       <p class="hint" id="err-codigo" role="alert" hidden></p>
       <div id="montaje-wrap" hidden>
@@ -507,6 +515,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
           <select id="sel-modelo"></select>
         </div>
         <div class="aviso-modelo" id="aviso-modelo" hidden></div>
+        <div class="aviso-modelo" id="pista-mirar" hidden></div>
         <p class="sec" data-t="mirar.vars"></p>
         <div class="cajas" id="cajas"></div>
         <p class="sec" data-t="mirar.pantalla"></p>
@@ -562,7 +571,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 const MOTOR = (function () {
   'use strict';
   const LIMITE_PASOS = 500;
-  const KW = ['mientras','hacer','si','entonces','sino','fin','para','desde','hasta','mostrar','constante','y','o','no'];
+  const KW = ['mientras','hacer','si','entonces','sino','fin','para','desde','hasta','mostrar','constante','leer','segun','caso','repetir','y','o','no'];
   const COLGADO = { colgado: true };
   const ID0 = /[A-Za-z_ÁÉÍÓÚáéíóúÑñÜü]/, IDN = /[A-Za-z_ÁÉÍÓÚáéíóúÑñÜü0-9]/;
 
@@ -589,7 +598,7 @@ const MOTOR = (function () {
         let j = i; while (j < s.length && IDN.test(s[j])) j++;
         const w = s.slice(i, j), l = w.toLowerCase();
         if (l === 'verdadero' || l === 'falso') t.push({ t: 'num', v: l === 'verdadero' });
-        else t.push(KW.includes(l) ? { t: 'kw', v: l } : { t: 'id', v: w });
+        else { const l2 = l === 'según' ? 'segun' : l; t.push(KW.includes(l2) ? { t: 'kw', v: l2 } : { t: 'id', v: w }); }
         i = j; continue;
       }
       if (c === '←' || d === '<-' || d === ':=') { t.push({ t: 'asig' }); i += c === '←' ? 1 : 2; continue; }
@@ -598,6 +607,7 @@ const MOTOR = (function () {
       if (c === '≥') { t.push({ t: 'cmp', v: '>=' }); i++; continue; }
       if (c === '≠') { t.push({ t: 'cmp', v: '!=' }); i++; continue; }
       if (c === '<' || c === '>' || c === '=') { t.push({ t: 'cmp', v: c }); i++; continue; }
+      if (c === ',') { t.push({ t: 'coma', v: ',' }); i++; continue; }       // «caso 6, 7 entonces»
       if ('+-*/%'.includes(c)) { t.push({ t: 'op', v: c }); i++; continue; }
       if (c === '(' || c === ')') { t.push({ t: 'par', v: c }); i++; continue; }
       throw fallo('simbolo', n, { c });
@@ -631,6 +641,12 @@ const MOTOR = (function () {
       if (!x) throw fallo('expr-a-medias', n);
       if (x.t === 'num') return { k: 'num', v: x.v };
       if (x.t === 'str') return { k: 'str', v: x.v };
+      // conversiones: numero(...) y texto(...). Sin paréntesis detrás, son nombres de caja como cualquier otro.
+      if (x.t === 'id' && es('par', '(') && ['numero', 'número', 'texto'].includes(x.v.toLowerCase())) {
+        p++; const a = eO();
+        if (!es('par', ')')) throw fallo('falta-parentesis', n);
+        p++; return { k: 'fn', f: x.v.toLowerCase() === 'texto' ? 'texto' : 'numero', a };
+      }
       if (x.t === 'id') return { k: 'var', n: x.v };
       if (x.t === 'par' && x.v === '(') {
         const e = eO();
@@ -652,12 +668,18 @@ const MOTOR = (function () {
     if (typeof v === 'number') return String(+v.toFixed(10));
     return String(v);
   }
+  // Con comillas cuando es un texto: es lo que enseñan las cajas de Mirar (la pantalla, en cambio, muestra el texto a secas).
+  const fmtV = v => (typeof v === 'string' ? '"' + v + '"' : fmt(v));
+  const tipoDe = v => (typeof v === 'boolean' ? 'sino' : typeof v === 'string' ? 'texto' : 'numero');
+  // Malentendido «las comillas no cambian nada»: un texto que parece número se trata como número.
+  const suelto = x => (typeof x === 'string' && x.trim() !== '' && isFinite(+x) ? +x : x);
   function txt(e, prec) {
     prec = prec || 0;
     switch (e.k) {
       case 'num': return fmt(e.v);
       case 'str': return '"' + e.v + '"';
       case 'var': return e.n;
+      case 'fn': return e.f + '(' + txt(e.a) + ')';
       case 'un': return '-' + txt(e.a, 7);
       case 'no': return 'no ' + txt(e.a, 3);
       default: {
@@ -673,11 +695,23 @@ const MOTOR = (function () {
     return set;
   }
 
+  // «caso 6, 7 entonces»: los valores del caso, separados por comas (las comas dentro de paréntesis no cuentan)
+  function valoresDeCaso(t, n) {
+    const partes = []; let cur = [], prof = 0;
+    for (const x of t.slice(1, -1)) {
+      if (x.t === 'par') prof += x.v === '(' ? 1 : -1;
+      if (x.t === 'coma' && prof === 0) { partes.push(cur); cur = []; } else cur.push(x);
+    }
+    partes.push(cur);
+    if (partes.some(x => !x.length)) throw fallo('caso-forma', n);
+    return partes.map(x => parseExpr(x, n));
+  }
+
   // ── Sentencias ──────────────────────────────────────────
   function parsear(codigo) {
     const lineas = codigo.split('\n');
     let pos = 0;
-    function bloque(abiertoEn) {
+    function bloque(abiertoEn, modo) {
       const out = [];
       while (pos < lineas.length) {
         const n = pos + 1, t = tokenizar(lineas[pos], n);
@@ -685,12 +719,26 @@ const MOTOR = (function () {
         const k = t[0].t === 'kw' ? t[0].v : null;
         if (k === 'fin') { if (!abiertoEn) throw fallo('fin-suelto', n); return { out, cierre: 'fin' }; }
         if (k === 'sino') { if (!abiertoEn) throw fallo('sino-suelto', n); return { out, cierre: 'sino' }; }
+        if (k === 'hasta') {                 // un «hasta» solo cierra el bloque de un «repetir» (el «hasta» de «para» no empieza la línea)
+          if (modo === 'repetir') return { out, cierre: 'hasta' };
+          if (abiertoEn) throw fallo('falta-fin', abiertoEn);
+          throw fallo('hasta-suelto', n);
+        }
+        if (k === 'caso') {                  // un «caso» solo cierra el bloque del caso anterior dentro de un «segun»
+          if (modo === 'segun') return { out, cierre: 'caso' };
+          if (abiertoEn) throw fallo('falta-fin', abiertoEn);
+          throw fallo('caso-suelto', n);
+        }
         pos++;
         const ultimo = t[t.length - 1], esKw = (x, v) => x && x.t === 'kw' && x.v === v;
         if (k === 'mostrar') { out.push({ tipo: 'mostrar', linea: n, expr: parseExpr(t.slice(1), n) }); continue; }
         if (k === 'constante') {
           if (!(t[1] && t[1].t === 'id' && t[2] && t[2].t === 'asig')) throw fallo('const-forma', n);
           out.push({ tipo: 'const', linea: n, nombre: t[1].v, expr: parseExpr(t.slice(3), n) }); continue;
+        }
+        if (k === 'leer') {
+          if (!(t.length === 2 && t[1].t === 'id')) throw fallo('leer-forma', n);
+          out.push({ tipo: 'leer', linea: n, nombre: t[1].v }); continue;
         }
         if (k === 'mientras') {
           if (!esKw(ultimo, 'hacer')) throw fallo('falta-hacer', n);
@@ -711,25 +759,54 @@ const MOTOR = (function () {
           if (b.cierre !== 'fin') throw fallo('para-sino', n);
           pos++; out.push({ tipo: 'para', linea: n, v: t[1].v, desde, hasta, cuerpo: b.out }); continue;
         }
+        if (k === 'repetir') {
+          if (t.length !== 1) throw fallo('repetir-forma', n);
+          const b = bloque(n, 'repetir');
+          if (b.cierre !== 'hasta') throw fallo('repetir-cierre', pos + 1);       // se cerró con «fin» o «sino»
+          const lineaHasta = pos + 1, th = tokenizar(lineas[pos], lineaHasta), cond = parseExpr(th.slice(1), lineaHasta);
+          pos++; out.push({ tipo: 'repetir', linea: n, lineaHasta, cond, cuerpo: b.out }); continue;
+        }
+        if (k === 'segun') {
+          if (!esKw(ultimo, 'hacer')) throw fallo('falta-hacer', n);
+          const sel = parseExpr(t.slice(1, -1), n), casos = []; let sino = null;
+          for (;;) {
+            while (pos < lineas.length && !tokenizar(lineas[pos], pos + 1).length) pos++;      // líneas vacías
+            if (pos >= lineas.length) throw fallo('falta-fin', n);
+            const n2 = pos + 1, t2 = tokenizar(lineas[pos], n2), k2 = t2[0].t === 'kw' ? t2[0].v : null;
+            if (k2 === 'fin') { pos++; break; }
+            if (k2 === 'caso') {
+              if (sino) throw fallo('caso-tras-sino', n2);
+              if (!esKw(t2[t2.length - 1], 'entonces')) throw fallo('falta-entonces', n2);
+              const valores = valoresDeCaso(t2, n2); pos++;
+              casos.push({ linea: n2, valores, cuerpo: bloque(n, 'segun').out });
+            } else if (k2 === 'sino') {
+              if (sino) throw fallo('caso-tras-sino', n2);
+              if (t2.length > 1) throw fallo('sobra', n2);
+              pos++; sino = { linea: n2, cuerpo: bloque(n, 'segun').out };
+            } else throw fallo('segun-falta-caso', n2);
+          }
+          out.push({ tipo: 'segun', linea: n, sel, casos, sino }); continue;
+        }
         if (t[0].t === 'id' && t[1] && t[1].t === 'asig') {
           out.push({ tipo: 'asig', linea: n, nombre: t[0].v, expr: parseExpr(t.slice(2), n) }); continue;
         }
         if (t.length > 1 && t[1].t === 'asig') throw fallo('asig-izquierda', n);   // «7 ← edad»: la flecha va hacia la caja
         throw fallo('linea-incomprensible', n);
       }
-      if (abiertoEn) throw fallo('falta-fin', abiertoEn);
+      if (abiertoEn) throw fallo(modo === 'repetir' ? 'falta-hasta' : 'falta-fin', abiertoEn);
       return { out, cierre: null };
     }
     return bloque(0).out;
   }
 
   // ── Ejecucion (con modelos mentales opcionales) ─────────
-  function correr(codigo, m) {
+  // `entrada`: lo que la persona escribe, en orden, cada vez que el programa hace «leer» (siempre texto)
+  function correr(codigo, m, entrada) {
     m = m || {};
     let ast;
     try { ast = parsear(codigo); }
     catch (e) { if (e.deMotor) return { error: errorDe(e), pasos: [], salida: [] }; throw e; }
-    const ctx = { env: new Map(), consts: new Set(), out: [], pasos: [], prof: 0 };
+    const ctx = { env: new Map(), consts: new Set(), out: [], pasos: [], prof: 0, entrada: (entrada || []).map(String) };
 
     function leer(n, linea) {
       if (!ctx.env.has(n)) throw fallo('sin-valor', linea, { n });
@@ -747,26 +824,41 @@ const MOTOR = (function () {
       switch (e.k) {
         case 'num': case 'str': return e.v;
         case 'var': return leer(e.n, linea);
+        case 'fn': {
+          const a = ev(e.a, linea);
+          if (e.f === 'texto') return fmt(a);
+          if (typeof a === 'number') return a;
+          if (typeof a === 'string' && a.trim() !== '' && isFinite(+a)) return +a;
+          throw fallo('no-numero', linea, { v: fmt(a) });
+        }
         case 'un': return -num(ev(e.a, linea), linea);
-        case 'no': return !ev(e.a, linea);
+        case 'no': { const a = ev(e.a, linea); if (typeof a !== 'boolean') throw fallo('no-bool', linea); return !a; }
         default: {
           let op = e.op;
           if (m.limite && LAXO[op]) op = LAXO[op];
-          if (op === 'y') return ev(e.a, linea) && ev(e.b, linea);
-          if (op === 'o') return ev(e.a, linea) || ev(e.b, linea);
-          const a = ev(e.a, linea), b = ev(e.b, linea);
+          if (op === 'y' || op === 'o') {
+            const a = ev(e.a, linea); if (typeof a !== 'boolean') throw fallo('no-bool', linea);
+            if (op === 'y' ? !a : a) return a;
+            const b = ev(e.b, linea); if (typeof b !== 'boolean') throw fallo('no-bool', linea);
+            return b;
+          }
+          if (m.sumaPrimero && op === '+' && e.a.k === 'bin' && e.a.op === '+') {   // «"Total: " + a + b» con la suma hecha antes que la unión
+            const x = ev(e.a.a, linea), y = ev(e.a.b, linea), z = ev(e.b, linea);
+            if (typeof x === 'string' && typeof y === 'number' && typeof z === 'number') return x + fmt(y + z);
+          }
+          let a = ev(e.a, linea), b = ev(e.b, linea);
+          if (m.comillasNada) { a = suelto(a); b = suelto(b); }
           switch (op) {
-            case '+': return (typeof a === 'string' || typeof b === 'string') ? fmt(a) + fmt(b) : a + b;
+            case '+': return (typeof a === 'string' || typeof b === 'string') ? fmt(a) + fmt(b) : num(a, linea) + num(b, linea);
             case '-': return num(a, linea) - num(b, linea);
             case '*': return num(a, linea) * num(b, linea);
             case '/': if (num(b, linea) === 0) throw fallo('div-cero', linea); return num(a, linea) / b;
             case '%': if (num(b, linea) === 0) throw fallo('div-cero', linea); return num(a, linea) % b;
             case '=': return a === b;
             case '!=': return a !== b;
-            case '<': return a < b;
-            case '>': return a > b;
-            case '<=': return a <= b;
-            case '>=': return a >= b;
+            case '<': case '>': case '<=': case '>=':
+              if (typeof a !== typeof b) throw fallo('no-comparable', linea, { op: e.op });
+              return op === '<' ? a < b : op === '>' ? a > b : op === '<=' ? a <= b : a >= b;
           }
         }
       }
@@ -776,9 +868,9 @@ const MOTOR = (function () {
       const vars = [];
       ctx.env.forEach((v, nombre) => {
         if (v && v.formula) {
-          let val; try { val = fmt(leer(nombre, linea)); } catch (_) { val = '?'; }
-          vars.push({ n: nombre, v: val, f: txt(v.formula) });
-        } else vars.push({ n: nombre, v: fmt(v), f: null, c: ctx.consts.has(nombre) });
+          let val, tp = null; try { const r = leer(nombre, linea); val = fmtV(r); tp = tipoDe(r); } catch (_) { val = '?'; }
+          vars.push({ n: nombre, v: val, t: tp, f: txt(v.formula) });
+        } else vars.push({ n: nombre, v: fmtV(v), t: tipoDe(v), f: null, c: ctx.consts.has(nombre) });
       });
       ctx.pasos.push({ linea, vars, salida: ctx.out.slice(), nota, cambia: cambia || null });
     }
@@ -795,7 +887,16 @@ const MOTOR = (function () {
           if (ctx.env.has(s.nombre)) throw fallo('const-existe', s.linea, { n: s.nombre });
           const val = ev(s.expr, s.linea);
           ctx.env.set(s.nombre, val); ctx.consts.add(s.nombre);
-          foto(s.linea, { id: 'const', p: { n: s.nombre, e: txt(s.expr), v: fmt(val) } }, s.nombre);
+          foto(s.linea, { id: 'const', p: { n: s.nombre, e: txt(s.expr), v: fmtV(val) } }, s.nombre);
+          return;
+        }
+        case 'leer': {
+          if (ctx.consts.has(s.nombre)) throw fallo('constante', s.linea, { n: s.nombre });
+          if (!ctx.entrada.length) throw fallo('sin-entrada', s.linea);
+          let val = ctx.entrada.shift();
+          if (m.entradaNumero) val = suelto(val);          // malentendido: «lo que escribe la persona ya llega como número»
+          ctx.env.set(s.nombre, val);
+          foto(s.linea, { id: 'leer', p: { n: s.nombre, v: fmtV(val) } }, s.nombre);
           return;
         }
         case 'asig': {
@@ -806,7 +907,7 @@ const MOTOR = (function () {
           }
           if (m.intercambia && e.k === 'var' && e.n !== s.nombre && ctx.env.has(e.n) && ctx.env.has(s.nombre)) {
             const a = ctx.env.get(s.nombre); ctx.env.set(s.nombre, ctx.env.get(e.n)); ctx.env.set(e.n, a);
-            foto(s.linea, { id: 'intercambia', p: { a: s.nombre, b: e.n, va: fmt(leer(s.nombre, s.linea)), vb: fmt(leer(e.n, s.linea)) } }, s.nombre);
+            foto(s.linea, { id: 'intercambia', p: { a: s.nombre, b: e.n, va: fmtV(leer(s.nombre, s.linea)), vb: fmtV(leer(e.n, s.linea)) } }, s.nombre);
             return;
           }
           if (m.acumula && ctx.env.has(s.nombre) && !usaVars(e).has(s.nombre)) {
@@ -828,13 +929,47 @@ const MOTOR = (function () {
           }
           const val = ev(e, s.linea);
           ctx.env.set(s.nombre, val);
-          foto(s.linea, { id: 'asig', p: { n: s.nombre, e: txt(e), v: fmt(val) } }, s.nombre);
+          foto(s.linea, { id: 'asig', p: { n: s.nombre, e: txt(e), v: fmtV(val) } }, s.nombre);
           return;
         }
         case 'mostrar': {
           const val = fmt(ev(s.expr, s.linea));
           ctx.out.push(val);
           foto(s.linea, { id: 'mostrar', p: { v: val } });
+          return;
+        }
+        case 'repetir': {
+          // primero ejecuta y después pregunta: se sale cuando la condición del «hasta» es verdadera (condición de PARADA).
+          // Malentendidos: `hastaMientras` (se repite mientras sea verdadera) y `repetirAntes` (se pregunta antes de ejecutar).
+          const parar = () => {
+            const r = ev(s.cond, s.lineaHasta);
+            if (typeof r !== 'boolean') throw fallo('cond-no-bool', s.lineaHasta);
+            foto(s.lineaHasta, { id: r ? 'hasta-si' : 'hasta-no', p: { c: txt(s.cond) } });
+            return m.hastaMientras ? !r : r;
+          };
+          if (m.repetirAntes) { while (!parar()) bloque(s.cuerpo); }
+          else { do { bloque(s.cuerpo); } while (!parar()); }
+          return;
+        }
+        case 'segun': {
+          // se evalúa UNA vez y se ejecuta solo el primer caso que coincide (comparación como «=»: el tipo cuenta).
+          // Malentendido `cae`: tras el caso que coincide siguen ejecutándose los de después (y el sino).
+          const v = ev(s.sel, s.linea);
+          foto(s.linea, { id: 'segun', p: { e: txt(s.sel), v: fmtV(v) } });
+          let entra = false;
+          for (const c of s.casos) {
+            const lista = c.valores.map(x => txt(x)).join(', ');
+            if (!entra) {
+              const co = c.valores.some(x => ev(x, c.linea) === v);
+              foto(c.linea, { id: co ? 'caso-si' : 'caso-no', p: { l: lista, v: fmtV(v) } });
+              if (!co) continue;
+              entra = true;
+            } else foto(c.linea, { id: 'caso-cae', p: { l: lista } });
+            bloque(c.cuerpo);
+            if (!m.cae) return;
+          }
+          if (s.sino && (!entra || m.cae)) { foto(s.sino.linea, { id: entra ? 'caso-cae-sino' : 'caso-otro', p: {} }); bloque(s.sino.cuerpo); return; }
+          if (!entra) foto(s.linea, { id: 'caso-nada', p: {} });
           return;
         }
         case 'si': {
@@ -881,7 +1016,14 @@ const MOTOR = (function () {
     { id: 'excluye',     flags: { excluye: true } },
     { id: 'sinoSiempre', flags: { sinoSiempre: true } },
     { id: 'acumula',     flags: { acumula: true } },
-    { id: 'constVariable', flags: { constVariable: true } }
+    { id: 'constVariable', flags: { constVariable: true } },
+    // `aplica`: solo se propone como causa en programas donde la regla equivocada tiene sentido
+    { id: 'comillasNada', flags: { comillasNada: true }, aplica: c => /"/.test(c) && !/\bleer\b/.test(c) },
+    { id: 'sumaPrimero',  flags: { sumaPrimero: true }, aplica: c => /"/.test(c) },
+    { id: 'entradaNumero', flags: { entradaNumero: true }, aplica: c => /\bleer\b/.test(c) },
+    { id: 'cae', flags: { cae: true }, aplica: c => /\bseg(u|ú)n\b/i.test(c) },
+    { id: 'hastaMientras', flags: { hastaMientras: true }, aplica: c => /\brepetir\b/.test(c) },
+    { id: 'repetirAntes', flags: { repetirAntes: true }, aplica: c => /\brepetir\b/.test(c) }
   ];
 
   // ── Diagnostico ─────────────────────────────────────────
@@ -892,14 +1034,16 @@ const MOTOR = (function () {
   function trocear(texto) { return norm(String(texto).split(/[\s,;]+/)); }
   const igual = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
-  function diagnosticar(codigo, respuesta) {
-    const real = correr(codigo), esperado = norm(real.salida), dado = trocear(respuesta);
+  function diagnosticar(codigo, respuesta, entrada) {
+    const palabras = sal => trocear(sal.join(' '));
+    const real = correr(codigo, null, entrada), esperado = palabras(real.salida), dado = trocear(respuesta);
     if (igual(esperado, dado)) return { correcta: true };
     const causas = [];
     for (const mod of MODELOS) {
-      const r = correr(codigo, mod.flags);
+      if (mod.aplica && !mod.aplica(codigo)) continue;
+      const r = correr(codigo, mod.flags, entrada);
       if (r.error || r.colgado) continue;
-      const s = norm(r.salida);
+      const s = palabras(r.salida);
       if (!igual(s, esperado) && igual(s, dado)) causas.push(mod);
     }
     const mismoConjunto = esperado.length === dado.length && JSON.stringify([...esperado].sort()) === JSON.stringify([...dado].sort());
@@ -919,6 +1063,11 @@ const MOTOR = (function () {
         return { id: e.k === 'var' ? 'mostrar-caja' : e.k === 'str' ? 'mostrar-texto' : 'mostrar', p: { e: txt(e) } };
       }
       if (k === 'constante') return { id: 'const', p: { n: t[1].v, e: txt(parseExpr(t.slice(3), 1)) } };
+      if (k === 'leer') return t[1] ? { id: 'leer', p: { n: t[1].v } } : null;
+      if (k === 'repetir') return { id: 'repetir', p: {} };
+      if (k === 'hasta') return t.length > 1 ? { id: 'hasta', p: { c: txt(parseExpr(t.slice(1), 1)) } } : null;
+      if (k === 'segun') return { id: 'segun', p: { e: txt(parseExpr(t.slice(1, -1), 1)) } };
+      if (k === 'caso') return { id: 'caso', p: { l: valoresDeCaso(t, 1).map(x => txt(x)).join(', ') } };
       if (k === 'mientras' || k === 'si') return { id: k, p: { c: txt(parseExpr(t.slice(1, -1), 1)) } };
       if (k === 'para') {
         const iH = t.findIndex(x => x.t === 'kw' && x.v === 'hasta');
@@ -936,10 +1085,16 @@ const MOTOR = (function () {
   // misma salida y mismas cajas al final, con los datos del reto Y con otros datos
   // (`entradas`: linea -> valores alternativos). Asi no cuela un programa que acierta
   // por casualidad (p. ej. un «mostrar "frío"» suelto que solo coincide con 18 grados).
-  function comprobarConstruccion(solucion, lineas, entradas) {
+  // `extra.entrada`: lo que escribe la persona en el reto; `extra.alternativas`: otras entradas con las que también tiene que salir lo mismo.
+  function comprobarConstruccion(solucion, lineas, entradas, extra) {
+    const dato = (extra && extra.entrada) || [];
     if (!lineas.length) return { estado: 'vacio' };
-    if (lineas.length < solucion.length) return { estado: 'faltan', n: solucion.length };
-    const esp = correr(solucion.join('\n')), r = correr(lineas.join('\n'));
+    if (lineas.length < solucion.length) {
+      // faltan líneas, pero lo que hay se ejecuta igual: así se puede ver qué hace (y por qué no basta)
+      const p = correr(lineas.join('\n'), null, dato);
+      return { estado: 'faltan', n: solucion.length, pasos: p.pasos.length, error: p.error, colgado: p.colgado, mio: p.error || p.colgado ? undefined : p.salida };
+    }
+    const esp = correr(solucion.join('\n'), null, dato), r = correr(lineas.join('\n'), null, dato);
     if (r.error) return { estado: 'error', error: r.error, pasos: r.pasos.length };
     if (r.colgado) return { estado: 'colgado', pasos: r.pasos.length };
     const pasos = r.pasos.length;
@@ -956,8 +1111,10 @@ const MOTOR = (function () {
       claves.forEach(k => { const v = entradas[k]; cambio[k] = k.replace(/[-\d.]+\s*$/, String(v[e % v.length])); valor[sinConst(k)] = String(v[e % v.length]); });
       const aplica = l => (Object.prototype.hasOwnProperty.call(valor, sinConst(l)) ? l.replace(/[-\d.]+\s*$/, valor[sinConst(l)]) : l);
       escenarios.push({ datos: claves.map(k => cambio[k]).join(', '),
-        a: correr(solucion.map(aplica).join('\n')), b: correr(lineas.map(aplica).join('\n')) });
+        a: correr(solucion.map(aplica).join('\n'), null, dato), b: correr(lineas.map(aplica).join('\n'), null, dato) });
     }
+    ((extra && extra.alternativas) || []).forEach(alt => escenarios.push({ datos: alt.map(x => '«' + x + '»').join(', '),
+      a: correr(solucion.join('\n'), null, alt), b: correr(lineas.join('\n'), null, alt) }));
     for (const sc of escenarios) {
       if (sc.a.error || sc.a.colgado) continue;
       if (!igual(norm(sc.b.salida), norm(sc.a.salida)) || sc.b.error || sc.b.colgado)
@@ -997,8 +1154,12 @@ const TEXTOS = { es: {
     'ayudas.primero': 'lee esto primero',
     'salto.reto': 'Saltar al reto',
     'bloques.aria': 'Bloques de temas',
+    'sinsel.texto': 'Elige un ejercicio de la lista.',
     'bloque.cajas': 'Cajas',
-    'bloque.decidir': 'Decidir y repetir',
+    'bloque.decidir': 'Decidir',
+    'bloque.repetir': 'Repetir',
+    'bloque.tipos': 'Datos',
+    'entrada.linea': 'La persona escribe: {datos}',
     'bloque.aria': '{nombre}: {n} de {m} hechos',
     'tira.elegir': '← Elegir', 'tira.mirar': 'Mirar', 'tira.reto': 'Reto {n} de {m}', 'tira.modo': '{m}: cambiar de modo',
     'plegar.cierra': 'Plegar el subtítulo', 'plegar.abre': 'Desplegar el subtítulo',
@@ -1009,7 +1170,7 @@ const TEXTOS = { es: {
     'koru.modo.predecir': 'Predecir (adivinar qué muestra el programa)',
     'koru.modo.construir': 'Construir (montar el programa con piezas)',
     'koru.modo.mirar': 'Mirar (ver la ejecución paso a paso)',
-    'koru.l.nivel': 'Nivel', 'koru.l.modo': 'Modo', 'koru.l.codigo': 'Programa', 'koru.l.montaje': 'Programa montado por la persona',
+    'koru.l.nivel': 'Nivel', 'koru.l.modo': 'Modo', 'koru.l.codigo': 'Programa', 'koru.l.entrada': 'Lo que escribe la persona', 'koru.l.montaje': 'Programa montado por la persona',
     'koru.l.respuesta': 'Respuesta de la persona', 'koru.l.esperado': 'Lo que muestra la máquina de verdad',
     'koru.l.obtenido': 'Lo que muestra el programa montado', 'koru.l.correcta': '¿Es correcto?', 'koru.l.fallos': 'Intentos fallidos',
     'koru.l.ayudas': 'Ayudas usadas', 'koru.l.xp': 'XP del reto',
@@ -1031,6 +1192,14 @@ const TEXTOS = { es: {
     'ac.titulo': '¿variable o "variable"?',
     'ac.texto': 'Sin comillas, <span class="v">edad</span> es una variable: se usa el valor que guarda. Entre comillas, <span class="s">"edad"</span> es un texto literal: se usa tal cual. Y <span class="n">7</span> es un número. Por eso <code>mostrar edad</code> y <code>mostrar "edad"</code> hacen cosas distintas.',
     'gl.constantes.titulo': '¿Qué es una constante?',
+    'gl.tipos.titulo': '¿Qué es un tipo de dato?',
+    'gl.tipos.texto': 'Cada valor tiene un <b>tipo</b>, que dice qué es y qué se puede hacer con él. Un <b>número</b> (<code>7</code>) se puede sumar, restar o comparar. Un <b>texto</b> (<code>"7"</code>, entre comillas) se puede unir con otros textos, pero no sirve para calcular. Un <b>sí/no</b> (<code>verdadero</code> o <code>falso</code>) es el resultado de una pregunta, como <code>t &gt; 20</code>. Aunque se parezcan, <code>7</code> y <code>"7"</code> son valores distintos: con <code>+</code>, los números se suman y los textos se unen.',
+    'gl.entrada.titulo': '¿Qué es leer un dato?',
+    'gl.entrada.texto': 'Un programa puede <b>pedir un dato</b> a la persona que lo usa. <code>leer nombre</code> espera lo que la persona escribe y lo guarda en la variable <code>nombre</code>. Lo que llega es siempre un <b>texto</b>, aunque sean cifras: para calcular con ello hay que convertirlo con <code>numero(...)</code>. Aquí, lo que escribe la persona aparece indicado encima del programa.',
+    'gl.segun.titulo': '¿Qué es un «segun»?',
+    'gl.segun.texto': 'Un <code>segun</code> elige entre varios <b>casos</b> según el valor de una expresión. <code>segun dia hacer</code> mira el valor de <code>dia</code> y ejecuta el bloque del <b>primer</b> <code>caso</code> que coincide; después termina, así que nunca se ejecutan dos. Un caso puede reunir varios valores: <code>caso 6, 7 entonces</code>. Si ninguno coincide, se ejecuta el <code>sino</code> (si lo hay). Es una forma más clara de elegir entre muchos valores que encadenar condicionales.',
+    'gl.repetir.titulo': '¿Qué es «repetir … hasta»?',
+    'gl.repetir.texto': 'Es un bucle que <b>primero ejecuta</b> y <b>después pregunta</b>. <code>repetir … hasta condición</code> ejecuta el bloque y, al llegar al <code>hasta</code>, comprueba la condición: si es <b>verdadera</b>, termina; si es falsa, vuelve a repetir. Por eso el bloque se ejecuta <b>al menos una vez</b>, y la condición dice cuándo <b>parar</b> (en <code>mientras</code>, en cambio, dice cuándo seguir).',
     'gl.repaso1.titulo': '¿Qué repasamos?',
     'gl.repaso1.texto': 'Aquí se mezclan las variables y las constantes. En cada programa, sigue el valor de cada nombre línea a línea: qué cambia, qué se queda igual y qué se copia.',
     'gl.repaso2.titulo': '¿Qué repasamos?',
@@ -1093,6 +1262,66 @@ const TEXTOS = { es: {
     'q.k3.x1': 'La constante cambia de valor',
     'q.k3.x2': 'Se crea otra constante con el mismo nombre',
     'q.k3.e': 'Una constante no admite otro valor: al intentar cambiarla, el programa se detiene en esa línea con un error.',
+    'q.t1.p': '¿Qué diferencia hay entre 7 y "7"?',
+    'q.t1.ok': 'El primero es un número y el segundo, un texto',
+    'q.t1.x1': 'Ninguna: son el mismo valor',
+    'q.t1.x2': 'El segundo vale más que el primero',
+    'q.t1.e': 'Las comillas hacen de "7" un texto: se puede unir con otros textos, pero no sirve para calcular, y «7 = "7"» da falso.',
+    'q.t2.p': '¿Qué muestra la pantalla?',
+    'q.t2.ok': '23',
+    'q.t2.x1': '5',
+    'q.t2.x2': '"2" + "3"',
+    'q.t2.e': 'Con textos, «+» los une: "2" y "3" dan 23. Para sumar, serían números, sin comillas.',
+    'q.t3.p': '¿Qué muestra la pantalla?',
+    'q.t3.ok': 'Total: 35',
+    'q.t3.x1': 'Total: 8',
+    'q.t3.x2': '35',
+    'q.t3.e': '«"Total: " + a» ya es un texto, y a ese texto se le une b: sale «Total: 35». Para sumar primero harían falta paréntesis.',
+    'q.e1.p': '¿Qué hace «leer nombre»?',
+    'q.e1.ok': 'Guarda en nombre lo que escribe la persona',
+    'q.e1.x1': 'Muestra la palabra nombre en pantalla',
+    'q.e1.x2': 'Crea una constante llamada nombre',
+    'q.e1.e': 'El programa espera un dato y lo guarda en la variable nombre.',
+    'q.e2.p': 'La persona escribe 4. ¿Qué muestra la pantalla?',
+    'q.e2.ok': '44',
+    'q.e2.x1': '8',
+    'q.e2.x2': 'n + n',
+    'q.e2.e': 'Lo que escribe la persona llega como texto: «"4" + "4"» une los dos textos y sale 44.',
+    'q.e3.p': '¿Para qué sirve numero(n)?',
+    'q.e3.ok': 'Para convertir el texto de n en un número',
+    'q.e3.x1': 'Para contar cuántas letras tiene n',
+    'q.e3.x2': 'Para mostrar n en pantalla',
+    'q.e3.e': 'Lo que llega con «leer» es texto; numero(...) lo convierte en un número con el que sí se puede calcular.',
+    'q.r1.p': '¿Cuándo se comprueba la condición de un «repetir … hasta»?',
+    'q.r1.ok': 'Después de ejecutar el bloque',
+    'q.r1.x1': 'Antes de ejecutar el bloque',
+    'q.r1.x2': 'Solo la primera vez',
+    'q.r1.e': 'El bloque se ejecuta primero y la condición se comprueba al final de cada vuelta; por eso se ejecuta al menos una vez.',
+    'q.r2.p': '¿Qué muestra la pantalla?',
+    'q.r2.ok': '5',
+    'q.r2.x1': 'Nada',
+    'q.r2.x2': '5 6',
+    'q.r2.e': 'El bloque se ejecuta una vez antes de comprobar: se muestra 5, n pasa a 6 y «6 > 3» ya es verdadera, así que se para.',
+    'q.r3.p': '¿Qué dice la condición de un «hasta»?',
+    'q.r3.ok': 'Cuándo parar',
+    'q.r3.x1': 'Cuándo seguir',
+    'q.r3.x2': 'Cuántas vueltas dar',
+    'q.r3.e': 'En «repetir … hasta» la condición dice cuándo parar: se repite mientras es falsa.',
+    'q.s1.p': '¿Para qué sirve un «segun»?',
+    'q.s1.ok': 'Para elegir entre varios casos según un valor',
+    'q.s1.x1': 'Para repetir un bloque varias veces',
+    'q.s1.x2': 'Para guardar varios valores en una variable',
+    'q.s1.e': 'Un «segun» compara un valor con cada caso y ejecuta el bloque del que coincide.',
+    'q.s2.p': '¿Qué muestra la pantalla?',
+    'q.s2.ok': 'b',
+    'q.s2.x1': 'a',
+    'q.s2.x2': 'Nada',
+    'q.s2.e': 'n vale 2: el caso 1 no coincide y el caso 2 sí, así que se muestra «b».',
+    'q.s3.p': '¿Cuándo se ejecuta el «sino» de un «segun»?',
+    'q.s3.ok': 'Cuando ningún caso coincide',
+    'q.s3.x1': 'Siempre, después del caso que coincide',
+    'q.s3.x2': 'Solo cuando coinciden todos los casos',
+    'q.s3.e': 'El «sino» recoge todo lo que no encaja en ningún caso; si un caso coincide, el «sino» no se ejecuta.',
     'q.c1.p': '¿Para qué sirve un «si»?',
     'q.c1.ok': 'Para hacer algo solo si se cumple una condición',
     'q.c1.x1': 'Para repetir algo varias veces',
@@ -1127,7 +1356,7 @@ const TEXTOS = { es: {
     'skin.boton': 'Skin CRT', 'skin.aria': 'Activar o desactivar el skin CRT',
     'fosforo.aria': 'Color del fósforo', 'fosforo.verde': 'Fósforo verde', 'fosforo.ambar': 'Fósforo ámbar', 'fosforo.cian': 'Fósforo cian',
     'crt.marca': 'HPK · CRT-1',
-    'tema.variables': 'Variables', 'tema.constantes': 'Constantes', 'tema.repaso1': 'Repaso: variables y constantes', 'tema.condicionales': 'Condicionales', 'tema.bucles': 'Bucles', 'tema.repaso2': 'Repaso: decidir y repetir',
+    'tema.variables': 'Variables', 'tema.constantes': 'Constantes', 'tema.repaso1': 'Repaso: variables y constantes', 'tema.condicionales': 'Condicionales', 'tema.bucles': 'Bucles', 'tema.repaso2': 'Repaso: decidir y repetir', 'tema.tipos': 'Tipos de datos', 'tema.entrada': 'Entrada de datos', 'tema.segun': 'Según', 'tema.repetir': 'Repetir … hasta',
     'programa.aria': 'Programa',
     'mascota.nota': 'CRT',
     'crt.tocar': 'Tocar a CRT',
@@ -1162,6 +1391,10 @@ const TEXTOS = { es: {
     'mirar.volver': 'Ver cómo lo hace la máquina de verdad',
     'mirar.vars': 'Variables (cajas)',
     'mirar.const': 'constante',
+    'mirar.pista': 'Pista:',
+    'tipo.numero': 'número',
+    'tipo.texto': 'texto',
+    'tipo.sino': 'sí o no',
     'mirar.pantalla': 'Pantalla',
     'mirar.pasa': 'Qué acaba de pasar',
     'mirar.inicio': 'Pulsa «Siguiente» para ejecutar la primera línea.',
@@ -1173,6 +1406,16 @@ const TEXTOS = { es: {
     'nota.intercambia': '{a} ← {b}  →  se intercambian: {a} = {va}, {b} = {vb}',
     'nota.formula': '{n} ← {e}  →  {n} recuerda la fórmula «{e}» y la recalcula cada vez',
     'nota.acumula': '{n} ← {e}  →  se suma al {antes} que había: {n} vale {v}',
+    'nota.leer': 'leer {n}  →  la persona escribe un dato y {n} vale {v}',
+    'nota.hasta-no': '¿{c}?  →  no: todavía no se para, se vuelve a repetir',
+    'nota.hasta-si': '¿{c}?  →  sí: se termina el repetir',
+    'nota.segun': 'segun {e}  →  {e} vale {v}: se busca el caso que coincide',
+    'nota.caso-si': 'caso {l}  →  coincide con {v}: se ejecuta este bloque y el segun termina',
+    'nota.caso-no': 'caso {l}  →  no coincide con {v}',
+    'nota.caso-otro': 'sino  →  ningún caso ha coincidido: se ejecuta este bloque',
+    'nota.caso-nada': 'Ningún caso coincide y no hay sino: no se ejecuta nada',
+    'nota.caso-cae': 'caso {l}  →  sin parar: se ejecuta también este bloque',
+    'nota.caso-cae-sino': 'sino  →  sin parar: se ejecuta también este bloque',
     'nota.const': '{n} ← {e}  →  {n} es una constante y vale {v}: ya no puede cambiar',
     'nota.mostrar': 'Se muestra en pantalla: {v}',
     'nota.test-si': '¿{c}?  →  sí, se cumple',
@@ -1205,6 +1448,19 @@ const TEXTOS = { es: {
     'err.no-calculable': 'Esto no se puede calcular con «{v}».',
     'err.div-cero': 'No se puede dividir entre cero.',
     'err.cond-no-bool': 'La condición tiene que salir «verdadero» o «falso».',
+    'err.hasta-suelto': 'Este «hasta» no cierra ningún «repetir».',
+    'err.falta-hasta': 'Falta un «hasta condición» para cerrar este «repetir».',
+    'err.repetir-forma': 'Un «repetir» va solo en su línea; la condición se escribe al final, en «hasta condición».',
+    'err.repetir-cierre': 'Un «repetir» se cierra con «hasta condición», no con «fin» ni con «sino».',
+    'err.caso-suelto': 'Este «caso» no está dentro de un «segun».',
+    'err.caso-forma': 'Un caso se escribe así: caso valor entonces (o caso valor1, valor2 entonces).',
+    'err.segun-falta-caso': 'Dentro de un «segun», cada bloque empieza con «caso … entonces» (o con «sino»).',
+    'err.caso-tras-sino': 'El «sino» va al final del «segun»: después no puede haber más casos.',
+    'err.leer-forma': 'Se escribe así: leer nombre (con el nombre de una variable).',
+    'err.sin-entrada': 'El programa pide otro dato, pero la persona no ha escrito más.',
+    'err.no-numero': 'No se puede convertir «{v}» en un número.',
+    'err.no-comparable': 'No se puede comparar un texto con un número usando «{op}».',
+    'err.no-bool': 'Aquí hace falta «verdadero» o «falso»: «y», «o» y «no» no funcionan con números ni con textos.',
 
     'mod.formula.corto': 'que «y ← x» guarda la fórmula y se actualiza sola',
     'mod.formula.diag': 'Parece que has leído «y ← x» como «y es siempre lo que valga x». No: guarda el valor que tenía x justo en ese momento, como una foto. Después, cambiar x no cambia el valor de y.',
@@ -1220,6 +1476,18 @@ const TEXTOS = { es: {
     'mod.excluye.diag': 'Parece que «hasta 4» ha dejado fuera el 4. En «para … hasta», el último valor SÍ se ejecuta.',
     'mod.acumula.corto': 'que la variable suma lo nuevo a lo que ya tenía',
     'mod.acumula.diag': 'Parece que has sumado el valor nuevo al que ya había. No: una variable guarda un solo valor, y asignar lo sustituye por el nuevo.',
+    'mod.comillasNada.corto': 'que las comillas no cambian nada: «"2"» es lo mismo que 2',
+    'mod.comillasNada.diag': 'Parece que has tratado un texto entre comillas como si fuera un número. Pero «"2"» es un texto: con «+» se une a otros textos, no se suma, y «"2" = 2» da falso.',
+    'mod.sumaPrimero.corto': 'que la suma de los números se hace antes de unirlos al texto',
+    'mod.sumaPrimero.diag': 'Parece que has sumado los dos números antes de unirlos al texto. Pero las operaciones se hacen de izquierda a derecha: «"Total: " + a» ya es un texto, y a ese texto se le une b. Para sumar primero hacen falta paréntesis.',
+    'mod.entradaNumero.corto': 'que lo que escribe la persona ya llega como número',
+    'mod.entradaNumero.diag': 'Parece que has tratado lo que escribe la persona como si ya fueran números. Pero llega siempre como texto: con «+» se une, no se suma, hasta que se convierte con numero(...).',
+    'mod.cae.corto': 'que después del caso que coincide se ejecutan también los siguientes',
+    'mod.cae.diag': 'Parece que has seguido ejecutando los casos de después del que coincide. Aquí un «segun» ejecuta solo el primer caso que coincide y termina (en algunos lenguajes, como C o Java, hay que escribir «break» para conseguir eso; aquí no hace falta).',
+    'mod.hastaMientras.corto': 'que «hasta» repite mientras la condición es verdadera',
+    'mod.hastaMientras.diag': 'Parece que has repetido mientras la condición del «hasta» era verdadera. Es al revés: se repite mientras es falsa y se para cuando se hace verdadera.',
+    'mod.repetirAntes.corto': 'que «repetir» comprueba la condición antes de ejecutar',
+    'mod.repetirAntes.diag': 'Parece que has comprobado la condición antes de ejecutar el bloque. En «repetir … hasta» se ejecuta primero y se comprueba al final, así que el bloque se ejecuta al menos una vez.',
     'mod.constVariable.corto': 'que una constante se puede cambiar como una variable',
     'mod.constVariable.diag': 'Parece que has tratado la constante como una variable. No: una constante guarda su valor al crearla y no admite otro; si el programa lo intenta, se detiene con un error.',
     'mod.sinoSiempre.corto': 'que el «sino» se ejecuta también tras el «si»',
@@ -1240,6 +1508,30 @@ const TEXTOS = { es: {
     'cons.rpuente.titulo': 'Cuenta y avisa',
     'cons.rpuente.consigna': 'Crea la constante TOPE con el valor 3. Con un «para» del 1 al TOPE, muestra cada número, pero en el último muestra «¡ya!»: debe salir 1 2 ¡ya!',
     'cons.rpuente.trampa': 'Junta todo: una constante como límite, una repetición y una decisión dentro. El «si» compara con la constante, así que si cambias TOPE, el aviso sigue en el último número.',
+    'cons.tarmar.titulo': 'Armar un saludo',
+    'cons.tarmar.consigna': 'Guarda el texto «Ana» en la variable nombre y muestra «Hola Ana» uniendo «Hola » con nombre.',
+    'cons.tarmar.trampa': 'Un texto va entre comillas y una variable no: con «"nombre"» saldría la palabra, no su valor. Y sin el espacio dentro de las comillas saldría «HolaAna».',
+    'cons.tsumatxt.titulo': 'Total con texto',
+    'cons.tsumatxt.consigna': 'Guarda 3 en a y 5 en b. Muestra «Total: 8»: el texto «Total: » seguido de la suma de a y b.',
+    'cons.tsumatxt.trampa': 'La suma va entre paréntesis para que se calcule antes de unirse al texto. Sin ellos, «"Total: " + a + b» uniría un 3 y después un 5, y saldría «Total: 35».',
+    'cons.esaluda.titulo': 'Saludar a quien escribe',
+    'cons.esaluda.consigna': 'Lee el nombre que escribe la persona y muestra «Hola » seguido de ese nombre.',
+    'cons.esaluda.trampa': 'El nombre no está escrito en el programa: se lee, y así el saludo vale para cualquier nombre. Entre comillas, «"nombre"» sería la palabra, no el dato.',
+    'cons.edoble.titulo': 'El doble de un número',
+    'cons.edoble.consigna': 'Lee un número que escribe la persona y muestra su doble.',
+    'cons.edoble.trampa': 'El dato llega como texto: hay que convertirlo con numero(...) antes de multiplicar. Con «n + n» saldría el texto repetido (44), no 8.',
+    'cons.sdiasem.titulo': 'Elegir según el día',
+    'cons.sdiasem.consigna': 'Guarda 3 en dia. Con un «segun»: si dia es 1 muestra «lunes», si es 3 muestra «miércoles» y en cualquier otro caso muestra «otro». Debe salir miércoles.',
+    'cons.sdiasem.trampa': 'Cada caso empieza con «caso … entonces», el «sino» recoge todo lo demás y el conjunto se cierra con un solo «fin».',
+    'cons.smenu.titulo': 'Descanso o trabajo',
+    'cons.smenu.consigna': 'Guarda 6 en dia. Con un «segun», muestra «descanso» si dia es 6 o 7 y «trabajo» en cualquier otro caso: debe salir descanso.',
+    'cons.smenu.trampa': 'Un caso puede tener varios valores separados por comas. Con «caso 6» a secas, el 7 caería en el «sino» y mostraría «trabajo».',
+    'cons.hcontar.titulo': 'Contar con repetir',
+    'cons.hcontar.consigna': 'Con un «repetir … hasta», muestra 1, 2, 3: debe salir 1 2 3.',
+    'cons.hcontar.trampa': 'La condición del «hasta» dice cuándo parar: con «n > 3» se para al llegar a 4, después de mostrar el 3. Con «n < 3» se pararía enseguida.',
+    'cons.hsumar.titulo': 'Sumar hasta llegar a 6',
+    'cons.hsumar.consigna': 'Suma 1, 2, 3… con un «repetir … hasta» y para en cuanto el total llegue a 6 o más. Después muestra el total: debe salir 6.',
+    'cons.hsumar.trampa': 'Dentro se suma i al total y se sube i; el «hasta total >= 6» decide cuándo parar. El «mostrar total» va después, fuera del bucle.',
     'cons.montaje': 'Tu programa',
     'cons.vacio': 'Arrastra aquí las líneas, en orden. La sangría se pone sola.',
     'cons.instr': 'Arrastra las líneas de abajo hasta aquí, o púlsalas para añadirlas. Puedes reordenarlas arrastrando. Con teclado: Intro añade o quita una línea y Alt + flechas la mueve.',
@@ -1261,6 +1553,8 @@ const TEXTOS = { es: {
     'cons.ayuda.nada': 'Ya está todo en su sitio: comprueba el programa.',
     'cons.fb.vacio': 'Todavía no has colocado ninguna línea.',
     'cons.fb.faltan': 'Aún te faltan líneas: el programa completo tiene {n}.',
+    'cons.fb.faltansale': 'Con lo que llevas, el programa muestra: {mio}.',
+    'cons.fb.faltanerror': 'Con lo que llevas, el programa se rompe en la línea {n}: {msg}',
     'cons.fb.error': 'Tu programa se rompe en la línea {n}: {msg}',
     'cons.fb.colgado': 'Tu programa no acaba nunca: se queda dando vueltas. Mira qué cambia dentro del bucle y si alguna vez deja de cumplirse la condición.',
     'cons.fb.distinta': 'Tu programa muestra: {mio}. Lo que se pide: {esperado}.',
@@ -1277,6 +1571,11 @@ const TEXTOS = { es: {
     'lee.mostrar-caja': 'Muestra el valor de {e}',
     'lee.mostrar-texto': 'Muestra el texto {e}',
     'lee.asig-calculo': 'Calcula {e} y guárdalo en {n}',
+    'lee.leer': 'Pide un dato a la persona y guárdalo en {n}',
+    'lee.repetir': 'Repite lo de dentro, al menos una vez',
+    'lee.hasta': 'Hasta que {c}: si ya se cumple, termina; si no, vuelve a repetir',
+    'lee.segun': 'Mira el valor de {e} y elige el caso que coincida',
+    'lee.caso': 'Si coincide con {l}, haz lo de dentro',
     'lee.const': 'Crea la constante {n} con el valor {e}',
     'lee.mostrar': 'Muestra {e} en pantalla',
     'lee.mientras': 'Mientras {c}, repite lo de dentro',
@@ -1297,6 +1596,14 @@ const TEXTOS = { es: {
     'cons.cambiar.titulo': 'Intercambia valores',
     'cons.cambiar.consigna': 'a vale 3 y b vale 5. Intercámbialos y muestra a y luego b: debe salir 5 3.',
     'cons.cambiar.trampa': 'Hace falta una variable auxiliar (aux): guarda uno de los valores antes de pisarlo. Con solo «a ← b» y «b ← a» las dos acaban valiendo lo mismo.',
+    'cons.doble.pista.suma': '«x ← x + 2» suma 2 al valor de x, no lo duplica: con x = 5 sale 7, no 10. Para duplicar, el valor se multiplica por 2.',
+    'cons.cuenta.pista.sube': 'Con «n ← n + 1», n sube en cada vuelta y nunca llega a 0: la condición «n > 0» se cumple siempre y el bucle no termina. Para contar hacia atrás hay que restar 1.',
+    'cons.cuenta.pista.orden': 'Si restas antes de mostrar, cada vuelta muestra el valor ya reducido: sale 2 1 0. Para que salga 3 2 1, primero se muestra n y después se resta 1.',
+    'cons.vueltas.pista.baja': 'Con «n ← n - 1», n baja en cada vuelta y «n < 4» se cumple siempre: el bucle no termina. Para llegar al 4 hay que sumar 1.',
+    'cons.vueltas.pista.limite': '«n <= 4» incluye el 4: el bucle da una vuelta más y se muestra el 4. Para que se pare en el 3, la condición tiene que ser «n < 4».',
+    'cons.suma.pista.pisa': '«total ← i» sustituye el total por el valor de i en cada vuelta: al final solo queda el último (4). Para acumular hay que sumar a lo que ya había: «total ← total + i».',
+    'cons.suma.pista.dentro': 'Si «mostrar total» está dentro del bucle, se muestra la suma parcial en cada vuelta (1 3 6 10). Para mostrar solo el resultado final, va después del «fin».',
+    'cons.cambiar.pista.pisa': 'Fíjate en el estado final: a y b valen lo mismo, así que una de las dos copias pisó un valor antes de guardarlo. Cuando se ejecuta «b ← a», el valor anterior de b se pierde y ya no se puede recuperar. Guarda primero uno de los valores en aux, y usa aux después para devolverlo.',
     'cons.kcrear.titulo': 'Crea una constante',
     'cons.kcrear.consigna': 'Crea una constante llamada DIAS que valga 7 y muéstrala.',
     'cons.kcrear.trampa': 'Una constante se crea con la palabra «constante» y su valor se da una sola vez, al crearla.',
@@ -1352,6 +1659,72 @@ const TEXTOS = { es: {
     'ej.kmezcla.titulo': 'Constante y variable juntas',
     'ej.kmezcla.consigna': '¿Qué valor se muestra?',
     'ej.kmezcla.trampa': 'BASE no cambia nunca; extra sí cambió, de 2 a 3. La cuenta usa los valores que tienen ahora: 5 + 3.',
+    'ej.tsumar.titulo': 'Sumar o unir',
+    'ej.tsumar.consigna': '¿Qué se muestra en pantalla?',
+    'ej.tsumar.trampa': 'Con números, «+» suma: 2 + 3 es 5. Con textos (entre comillas), «+» los une: «"2" + "3"» es el texto «23». La pantalla no muestra las comillas, pero el programa sí las tiene en cuenta.',
+    'ej.tsaludo.titulo': 'Unir texto y valores',
+    'ej.tsaludo.consigna': '¿Qué se muestra en pantalla?',
+    'ej.tsaludo.trampa': 'Un texto unido a una variable usa el valor que guarda: «Hola » + nombre da «Hola Ana». Un número unido a un texto se convierte en texto: «Tienes » + edad da «Tienes 12». Los espacios dentro de las comillas también cuentan.',
+    'ej.ttotal.titulo': 'El total que no suma',
+    'ej.ttotal.consigna': '¿Qué se muestra en pantalla?',
+    'ej.ttotal.trampa': 'Las operaciones se hacen de izquierda a derecha: «"Total: " + a» ya es un texto, y a ese texto se le une b, así que sale «Total: 35». Con paréntesis, primero se calcula a + b = 8 y después se une al texto.',
+    'ej.tcomillas.titulo': 'Con comillas y sin',
+    'ej.tcomillas.consigna': '¿Qué se muestra en pantalla?',
+    'ej.tcomillas.trampa': 'El 7 es un número y «"7"» es un texto: aunque se vean parecidos, son valores de distinto tipo y «a = b» da falso. Por eso se ejecuta el «sino».',
+    'ej.tnocalcula.titulo': 'Un texto no se multiplica',
+    'ej.tnocalcula.consigna': '¿Qué se muestra? Si el programa se detiene por un error, cuenta solo lo que se mostró antes.',
+    'ej.tnocalcula.trampa': 'Un texto no sirve para calcular: «"ab" * 2» es un error y el programa se detiene en esa línea. El 9 nunca llega a ejecutarse.',
+    'ej.tsino.titulo': 'Guardar un sí o no',
+    'ej.tsino.consigna': '¿Qué se muestra en pantalla?',
+    'ej.tsino.trampa': 'Una comparación da «verdadero» o «falso», y ese valor se puede guardar en una variable y mostrar. «si calor» pregunta por el valor guardado, sin comparar nada más.',
+    'ej.esaludo.titulo': 'Leer un nombre',
+    'ej.esaludo.consigna': '¿Qué se muestra en pantalla?',
+    'ej.esaludo.trampa': '«leer nombre» guarda en la variable lo que escribe la persona, y «Hola » + nombre une los dos textos: sale «Hola Ana». Con otro nombre saldría otro saludo, sin cambiar el programa.',
+    'ej.eorden.titulo': 'Cada leer, un dato',
+    'ej.eorden.consigna': '¿Qué se muestra en pantalla?',
+    'ej.eorden.trampa': 'Cada «leer» toma el siguiente dato, en el orden en que la persona los escribió: a recibe el 3 y b recibe el 4. Se muestra primero b.',
+    'ej.esumatxt.titulo': 'Sumar lo que llega',
+    'ej.esumatxt.consigna': '¿Qué se muestra en pantalla?',
+    'ej.esumatxt.trampa': 'Lo que escribe la persona llega siempre como texto, aunque sean cifras: «"2" + "3"» une los dos textos y sale «23», no 5.',
+    'ej.enumero.titulo': 'Convertir en número',
+    'ej.enumero.consigna': '¿Qué se muestra en pantalla?',
+    'ej.enumero.trampa': '«numero(a)» convierte el texto «2» en el número 2, y entonces «+» sí suma: sale 5. Sin la conversión saldría «23».',
+    'ej.ecalor.titulo': 'Leer y decidir',
+    'ej.ecalor.consigna': '¿Qué se muestra en pantalla?',
+    'ej.ecalor.trampa': 'Con la conversión, «numero(t)» es el número 25 y la comparación «25 > 20» es verdadera: se muestra «calor».',
+    'ej.ecompara.titulo': 'Comparar sin convertir',
+    'ej.ecompara.consigna': '¿Qué se muestra? Si el programa se detiene por un error, cuenta solo lo que se mostró antes.',
+    'ej.ecompara.trampa': 'El dato llega como texto y un texto no se puede comparar con el número 20: el programa se detiene en el «si». Antes hay que convertirlo: «numero(t) > 20».',
+    'ej.sdia.titulo': 'Elegir un caso',
+    'ej.sdia.consigna': '¿Qué se muestra en pantalla?',
+    'ej.sdia.trampa': 'El «segun» compara el valor de dia (2) con cada caso, de arriba abajo, y ejecuta solo el primero que coincide: «martes». Después termina: los casos siguientes no se ejecutan.',
+    'ej.slista.titulo': 'Varios valores en un caso',
+    'ej.slista.consigna': '¿Qué se muestra en pantalla?',
+    'ej.slista.trampa': 'Un caso puede reunir varios valores separados por comas: «caso 6, 7» se cumple si dia vale 6 o 7. Como dia vale 7, se ejecuta ese caso y el «sino» no.',
+    'ej.ssin.titulo': 'Ningún caso coincide',
+    'ej.ssin.consigna': '¿Qué se muestra en pantalla?',
+    'ej.ssin.trampa': 'Ningún caso coincide con 4 y no hay «sino»: el «segun» no ejecuta nada y el programa sigue después de su «fin».',
+    'ej.stexto.titulo': 'Casos con texto',
+    'ej.stexto.consigna': '¿Qué se muestra en pantalla?',
+    'ej.stexto.trampa': 'Con textos, el caso tiene que ser idéntico al valor: «"verde"» coincide con «"verde"». Las mayúsculas cuentan: «"Verde"» no sería igual.',
+    'ej.sresto.titulo': 'Según el resto',
+    'ej.sresto.consigna': '¿Qué se muestra en pantalla?',
+    'ej.sresto.trampa': 'El «segun» evalúa la expresión «n % 3» una sola vez: 7 % 3 es 1, así que se ejecuta el caso 1.',
+    'ej.hcuenta.titulo': 'Contar con repetir',
+    'ej.hcuenta.consigna': '¿Qué se muestra en pantalla?',
+    'ej.hcuenta.trampa': 'El «repetir» ejecuta el bloque y después comprueba «n > 3». Mientras sea falsa, repite: salen 1, 2 y 3, y cuando n llega a 4 la condición es verdadera y termina. La condición dice cuándo parar.',
+    'ej.halmenos.titulo': 'Al menos una vez',
+    'ej.halmenos.consigna': '¿Qué se muestra en pantalla?',
+    'ej.halmenos.trampa': 'El bloque se ejecuta antes de comprobar nada: se muestra el 5 aunque n ya cumple «n > 3». Solo después se ve que hay que parar. Con «mientras» no se habría ejecutado ninguna vez.',
+    'ej.hatras.titulo': 'Cuenta atrás con repetir',
+    'ej.hatras.consigna': '¿Qué se muestra en pantalla?',
+    'ej.hatras.trampa': 'Primero se muestra y después se resta; «vidas = 0» se comprueba tras restar, así que el 0 nunca llega a mostrarse: sale 3 2 1.',
+    'ej.hcompara.titulo': 'Mientras y repetir',
+    'ej.hcompara.consigna': '¿Qué se muestra en pantalla?',
+    'ej.hcompara.trampa': 'El «mientras» muestra 1 y 2 y termina con n = 3. El «repetir» entra una vez sin preguntar: muestra el 3, y como n vale 4 y «n > 4» todavía es falsa, repite y muestra el 4; con n = 5 se sale.',
+    'ej.hsuma.titulo': 'Sumar hasta llegar',
+    'ej.hsuma.consigna': '¿Qué se muestra en pantalla?',
+    'ej.hsuma.trampa': 'En cada vuelta se suma i al total y después se comprueba «total >= 6»: el total va valiendo 1, 3 y 6. Al llegar a 6 la condición es verdadera, se termina y se muestra 6.',
     'ej.rpan.titulo': 'El total no se actualiza',
     'ej.rpan.consigna': '¿Qué valor se muestra?',
     'ej.rpan.trampa': 'total se calculó cuando panes valía 2. Cambiar panes después no recalcula nada: una variable guarda un resultado, no una receta. PRECIO, por su parte, no cambia en ningún momento.',
@@ -1392,13 +1765,21 @@ const TEXTOS = { es: {
 
   /* ════════ PRIMARIA — solo lo que cambia (muestra) ════════ */
   primaria: {
-    'tema.variables': 'Cajas con nombre', 'tema.constantes': 'Cajas que no cambian', 'tema.repaso1': 'Cajas de todo tipo', 'tema.condicionales': 'Decidir', 'tema.bucles': 'Repetir', 'tema.repaso2': 'Decide y repite',
+    'tema.variables': 'Cajas con nombre', 'tema.constantes': 'Cajas que no cambian', 'tema.repaso1': 'Cajas de todo tipo', 'tema.condicionales': 'Decidir', 'tema.bucles': 'Repetir', 'tema.repaso2': 'Decide y repite', 'tema.tipos': 'Números y textos', 'tema.entrada': 'Pedir datos', 'tema.segun': 'Elegir entre casos', 'tema.repetir': 'Repetir hasta que…',
     'subtitulo': 'Construye, predice y observa cómo lo hace la máquina. Aquí los errores hablan.',
     'np.titulo': '¿Por qué una flecha ←?',
     'np.texto': 'Para meter algo en una caja usamos una flecha: <code>edad ← 7</code> se lee «mete el 7 en la caja edad» y la flecha apunta hacia la caja. El signo <code>=</code> lo guardamos para <b>preguntar</b> si dos cosas son iguales. Cuando programes con lenguajes de verdad, verás que muchos usan <code>=</code> para meter cosas en la caja. Aquí la flecha nos ayuda a no confundirlo con mates.',
     'ac.titulo': '¿caja o "caja"?',
     'ac.texto': 'Fíjate en cómo se ven. <span class="v">edad</span> es una caja: una palabra con cosas dentro. <span class="n">7</span> es un número. <span class="s">"edad"</span>, entre comillas, es un texto: la palabra escrita tal cual, sin nada dentro. Si escribes <code>mostrar edad</code>, la pantalla enseña lo que hay dentro de la caja. Si escribes <code>mostrar "edad"</code>, enseña la palabra edad.',
     'gl.constantes.titulo': '¿Qué es una constante?',
+    'gl.tipos.titulo': '¿Números o textos?',
+    'gl.tipos.texto': 'Las cajas pueden guardar cosas distintas. Un <b>número</b> (<code>7</code>) sirve para hacer cuentas. Un <b>texto</b> (<code>"7"</code>, entre comillas) es una palabra o un trozo de frase: se puede unir con otros textos, pero no sirve para hacer cuentas. Aunque <code>7</code> y <code>"7"</code> se vean parecidos, no son lo mismo: con <code>+</code>, los números se suman y los textos se unen.',
+    'gl.entrada.titulo': '¿Qué es pedir un dato?',
+    'gl.entrada.texto': 'A veces el programa necesita que la persona le diga algo. <code>leer nombre</code> hace que el programa espere lo que la persona escribe y lo guarde en la caja <code>nombre</code>. Lo que llega es siempre un <b>texto</b>, aunque sean cifras. Para hacer cuentas con ello hay que convertirlo en número con <code>numero(...)</code>. Encima del programa verás lo que escribe la persona.',
+    'gl.segun.titulo': '¿Qué es un «segun»?',
+    'gl.segun.texto': 'A veces hay muchas opciones y solo una es la buena. <code>segun dia hacer</code> mira lo que hay en la caja <code>dia</code> y hace lo del <b>primer</b> <code>caso</code> que coincide, y nada más. Un caso puede tener varios valores: <code>caso 6, 7 entonces</code>. Si ninguno coincide, se hace lo del <code>sino</code>.',
+    'gl.repetir.titulo': '¿Qué es «repetir … hasta»?',
+    'gl.repetir.texto': 'Con <code>repetir … hasta</code>, el programa <b>primero hace</b> lo de dentro y <b>después pregunta</b> si ya puede parar. Si la respuesta es «verdadero», se acaba; si es «falso», lo repite. Por eso lo de dentro se hace <b>por lo menos una vez</b>. Ojo: aquí la condición dice cuándo <b>parar</b>; en «mientras» dice cuándo seguir.',
     'gl.repaso1.texto': 'Aquí se juntan las cajas que cambian y las que no. Sigue cada caja línea a línea: cuál cambia, cuál se queda igual y cuál copia el número de otra.',
     'gl.repaso2.texto': 'Aquí se juntan las decisiones y las repeticiones. Sigue el programa vuelta a vuelta: en cada vuelta, el «si» hace una pregunta y se hace una cosa u otra.',
     'gl.constantes.texto': 'A veces hay un número que nunca debe cambiar, como los días de la semana. Para eso sirve una <b>constante</b>: una caja que guarda su número una sola vez y ya no se le puede cambiar. Se crea con <code>constante DIAS ← 7</code> y después se usa como cualquier caja. Si el programa intenta meterle otro número, se para con un error.',
@@ -1425,6 +1806,9 @@ const TEXTOS = { es: {
     'mirar.inicio': 'Pulsa «Siguiente» y la máquina ejecutará la primera instrucción.',
     'b.sig': 'Siguiente paso →',
     'nota.asig': '{n} ← {e}  →  la caja {n} ahora guarda {v}',
+    'nota.leer': 'leer {n}  →  la persona escribe un dato y la caja {n} guarda {v}',
+    'nota.hasta-no': '¿{c}?  →  no, todavía no: se repite',
+    'nota.hasta-si': '¿{c}?  →  sí: se acaba la repetición',
     'nota.const': '{n} ← {e}  →  la caja {n} guarda {v} y ya no se le puede cambiar',
     'nota.mostrar': 'La pantalla muestra: {v}',
     'nota.test-si': '¿{c}?  →  sí, es verdad',
@@ -1445,6 +1829,18 @@ const TEXTOS = { es: {
     'mod.excluye.diag': 'Creo que «hasta 4» se ha dejado el 4 fuera. En «para … hasta» el último número también se hace.',
     'mod.acumula.corto': 'que la caja suma lo nuevo a lo que ya había',
     'mod.acumula.diag': 'Creo que has sumado el número nuevo al que ya estaba en la caja. Pero una caja guarda un solo valor: cuando metes uno nuevo, el de antes desaparece.',
+    'mod.comillasNada.corto': 'que las comillas no cambian nada',
+    'mod.comillasNada.diag': 'Creo que has tratado el texto «"2"» como si fuera el número 2. Pero lo que va entre comillas es un texto: con «+» se une a otros textos, no se suma.',
+    'mod.sumaPrimero.corto': 'que primero se suman los números',
+    'mod.sumaPrimero.diag': 'Creo que has sumado los dos números antes de unirlos al texto. Pero la cuenta va de izquierda a derecha: primero se une «Total: » con a, y al resultado se le une b. Con paréntesis, la suma va primero.',
+    'mod.entradaNumero.corto': 'que lo que escribe la persona ya es un número',
+    'mod.entradaNumero.diag': 'Creo que has sumado lo que escribió la persona como si ya fueran números. Pero llega como texto: con «+» se une. Para sumar hay que convertirlo con numero(...).',
+    'mod.cae.corto': 'que también se hacen los casos de después',
+    'mod.cae.diag': 'Creo que has seguido haciendo los casos de después del que coincide. Pero un «segun» hace solo el primer caso que coincide y ahí se acaba.',
+    'mod.hastaMientras.corto': 'que «hasta» repite mientras sea verdad',
+    'mod.hastaMientras.diag': 'Creo que has repetido mientras la condición era verdadera. Pero con «hasta» es al revés: se repite mientras es falsa y se para cuando es verdadera.',
+    'mod.repetirAntes.corto': 'que primero se pregunta y después se hace',
+    'mod.repetirAntes.diag': 'Creo que has mirado la condición antes de hacer lo de dentro. Pero «repetir» primero hace y después pregunta: lo de dentro se hace por lo menos una vez.',
     'mod.constVariable.corto': 'que una constante se puede cambiar como cualquier caja',
     'mod.constVariable.diag': 'Creo que has cambiado el número de una constante. Pero una constante no se puede cambiar: si el programa lo intenta, se para con un error.',
     'mod.sinoSiempre.corto': 'que se hacen las dos cosas, la del «si» y la del «sino»',
@@ -1456,6 +1852,8 @@ const TEXTOS = { es: {
     'cons.ver': 'Ver mi programa paso a paso',
     'cons.fb.vacio': 'Todavía no hay ninguna línea puesta.',
     'cons.fb.faltan': 'Faltan líneas: el programa completo tiene {n}.',
+    'cons.fb.faltansale': 'Con lo que llevas, la pantalla muestra: {mio}.',
+    'cons.fb.faltanerror': 'Con lo que llevas, el programa se atasca en la línea {n}: {msg}',
     'cons.fb.error': 'Tu programa se atasca en la línea {n}: {msg}',
     'cons.fb.colgado': 'Tu programa no termina nunca: da vueltas sin parar. Mira qué pasa dentro de la repetición: ¿alguna vez deja de ser verdad?',
     'cons.fb.distinta': 'Tu programa muestra: {mio}. Tenía que mostrar: {esperado}.',
@@ -1466,6 +1864,14 @@ const TEXTOS = { es: {
     'cons.fb.ok': '¡Lo has conseguido!',
     'cons.fb.otro': 'Lo has hecho en otro orden, y también vale.',
     'cons.cambiar.trampa': 'Hace falta una caja de ayuda (aux): guarda el valor anterior antes de pisarlo. Con solo «a ← b» y «b ← a» los dos acaban valiendo lo mismo.',
+    'cons.doble.pista.suma': '«x ← x + 2» le añade 2 a la caja x, pero no duplica su número: con 5 sale 7, no 10. Para duplicar hay que multiplicar por 2.',
+    'cons.cuenta.pista.sube': 'Con «n ← n + 1», el número de la caja n sube en cada vuelta y nunca llega a 0: la repetición no acaba nunca. Para contar hacia atrás hay que restar 1.',
+    'cons.cuenta.pista.orden': 'Si le restas 1 a n antes de mostrarla, la pantalla muestra el número ya rebajado: sale 2 1 0. Para que salga 3 2 1, primero se muestra n y después se le resta 1.',
+    'cons.vueltas.pista.baja': 'Con «n ← n - 1», el número de la caja n baja en cada vuelta y siempre es menor que 4: la repetición no acaba nunca. Para llegar al 4 hay que sumar 1.',
+    'cons.vueltas.pista.limite': 'Con «n <= 4» el 4 también entra: la repetición da una vuelta más y se muestra el 4. Para que se pare en el 3, la condición tiene que ser «n < 4».',
+    'cons.suma.pista.pisa': '«total ← i» cambia lo que hay en la caja total por el número de i en cada vuelta, así que al final solo queda el último (4). Para ir sumando hay que añadir a lo que ya había: «total ← total + i».',
+    'cons.suma.pista.dentro': 'Si «mostrar total» está dentro de la repetición, la pantalla muestra la suma en cada vuelta (1 3 6 10). Para que salga solo el resultado final, va después del «fin».',
+    'cons.cambiar.pista.pisa': 'Mira las cajas al final: a y b guardan lo mismo, así que una de las copias pisó un número antes de guardarlo. Cuando metes algo en una caja, lo que había dentro se pierde. Guarda primero uno de los números en la caja aux, y luego usa aux para devolverlo.',
     'cons.ayuda.puesta': 'Te he colocado la siguiente línea que toca. Lo que estaba mal puesto vuelve a la caja de piezas.',
     'ej.kuso.consigna': '¿Qué número se muestra en pantalla?',
     'ej.kuso.trampa': 'DIAS es una constante: siempre guarda el 7. Se usa igual que otra caja en las cuentas, pero nadie le puede cambiar el número.',
@@ -1475,6 +1881,47 @@ const TEXTOS = { es: {
     'ej.ktope.consigna': '¿Qué números muestra la pantalla?',
     'ej.ktope.trampa': 'TOPE siempre vale 3. Lo que cambia es n, que va subiendo hasta que ya no es menor o igual que TOPE.',
     'ej.rpan.titulo': 'La cuenta del pan',
+    'ej.tsumar.consigna': '¿Qué muestra la pantalla?',
+    'ej.tsumar.trampa': 'Con números, «+» suma: 2 + 3 es 5. Con textos (entre comillas), «+» los une: «"2" + "3"» es 23. La pantalla no muestra las comillas, pero el programa sí las tiene en cuenta.',
+    'ej.tsaludo.titulo': 'Unir con una caja',
+    'ej.tsaludo.consigna': '¿Qué muestra la pantalla?',
+    'ej.tsaludo.trampa': 'Un texto se une con lo que hay dentro de la caja: «Hola » + nombre da «Hola Ana». Un número unido a un texto se convierte en texto: «Tienes » + edad da «Tienes 12». Los espacios dentro de las comillas también cuentan.',
+    'ej.ttotal.consigna': '¿Qué muestra la pantalla?',
+    'ej.ttotal.trampa': 'La cuenta se hace de izquierda a derecha: «"Total: " + a» ya es un texto, y a ese texto se le une b, así que sale «Total: 35». Con paréntesis, primero se hace a + b = 8 y después se une al texto.',
+    'ej.tcomillas.consigna': '¿Qué muestra la pantalla?',
+    'ej.tcomillas.trampa': 'El 7 es un número y «"7"» es un texto. Se parecen, pero no son lo mismo, así que la pregunta «a = b» tiene la respuesta «falso» y se hace lo del «sino».',
+    'ej.tnocalcula.consigna': '¿Qué muestra la pantalla? Si el programa se para por un error, cuenta solo lo que se mostró antes.',
+    'ej.tnocalcula.trampa': 'Con un texto no se pueden hacer cuentas: «"ab" * 2» es un error y el programa se para en esa línea. El 9 no llega a mostrarse.',
+    'ej.esaludo.consigna': '¿Qué muestra la pantalla?',
+    'ej.esaludo.trampa': '«leer nombre» guarda en la caja lo que escribe la persona, y «Hola » + nombre une los dos textos: sale «Hola Ana». Con otro nombre saldría otro saludo, sin cambiar el programa.',
+    'ej.eorden.consigna': '¿Qué muestra la pantalla?',
+    'ej.eorden.trampa': 'Cada «leer» toma el siguiente dato, en el orden en que la persona los escribió: la caja a guarda el 3 y la caja b guarda el 4. Primero se muestra b.',
+    'ej.esumatxt.consigna': '¿Qué muestra la pantalla?',
+    'ej.esumatxt.trampa': 'Lo que escribe la persona llega siempre como texto, aunque sean cifras: «"2" + "3"» une los dos textos y sale «23», no 5.',
+    'ej.enumero.consigna': '¿Qué muestra la pantalla?',
+    'ej.enumero.trampa': '«numero(a)» convierte el texto «2» en el número 2, y entonces «+» sí suma: sale 5. Sin la conversión saldría «23».',
+    'ej.ecalor.consigna': '¿Qué muestra la pantalla?',
+    'ej.ecalor.trampa': 'Con la conversión, «numero(t)» es el número 25, y «25 > 20» es verdadero: se muestra «calor».',
+    'ej.ecompara.consigna': '¿Qué muestra la pantalla? Si el programa se para por un error, cuenta solo lo que se mostró antes.',
+    'ej.ecompara.trampa': 'El dato llega como texto, y un texto no se puede comparar con el número 20: el programa se para en el «si». Antes hay que convertirlo: «numero(t) > 20».',
+    'ej.sdia.consigna': '¿Qué muestra la pantalla?',
+    'ej.sdia.trampa': 'El «segun» mira lo que hay en la caja dia (2) y lo compara con cada caso, de arriba abajo. Hace solo el primero que coincide («martes») y ahí se acaba: los casos de después no se hacen.',
+    'ej.slista.consigna': '¿Qué muestra la pantalla?',
+    'ej.slista.trampa': 'Un caso puede tener varios valores separados por comas: «caso 6, 7» vale si la caja dia guarda un 6 o un 7. Como guarda un 7, se hace ese caso y el «sino» no.',
+    'ej.ssin.consigna': '¿Qué muestra la pantalla?',
+    'ej.ssin.trampa': 'Ningún caso coincide con el 4 y no hay «sino»: el «segun» no hace nada y el programa sigue después de su «fin».',
+    'ej.stexto.consigna': '¿Qué muestra la pantalla?',
+    'ej.stexto.trampa': 'Con textos, el caso tiene que ser igual de verdad: «"verde"» coincide con «"verde"». Las mayúsculas cuentan: «"Verde"» no sería igual.',
+    'ej.hcuenta.consigna': '¿Qué muestra la pantalla?',
+    'ej.hcuenta.trampa': 'El «repetir» hace lo de dentro y después pregunta «n > 3». Mientras la respuesta sea «falso», lo repite: salen 1, 2 y 3, y cuando n llega a 4 la respuesta es «verdadero» y se acaba. La condición dice cuándo parar.',
+    'ej.halmenos.consigna': '¿Qué muestra la pantalla?',
+    'ej.halmenos.trampa': 'Lo de dentro se hace antes de preguntar nada: la pantalla muestra el 5 aunque n ya cumple «n > 3». Solo después se ve que hay que parar. Con «mientras» no se habría hecho ninguna vez.',
+    'ej.hatras.consigna': '¿Qué muestra la pantalla?',
+    'ej.hatras.trampa': 'Primero se muestra y después se resta 1; la pregunta «vidas = 0» se hace al restar, así que el 0 nunca llega a mostrarse: sale 3 2 1.',
+    'ej.hcompara.consigna': '¿Qué muestra la pantalla?',
+    'ej.hcompara.trampa': 'El «mientras» muestra 1 y 2 y acaba con n = 3. El «repetir» hace lo de dentro una vez sin preguntar: muestra el 3, y como n vale 4 y «n > 4» todavía es falso, repite y muestra el 4; con n = 5 se acaba.',
+    'ej.hsuma.consigna': '¿Qué muestra la pantalla?',
+    'ej.hsuma.trampa': 'En cada vuelta se suma i al total y después se pregunta «total >= 6»: el total va valiendo 1, 3 y 6. Al llegar a 6 la respuesta es «verdadero», se acaba y se muestra 6.',
     'ej.rpan.consigna': '¿Qué número se muestra en pantalla?',
     'ej.rpan.trampa': 'La caja total guardó 2 * 4 cuando panes valía 2. Si luego panes cambia, total se queda como estaba: una caja guarda una foto, no un atajo. Y PRECIO no cambia mientras el programa se ejecuta.',
     'ej.rvidas.consigna': '¿Qué números muestra la pantalla?',
@@ -1511,6 +1958,11 @@ const TEXTOS = { es: {
     'q.v2.p': '¿Qué hay dentro de la caja x al final?',
     'q.v2.e': 'La caja se queda con lo último que metiste: el 8.',
     'q.v3.e': 'Si está entre comillas es un texto: se muestra tal cual. Sin comillas sería una caja, y mostrar edad mostraría lo que hay dentro de la caja: el 7.',
+    'q.t1.e': 'Las comillas hacen del 7 un texto: se puede unir con otras palabras, pero no sirve para hacer cuentas.',
+    'q.t3.e': '«"Total: " + a» ya es un texto, y a ese texto se le une b: sale «Total: 35». Para sumar primero hacen falta paréntesis.',
+    'q.e1.ok': 'Guarda en la caja nombre lo que escribe la persona',
+    'q.e1.e': 'El programa espera un dato y lo guarda en la caja nombre.',
+    'q.e2.e': 'Lo que escribe la persona llega como texto: «"4" + "4"» une los dos textos y sale 44.',
     'q.k1.ok': 'Una caja cuyo número no se puede cambiar',
     'q.k1.x1': 'Una caja que cambia en cada vuelta',
     'q.k1.x2': 'Un texto entre comillas',
@@ -1536,6 +1988,10 @@ const TEXTOS = { es: {
     'lee.mostrar-caja': 'Muestra en la pantalla lo que hay dentro de la caja {e}',
     'lee.mostrar-texto': 'Muestra en la pantalla el texto {e}, tal cual',
     'lee.asig-calculo': 'Haz la cuenta {e} y mete el resultado en la caja {n}',
+    'lee.leer': 'Pide un dato a la persona y mételo en la caja {n}',
+    'lee.repetir': 'Repite lo de dentro, por lo menos una vez',
+    'lee.hasta': 'Hasta que {c}: si ya es verdad, se acaba; si no, vuelve a repetir',
+    'lee.segun': 'Mira lo que hay en {e} y elige el caso que coincida',
     'lee.const': 'Guarda {e} en la caja {n}, y ya no se podrá cambiar',
     'lee.mostrar': 'Muestra {e} en la pantalla',
     'lee.mientras': 'Mientras {c}, repite lo de dentro',
@@ -1558,6 +2014,22 @@ const TEXTOS = { es: {
     'cons.doble.consigna': 'La caja x guarda un 5. Haz que valga el doble y que la pantalla lo muestre: tiene que salir 10.',
     'cons.cambiar.consigna': 'La caja a guarda un 3 y la b un 5. Intercambia sus valores y muestra a y luego b: tiene que salir 5 3.',
     'cons.clima.consigna': 'Si hay 25 grados o más, muestra «calor»; si no, muestra «frío». Hoy hay 18 grados.',
+    'cons.tarmar.consigna': 'Guarda el texto «Ana» en la caja nombre y haz que la pantalla muestre «Hola Ana», uniendo «Hola » con la caja nombre.',
+    'cons.tarmar.trampa': 'Un texto va entre comillas y una caja no: con «"nombre"» saldría la palabra, no lo que hay dentro de la caja. Y sin el espacio dentro de las comillas saldría «HolaAna».',
+    'cons.tsumatxt.consigna': 'Guarda un 3 en la caja a y un 5 en la caja b. Haz que la pantalla muestre «Total: 8»: el texto «Total: » seguido de la suma de a y b.',
+    'cons.tsumatxt.trampa': 'La suma va entre paréntesis para que se haga antes de unirse al texto. Sin ellos se uniría un 3 y después un 5, y saldría «Total: 35».',
+    'cons.esaluda.consigna': 'Lee el nombre que escribe la persona y haz que la pantalla muestre «Hola » seguido de ese nombre.',
+    'cons.esaluda.trampa': 'El nombre no está escrito en el programa: se lee, y así el saludo vale para cualquier nombre. Entre comillas, «"nombre"» sería la palabra, no lo que escribió la persona.',
+    'cons.edoble.consigna': 'Lee un número que escribe la persona y haz que la pantalla muestre su doble.',
+    'cons.edoble.trampa': 'El dato llega como texto: hay que convertirlo con numero(...) antes de multiplicar. Con «n + n» saldría el texto repetido (44), no 8.',
+    'cons.sdiasem.consigna': 'Guarda 3 en la caja dia. Con un «segun»: si dia es 1, la pantalla muestra «lunes»; si es 3, «miércoles»; y en cualquier otro caso, «otro». Tiene que salir miércoles.',
+    'cons.sdiasem.trampa': 'Cada caso empieza con «caso … entonces», el «sino» recoge todo lo demás y todo se cierra con un solo «fin».',
+    'cons.smenu.consigna': 'Guarda 6 en la caja dia. Con un «segun», haz que la pantalla muestre «descanso» si dia es 6 o 7 y «trabajo» en cualquier otro caso: tiene que salir descanso.',
+    'cons.smenu.trampa': 'Un caso puede tener varios valores separados por comas. Con «caso 6» a secas, el 7 caería en el «sino» y saldría «trabajo».',
+    'cons.hcontar.consigna': 'Con un «repetir … hasta», haz que la pantalla muestre 1, 2, 3: tiene que salir 1 2 3.',
+    'cons.hcontar.trampa': 'La condición del «hasta» dice cuándo parar: con «n > 3» se para al llegar a 4, después de mostrar el 3. Con «n < 3» pararía enseguida.',
+    'cons.hsumar.consigna': 'Suma 1, 2, 3… con un «repetir … hasta» y para en cuanto el total llegue a 6 o más. Después haz que la pantalla muestre el total: tiene que salir 6.',
+    'cons.hsumar.trampa': 'Dentro se suma i al total y se sube i; el «hasta total >= 6» decide cuándo parar. El «mostrar total» va después, fuera de la repetición.',
     'cons.rtotal.titulo': 'La cuenta del pan',
     'cons.rtotal.consigna': 'Crea la constante PRECIO con el 4, guarda un 3 en panes y guarda en total lo que cuestan los panes. Muestra total: tiene que salir 12.',
     'cons.rtotal.trampa': 'PRECIO se crea una sola vez, y total se calcula con ella y con panes. Si un día cambia el precio, solo hay que escribir otro número al crear la constante.',
@@ -1598,7 +2070,7 @@ const TEXTOS = { es: {
 
   /* ════════ BACHILLERATO — solo lo que cambia (muestra) ════════ */
   bach: {
-    'tema.variables': 'Variables y asignación', 'tema.constantes': 'Constantes', 'tema.condicionales': 'Selección', 'tema.bucles': 'Iteración', 'tema.repaso2': 'Repaso: selección e iteración',
+    'tema.variables': 'Variables y asignación', 'tema.constantes': 'Constantes', 'tema.condicionales': 'Selección', 'tema.bucles': 'Iteración', 'tema.repaso2': 'Repaso: selección e iteración', 'tema.tipos': 'Tipos de datos', 'tema.entrada': 'Entrada de datos', 'tema.segun': 'Selección múltiple', 'tema.repetir': 'Iteración con condición final',
     'subtitulo': 'Construye el programa, predice su salida y observa cómo se ejecuta. Si te equivocas, buscamos <em>qué regla equivocada</em> explicaría tu respuesta.',
     'np.titulo': 'Nota sobre notación',
     'np.texto': 'Convención de este módulo: <code>←</code> es asignación y <code>=</code> es comparación de igualdad, como en la tradición del pseudocódigo. No es universal: Python, JavaScript y C asignan con <code>=</code> y comparan con <code>==</code>; Pascal asigna con <code>:=</code>. Las palabras reservadas (<code>mientras</code>, <code>si</code>, <code>fin</code>) también son convención y varían entre lenguajes.',
@@ -1608,6 +2080,14 @@ const TEXTOS = { es: {
     'gl.variables.texto': 'Una variable es un identificador asociado a un valor en memoria. La asignación <code>x ← expr</code> evalúa la expresión y almacena el resultado, sustituyendo el valor anterior.',
     'gl.constantes.titulo': 'Constantes',
     'gl.constantes.texto': 'Una constante es un identificador ligado a un valor que no puede reasignarse. Se declara con <code>constante N ← expr</code>: la expresión se evalúa una vez y cualquier asignación posterior es un error de ejecución. Sirve para dar nombre a valores fijos y evitar «números mágicos».',
+    'gl.tipos.titulo': 'Tipos de datos',
+    'gl.tipos.texto': 'Un tipo de dato determina qué valores son posibles y qué operaciones son válidas sobre ellos. Aquí hay tres: numérico (<code>7</code>), cadena (<code>"7"</code>) y lógico (<code>verdadero</code>, <code>falso</code>). <code>7</code> y <code>"7"</code> son valores distintos: comparados con <code>=</code>, el resultado es <code>falso</code>. El operador <code>+</code> suma números y <b>concatena</b> cadenas; si un operando es una cadena, el otro se convierte en texto antes de concatenar. Operar con un tipo no admitido (<code>"ab" * 2</code>, <code>verdadero + 1</code>) es un error de ejecución, y las comparaciones de orden (<code>&lt;</code>, <code>&gt;</code>) exigen operandos del mismo tipo.',
+    'gl.entrada.titulo': 'Entrada de datos',
+    'gl.entrada.texto': '<code>leer x</code> detiene la ejecución hasta recibir un dato del usuario y lo asigna a <code>x</code>. El dato llega siempre como cadena, incluso si son cifras (como ocurre con <code>input()</code> en Python o <code>prompt()</code> en JavaScript). Para operar numéricamente hay que convertirlo de forma explícita con <code>numero(...)</code>, que da error si la cadena no representa un número; <code>texto(...)</code> hace la conversión inversa. Aquí, el dato que escribe el usuario aparece indicado encima del programa.',
+    'gl.segun.titulo': 'Selección múltiple',
+    'gl.segun.texto': '<code>segun e hacer</code> evalúa la expresión <code>e</code> una sola vez y la compara, con igualdad estricta (el tipo cuenta), con los valores de cada <code>caso</code>, de arriba abajo; ejecuta el bloque del primero que coincide y termina. Un caso admite varios valores (<code>caso 6, 7 entonces</code>) y el <code>sino</code> final recoge el resto. Aquí no hay «caída» (<i>fall-through</i>): en C o Java, sin <code>break</code>, la ejecución continuaría por los casos siguientes.',
+    'gl.repetir.titulo': 'Iteración con condición final',
+    'gl.repetir.texto': '<code>repetir … hasta c</code> es una iteración de condición final (equivalente a <i>do … until</i>): el cuerpo se ejecuta antes de evaluar <code>c</code>, así que se ejecuta al menos una vez. Se sale cuando <code>c</code> es verdadera, es decir, es una condición de parada: la contraria de la de <code>mientras</code>. En C o Java la forma habitual es <code>do … while</code>, donde la condición es de continuación.',
     'gl.condicionales.titulo': 'Selección',
     'gl.condicionales.texto': 'Estructura de selección: se evalúa una expresión booleana y se ejecuta una rama u otra. La condición se evalúa una sola vez y las ramas son mutuamente excluyentes.',
     'gl.bucles.titulo': 'Iteración',
@@ -1628,17 +2108,25 @@ const TEXTOS = { es: {
     'mod.sinoSiempre.diag': 'Ejecutas la rama «sino» a continuación de la rama «si». Son mutuamente excluyentes: se ejecuta una u otra, nunca ambas.',
     'mod.acumula.diag': 'Interpretas la asignación como acumulativa (x ← 8 sumaría 8 al valor previo). La asignación sustituye el valor anterior.',
     'nota.acumula': '{n} ← {e}  →  se acumula sobre {antes}: {n} = {v}',
-    'mod.constVariable.diag': 'Interpretas la constante como una variable ordinaria. Una constante se enlaza a un valor una sola vez; reasignarla es un error y detiene la ejecución.'
+    'mod.constVariable.diag': 'Interpretas la constante como una variable ordinaria. Una constante se enlaza a un valor una sola vez; reasignarla es un error y detiene la ejecución.',
+    'mod.comillasNada.diag': 'Interpretas la cadena «"2"» como el número 2. Las comillas fijan el tipo: «+» concatena cadenas y «=» entre una cadena y un número da falso.',
+    'mod.cae.diag': 'Modelas el «segun» con caída (fall-through): tras el caso que coincide se ejecutan los siguientes. En esta notación cada caso termina implícitamente; la caída existe en C o Java (sin «break»), no aquí.',
+    'mod.hastaMientras.diag': 'Interpretas la condición del «hasta» como de continuación. Es de parada: se itera mientras es falsa y se sale cuando resulta verdadera.',
+    'mod.repetirAntes.diag': 'Tratas el «repetir … hasta» como una iteración de condición inicial. La condición se evalúa al final: el cuerpo se ejecuta al menos una vez.',
+    'mod.entradaNumero.diag': 'Interpretas el dato leído como numérico. Llega siempre como cadena: «+» concatena hasta que se convierte explícitamente con numero(...).',
+    'mod.sumaPrimero.diag': 'Evalúas la suma antes que la concatenación. El operador «+» se evalúa de izquierda a derecha: ("Total: " + a) + b. Para sumar primero hacen falta paréntesis.',
+    'tipo.texto': 'cadena',
+    'tipo.sino': 'lógico'
   }
 } };
 
 /* Que ejercicios entran en cada curso. Primaria deja fuera lo que usa «%». */
-const TODOS = ['dentro', 'ultimo', 'dos', 'foto', 'intercambio', 'precio', 'kuso', 'kcambia', 'kmezcla', 'rpan', 'rvidas', 'justo', 'unootro', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares', 'ktope', 'rmayores', 'rsuma'];
+const TODOS = ['dentro', 'ultimo', 'dos', 'foto', 'intercambio', 'precio', 'kuso', 'kcambia', 'kmezcla', 'rpan', 'rvidas', 'justo', 'unootro', 'sdia', 'slista', 'ssin', 'stexto', 'sresto', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares', 'ktope', 'hcuenta', 'halmenos', 'hatras', 'hcompara', 'hsuma', 'rmayores', 'rsuma', 'tsumar', 'tsaludo', 'ttotal', 'tcomillas', 'tnocalcula', 'tsino', 'esaludo', 'eorden', 'esumatxt', 'enumero', 'ecalor', 'ecompara'];
 // los tres primeros son la rampa de entrada (primaria); ESO y bach empiezan en «foto»
 const FACILES = ['dentro', 'ultimo', 'dos'];
-const RETOS = ['crear', 'caja', 'doble', 'cambiar', 'kcrear', 'kpaquetes', 'rtotal', 'rrestar', 'clima', 'justo', 'unootro', 'cuenta', 'vueltas', 'suma', 'pares', 'ktope', 'rmayor', 'rpuente'];
+const RETOS = ['crear', 'caja', 'doble', 'cambiar', 'kcrear', 'kpaquetes', 'rtotal', 'rrestar', 'clima', 'justo', 'unootro', 'sdiasem', 'smenu', 'cuenta', 'vueltas', 'suma', 'pares', 'ktope', 'hcontar', 'hsumar', 'rmayor', 'rpuente', 'tarmar', 'tsumatxt', 'esaluda', 'edoble'];
 const REGISTROS = {
-  primaria: { ejercicios: TODOS.filter(x => x !== 'pares'), construcciones: RETOS.filter(x => x !== 'pares'), lectura: true },
+  primaria: { ejercicios: TODOS.filter(x => x !== 'pares' && x !== 'tsino' && x !== 'sresto'), construcciones: RETOS.filter(x => x !== 'pares'), lectura: true },
   eso:      { ejercicios: TODOS.filter(x => !FACILES.includes(x)), construcciones: RETOS, lectura: false },
   bach:     { ejercicios: TODOS.filter(x => !FACILES.includes(x)), construcciones: RETOS, lectura: false }
 };
@@ -1646,7 +2134,9 @@ const REGISTROS = {
    tema de sitio) basta editar esto y dar nombre a «bloque.<id>» en TEXTOS. Con un solo bloque no se muestran pestañas. */
 const BLOQUES = [
   { id: 'cajas',   temas: ['variables', 'constantes', 'repaso1'] },
-  { id: 'decidir', temas: ['condicionales', 'bucles', 'repaso2'] }
+  { id: 'decidir', temas: ['condicionales', 'segun'] },
+  { id: 'repetir', temas: ['bucles', 'repetir', 'repaso2'] },
+  { id: 'tipos',   temas: ['tipos', 'entrada'] }
 ];
 
 /* t('clave', {huecos}): registro activo → base. Si falta en ambos, se ve ⟦clave⟧ y avisa. */
@@ -1675,10 +2165,32 @@ const EJERCICIOS = {
   kmezcla:     { tema: 'constantes',    codigo: 'constante BASE ← 5\nextra ← 2\nextra ← extra + 1\nmostrar BASE + extra' },
   rpan:        { tema: 'repaso1',       codigo: 'constante PRECIO ← 4\npanes ← 2\ntotal ← panes * PRECIO\npanes ← 5\nmostrar total' },
   rvidas:      { tema: 'repaso1',       codigo: 'constante MAX ← 3\nvidas ← MAX\nvidas ← vidas - 1\nmostrar vidas\nmostrar MAX' },
+  hcuenta:     { tema: 'repetir',       codigo: 'n ← 1\nrepetir\n  mostrar n\n  n ← n + 1\nhasta n > 3' },
+  halmenos:    { tema: 'repetir',       codigo: 'n ← 5\nrepetir\n  mostrar n\n  n ← n + 1\nhasta n > 3\nmostrar "fin"' },
+  hatras:      { tema: 'repetir',       codigo: 'vidas ← 3\nrepetir\n  mostrar vidas\n  vidas ← vidas - 1\nhasta vidas = 0' },
+  hcompara:    { tema: 'repetir',       codigo: 'n ← 1\nmientras n < 3 hacer\n  mostrar n\n  n ← n + 1\nfin\nrepetir\n  mostrar n\n  n ← n + 1\nhasta n > 4' },
+  hsuma:       { tema: 'repetir',       codigo: 'total ← 0\ni ← 1\nrepetir\n  total ← total + i\n  i ← i + 1\nhasta total >= 6\nmostrar total' },
   rmayores:    { tema: 'repaso2',       codigo: 'para i desde 1 hasta 5 hacer\n  si i > 3 entonces\n    mostrar i\n  fin\nfin' },
+  tsumar:      { tema: 'tipos',         codigo: 'mostrar 2 + 3\nmostrar "2" + "3"' },
+  tsaludo:     { tema: 'tipos',         codigo: 'nombre ← "Ana"\nedad ← 12\nmostrar "Hola " + nombre\nmostrar "Tienes " + edad' },
+  ttotal:      { tema: 'tipos',         codigo: 'a ← 3\nb ← 5\nmostrar "Total: " + a + b\nmostrar "Total: " + (a + b)' },
+  tcomillas:   { tema: 'tipos',         codigo: 'a ← 7\nb ← "7"\nsi a = b entonces\n  mostrar "iguales"\nsino\n  mostrar "distintos"\nfin' },
+  tnocalcula:  { tema: 'tipos',         codigo: 'mostrar 4 * 2\nmostrar "ab" * 2\nmostrar 9' },
+  tsino:       { tema: 'tipos',         codigo: 't ← 25\ncalor ← t > 20\nmostrar calor\nsi calor entonces\n  mostrar "ventilador"\nfin' },
+  esaludo:     { tema: 'entrada',       entrada: ['Ana'],      codigo: 'leer nombre\nmostrar "Hola " + nombre' },
+  eorden:      { tema: 'entrada',       entrada: ['3', '4'],   codigo: 'leer a\nleer b\nmostrar b\nmostrar a' },
+  esumatxt:    { tema: 'entrada',       entrada: ['2', '3'],   codigo: 'leer a\nleer b\nmostrar a + b' },
+  enumero:     { tema: 'entrada',       entrada: ['2', '3'],   codigo: 'leer a\nleer b\nmostrar numero(a) + numero(b)' },
+  ecalor:      { tema: 'entrada',       entrada: ['25'],       codigo: 'leer t\nsi numero(t) > 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin' },
+  ecompara:    { tema: 'entrada',       entrada: ['25'],       codigo: 'leer t\nmostrar "recibido"\nsi t > 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin' },
   rsuma:       { tema: 'repaso2',       codigo: 'total ← 0\npara i desde 1 hasta 4 hacer\n  si i < 3 entonces\n    total ← total + i\n  sino\n    total ← total - 1\n  fin\nfin\nmostrar total' },
   justo:       { tema: 'condicionales', codigo: 't ← 20\nsi t >= 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin' },
   unootro:     { tema: 'condicionales', codigo: 't ← 25\nsi t > 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin\nmostrar "listo"' },
+  sdia:        { tema: 'segun',         codigo: 'dia ← 2\nsegun dia hacer\n  caso 1 entonces\n    mostrar "lunes"\n  caso 2 entonces\n    mostrar "martes"\n  caso 3 entonces\n    mostrar "miércoles"\nfin' },
+  slista:      { tema: 'segun',         codigo: 'dia ← 7\nsegun dia hacer\n  caso 6, 7 entonces\n    mostrar "descanso"\n  sino\n    mostrar "trabajo"\nfin' },
+  ssin:        { tema: 'segun',         codigo: 'nota ← 4\nsegun nota hacer\n  caso 1 entonces\n    mostrar "uno"\n  caso 2 entonces\n    mostrar "dos"\nfin\nmostrar "fin"' },
+  stexto:      { tema: 'segun',         codigo: 'color ← "verde"\nsegun color hacer\n  caso "rojo" entonces\n    mostrar "para"\n  caso "verde" entonces\n    mostrar "pasa"\n  sino\n    mostrar "cuidado"\nfin' },
+  sresto:      { tema: 'segun',         codigo: 'n ← 7\nsegun n % 3 hacer\n  caso 0 entonces\n    mostrar "multiplo"\n  caso 1 entonces\n    mostrar "sobra uno"\n  caso 2 entonces\n    mostrar "sobran dos"\nfin' },
   vueltas:     { tema: 'bucles',        codigo: 'n ← 1\nmientras n < 4 hacer\n  mostrar n\n  n ← n + 1\nfin' },
   noentra:     { tema: 'bucles',        codigo: 'n ← 5\nmientras n < 3 hacer\n  mostrar n\n  n ← n + 1\nfin\nmostrar "fin"' },
   cuenta:      { tema: 'bucles',        codigo: 'vidas ← 3\nmientras vidas > 0 hacer\n  mostrar vidas\n  vidas ← vidas - 1\nfin' },
@@ -1696,20 +2208,28 @@ Object.keys(EJERCICIOS).forEach(id => { EJERCICIOS[id].id = id; });
 const CONSTRUCCIONES = {
   crear:   { tema: 'variables',     entradas: { 'edad ← 7': [9, 2] }, solucion: ['edad ← 7'], distractores: ['peso ← 7', 'edad ← 8', '7 ← edad'] },
   caja:    { tema: 'variables',     entradas: { 'edad ← 7': [9, 12] }, solucion: ['edad ← 7', 'mostrar edad'], distractores: ['mostrar "edad"'] },
-  doble:   { tema: 'variables',     entradas: { 'x ← 5': [2, 11] }, solucion: ['x ← 5', 'x ← x * 2', 'mostrar x'], distractores: ['x ← x + 2'] },
-  cambiar: { tema: 'variables',     entradas: { 'a ← 3': [8, 1], 'b ← 5': [6, 9] }, solucion: ['a ← 3', 'b ← 5', 'aux ← a', 'a ← b', 'b ← aux', 'mostrar a', 'mostrar b'], distractores: ['b ← a'] },
+  doble:   { tema: 'variables',     entradas: { 'x ← 5': [2, 11] }, solucion: ['x ← 5', 'x ← x * 2', 'mostrar x'], distractores: ['x ← x + 2'], pistas: [{ id: 'suma', si: (v, l) => l.includes('x ← x + 2') }] },
+  cambiar: { tema: 'variables',     entradas: { 'a ← 3': [8, 1], 'b ← 5': [6, 9] }, solucion: ['a ← 3', 'b ← 5', 'aux ← a', 'a ← b', 'b ← aux', 'mostrar a', 'mostrar b'], distractores: ['b ← a'] , pistas: [{ id: 'pisa', si: v => v.a !== undefined && v.a === v.b }] },
   kcrear:  { tema: 'constantes',   entradas: { 'constante DIAS ← 7': [5, 30] }, solucion: ['constante DIAS ← 7', 'mostrar DIAS'], distractores: ['DIAS ← 7', 'constante DIAS ← 8', 'mostrar "DIAS"'] },
   kpaquetes: { tema: 'constantes', entradas: { 'paquetes ← 3': [5, 10], 'constante HUEVOS ← 6': [12, 4] }, solucion: ['constante HUEVOS ← 6', 'paquetes ← 3', 'mostrar paquetes * HUEVOS'], distractores: ['HUEVOS ← 6', 'mostrar paquetes * 6', 'paquetes ← paquetes * HUEVOS'] },
   rtotal:  { tema: 'repaso1',      entradas: { 'panes ← 3': [5, 1], 'constante PRECIO ← 4': [2, 10] }, solucion: ['constante PRECIO ← 4', 'panes ← 3', 'total ← panes * PRECIO', 'mostrar total'], distractores: ['PRECIO ← 4', 'mostrar panes * 4', 'total ← panes + PRECIO'] },
   rrestar: { tema: 'repaso1',      entradas: { 'constante MAX ← 3': [5, 2] }, solucion: ['constante MAX ← 3', 'vidas ← MAX', 'vidas ← vidas - 1', 'mostrar vidas', 'mostrar MAX'], distractores: ['MAX ← MAX - 1', 'mostrar MAX - 1'] },
+  hcontar: { tema: 'repetir',      entradas: { 'n ← 1': [2, 3, 5] }, solucion: ['n ← 1', 'repetir', 'mostrar n', 'n ← n + 1', 'hasta n > 3'], distractores: ['hasta n < 3', 'n ← n - 1', 'mostrar n + 1'] },
+  hsumar:  { tema: 'repetir',      solucion: ['total ← 0', 'i ← 1', 'repetir', 'total ← total + i', 'i ← i + 1', 'hasta total >= 6', 'mostrar total'], distractores: ['hasta total < 6', 'total ← i', 'mostrar i'] },
   rmayor:  { tema: 'repaso2',      solucion: ['para i desde 1 hasta 5 hacer', 'si i > 3 entonces', 'mostrar i', 'fin', 'fin'], distractores: ['si i >= 3 entonces', 'mostrar 3'] },
   rpuente: { tema: 'repaso2',      entradas: { 'constante TOPE ← 3': [2, 5] }, solucion: ['constante TOPE ← 3', 'para i desde 1 hasta TOPE hacer', 'si i = TOPE entonces', 'mostrar "¡ya!"', 'sino', 'mostrar i', 'fin', 'fin'], distractores: ['si i > TOPE entonces', 'mostrar TOPE'] },
+  tarmar:  { tema: 'tipos',         solucion: ['nombre ← "Ana"', 'mostrar "Hola " + nombre'], distractores: ['mostrar "Hola" + nombre', 'mostrar "Hola " + "nombre"', 'nombre ← Ana'] },
+  tsumatxt: { tema: 'tipos',        entradas: { 'a ← 3': [4, 10], 'b ← 5': [1, 2] }, solucion: ['a ← 3', 'b ← 5', 'mostrar "Total: " + (a + b)'], distractores: ['mostrar "Total: " + a + b', 'mostrar "Total: " + "a + b"'] },
+  esaluda: { tema: 'entrada',      entrada: ['Ana'], alternativas: [['Luis'], ['Marta']], solucion: ['leer nombre', 'mostrar "Hola " + nombre'], distractores: ['mostrar "Hola " + "nombre"', 'nombre ← "Ana"', 'mostrar "Hola" + nombre'] },
+  edoble:  { tema: 'entrada',      entrada: ['4'], alternativas: [['7'], ['0'], ['12']], solucion: ['leer n', 'mostrar numero(n) * 2'], distractores: ['mostrar n * 2', 'mostrar n + n', 'mostrar numero(n) + 2'] },
   clima:   { tema: 'condicionales', entradas: { 't ← 18': [30, 25, 10, 24] }, solucion: ['t ← 18', 'si t >= 25 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin'], distractores: ['mostrar "templado"', 'si t <= 25 entonces'] },
   justo:   { tema: 'condicionales', entradas: { 't ← 20': [19, 21, 5, 30] }, solucion: ['t ← 20', 'si t >= 20 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin'], distractores: ['si t > 20 entonces', 'mostrar "templado"'] },
   unootro: { tema: 'condicionales', entradas: { 't ← 25': [10, 30, 20] }, solucion: ['t ← 25', 'si t > 20 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin', 'mostrar "listo"'], distractores: ['si t < 20 entonces', 'mostrar "templado"'] },
-  cuenta:  { tema: 'bucles',        entradas: { 'n ← 3': [5, 1, 0] }, solucion: ['n ← 3', 'mientras n > 0 hacer', 'mostrar n', 'n ← n - 1', 'fin'], distractores: ['n ← n + 1'] },
-  vueltas: { tema: 'bucles',        entradas: { 'n ← 1': [2, 3] }, solucion: ['n ← 1', 'mientras n < 4 hacer', 'mostrar n', 'n ← n + 1', 'fin'], distractores: ['n ← n - 1', 'mientras n <= 4 hacer'] },
-  suma:    { tema: 'bucles',        solucion: ['total ← 0', 'para i desde 1 hasta 4 hacer', 'total ← total + i', 'fin', 'mostrar total'], distractores: ['total ← i'] },
+  sdiasem: { tema: 'segun',        entradas: { 'dia ← 3': [1, 5, 8] }, solucion: ['dia ← 3', 'segun dia hacer', 'caso 1 entonces', 'mostrar "lunes"', 'caso 3 entonces', 'mostrar "miércoles"', 'sino', 'mostrar "otro"', 'fin'], distractores: ['caso 2 entonces', 'mostrar "martes"', 'segun dia entonces'] },
+  smenu:   { tema: 'segun',        entradas: { 'dia ← 6': [7, 1, 3] }, solucion: ['dia ← 6', 'segun dia hacer', 'caso 6, 7 entonces', 'mostrar "descanso"', 'sino', 'mostrar "trabajo"', 'fin'], distractores: ['caso 6 entonces', 'caso 7 entonces', 'mostrar "estudio"'] },
+  cuenta:  { tema: 'bucles',        entradas: { 'n ← 3': [5, 1, 0] }, solucion: ['n ← 3', 'mientras n > 0 hacer', 'mostrar n', 'n ← n - 1', 'fin'], distractores: ['n ← n + 1'], pistas: [{ id: 'sube', si: (v, l) => l.includes('n ← n + 1') }, { id: 'orden', si: (v, l) => l.includes('mostrar n') && l.includes('n ← n - 1') && l.indexOf('mostrar n') > l.indexOf('n ← n - 1') }] },
+  vueltas: { tema: 'bucles',        entradas: { 'n ← 1': [2, 3] }, solucion: ['n ← 1', 'mientras n < 4 hacer', 'mostrar n', 'n ← n + 1', 'fin'], distractores: ['n ← n - 1', 'mientras n <= 4 hacer'], pistas: [{ id: 'baja', si: (v, l) => l.includes('n ← n - 1') }, { id: 'limite', si: (v, l) => l.includes('mientras n <= 4 hacer') }] },
+  suma:    { tema: 'bucles',        solucion: ['total ← 0', 'para i desde 1 hasta 4 hacer', 'total ← total + i', 'fin', 'mostrar total'], distractores: ['total ← i'], pistas: [{ id: 'pisa', si: (v, l) => l.includes('total ← i') }, { id: 'dentro', si: (v, l) => l.includes('mostrar total') && l.includes('fin') && l.indexOf('mostrar total') < l.indexOf('fin') }] },
   pares:   { tema: 'bucles',        solucion: ['para i desde 1 hasta 6 hacer', 'si i % 2 = 0 entonces', 'mostrar i', 'fin', 'fin'], distractores: ['si i % 2 = 1 entonces'] },
   ktope:   { tema: 'bucles',        entradas: { 'constante TOPE ← 3': [5, 2] }, solucion: ['constante TOPE ← 3', 'n ← 1', 'mientras n <= TOPE hacer', 'mostrar n', 'n ← n + 1', 'fin'], distractores: ['TOPE ← 3', 'mientras n < TOPE hacer', 'n ← TOPE'] }
 };
@@ -1753,9 +2273,21 @@ const PREGUNTAS = [
   { id: 'c1', tema: 'condicionales' },
   { id: 'c2', tema: 'condicionales' },
   { id: 'c3', tema: 'condicionales', codigo: 't ← 20\nsi t > 20 entonces\n  mostrar "calor"\nfin' },
+  { id: 'r1', tema: 'repetir' },
+  { id: 'r2', tema: 'repetir', codigo: 'n ← 5\nrepetir\n  mostrar n\n  n ← n + 1\nhasta n > 3' },
+  { id: 'r3', tema: 'repetir' },
+  { id: 's1', tema: 'segun' },
+  { id: 's2', tema: 'segun', codigo: 'n ← 2\nsegun n hacer\n  caso 1 entonces\n    mostrar "a"\n  caso 2 entonces\n    mostrar "b"\nfin' },
+  { id: 's3', tema: 'segun' },
   { id: 'b1', tema: 'bucles' },
   { id: 'b2', tema: 'bucles', codigo: 'n ← 5\nmientras n < 3 hacer\n  mostrar n\n  n ← n + 1\nfin' },
-  { id: 'b3', tema: 'bucles' }
+  { id: 'b3', tema: 'bucles' },
+  { id: 't1', tema: 'tipos' },
+  { id: 't2', tema: 'tipos', codigo: 'mostrar "2" + "3"' },
+  { id: 't3', tema: 'tipos', codigo: 'a ← 3\nb ← 5\nmostrar "Total: " + a + b' },
+  { id: 'e1', tema: 'entrada' },
+  { id: 'e2', tema: 'entrada', codigo: 'leer n\nmostrar n + n', entrada: ['4'] },
+  { id: 'e3', tema: 'entrada' }
 ];
 /* Elige la pregunta: la primera sin responder del tema que se esta viendo; si no hay, de otro tema. */
 function elegirPregunta(tema, respondidas) {
@@ -1783,9 +2315,9 @@ const KORU = (function () {
   const NIVELES = { primaria: 'primaria', eso: 'ESO', bach: 'bachillerato' };
   const campo = (label, value, unit) => ({ label, value, unit: unit || '' });
   // la salida de un programa como texto («3 2 1»); null si el programa no se puede ejecutar
-  function salidaDe(codigo) {
+  function salidaDe(codigo, entrada) {
     if (!codigo) return null;
-    try { const r = MOTOR.correr(codigo); return r.error ? null : r.salida.map(String).join(' '); } catch (_) { return null; }
+    try { const r = MOTOR.correr(codigo, null, entrada); return r.error ? null : r.salida.map(String).join(' '); } catch (_) { return null; }
   }
   const unaLinea = a => (Array.isArray(a) ? a : [a]).map(String).join(' ');
 
@@ -1795,10 +2327,11 @@ const KORU = (function () {
     const u = s.ultimo || null, pred = s.tipo === 'predecir';
     const inputs = { nivel: campo(t('koru.l.nivel'), s.nivel), modo: campo(t('koru.l.modo'), s.modo) };
     if (s.codigo) inputs.codigo = campo(t('koru.l.codigo'), s.codigo);
+    if (s.entrada && s.entrada.length) inputs.entrada = campo(t('koru.l.entrada'), s.entrada.join(' · '));
     if (s.montaje && s.montaje.length) inputs.montaje = campo(t('koru.l.montaje'), s.montaje.join('\n'));
     if (u && u.respuesta !== undefined) inputs.respuesta = campo(t('koru.l.respuesta'), u.respuesta.trim() || t('koru.nada'));
     const outputs = {};
-    const esperado = salidaDe(pred ? s.codigo : s.solucion);
+    const esperado = salidaDe(pred ? s.codigo : s.solucion, s.entrada);
     if (esperado !== null) outputs.esperado = campo(t('koru.l.esperado'), esperado || t('koru.nada'));
     if (u && u.mio !== undefined) outputs.obtenido = campo(t('koru.l.obtenido'), unaLinea(u.mio) || t('koru.nada'));
     if (u) outputs.correcta = campo(t('koru.l.correcta'), !!(u.correcta || u.estado === 'ok'));
@@ -1991,7 +2524,7 @@ const KORU = (function () {
 
   // ── resaltado del codigo ────────────────────────────────
   // Cada palabra se pinta segun lo que ES: palabra del lenguaje, caja (variable) o valor (numero / texto).
-  const PALABRAS = new Set(['mientras', 'hacer', 'si', 'entonces', 'sino', 'fin', 'para', 'desde', 'hasta', 'mostrar', 'constante']);
+  const PALABRAS = new Set(['mientras', 'hacer', 'si', 'entonces', 'sino', 'fin', 'para', 'desde', 'hasta', 'mostrar', 'constante', 'leer', 'segun', 'según', 'caso', 'repetir']);
   const TOK = /("[^"]*")|([A-Za-zÁÉÍÓÚáéíóúÑñÜü_][A-Za-zÁÉÍÓÚáéíóúÑñÜü_0-9]*)|(\d+(?:\.\d+)?)|(←|<-|:=)|(\s+)|([\s\S])/g;
   function resaltar(linea) {
     const ci = linea.search(/#|\/\//);
@@ -2013,7 +2546,8 @@ const KORU = (function () {
           if (l === 'verdadero' || l === 'falso') return '<span class="n">' + esc(x.v) + '</span>';
           const logico = (l === 'y' || l === 'o') ? cierra(vecino(k, -1)) && abre(vecino(k, 1))
             : l === 'no' ? abre(vecino(k, 1)) && !cierra(vecino(k, -1)) : false;
-          return PALABRAS.has(l) || logico ? '<span class="k">' + esc(x.v) + '</span>' : '<span class="v">' + esc(x.v) + '</span>';
+          const sigue = vecino(k, 1), conversion = (l === 'numero' || l === 'número' || l === 'texto') && sigue && sigue.t === 'o' && sigue.v === '(';
+          return PALABRAS.has(l) || logico || conversion ? '<span class="k">' + esc(x.v) + '</span>' : '<span class="v">' + esc(x.v) + '</span>';
         }
         default: return esc(x.v);
       }
@@ -2058,10 +2592,11 @@ const KORU = (function () {
     else { $('#temas').removeAttribute('role'); $('#temas').removeAttribute('aria-labelledby'); }
     const temas = [...new Set(lista.map(x => x.tema))].filter(tm => !pestanas || bloqueDe(tm) === E.bloqueVista);
     $('#temas').innerHTML = temas.map(tm => '<div class="tema"><span class="tema-n">' + esc(t('tema.' + tm)) + '</span>' +
-      lista.map((x, k) => x.tema === tm ? '<button class="chip' + (E.xp[claveXP(reto ? 'c' : 'p', x.id)] !== undefined ? ' ok' : '') + '" data-k="' + k + '"' + (k === sel ? ' aria-current="true"' : '') + '>' + esc(t(pre + x.id + '.titulo')) + '</button>' : '').join('') + '</div>').join('');
+      lista.map((x, k) => x.tema === tm ? '<button class="chip' + (E.xp[claveXP(reto ? 'c' : 'p', x.id)] !== undefined ? ' ok' : '') + '" data-k="' + k + '"' + (k === sel && !E.sinSel ? ' aria-current="true"' : '') + '>' + esc(t(pre + x.id + '.titulo')) + '</button>' : '').join('') + '</div>').join('');
   }
   // pestañas: clic o flechas (Izquierda/Derecha/Inicio/Fin); al elegir una se ve ese bloque sin cambiar el reto abierto
-  function elegirBloque(id, foco) { E.bloqueVista = id; pintarLista(); if (foco) { const b = $('#tab-' + id); if (b) b.focus(); } }
+  function fijarSinSel(v) { E.sinSel = v; if (v) document.documentElement.dataset.sinsel = '1'; else delete document.documentElement.dataset.sinsel; }
+  function elegirBloque(id, foco) { if (id !== E.bloqueVista) fijarSinSel(true); E.bloqueVista = id; pintarLista(); if (foco) { const b = $('#tab-' + id); if (b) b.focus(); } }
   $('#bloques').addEventListener('click', e => { const b = e.target.closest('[data-b]'); if (b) elegirBloque(b.dataset.b, false); });
   $('#bloques').addEventListener('keydown', e => {
     const tabs = [...document.querySelectorAll('#bloques [data-b]')], i = tabs.findIndex(x => x.dataset.b === E.bloqueVista);
@@ -2095,8 +2630,17 @@ const KORU = (function () {
     const reto = esReto();
     $('#ej-titulo').textContent = reto ? tcon('titulo') : tej('titulo');
     $('#ej-consigna').textContent = reto ? tcon('consigna') : tej('consigna');
+    pintarEntrada();
+  }
+  // lo que la persona escribe cuando el programa hace «leer»: va indicado encima del programa, en los tres modos
+  const entradaActual = () => (esReto() ? ret() : ej()).entrada || [];
+  function pintarEntrada() {
+    const d = entradaActual(), el = $('#entrada');
+    el.hidden = !d.length;
+    el.textContent = d.length ? t('entrada.linea', { datos: d.map(x => '«' + x + '»').join(', ') }) : '';
   }
   function vista() {
+    fijarSinSel(false);
     const m = E.modo;
     $('#v-predecir').hidden = m !== 'predecir'; $('#v-mirar').hidden = m !== 'mirar'; $('#v-construir').hidden = m !== 'construir';
     $('#mascota-fila').hidden = m === 'mirar';
@@ -2115,7 +2659,7 @@ const KORU = (function () {
   $('#resp').addEventListener('input', () => { if ($('#cara').dataset.estado !== 'pensando') mascota('pensando'); });
   $('#form-pred').addEventListener('submit', ev => {
     ev.preventDefault();
-    const fb = $('#fb'), r = MOTOR.diagnosticar(ej().codigo, $('#resp').value);
+    const fb = $('#fb'), r = MOTOR.diagnosticar(ej().codigo, $('#resp').value, ej().entrada);
     E.ultimo = { id: ej().id, respuesta: $('#resp').value, correcta: !!r.correcta, causas: (r.causas || []).map(c => c.id) };
     if (r.correcta) {
       const gan = otorgar('p', ej().id, XP_PRED, E.fallosP, E.ayudaP ? 1 : 0); pintarLista(); mascota('feliz');
@@ -2153,14 +2697,17 @@ const KORU = (function () {
 
   // ── CONSTRUIR ───────────────────────────────────────────
   // La sangria no se arrastra: sale sola de mientras/si/para … fin.
+  // Una pila de lo abierto: «segun» abre sus casos (cada «caso» y el «sino» del segun abren su bloque), «fin» cierra el bloque y el segun.
   function indentaciones(textos) {
-    let d = 0;
+    const pila = [];
     return textos.map(tx => {
       const m = /^\s*([a-záéíóúñü]+)/i.exec(tx), k = m ? m[1].toLowerCase() : '';
-      if (k === 'fin') { d = Math.max(0, d - 1); return d; }
-      if (k === 'sino') return Math.max(0, d - 1);
-      const s = d; if (k === 'mientras' || k === 'si' || k === 'para') d++;
-      return s;
+      const enCaso = () => pila[pila.length - 1] === 'caso';
+      if (k === 'fin') { if (enCaso()) pila.pop(); pila.pop(); return pila.length; }
+      if (k === 'hasta') { pila.pop(); return pila.length; }                 // cierra el «repetir»
+      if (k === 'sino') { if (enCaso()) { pila.pop(); const r = pila.length; pila.push('caso'); return r; } return Math.max(0, pila.length - 1); }
+      if (k === 'caso') { if (enCaso()) pila.pop(); const r = pila.length; pila.push('caso'); return r; }
+      const r = pila.length; if (k === 'mientras' || k === 'si' || k === 'para' || k === 'repetir' || k === 'segun' || k === 'según') pila.push(k); return r;
     });
   }
   function mezclar(uids, solUids) {
@@ -2291,9 +2838,17 @@ const KORU = (function () {
     fb.className = 'fb'; fb.textContent = t('cons.ayuda.puesta');
     pintarC(u);
   };
+  // pista propia del reto (p. ej. en el intercambio, «a y b acaban valiendo lo mismo»): se decide con el estado final de las cajas
+  // y con las líneas montadas. La usan Construir (al comprobar) y Mirar (al ver el programa montado).
+  function pistaDe(r, lineas) {
+    if (!r.pistas) return null;
+    const pr = MOTOR.correr(lineas.join('\n'), null, r.entrada), fin = {};
+    (pr.pasos.length ? pr.pasos[pr.pasos.length - 1].vars : []).forEach(v => { fin[v.n] = v.v; });
+    return r.pistas.find(p => p.si(fin, lineas)) || null;
+  }
   $('#c-comprobar').onclick = () => {
     const r = ret(), lineas = C.montaje.map(u => C.bloques.get(u).texto), fb = $('#fb-c');
-    const res = MOTOR.comprobarConstruccion(r.solucion, lineas, r.entradas);
+    const res = MOTOR.comprobarConstruccion(r.solucion, lineas, r.entradas, { entrada: r.entrada, alternativas: r.alternativas });
     E.ultimo = { id: r.id, estado: res.estado, mio: res.mio, correcta: res.estado === 'ok' };
     const botones = res.pasos > 0 && res.estado !== 'ok' ? '<button class="btn" id="c-ver">' + esc(t('cons.ver')) + '</button>' : '';
     const ver = () => { const b = $('#c-ver'); if (b) b.onclick = () => { E.codigoMirar = lineas.join('\n'); E.modo = 'mirar'; E.paso = -1; E.modelo = ''; vista(); }; };
@@ -2313,7 +2868,11 @@ const KORU = (function () {
     let msg;
     switch (res.estado) {
       case 'vacio': msg = t('cons.fb.vacio'); break;
-      case 'faltan': msg = t('cons.fb.faltan', { n: res.n }); break;
+      case 'faltan':
+        msg = t('cons.fb.faltan', { n: res.n });
+        if (res.error) msg += ' ' + t('cons.fb.faltanerror', { n: res.error.linea, msg: t('err.' + res.error.id, res.error.p) });
+        else if (res.mio && res.mio.length) msg += ' ' + t('cons.fb.faltansale', { mio: res.mio.join(' ') });
+        break;
       case 'error': msg = t('cons.fb.error', { n: res.error.linea, msg: t('err.' + res.error.id, res.error.p) }); break;
       case 'colgado': msg = t('cons.fb.colgado'); break;
       case 'distinta':
@@ -2328,9 +2887,10 @@ const KORU = (function () {
         break;
       default: msg = t('cons.fb.casi');
     }
+    const pista = res.estado !== 'vacio' ? pistaDe(r, lineas) : null;
     mascota('fallo'); C.fallos++;
     fb.className = 'fb mal';
-    fb.innerHTML = esc(msg) + (botones ? '<div class="acciones">' + botones + '</div>' : '');
+    fb.innerHTML = esc(msg) + (pista ? '<p class="pista">' + esc(t('cons.' + r.id + '.pista.' + pista.id)) + '</p>' : '') + (botones ? '<div class="acciones">' + botones + '</div>' : '');
     ver(); pintarC();
   };
 
@@ -2344,7 +2904,7 @@ const KORU = (function () {
   }
   function recalcular() {
     const m = MOTOR.MODELOS.find(x => x.id === E.modelo);
-    E.traza = MOTOR.correr(codigoActual(), m ? m.flags : {});
+    E.traza = MOTOR.correr(codigoActual(), m ? m.flags : {}, entradaActual());
     const av = $('#aviso-modelo');
     av.hidden = !m;
     if (m) {
@@ -2352,13 +2912,18 @@ const KORU = (function () {
         '<div class="acciones"><button type="button" class="btn" id="b-real">' + esc(t('mirar.volver')) + '</button></div>';
       $('#b-real').onclick = () => { pararAuto(); E.modelo = ''; E.paso = -1; $('#sel-modelo').value = ''; recalcular(); };
     }
+    // la pista de Construir se repite aquí cuando se llega desde «Ver mi programa paso a paso»
+    const pm = $('#pista-mirar'), pista = E.codigoMirar !== null && !m ? pistaDe(ret(), E.codigoMirar.split('\n')) : null;
+    pm.hidden = !pista;
+    pm.innerHTML = pista ? '<strong>' + esc(t('mirar.pista')) + '</strong> ' + esc(t('cons.' + ret().id + '.pista.' + pista.id)) : '';
     pintarMirar();
   }
   const textoNota = n => t('nota.' + n.id, n.p);
   function pintarMirar() {
     const tr = E.traza, p = E.paso >= 0 ? tr.pasos[E.paso] : null, e = $('#err-codigo');
     pintarCodigo(p ? p.linea : 0);
-    $('#cajas').innerHTML = p ? p.vars.map(v => '<div class="caja' + (v.n === p.cambia ? ' cambia' : '') + (v.c ? ' const' : '') + '"><b>' + esc(v.n) + '</b><span>' + esc(v.v) + '</span>' + (v.f ? '<em>ƒ ' + esc(v.f) + '</em>' : '') + (v.c ? '<em>' + esc(t('mirar.const')) + '</em>' : '') + '</div>').join('') : '';
+    const conTipo = ['tipos', 'entrada'].includes((esReto() ? ret() : ej()).tema);           // en el tema de tipos cada caja dice de qué tipo es
+    $('#cajas').innerHTML = p ? p.vars.map(v => '<div class="caja' + (v.n === p.cambia ? ' cambia' : '') + (v.c ? ' const' : '') + '"><b>' + esc(v.n) + '</b><span>' + esc(v.v) + '</span>' + (v.f ? '<em>ƒ ' + esc(v.f) + '</em>' : '') + (v.c ? '<em>' + esc(t('mirar.const')) + '</em>' : '') + (conTipo && v.t ? '<em class="tipo">' + esc(t('tipo.' + v.t)) + '</em>' : '') + '</div>').join('') : '';
     $('#pantalla').textContent = p ? p.salida.join('\n') : '';
     const fin = E.paso >= tr.pasos.length - 1;
     let nota = p ? textoNota(p.nota) : t('mirar.inicio');
@@ -2482,6 +3047,7 @@ const KORU = (function () {
       titulo: reto ? tcon('titulo') : tej('titulo'),
       codigo: reto ? E.codigoMirar : codigoActual(),
       solucion: reto ? r.solucion.join('\n') : null,
+      entrada: r.entrada || null,
       montaje: reto && E.modo === 'construir' && C.id === r.id ? C.montaje.map(x => C.bloques.get(x).texto) : null,
       fallos: reto ? C.fallos : E.fallosP, ayudas: reto ? C.ayudas : (E.ayudaP ? 1 : 0),
       xp: E.xp[claveXP(reto ? 'c' : 'p', r.id)] || 0, modelo: E.modelo, ultimo: u };
