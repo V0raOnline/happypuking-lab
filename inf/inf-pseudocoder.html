@@ -33,7 +33,7 @@
 <meta property="og:locale" content="es_ES">
 <meta property="og:url" content="https://v0raonline.github.io/happypuking-lab/inf/inf-pseudocoder.html">
 <meta property="og:title" content="PseudoCoder: aprende a programar sin escribir código">
-<meta property="og:description" content="Variables, condicionales y bucles con CRT, un monitor de tubo: monta el programa, predice qué hace y, si te equivocas, descubre por qué. Gratis, sin cuentas y sin instalar nada.">
+<meta property="og:description" content="Variables, constantes, condicionales y bucles con CRT, un monitor de tubo: monta el programa, predice qué hace y, si te equivocas, descubre por qué. Gratis, sin cuentas y sin instalar nada.">
 <meta property="og:image" content="https://v0raonline.github.io/happypuking-lab/assets/crt/og-pseudocoder.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -85,7 +85,11 @@ h1{font:700 clamp(1.7rem,4.5vw,2.5rem)/1.1 'Space Grotesk',sans-serif;margin:.2r
 .modos{display:flex;gap:.5rem;flex-wrap:wrap}
 .nivel{display:flex;gap:.4rem;align-items:center;font:.8rem 'DM Mono',monospace;color:var(--muted)}
 .modo,.chip,.btn{font:600 .85rem 'Nunito',sans-serif;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:.45rem 1rem;cursor:pointer}
-.modo[aria-pressed="true"]{background:var(--magenta);border-color:var(--magenta);color:#fff}
+.modo[aria-pressed="true"],.tab[aria-selected="true"]{background:var(--magenta);border-color:var(--magenta);color:#fff}
+.bloques{display:flex;gap:.5rem;flex-wrap:wrap;margin:0 0 .8rem}
+.bloques:empty{display:none}
+.tab{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;text-align:center}
+.tab .prog{margin-top:.1rem;font-weight:700;font-size:.85em;white-space:nowrap}
 .btn.primario{background:var(--magenta);border-color:var(--magenta);color:#fff}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn:hover:not(:disabled),.chip:hover{border-color:var(--magenta)}
@@ -104,6 +108,8 @@ h1{font:700 clamp(1.7rem,4.5vw,2.5rem)/1.1 'Space Grotesk',sans-serif;margin:.2r
 .ln{display:flex;white-space:pre;padding-right:1rem}
 .ln i{font-style:normal;color:var(--muted);width:2.6rem;text-align:right;padding-right:.9rem;flex:none;user-select:none}
 .ln.activa{background:var(--magenta-soft);box-shadow:inset 3px 0 0 var(--magenta)}
+/* la linea activa lleva un tinte: en la piel laboratorio con tema claro hay que oscurecer un poco el numero y los colores del codigo para llegar a 4,5:1 */
+:root[data-skin="lab"][data-theme="light"] .ln.activa{--var:#094a73;--muted:#4f4555;--str:#0e5a30;--num:#774100;--kw:#5b3299;--com:#4f4555}
 .k{color:var(--kw);font-weight:600}.n{color:var(--num)}.s{color:var(--str)}.c{color:var(--com);font-style:italic}.as{color:var(--asig,var(--magenta));font-weight:700}
 .mascota{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
 .cara{font:600 1.1rem 'DM Mono',monospace;background:var(--surface2);border:2px solid var(--border);border-radius:18px;padding:.5rem .8rem;min-width:7rem;text-align:center;transition:border-color .2s,background .2s}
@@ -126,6 +132,7 @@ input[type=text]{font:500 1.05rem 'DM Mono',monospace;background:var(--bg);color
 .caja b{display:block;font:600 .75rem 'DM Mono',monospace;color:var(--muted);letter-spacing:.04em}
 .caja span{font:600 1.5rem 'DM Mono',monospace}
 .caja.cambia{border-color:var(--magenta);background:var(--magenta-soft)}
+.caja.const{border-style:double;border-width:4px}
 .caja em{display:block;font:normal .65rem 'DM Mono',monospace;color:var(--amber)}
 @media(prefers-reduced-motion:no-preference){.caja.cambia{animation:pop .35s ease}}
 @keyframes pop{50%{transform:scale(1.07)}}
@@ -247,7 +254,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   border-color:color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 14%,#000);
   transform:translate(1px,1px);box-shadow:none}
 /* hundidos: modo activo y chip actual */
-:root[data-skin="crt"] .modo[aria-pressed="true"],:root[data-skin="crt"] .chip[aria-current="true"]{
+:root[data-skin="crt"] .modo[aria-pressed="true"],:root[data-skin="crt"] .tab[aria-selected="true"],:root[data-skin="crt"] .chip[aria-current="true"]{
   background:color-mix(in srgb,var(--f) 40%,var(--fbg));color:#fff;text-shadow:0 0 6px var(--fglow);
   border-color:color-mix(in srgb,var(--f) 14%,#000) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 62%,#fff) color-mix(in srgb,var(--f) 14%,#000);
   transform:translate(1px,1px);box-shadow:none}
@@ -319,13 +326,15 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
   /* ── ELEGIR: la lista de retos, una fila por reto ── */
   :root[data-pantalla="elegir"] .grid,:root[data-pantalla="elegir"] .salto{display:none}
   :root[data-pantalla="elegir"] .modo{flex:1 1 auto;min-height:var(--tap)}
+  :root[data-pantalla="elegir"] .bloques{flex-wrap:nowrap}
+  :root[data-pantalla="elegir"] .tab{flex:1 1 0;min-width:0}
   :root[data-pantalla="elegir"] .temas{gap:.2rem;margin-bottom:.4rem}
   :root[data-pantalla="elegir"] .tema{flex-direction:column;align-items:stretch;gap:.35rem;margin-bottom:.5rem}
   :root[data-pantalla="elegir"] .tema-n{min-width:0}
   :root[data-pantalla="elegir"] .chip{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:var(--tap);text-align:left;padding-left:.8rem;padding-right:.8rem}
   :root[data-pantalla="elegir"] .chip.ok::after{margin-left:auto;padding-left:.6rem}
   /* ── RETO: lo de uso inmediato, junto ── */
-  :root[data-pantalla="reto"] .topbar,:root[data-pantalla="reto"] .sub,:root[data-pantalla="reto"] .modos,
+  :root[data-pantalla="reto"] .topbar,:root[data-pantalla="reto"] .sub,:root[data-pantalla="reto"] .bloques,:root[data-pantalla="reto"] .modos,
   :root[data-pantalla="reto"] .temas,:root[data-pantalla="reto"] .hud-nivel,:root[data-pantalla="reto"] .plegar,
   :root[data-pantalla="reto"] #xp-rango,:root[data-pantalla="reto"] #ay-txt,:root[data-pantalla="reto"] .hud-et{display:none}
   :root[data-pantalla="reto"] h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -437,6 +446,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
     <button class="modo" id="m-predecir" aria-pressed="false" data-t="modo.predecir"></button>
     <button class="modo" id="m-mirar" aria-pressed="false" data-t="modo.mirar"></button>
   </div>
+  <div class="bloques" id="bloques" role="tablist" data-t-aria="bloques.aria"></div>
   <div class="temas" id="temas"></div>
 
   <div class="grid">
@@ -552,7 +562,7 @@ select{font:600 .85rem 'Nunito',sans-serif;background:var(--bg);color:var(--text
 const MOTOR = (function () {
   'use strict';
   const LIMITE_PASOS = 500;
-  const KW = ['mientras','hacer','si','entonces','sino','fin','para','desde','hasta','mostrar','y','o','no'];
+  const KW = ['mientras','hacer','si','entonces','sino','fin','para','desde','hasta','mostrar','constante','y','o','no'];
   const COLGADO = { colgado: true };
   const ID0 = /[A-Za-z_ÁÉÍÓÚáéíóúÑñÜü]/, IDN = /[A-Za-z_ÁÉÍÓÚáéíóúÑñÜü0-9]/;
 
@@ -678,6 +688,10 @@ const MOTOR = (function () {
         pos++;
         const ultimo = t[t.length - 1], esKw = (x, v) => x && x.t === 'kw' && x.v === v;
         if (k === 'mostrar') { out.push({ tipo: 'mostrar', linea: n, expr: parseExpr(t.slice(1), n) }); continue; }
+        if (k === 'constante') {
+          if (!(t[1] && t[1].t === 'id' && t[2] && t[2].t === 'asig')) throw fallo('const-forma', n);
+          out.push({ tipo: 'const', linea: n, nombre: t[1].v, expr: parseExpr(t.slice(3), n) }); continue;
+        }
         if (k === 'mientras') {
           if (!esKw(ultimo, 'hacer')) throw fallo('falta-hacer', n);
           const cond = parseExpr(t.slice(1, -1), n), b = bloque(n);
@@ -715,7 +729,7 @@ const MOTOR = (function () {
     let ast;
     try { ast = parsear(codigo); }
     catch (e) { if (e.deMotor) return { error: errorDe(e), pasos: [], salida: [] }; throw e; }
-    const ctx = { env: new Map(), out: [], pasos: [], prof: 0 };
+    const ctx = { env: new Map(), consts: new Set(), out: [], pasos: [], prof: 0 };
 
     function leer(n, linea) {
       if (!ctx.env.has(n)) throw fallo('sin-valor', linea, { n });
@@ -764,7 +778,7 @@ const MOTOR = (function () {
         if (v && v.formula) {
           let val; try { val = fmt(leer(nombre, linea)); } catch (_) { val = '?'; }
           vars.push({ n: nombre, v: val, f: txt(v.formula) });
-        } else vars.push({ n: nombre, v: fmt(v), f: null });
+        } else vars.push({ n: nombre, v: fmt(v), f: null, c: ctx.consts.has(nombre) });
       });
       ctx.pasos.push({ linea, vars, salida: ctx.out.slice(), nota, cambia: cambia || null });
     }
@@ -777,8 +791,19 @@ const MOTOR = (function () {
     function bloque(lista) { for (const s of lista) sentencia(s); }
     function sentencia(s) {
       switch (s.tipo) {
+        case 'const': {
+          if (ctx.env.has(s.nombre)) throw fallo('const-existe', s.linea, { n: s.nombre });
+          const val = ev(s.expr, s.linea);
+          ctx.env.set(s.nombre, val); ctx.consts.add(s.nombre);
+          foto(s.linea, { id: 'const', p: { n: s.nombre, e: txt(s.expr), v: fmt(val) } }, s.nombre);
+          return;
+        }
         case 'asig': {
           const e = s.expr;
+          if (ctx.consts.has(s.nombre)) {                       // una constante no cambia… salvo en el malentendido «es una variable»
+            if (!m.constVariable) throw fallo('constante', s.linea, { n: s.nombre });
+            ctx.consts.delete(s.nombre);
+          }
           if (m.intercambia && e.k === 'var' && e.n !== s.nombre && ctx.env.has(e.n) && ctx.env.has(s.nombre)) {
             const a = ctx.env.get(s.nombre); ctx.env.set(s.nombre, ctx.env.get(e.n)); ctx.env.set(e.n, a);
             foto(s.linea, { id: 'intercambia', p: { a: s.nombre, b: e.n, va: fmt(leer(s.nombre, s.linea)), vb: fmt(leer(e.n, s.linea)) } }, s.nombre);
@@ -825,6 +850,7 @@ const MOTOR = (function () {
           return;
         }
         case 'para': {
+          if (ctx.consts.has(s.v)) throw fallo('constante', s.linea, { n: s.v });
           const a = num(ev(s.desde, s.linea), s.linea), b = num(ev(s.hasta, s.linea), s.linea);
           for (let i = a; m.excluye ? i < b : i <= b; i++) {
             ctx.env.set(s.v, i);
@@ -854,7 +880,8 @@ const MOTOR = (function () {
     { id: 'limite',      flags: { limite: true } },
     { id: 'excluye',     flags: { excluye: true } },
     { id: 'sinoSiempre', flags: { sinoSiempre: true } },
-    { id: 'acumula',     flags: { acumula: true } }
+    { id: 'acumula',     flags: { acumula: true } },
+    { id: 'constVariable', flags: { constVariable: true } }
   ];
 
   // ── Diagnostico ─────────────────────────────────────────
@@ -891,6 +918,7 @@ const MOTOR = (function () {
         const e = parseExpr(t.slice(1), 1);
         return { id: e.k === 'var' ? 'mostrar-caja' : e.k === 'str' ? 'mostrar-texto' : 'mostrar', p: { e: txt(e) } };
       }
+      if (k === 'constante') return { id: 'const', p: { n: t[1].v, e: txt(parseExpr(t.slice(3), 1)) } };
       if (k === 'mientras' || k === 'si') return { id: k, p: { c: txt(parseExpr(t.slice(1, -1), 1)) } };
       if (k === 'para') {
         const iH = t.findIndex(x => x.t === 'kw' && x.v === 'hasta');
@@ -921,9 +949,12 @@ const MOTOR = (function () {
     const claves = Object.keys(entradas || {}), nEsc = claves.reduce((m, k) => Math.max(m, entradas[k].length), 0);
     const escenarios = [{ datos: '', a: esp, b: r }];
     for (let e = 0; e < nEsc; e++) {
-      const cambio = {};
-      claves.forEach(k => { const v = entradas[k]; cambio[k] = k.replace(/[-\d.]+\s*$/, String(v[e % v.length])); });
-      const aplica = l => (cambio[l.trim()] !== undefined ? cambio[l.trim()] : l);
+      const cambio = {}, valor = {};
+      // «constante X ← 6» y «X ← 6» son la misma linea a efectos de cambiar los datos: si no, un programa que usa
+      // una variable en vez de la constante parecería fallar con otros datos cuando solo ha usado otra pieza.
+      const sinConst = l => l.trim().replace(/^constante\s+/i, '');
+      claves.forEach(k => { const v = entradas[k]; cambio[k] = k.replace(/[-\d.]+\s*$/, String(v[e % v.length])); valor[sinConst(k)] = String(v[e % v.length]); });
+      const aplica = l => (Object.prototype.hasOwnProperty.call(valor, sinConst(l)) ? l.replace(/[-\d.]+\s*$/, valor[sinConst(l)]) : l);
       escenarios.push({ datos: claves.map(k => cambio[k]).join(', '),
         a: correr(solucion.map(aplica).join('\n')), b: correr(lineas.map(aplica).join('\n')) });
     }
@@ -965,6 +996,10 @@ const TEXTOS = { es: {
     'ayudas.titulo': 'Ayudas',
     'ayudas.primero': 'lee esto primero',
     'salto.reto': 'Saltar al reto',
+    'bloques.aria': 'Bloques de temas',
+    'bloque.cajas': 'Cajas',
+    'bloque.decidir': 'Decidir y repetir',
+    'bloque.aria': '{nombre}: {n} de {m} hechos',
     'tira.elegir': '← Elegir', 'tira.mirar': 'Mirar', 'tira.reto': 'Reto {n} de {m}', 'tira.modo': '{m}: cambiar de modo',
     'plegar.cierra': 'Plegar el subtítulo', 'plegar.abre': 'Desplegar el subtítulo',
     /* ── KORU (capa silenciosa: aun sin interfaz) ── */
@@ -995,6 +1030,12 @@ const TEXTOS = { es: {
     'koru.pide.libre': 'Pregunta de la persona: {pregunta}',
     'ac.titulo': '¿variable o "variable"?',
     'ac.texto': 'Sin comillas, <span class="v">edad</span> es una variable: se usa el valor que guarda. Entre comillas, <span class="s">"edad"</span> es un texto literal: se usa tal cual. Y <span class="n">7</span> es un número. Por eso <code>mostrar edad</code> y <code>mostrar "edad"</code> hacen cosas distintas.',
+    'gl.constantes.titulo': '¿Qué es una constante?',
+    'gl.repaso1.titulo': '¿Qué repasamos?',
+    'gl.repaso1.texto': 'Aquí se mezclan las variables y las constantes. En cada programa, sigue el valor de cada nombre línea a línea: qué cambia, qué se queda igual y qué se copia.',
+    'gl.repaso2.titulo': '¿Qué repasamos?',
+    'gl.repaso2.texto': 'Aquí se mezclan las decisiones y las repeticiones. Sigue el programa vuelta a vuelta: en cada una, qué pregunta se hace y qué se ejecuta según la respuesta.',
+    'gl.constantes.texto': 'Una constante es un nombre con un valor que <b>no cambia</b> mientras se ejecuta el programa. Se crea una sola vez con <code>constante MAXIMO ← 10</code> y después se usa como una variable, pero si el programa intenta darle otro valor, se detiene con un error. Se suele escribir en MAYÚSCULAS para distinguirla.',
     'gl.variables.titulo': '¿Qué es una variable?',
     'gl.variables.texto': 'Una variable es un nombre al que le asignas un valor. Al escribir <code>edad ← 7</code>, el nombre <span class="v">edad</span> pasa a guardar un 7, y puedes cambiarlo cuando quieras asignándole otro.',
     'gl.condicionales.titulo': '¿Qué es un condicional?',
@@ -1037,6 +1078,21 @@ const TEXTOS = { es: {
     'q.v3.x1': 'El número 7',
     'q.v3.x2': 'Nada',
     'q.v3.e': 'Entre comillas es un texto literal y se muestra tal cual. Sin comillas, mostrar edad mostraría el valor 7.',
+    'q.k1.p': '¿Qué es una constante?',
+    'q.k1.ok': 'Un nombre con un valor que no cambia durante el programa',
+    'q.k1.x1': 'Una variable que cambia en cada vuelta',
+    'q.k1.x2': 'Un número escrito entre comillas',
+    'q.k1.e': 'Una constante guarda un valor que se fija al crearla y no puede cambiar mientras se ejecuta el programa.',
+    'q.k2.p': '¿Qué muestra la pantalla?',
+    'q.k2.ok': '10',
+    'q.k2.x1': 'MAXIMO',
+    'q.k2.x2': 'Nada',
+    'q.k2.e': 'MAXIMO es una constante que guarda el 10; mostrar MAXIMO muestra su valor.',
+    'q.k3.p': '¿Qué pasa si el programa intenta cambiar una constante?',
+    'q.k3.ok': 'El programa se detiene con un error',
+    'q.k3.x1': 'La constante cambia de valor',
+    'q.k3.x2': 'Se crea otra constante con el mismo nombre',
+    'q.k3.e': 'Una constante no admite otro valor: al intentar cambiarla, el programa se detiene en esa línea con un error.',
     'q.c1.p': '¿Para qué sirve un «si»?',
     'q.c1.ok': 'Para hacer algo solo si se cumple una condición',
     'q.c1.x1': 'Para repetir algo varias veces',
@@ -1071,7 +1127,7 @@ const TEXTOS = { es: {
     'skin.boton': 'Skin CRT', 'skin.aria': 'Activar o desactivar el skin CRT',
     'fosforo.aria': 'Color del fósforo', 'fosforo.verde': 'Fósforo verde', 'fosforo.ambar': 'Fósforo ámbar', 'fosforo.cian': 'Fósforo cian',
     'crt.marca': 'HPK · CRT-1',
-    'tema.variables': 'Variables', 'tema.condicionales': 'Condicionales', 'tema.bucles': 'Bucles',
+    'tema.variables': 'Variables', 'tema.constantes': 'Constantes', 'tema.repaso1': 'Repaso: variables y constantes', 'tema.condicionales': 'Condicionales', 'tema.bucles': 'Bucles', 'tema.repaso2': 'Repaso: decidir y repetir',
     'programa.aria': 'Programa',
     'mascota.nota': 'CRT',
     'crt.tocar': 'Tocar a CRT',
@@ -1105,6 +1161,7 @@ const TEXTOS = { es: {
     'mirar.aviso': 'Ojo: esto es un malentendido, no lo que hace la máquina.',
     'mirar.volver': 'Ver cómo lo hace la máquina de verdad',
     'mirar.vars': 'Variables (cajas)',
+    'mirar.const': 'constante',
     'mirar.pantalla': 'Pantalla',
     'mirar.pasa': 'Qué acaba de pasar',
     'mirar.inicio': 'Pulsa «Siguiente» para ejecutar la primera línea.',
@@ -1116,6 +1173,7 @@ const TEXTOS = { es: {
     'nota.intercambia': '{a} ← {b}  →  se intercambian: {a} = {va}, {b} = {vb}',
     'nota.formula': '{n} ← {e}  →  {n} recuerda la fórmula «{e}» y la recalcula cada vez',
     'nota.acumula': '{n} ← {e}  →  se suma al {antes} que había: {n} vale {v}',
+    'nota.const': '{n} ← {e}  →  {n} es una constante y vale {v}: ya no puede cambiar',
     'nota.mostrar': 'Se muestra en pantalla: {v}',
     'nota.test-si': '¿{c}?  →  sí, se cumple',
     'nota.test-no': '¿{c}?  →  no se cumple',
@@ -1141,6 +1199,9 @@ const TEXTOS = { es: {
     'err.falta-fin': 'Falta un «fin» para cerrar lo que empieza aquí.',
     'err.sin-valor': '«{n}» todavía no tiene valor: hay que dárselo antes de usarla.',
     'err.ciclo': 'Una variable depende de otra que depende de la primera: se quedan dando vueltas sin parar.',
+    'err.constante': '«{n}» es una constante: no se le puede dar otro valor.',
+    'err.const-forma': 'Una constante se escribe así: constante NOMBRE ← valor',
+    'err.const-existe': '«{n}» ya existe como variable: elige otro nombre para la constante.',
     'err.no-calculable': 'Esto no se puede calcular con «{v}».',
     'err.div-cero': 'No se puede dividir entre cero.',
     'err.cond-no-bool': 'La condición tiene que salir «verdadero» o «falso».',
@@ -1159,9 +1220,26 @@ const TEXTOS = { es: {
     'mod.excluye.diag': 'Parece que «hasta 4» ha dejado fuera el 4. En «para … hasta», el último valor SÍ se ejecuta.',
     'mod.acumula.corto': 'que la variable suma lo nuevo a lo que ya tenía',
     'mod.acumula.diag': 'Parece que has sumado el valor nuevo al que ya había. No: una variable guarda un solo valor, y asignar lo sustituye por el nuevo.',
+    'mod.constVariable.corto': 'que una constante se puede cambiar como una variable',
+    'mod.constVariable.diag': 'Parece que has tratado la constante como una variable. No: una constante guarda su valor al crearla y no admite otro; si el programa lo intenta, se detiene con un error.',
     'mod.sinoSiempre.corto': 'que el «sino» se ejecuta también tras el «si»',
     'mod.sinoSiempre.diag': 'Parece que has ejecutado el «sino» después del «si». Es uno o el otro, nunca los dos.',
 
+    'cons.ktope.titulo': 'Una constante como límite',
+    'cons.ktope.consigna': 'Crea la constante TOPE con el valor 3 y usa un bucle para mostrar los números del 1 al TOPE: debe salir 1 2 3.',
+    'cons.ktope.trampa': 'El límite del bucle es la constante: si cambias su valor al crearla, el bucle se adapta solo. Con «<=» el último número, el propio TOPE, también se muestra.',
+    'cons.rtotal.titulo': 'El total del pan',
+    'cons.rtotal.consigna': 'Crea la constante PRECIO con el valor 4, guarda 3 en panes y guarda en total lo que cuestan: al mostrar total debe salir 12.',
+    'cons.rtotal.trampa': 'La constante guarda el precio una vez; el total se calcula con ella y con los panes. Si el precio cambia, se corrige en un solo sitio.',
+    'cons.rrestar.titulo': 'Restar sin tocar la constante',
+    'cons.rrestar.consigna': 'Crea la constante MAX con el 3, guarda MAX en vidas, réstale 1 a vidas y muestra vidas y MAX: debe salir 2 3.',
+    'cons.rrestar.trampa': 'Se resta en la variable, no en la constante: «MAX ← MAX - 1» sería un error, porque una constante no puede cambiar.',
+    'cons.rmayor.titulo': 'Mayores que 3',
+    'cons.rmayor.consigna': 'Con un «para» del 1 al 5, muestra solo los números mayores que 3: debe salir 4 5.',
+    'cons.rmayor.trampa': 'Un bloque dentro de otro: el «si» vive dentro del «para», y cada uno necesita su propio «fin». Con «>= 3» el 3 también saldría.',
+    'cons.rpuente.titulo': 'Cuenta y avisa',
+    'cons.rpuente.consigna': 'Crea la constante TOPE con el valor 3. Con un «para» del 1 al TOPE, muestra cada número, pero en el último muestra «¡ya!»: debe salir 1 2 ¡ya!',
+    'cons.rpuente.trampa': 'Junta todo: una constante como límite, una repetición y una decisión dentro. El «si» compara con la constante, así que si cambias TOPE, el aviso sigue en el último número.',
     'cons.montaje': 'Tu programa',
     'cons.vacio': 'Arrastra aquí las líneas, en orden. La sangría se pone sola.',
     'cons.instr': 'Arrastra las líneas de abajo hasta aquí, o púlsalas para añadirlas. Puedes reordenarlas arrastrando. Con teclado: Intro añade o quita una línea y Alt + flechas la mueve.',
@@ -1199,6 +1277,7 @@ const TEXTOS = { es: {
     'lee.mostrar-caja': 'Muestra el valor de {e}',
     'lee.mostrar-texto': 'Muestra el texto {e}',
     'lee.asig-calculo': 'Calcula {e} y guárdalo en {n}',
+    'lee.const': 'Crea la constante {n} con el valor {e}',
     'lee.mostrar': 'Muestra {e} en pantalla',
     'lee.mientras': 'Mientras {c}, repite lo de dentro',
     'lee.si': 'Si {c}, haz lo de dentro',
@@ -1218,12 +1297,27 @@ const TEXTOS = { es: {
     'cons.cambiar.titulo': 'Intercambia valores',
     'cons.cambiar.consigna': 'a vale 3 y b vale 5. Intercámbialos y muestra a y luego b: debe salir 5 3.',
     'cons.cambiar.trampa': 'Hace falta una variable auxiliar (aux): guarda uno de los valores antes de pisarlo. Con solo «a ← b» y «b ← a» las dos acaban valiendo lo mismo.',
+    'cons.kcrear.titulo': 'Crea una constante',
+    'cons.kcrear.consigna': 'Crea una constante llamada DIAS que valga 7 y muéstrala.',
+    'cons.kcrear.trampa': 'Una constante se crea con la palabra «constante» y su valor se da una sola vez, al crearla.',
+    'cons.kpaquetes.titulo': 'Una constante en un cálculo',
+    'cons.kpaquetes.consigna': 'Cada paquete trae 6 huevos. Crea la constante HUEVOS con ese valor y calcula los huevos de 3 paquetes: debe salir 18.',
+    'cons.kpaquetes.trampa': 'Darle nombre al 6 evita repetirlo en cada cálculo: si cambian los huevos por paquete, se corrige un solo número, el de la línea donde se crea la constante.',
     'cons.clima.titulo': 'Frío o calor',
     'cons.clima.consigna': 'Si la temperatura es 25 o más, muestra «calor»; si no, «frío». Hoy hay 18 grados.',
     'cons.clima.trampa': 'El «sino» lleva a un camino alternativo, y «fin» cierra todo el bloque «si». Solo se recorre uno de los dos caminos.',
+    'cons.justo.titulo': 'Justo en el límite',
+    'cons.justo.consigna': 'Si la temperatura es 20 o más, muestra «calor»; si no, «frío». Hoy hay 20 grados.',
+    'cons.justo.trampa': '«>=» incluye el 20; «>» no. El caso del borde es donde se esconden los fallos.',
+    'cons.unootro.titulo': 'Uno o el otro, y después…',
+    'cons.unootro.consigna': 'Hoy hay 25 grados. Si es más de 20, muestra «calor»; si no, «frío». Después, pase lo que pase, muestra «listo».',
+    'cons.unootro.trampa': 'El «sino» solo se ejecuta si no se cumple el «si». «Listo» va después del «fin», fuera del bloque: se muestra siempre.',
     'cons.cuenta.titulo': 'Cuenta atrás',
     'cons.cuenta.consigna': 'Con un bucle, muestra 3, 2, 1.',
     'cons.cuenta.trampa': 'Dentro del bucle hace falta algo que acerque la condición a dejar de cumplirse (restar 1). Y el orden importa: mostrar antes de restar.',
+    'cons.vueltas.titulo': 'Contar vueltas',
+    'cons.vueltas.consigna': 'Con un bucle «mientras», muestra 1, 2, 3.',
+    'cons.vueltas.trampa': 'Con «<» el 4 se queda fuera: cuando n llega a 4 la condición ya no se cumple. Y dentro del bucle hay que sumar 1 a n, o no terminaría nunca.',
     'cons.suma.titulo': 'Sumar de 1 a 4',
     'cons.suma.consigna': 'Suma los números del 1 al 4 y muestra el total: debe salir 10.',
     'cons.suma.trampa': 'El total se va acumulando dentro del bucle, y se muestra UNA vez, fuera, cuando el bucle ha terminado.',
@@ -1249,6 +1343,27 @@ const TEXTOS = { es: {
     'ej.precio.titulo': 'El precio que cambió',
     'ej.precio.consigna': '¿Cuánto vale total al final?',
     'ej.precio.trampa': 'total se calculó con el precio de ANTES. Una variable guarda un resultado, no una receta.',
+    'ej.kuso.titulo': 'Usar una constante',
+    'ej.kuso.consigna': '¿Qué valor se muestra?',
+    'ej.kuso.trampa': 'Una constante se usa como una variable dentro de las operaciones: aquí DIAS vale 7, así que semanas * DIAS es 3 * 7.',
+    'ej.kcambia.titulo': 'Cambiar una constante',
+    'ej.kcambia.consigna': '¿Qué se muestra? Si el programa se detiene por un error, cuenta solo lo que se mostró antes.',
+    'ej.kcambia.trampa': 'Una constante no puede cambiar: al intentar darle otro valor, el programa se detiene con un error y lo que va después no se ejecuta.',
+    'ej.kmezcla.titulo': 'Constante y variable juntas',
+    'ej.kmezcla.consigna': '¿Qué valor se muestra?',
+    'ej.kmezcla.trampa': 'BASE no cambia nunca; extra sí cambió, de 2 a 3. La cuenta usa los valores que tienen ahora: 5 + 3.',
+    'ej.rpan.titulo': 'El total no se actualiza',
+    'ej.rpan.consigna': '¿Qué valor se muestra?',
+    'ej.rpan.trampa': 'total se calculó cuando panes valía 2. Cambiar panes después no recalcula nada: una variable guarda un resultado, no una receta. PRECIO, por su parte, no cambia en ningún momento.',
+    'ej.rvidas.titulo': 'Copiar una constante',
+    'ej.rvidas.consigna': '¿Qué valores se muestran?',
+    'ej.rvidas.trampa': 'vidas copia el valor de MAX (3) y después baja a 2. MAX no se ve afectada: sigue valiendo 3, porque una constante no cambia mientras el programa se ejecuta.',
+    'ej.rmayores.titulo': 'Repetir y decidir',
+    'ej.rmayores.consigna': '¿Qué números se muestran?',
+    'ej.rmayores.trampa': 'El «para» recorre del 1 al 5, los dos incluidos, y el «si» deja pasar solo los mayores que 3: el 4 y el 5.',
+    'ej.rsuma.titulo': 'Sumar o restar según el caso',
+    'ej.rsuma.consigna': '¿Cuánto vale total al final?',
+    'ej.rsuma.trampa': 'En cada vuelta se hace una cosa u otra, nunca las dos: los dos primeros números suman (1 + 2 = 3) y los dos últimos restan 1 cada uno: 3 - 1 - 1 = 1.',
     'ej.justo.titulo': 'Justo en el límite',
     'ej.justo.consigna': '¿Qué mensaje sale?',
     'ej.justo.trampa': '«>=» incluye el 20; «>» no. El caso del borde es donde se esconden los fallos.',
@@ -1267,6 +1382,9 @@ const TEXTOS = { es: {
     'ej.suma.titulo': 'La suma de 1 a 4',
     'ej.suma.consigna': '¿Cuánto vale total al final?',
     'ej.suma.trampa': 'En «para … hasta 4», el 4 también cuenta: son cuatro vueltas, no tres.',
+    'ej.ktope.titulo': 'Una constante como límite',
+    'ej.ktope.consigna': '¿Qué números se muestran?',
+    'ej.ktope.trampa': 'TOPE no cambia en ningún momento; lo que cambia es n. La condición «n <= TOPE» deja de cumplirse cuando n llega a 4.',
     'ej.pares.titulo': 'Solo los pares',
     'ej.pares.consigna': '¿Qué números se muestran?',
     'ej.pares.trampa': '«i % 2 = 0» significa «el resto de dividir i entre 2 es 0», o sea, i es par. Y el 6 también entra.'
@@ -1274,12 +1392,16 @@ const TEXTOS = { es: {
 
   /* ════════ PRIMARIA — solo lo que cambia (muestra) ════════ */
   primaria: {
-    'tema.variables': 'Cajas con nombre', 'tema.condicionales': 'Decidir', 'tema.bucles': 'Repetir',
+    'tema.variables': 'Cajas con nombre', 'tema.constantes': 'Cajas que no cambian', 'tema.repaso1': 'Cajas de todo tipo', 'tema.condicionales': 'Decidir', 'tema.bucles': 'Repetir', 'tema.repaso2': 'Decide y repite',
     'subtitulo': 'Construye, predice y observa cómo lo hace la máquina. Aquí los errores hablan.',
     'np.titulo': '¿Por qué una flecha ←?',
     'np.texto': 'Para meter algo en una caja usamos una flecha: <code>edad ← 7</code> se lee «mete el 7 en la caja edad» y la flecha apunta hacia la caja. El signo <code>=</code> lo guardamos para <b>preguntar</b> si dos cosas son iguales. Cuando programes con lenguajes de verdad, verás que muchos usan <code>=</code> para meter cosas en la caja. Aquí la flecha nos ayuda a no confundirlo con mates.',
     'ac.titulo': '¿caja o "caja"?',
     'ac.texto': 'Fíjate en cómo se ven. <span class="v">edad</span> es una caja: una palabra con cosas dentro. <span class="n">7</span> es un número. <span class="s">"edad"</span>, entre comillas, es un texto: la palabra escrita tal cual, sin nada dentro. Si escribes <code>mostrar edad</code>, la pantalla enseña lo que hay dentro de la caja. Si escribes <code>mostrar "edad"</code>, enseña la palabra edad.',
+    'gl.constantes.titulo': '¿Qué es una constante?',
+    'gl.repaso1.texto': 'Aquí se juntan las cajas que cambian y las que no. Sigue cada caja línea a línea: cuál cambia, cuál se queda igual y cuál copia el número de otra.',
+    'gl.repaso2.texto': 'Aquí se juntan las decisiones y las repeticiones. Sigue el programa vuelta a vuelta: en cada vuelta, el «si» hace una pregunta y se hace una cosa u otra.',
+    'gl.constantes.texto': 'A veces hay un número que nunca debe cambiar, como los días de la semana. Para eso sirve una <b>constante</b>: una caja que guarda su número una sola vez y ya no se le puede cambiar. Se crea con <code>constante DIAS ← 7</code> y después se usa como cualquier caja. Si el programa intenta meterle otro número, se para con un error.',
     'gl.variables.titulo': '¿Qué es una caja?',
     'gl.variables.texto': 'Una caja es una palabra a la que puedes meter cosas dentro: un número o un texto. Si escribes <code>edad ← 7</code>, la palabra <span class="v">edad</span> se convierte en una caja que guarda un 7. Después puedes <b>cambiar lo que hay dentro</b> metiendo otra cosa: la caja se queda con lo último que metiste.',
     'gl.condicionales.titulo': '¿Qué es un condicional?',
@@ -1298,10 +1420,12 @@ const TEXTOS = { es: {
     'fb.modelo': 'Ver cómo lo has pensado tú',
     'mirar.vars': 'Cajas con nombre',
     'mirar.modelo': 'Como lo haría quien piensa {creencia}',
+    'mirar.const': 'no cambia',
     'mirar.aviso': 'Cuidado: así NO funciona la máquina. Es una idea equivocada.',
     'mirar.inicio': 'Pulsa «Siguiente» y la máquina ejecutará la primera instrucción.',
     'b.sig': 'Siguiente paso →',
     'nota.asig': '{n} ← {e}  →  la caja {n} ahora guarda {v}',
+    'nota.const': '{n} ← {e}  →  la caja {n} guarda {v} y ya no se le puede cambiar',
     'nota.mostrar': 'La pantalla muestra: {v}',
     'nota.test-si': '¿{c}?  →  sí, es verdad',
     'nota.test-no': '¿{c}?  →  no, no es verdad',
@@ -1321,6 +1445,8 @@ const TEXTOS = { es: {
     'mod.excluye.diag': 'Creo que «hasta 4» se ha dejado el 4 fuera. En «para … hasta» el último número también se hace.',
     'mod.acumula.corto': 'que la caja suma lo nuevo a lo que ya había',
     'mod.acumula.diag': 'Creo que has sumado el número nuevo al que ya estaba en la caja. Pero una caja guarda un solo valor: cuando metes uno nuevo, el de antes desaparece.',
+    'mod.constVariable.corto': 'que una constante se puede cambiar como cualquier caja',
+    'mod.constVariable.diag': 'Creo que has cambiado el número de una constante. Pero una constante no se puede cambiar: si el programa lo intenta, se para con un error.',
     'mod.sinoSiempre.corto': 'que se hacen las dos cosas, la del «si» y la del «sino»',
     'mod.sinoSiempre.diag': 'Creo que has hecho las dos cosas, la del «si» y la del «sino». Es una o la otra, nunca las dos.',
     'cons.vacio': 'Arrastra aquí las líneas, una debajo de otra. Los huecos se ponen solos.',
@@ -1341,6 +1467,25 @@ const TEXTOS = { es: {
     'cons.fb.otro': 'Lo has hecho en otro orden, y también vale.',
     'cons.cambiar.trampa': 'Hace falta una caja de ayuda (aux): guarda el valor anterior antes de pisarlo. Con solo «a ← b» y «b ← a» los dos acaban valiendo lo mismo.',
     'cons.ayuda.puesta': 'Te he colocado la siguiente línea que toca. Lo que estaba mal puesto vuelve a la caja de piezas.',
+    'ej.kuso.consigna': '¿Qué número se muestra en pantalla?',
+    'ej.kuso.trampa': 'DIAS es una constante: siempre guarda el 7. Se usa igual que otra caja en las cuentas, pero nadie le puede cambiar el número.',
+    'ej.kcambia.consigna': '¿Qué números muestra la pantalla? Si el programa se para por un error, cuenta solo lo que se mostró antes.',
+    'ej.kcambia.trampa': 'Una constante no se puede cambiar. Cuando el programa lo intenta, se para con un error y ya no sigue: por eso no se muestra el 20.',
+    'ej.ktope.titulo': 'Una constante como tope',
+    'ej.ktope.consigna': '¿Qué números muestra la pantalla?',
+    'ej.ktope.trampa': 'TOPE siempre vale 3. Lo que cambia es n, que va subiendo hasta que ya no es menor o igual que TOPE.',
+    'ej.rpan.titulo': 'La cuenta del pan',
+    'ej.rpan.consigna': '¿Qué número se muestra en pantalla?',
+    'ej.rpan.trampa': 'La caja total guardó 2 * 4 cuando panes valía 2. Si luego panes cambia, total se queda como estaba: una caja guarda una foto, no un atajo. Y PRECIO no cambia mientras el programa se ejecuta.',
+    'ej.rvidas.consigna': '¿Qué números muestra la pantalla?',
+    'ej.rvidas.trampa': 'vidas copia el 3 que hay en MAX y luego baja a 2. MAX sigue en 3: una constante no cambia mientras el programa se ejecuta.',
+    'ej.rmayores.consigna': '¿Qué números muestra la pantalla?',
+    'ej.rmayores.trampa': 'La repetición va del 1 al 5, con el 5 incluido, y el «si» solo deja pasar los números mayores que 3: el 4 y el 5.',
+    'ej.rsuma.titulo': 'Sumar o restar según el caso',
+    'ej.rsuma.consigna': '¿Qué número se muestra al final?',
+    'ej.rsuma.trampa': 'En cada vuelta se hace una sola cosa: los números menores que 3 se suman (1 + 2 = 3) y los otros restan 1: 3 - 1 - 1 = 1.',
+    'ej.kmezcla.consigna': '¿Qué número se muestra en pantalla?',
+    'ej.kmezcla.trampa': 'BASE siempre guarda el 5. La caja extra cambió de 2 a 3, así que la cuenta usa lo que hay ahora: 5 + 3.',
     'ej.intercambio.consigna': 'La pantalla muestra a y luego b. ¿Qué números salen?',
     'ej.intercambio.trampa': 'Después de «a ← b», las dos cajas valen lo mismo: el 3 que había en a se perdió. Para cambiarlas de sitio hace falta una caja de ayuda.',
     'ej.precio.trampa': 'La caja total se calculó con el precio de ANTES (10 × 3). Cambiar la caja precio después no cambia el valor de total: una caja guarda una foto, no un atajo.',
@@ -1354,6 +1499,8 @@ const TEXTOS = { es: {
     'nota.acumula': '{n} ← {e}  →  se suma al {antes} que ya había: la caja {n} guarda {v}',
     'nota.para': 'la caja {v} ahora guarda {i}',
     'err.ciclo': 'Una caja espera a otra que espera a la primera: dan vueltas sin parar.',
+    'err.constante': '«{n}» es una constante: no se le puede meter otro número.',
+    'err.const-existe': 'La caja «{n}» ya existe: elige otro nombre para la constante.',
     'ay.sin': 'No te quedan ayuditas. Se recargan al ganar XP, con el tiempo o contestando una pregunta.',
     'quiz.ok': '¡Bien! Ganas una ayudita.',
     'quiz.mal': 'Esta vez no. Esta pregunta no vuelve a salir, pero ya has visto la respuesta.',
@@ -1364,6 +1511,16 @@ const TEXTOS = { es: {
     'q.v2.p': '¿Qué hay dentro de la caja x al final?',
     'q.v2.e': 'La caja se queda con lo último que metiste: el 8.',
     'q.v3.e': 'Si está entre comillas es un texto: se muestra tal cual. Sin comillas sería una caja, y mostrar edad mostraría lo que hay dentro de la caja: el 7.',
+    'q.k1.ok': 'Una caja cuyo número no se puede cambiar',
+    'q.k1.x1': 'Una caja que cambia en cada vuelta',
+    'q.k1.x2': 'Un texto entre comillas',
+    'q.k1.e': 'Una constante guarda un valor que se fija al crearla y no puede cambiar mientras se ejecuta el programa.',
+    'q.k2.e': 'La caja MAXIMO guarda el 10, y «mostrar MAXIMO» muestra lo que hay dentro, no la palabra.',
+    'q.k3.p': '¿Qué pasa si el programa intenta cambiar el número de una constante?',
+    'q.k3.ok': 'El programa se para con un error',
+    'q.k3.x1': 'La constante guarda el número nuevo',
+    'q.k3.x2': 'Se crea otra constante igual',
+    'q.k3.e': 'Una constante no se puede cambiar: si el programa lo intenta, se para con un error.',
     'q.c1.ok': 'Para hacer algo solo si algo es verdad',
     'q.c1.e': 'Un «si» hace lo de dentro solo cuando lo que preguntas es verdad.',
     'q.c2.p': 'El «si» no es verdad y hay un «sino». ¿Qué pasa?',
@@ -1379,6 +1536,7 @@ const TEXTOS = { es: {
     'lee.mostrar-caja': 'Muestra en la pantalla lo que hay dentro de la caja {e}',
     'lee.mostrar-texto': 'Muestra en la pantalla el texto {e}, tal cual',
     'lee.asig-calculo': 'Haz la cuenta {e} y mete el resultado en la caja {n}',
+    'lee.const': 'Guarda {e} en la caja {n}, y ya no se podrá cambiar',
     'lee.mostrar': 'Muestra {e} en la pantalla',
     'lee.mientras': 'Mientras {c}, repite lo de dentro',
     'lee.si': 'Si {c}, haz lo de dentro',
@@ -1389,12 +1547,35 @@ const TEXTOS = { es: {
     'cons.crear.consigna': 'Crea una caja que se llame edad y mete dentro el número 7.',
     'cons.crear.trampa': 'Al escribir «edad ← 7», la palabra «edad» se convierte en una caja con un 7 dentro. La flecha va hacia la caja: de lo que metes a donde lo metes.',
     'cons.caja.titulo': 'Guarda cosas en cajas y úsalas',
+    'cons.kcrear.consigna': 'Crea una constante llamada DIAS que valga 7 y haz que la pantalla la muestre.',
+    'cons.kcrear.trampa': 'Una constante es una caja que se crea con la palabra «constante» y guarda su número una sola vez.',
+    'cons.kpaquetes.titulo': 'Una constante en una cuenta',
+    'cons.kpaquetes.consigna': 'Cada paquete trae 6 huevos. Crea la constante HUEVOS con el 6 y calcula cuántos huevos hay en 3 paquetes: tiene que salir 18.',
+    'cons.kpaquetes.trampa': 'Ponerle nombre al 6 sirve para no repetirlo en cada cuenta. Si un día los paquetes traen otra cantidad, se escribe un número distinto una sola vez, al crear la constante.',
     'cons.caja.consigna': 'Mete el 7 en la caja edad y haz que la pantalla muestre lo que hay dentro de la caja.',
     'cons.doble.titulo': 'Duplica el valor de una caja',
     'cons.cambiar.titulo': 'Intercambia valores en cajas',
     'cons.doble.consigna': 'La caja x guarda un 5. Haz que valga el doble y que la pantalla lo muestre: tiene que salir 10.',
     'cons.cambiar.consigna': 'La caja a guarda un 3 y la b un 5. Intercambia sus valores y muestra a y luego b: tiene que salir 5 3.',
     'cons.clima.consigna': 'Si hay 25 grados o más, muestra «calor»; si no, muestra «frío». Hoy hay 18 grados.',
+    'cons.rtotal.titulo': 'La cuenta del pan',
+    'cons.rtotal.consigna': 'Crea la constante PRECIO con el 4, guarda un 3 en panes y guarda en total lo que cuestan los panes. Muestra total: tiene que salir 12.',
+    'cons.rtotal.trampa': 'PRECIO se crea una sola vez, y total se calcula con ella y con panes. Si un día cambia el precio, solo hay que escribir otro número al crear la constante.',
+    'cons.rrestar.consigna': 'Crea la constante MAX con el 3, guarda MAX en la caja vidas, réstale 1 a vidas y muestra vidas y MAX: tiene que salir 2 3.',
+    'cons.rrestar.trampa': 'Se le resta a la caja vidas, no a MAX: una constante no se puede cambiar, y el programa se pararía con un error.',
+    'cons.rmayor.consigna': 'Con una repetición del 1 al 5, muestra solo los números mayores que 3: tiene que salir 4 5.',
+    'cons.rmayor.trampa': 'La decisión va dentro de la repetición, y cada una necesita su propio «fin». Con «>= 3» también saldría el 3.',
+    'cons.rpuente.consigna': 'Crea la constante TOPE con el 3. Con una repetición del 1 al TOPE, muestra cada número, pero en el último muestra «¡ya!»: tiene que salir 1 2 ¡ya!',
+    'cons.rpuente.trampa': 'Aquí se junta todo: una constante, una repetición y una decisión. El «si» compara con TOPE, así que si un día cambias el 3, el aviso sigue saliendo en el último número.',
+    'cons.justo.consigna': 'Si hay 20 grados o más, muestra «calor»; si no, muestra «frío». Hoy hay 20 grados.',
+    'cons.justo.trampa': 'Con «>=» el 20 también cuenta; con «>» no. Los números que caen justo en el borde son los que más engañan.',
+    'cons.unootro.consigna': 'Hoy hay 25 grados. Si hay más de 20, muestra «calor»; si no, muestra «frío». Después, pase lo que pase, muestra «listo».',
+    'cons.unootro.trampa': 'El «sino» solo se hace si el «si» no se cumple. «Listo» va después del «fin»: se muestra siempre.',
+    'cons.vueltas.consigna': 'Con una repetición «mientras», muestra 1, 2, 3.',
+    'cons.vueltas.trampa': 'Con «<» el 4 se queda fuera: cuando n llega a 4, la condición ya no se cumple. Y dentro hay que subir n de uno en uno, o el programa no acabaría nunca.',
+    'cons.ktope.titulo': 'Una constante como tope',
+    'cons.ktope.consigna': 'Crea la constante TOPE con el 3 y haz una repetición que muestre los números del 1 al TOPE: tiene que salir 1 2 3.',
+    'cons.ktope.trampa': 'El tope de la repetición es la constante: si un día cambias el número al crearla, la repetición se adapta sola. Con «<=» el último número, el TOPE, también se muestra.',
     'cons.cuenta.consigna': 'Con una repetición, muestra 3, 2, 1.',
     'cons.suma.consigna': 'Suma los números del 1 al 4 y muestra el total: tiene que salir 10.',
     'ej.dentro.titulo': '¿Qué hay en la caja?',
@@ -1417,7 +1598,7 @@ const TEXTOS = { es: {
 
   /* ════════ BACHILLERATO — solo lo que cambia (muestra) ════════ */
   bach: {
-    'tema.variables': 'Variables y asignación', 'tema.condicionales': 'Selección', 'tema.bucles': 'Iteración',
+    'tema.variables': 'Variables y asignación', 'tema.constantes': 'Constantes', 'tema.condicionales': 'Selección', 'tema.bucles': 'Iteración', 'tema.repaso2': 'Repaso: selección e iteración',
     'subtitulo': 'Construye el programa, predice su salida y observa cómo se ejecuta. Si te equivocas, buscamos <em>qué regla equivocada</em> explicaría tu respuesta.',
     'np.titulo': 'Nota sobre notación',
     'np.texto': 'Convención de este módulo: <code>←</code> es asignación y <code>=</code> es comparación de igualdad, como en la tradición del pseudocódigo. No es universal: Python, JavaScript y C asignan con <code>=</code> y comparan con <code>==</code>; Pascal asigna con <code>:=</code>. Las palabras reservadas (<code>mientras</code>, <code>si</code>, <code>fin</code>) también son convención y varían entre lenguajes.',
@@ -1425,6 +1606,8 @@ const TEXTOS = { es: {
     'ac.texto': 'Sin comillas, <span class="v">x</span> es un identificador: se evalúa a su valor. Entre comillas, <span class="s">"x"</span> es un literal de cadena. <span class="n">7</span> es un literal numérico. <code>mostrar x</code> y <code>mostrar "x"</code> producen salidas distintas.',
     'gl.variables.titulo': 'Variables y asignación',
     'gl.variables.texto': 'Una variable es un identificador asociado a un valor en memoria. La asignación <code>x ← expr</code> evalúa la expresión y almacena el resultado, sustituyendo el valor anterior.',
+    'gl.constantes.titulo': 'Constantes',
+    'gl.constantes.texto': 'Una constante es un identificador ligado a un valor que no puede reasignarse. Se declara con <code>constante N ← expr</code>: la expresión se evalúa una vez y cualquier asignación posterior es un error de ejecución. Sirve para dar nombre a valores fijos y evitar «números mágicos».',
     'gl.condicionales.titulo': 'Selección',
     'gl.condicionales.texto': 'Estructura de selección: se evalúa una expresión booleana y se ejecuta una rama u otra. La condición se evalúa una sola vez y las ramas son mutuamente excluyentes.',
     'gl.bucles.titulo': 'Iteración',
@@ -1444,20 +1627,27 @@ const TEXTOS = { es: {
     'mod.excluye.diag': 'Tratas el límite superior de «para … hasta» como exclusivo. En esta notación es inclusivo: el último valor sí se ejecuta.',
     'mod.sinoSiempre.diag': 'Ejecutas la rama «sino» a continuación de la rama «si». Son mutuamente excluyentes: se ejecuta una u otra, nunca ambas.',
     'mod.acumula.diag': 'Interpretas la asignación como acumulativa (x ← 8 sumaría 8 al valor previo). La asignación sustituye el valor anterior.',
-    'nota.acumula': '{n} ← {e}  →  se acumula sobre {antes}: {n} = {v}'
+    'nota.acumula': '{n} ← {e}  →  se acumula sobre {antes}: {n} = {v}',
+    'mod.constVariable.diag': 'Interpretas la constante como una variable ordinaria. Una constante se enlaza a un valor una sola vez; reasignarla es un error y detiene la ejecución.'
   }
 } };
 
 /* Que ejercicios entran en cada curso. Primaria deja fuera lo que usa «%». */
-const TODOS = ['dentro', 'ultimo', 'dos', 'foto', 'intercambio', 'precio', 'justo', 'unootro', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares'];
+const TODOS = ['dentro', 'ultimo', 'dos', 'foto', 'intercambio', 'precio', 'kuso', 'kcambia', 'kmezcla', 'rpan', 'rvidas', 'justo', 'unootro', 'vueltas', 'noentra', 'cuenta', 'suma', 'pares', 'ktope', 'rmayores', 'rsuma'];
 // los tres primeros son la rampa de entrada (primaria); ESO y bach empiezan en «foto»
 const FACILES = ['dentro', 'ultimo', 'dos'];
-const RETOS = ['crear', 'caja', 'doble', 'cambiar', 'clima', 'cuenta', 'suma', 'pares'];
+const RETOS = ['crear', 'caja', 'doble', 'cambiar', 'kcrear', 'kpaquetes', 'rtotal', 'rrestar', 'clima', 'justo', 'unootro', 'cuenta', 'vueltas', 'suma', 'pares', 'ktope', 'rmayor', 'rpuente'];
 const REGISTROS = {
   primaria: { ejercicios: TODOS.filter(x => x !== 'pares'), construcciones: RETOS.filter(x => x !== 'pares'), lectura: true },
   eso:      { ejercicios: TODOS.filter(x => !FACILES.includes(x)), construcciones: RETOS, lectura: false },
   bach:     { ejercicios: TODOS.filter(x => !FACILES.includes(x)), construcciones: RETOS, lectura: false }
 };
+/* Pestañas de la pantalla Elegir: cada bloque agrupa temas y se cierra con su repaso. Para añadir un bloque (o mover un
+   tema de sitio) basta editar esto y dar nombre a «bloque.<id>» en TEXTOS. Con un solo bloque no se muestran pestañas. */
+const BLOQUES = [
+  { id: 'cajas',   temas: ['variables', 'constantes', 'repaso1'] },
+  { id: 'decidir', temas: ['condicionales', 'bucles', 'repaso2'] }
+];
 
 /* t('clave', {huecos}): registro activo → base. Si falta en ambos, se ve ⟦clave⟧ y avisa. */
 let REG = 'eso';
@@ -1480,13 +1670,21 @@ const EJERCICIOS = {
   foto:        { tema: 'variables',     codigo: 'x ← 4\ny ← x\nx ← 10\nmostrar y' },
   intercambio: { tema: 'variables',     codigo: 'a ← 3\nb ← 5\na ← b\nb ← a\nmostrar a\nmostrar b' },
   precio:      { tema: 'variables',     codigo: 'precio ← 10\ntotal ← precio * 3\nprecio ← 20\nmostrar total' },
+  kuso:        { tema: 'constantes',    codigo: 'constante DIAS ← 7\nsemanas ← 3\nmostrar semanas * DIAS' },
+  kcambia:     { tema: 'constantes',    codigo: 'constante MAXIMO ← 10\nmostrar MAXIMO\nMAXIMO ← 20\nmostrar MAXIMO' },
+  kmezcla:     { tema: 'constantes',    codigo: 'constante BASE ← 5\nextra ← 2\nextra ← extra + 1\nmostrar BASE + extra' },
+  rpan:        { tema: 'repaso1',       codigo: 'constante PRECIO ← 4\npanes ← 2\ntotal ← panes * PRECIO\npanes ← 5\nmostrar total' },
+  rvidas:      { tema: 'repaso1',       codigo: 'constante MAX ← 3\nvidas ← MAX\nvidas ← vidas - 1\nmostrar vidas\nmostrar MAX' },
+  rmayores:    { tema: 'repaso2',       codigo: 'para i desde 1 hasta 5 hacer\n  si i > 3 entonces\n    mostrar i\n  fin\nfin' },
+  rsuma:       { tema: 'repaso2',       codigo: 'total ← 0\npara i desde 1 hasta 4 hacer\n  si i < 3 entonces\n    total ← total + i\n  sino\n    total ← total - 1\n  fin\nfin\nmostrar total' },
   justo:       { tema: 'condicionales', codigo: 't ← 20\nsi t >= 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin' },
   unootro:     { tema: 'condicionales', codigo: 't ← 25\nsi t > 20 entonces\n  mostrar "calor"\nsino\n  mostrar "frío"\nfin\nmostrar "listo"' },
   vueltas:     { tema: 'bucles',        codigo: 'n ← 1\nmientras n < 4 hacer\n  mostrar n\n  n ← n + 1\nfin' },
   noentra:     { tema: 'bucles',        codigo: 'n ← 5\nmientras n < 3 hacer\n  mostrar n\n  n ← n + 1\nfin\nmostrar "fin"' },
   cuenta:      { tema: 'bucles',        codigo: 'vidas ← 3\nmientras vidas > 0 hacer\n  mostrar vidas\n  vidas ← vidas - 1\nfin' },
   suma:        { tema: 'bucles',        codigo: 'total ← 0\npara i desde 1 hasta 4 hacer\n  total ← total + i\nfin\nmostrar total' },
-  pares:       { tema: 'bucles',        codigo: 'para i desde 1 hasta 6 hacer\n  si i % 2 = 0 entonces\n    mostrar i\n  fin\nfin' }
+  pares:       { tema: 'bucles',        codigo: 'para i desde 1 hasta 6 hacer\n  si i % 2 = 0 entonces\n    mostrar i\n  fin\nfin' },
+  ktope:       { tema: 'bucles',        codigo: 'constante TOPE ← 3\nn ← 1\nmientras n <= TOPE hacer\n  mostrar n\n  n ← n + 1\nfin' }
 };
 Object.keys(EJERCICIOS).forEach(id => { EJERCICIOS[id].id = id; });
 </script>
@@ -1500,10 +1698,20 @@ const CONSTRUCCIONES = {
   caja:    { tema: 'variables',     entradas: { 'edad ← 7': [9, 12] }, solucion: ['edad ← 7', 'mostrar edad'], distractores: ['mostrar "edad"'] },
   doble:   { tema: 'variables',     entradas: { 'x ← 5': [2, 11] }, solucion: ['x ← 5', 'x ← x * 2', 'mostrar x'], distractores: ['x ← x + 2'] },
   cambiar: { tema: 'variables',     entradas: { 'a ← 3': [8, 1], 'b ← 5': [6, 9] }, solucion: ['a ← 3', 'b ← 5', 'aux ← a', 'a ← b', 'b ← aux', 'mostrar a', 'mostrar b'], distractores: ['b ← a'] },
+  kcrear:  { tema: 'constantes',   entradas: { 'constante DIAS ← 7': [5, 30] }, solucion: ['constante DIAS ← 7', 'mostrar DIAS'], distractores: ['DIAS ← 7', 'constante DIAS ← 8', 'mostrar "DIAS"'] },
+  kpaquetes: { tema: 'constantes', entradas: { 'paquetes ← 3': [5, 10], 'constante HUEVOS ← 6': [12, 4] }, solucion: ['constante HUEVOS ← 6', 'paquetes ← 3', 'mostrar paquetes * HUEVOS'], distractores: ['HUEVOS ← 6', 'mostrar paquetes * 6', 'paquetes ← paquetes * HUEVOS'] },
+  rtotal:  { tema: 'repaso1',      entradas: { 'panes ← 3': [5, 1], 'constante PRECIO ← 4': [2, 10] }, solucion: ['constante PRECIO ← 4', 'panes ← 3', 'total ← panes * PRECIO', 'mostrar total'], distractores: ['PRECIO ← 4', 'mostrar panes * 4', 'total ← panes + PRECIO'] },
+  rrestar: { tema: 'repaso1',      entradas: { 'constante MAX ← 3': [5, 2] }, solucion: ['constante MAX ← 3', 'vidas ← MAX', 'vidas ← vidas - 1', 'mostrar vidas', 'mostrar MAX'], distractores: ['MAX ← MAX - 1', 'mostrar MAX - 1'] },
+  rmayor:  { tema: 'repaso2',      solucion: ['para i desde 1 hasta 5 hacer', 'si i > 3 entonces', 'mostrar i', 'fin', 'fin'], distractores: ['si i >= 3 entonces', 'mostrar 3'] },
+  rpuente: { tema: 'repaso2',      entradas: { 'constante TOPE ← 3': [2, 5] }, solucion: ['constante TOPE ← 3', 'para i desde 1 hasta TOPE hacer', 'si i = TOPE entonces', 'mostrar "¡ya!"', 'sino', 'mostrar i', 'fin', 'fin'], distractores: ['si i > TOPE entonces', 'mostrar TOPE'] },
   clima:   { tema: 'condicionales', entradas: { 't ← 18': [30, 25, 10, 24] }, solucion: ['t ← 18', 'si t >= 25 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin'], distractores: ['mostrar "templado"', 'si t <= 25 entonces'] },
+  justo:   { tema: 'condicionales', entradas: { 't ← 20': [19, 21, 5, 30] }, solucion: ['t ← 20', 'si t >= 20 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin'], distractores: ['si t > 20 entonces', 'mostrar "templado"'] },
+  unootro: { tema: 'condicionales', entradas: { 't ← 25': [10, 30, 20] }, solucion: ['t ← 25', 'si t > 20 entonces', 'mostrar "calor"', 'sino', 'mostrar "frío"', 'fin', 'mostrar "listo"'], distractores: ['si t < 20 entonces', 'mostrar "templado"'] },
   cuenta:  { tema: 'bucles',        entradas: { 'n ← 3': [5, 1, 0] }, solucion: ['n ← 3', 'mientras n > 0 hacer', 'mostrar n', 'n ← n - 1', 'fin'], distractores: ['n ← n + 1'] },
+  vueltas: { tema: 'bucles',        entradas: { 'n ← 1': [2, 3] }, solucion: ['n ← 1', 'mientras n < 4 hacer', 'mostrar n', 'n ← n + 1', 'fin'], distractores: ['n ← n - 1', 'mientras n <= 4 hacer'] },
   suma:    { tema: 'bucles',        solucion: ['total ← 0', 'para i desde 1 hasta 4 hacer', 'total ← total + i', 'fin', 'mostrar total'], distractores: ['total ← i'] },
-  pares:   { tema: 'bucles',        solucion: ['para i desde 1 hasta 6 hacer', 'si i % 2 = 0 entonces', 'mostrar i', 'fin', 'fin'], distractores: ['si i % 2 = 1 entonces'] }
+  pares:   { tema: 'bucles',        solucion: ['para i desde 1 hasta 6 hacer', 'si i % 2 = 0 entonces', 'mostrar i', 'fin', 'fin'], distractores: ['si i % 2 = 1 entonces'] },
+  ktope:   { tema: 'bucles',        entradas: { 'constante TOPE ← 3': [5, 2] }, solucion: ['constante TOPE ← 3', 'n ← 1', 'mientras n <= TOPE hacer', 'mostrar n', 'n ← n + 1', 'fin'], distractores: ['TOPE ← 3', 'mientras n < TOPE hacer', 'n ← TOPE'] }
 };
 Object.keys(CONSTRUCCIONES).forEach(id => { CONSTRUCCIONES[id].id = id; });
 </script>
@@ -1539,6 +1747,9 @@ const PREGUNTAS = [
   { id: 'v1', tema: 'variables' },
   { id: 'v2', tema: 'variables', codigo: 'x ← 3\nx ← 8' },
   { id: 'v3', tema: 'variables', codigo: 'edad ← 7\nmostrar "edad"' },
+  { id: 'k1', tema: 'constantes' },
+  { id: 'k2', tema: 'constantes', codigo: 'constante MAXIMO ← 10\nmostrar MAXIMO' },
+  { id: 'k3', tema: 'constantes' },
   { id: 'c1', tema: 'condicionales' },
   { id: 'c2', tema: 'condicionales' },
   { id: 'c3', tema: 'condicionales', codigo: 't ← 20\nsi t > 20 entonces\n  mostrar "calor"\nfin' },
@@ -1780,7 +1991,7 @@ const KORU = (function () {
 
   // ── resaltado del codigo ────────────────────────────────
   // Cada palabra se pinta segun lo que ES: palabra del lenguaje, caja (variable) o valor (numero / texto).
-  const PALABRAS = new Set(['mientras', 'hacer', 'si', 'entonces', 'sino', 'fin', 'para', 'desde', 'hasta', 'mostrar']);
+  const PALABRAS = new Set(['mientras', 'hacer', 'si', 'entonces', 'sino', 'fin', 'para', 'desde', 'hasta', 'mostrar', 'constante']);
   const TOK = /("[^"]*")|([A-Za-zÁÉÍÓÚáéíóúÑñÜü_][A-Za-zÁÉÍÓÚáéíóúÑñÜü_0-9]*)|(\d+(?:\.\d+)?)|(←|<-|:=)|(\s+)|([\s\S])/g;
   function resaltar(linea) {
     const ci = linea.search(/#|\/\//);
@@ -1831,10 +2042,32 @@ const KORU = (function () {
   // ── lista de ejercicios / retos ─────────────────────────
   function pintarLista() {
     const reto = esReto(), lista = reto ? E.listaC : E.lista, sel = reto ? E.c : E.i, pre = reto ? 'cons.' : 'ej.';
-    const temas = [...new Set(lista.map(x => x.tema))];
+    // pestañas: cada bloque agrupa temas. La pestaña que se ve es la del reto abierto, hasta que se elige otra a mano.
+    const bloqueDe = tm => (BLOQUES.find(b => b.temas.includes(tm)) || BLOQUES[0]).id;
+    const idsBloques = BLOQUES.map(b => b.id).filter(id => lista.some(x => bloqueDe(x.tema) === id));
+    const actual = bloqueDe(lista[sel].tema);
+    if (actual !== E.bloqueActual) { E.bloqueActual = actual; E.bloqueVista = actual; }
+    if (!idsBloques.includes(E.bloqueVista)) E.bloqueVista = idsBloques[0];
+    const pestanas = idsBloques.length > 1;
+    $('#bloques').innerHTML = pestanas ? idsBloques.map(id => {
+      const delBloque = lista.filter(x => bloqueDe(x.tema) === id), hechos = delBloque.filter(x => E.xp[claveXP(reto ? 'c' : 'p', x.id)] !== undefined).length, nombre = t('bloque.' + id);
+      return '<button type="button" role="tab" class="modo tab" id="tab-' + id + '" data-b="' + id + '" aria-controls="temas" aria-selected="' + (id === E.bloqueVista) + '" tabindex="' + (id === E.bloqueVista ? 0 : -1) + '" aria-label="' +
+        esc(t('bloque.aria', { nombre, n: hechos, m: delBloque.length })) + '">' + esc(nombre) + '<span class="prog" aria-hidden="true">' + hechos + '/' + delBloque.length + '</span></button>';
+    }).join('') : '';
+    if (pestanas) { $('#temas').setAttribute('role', 'tabpanel'); $('#temas').setAttribute('aria-labelledby', 'tab-' + E.bloqueVista); }
+    else { $('#temas').removeAttribute('role'); $('#temas').removeAttribute('aria-labelledby'); }
+    const temas = [...new Set(lista.map(x => x.tema))].filter(tm => !pestanas || bloqueDe(tm) === E.bloqueVista);
     $('#temas').innerHTML = temas.map(tm => '<div class="tema"><span class="tema-n">' + esc(t('tema.' + tm)) + '</span>' +
       lista.map((x, k) => x.tema === tm ? '<button class="chip' + (E.xp[claveXP(reto ? 'c' : 'p', x.id)] !== undefined ? ' ok' : '') + '" data-k="' + k + '"' + (k === sel ? ' aria-current="true"' : '') + '>' + esc(t(pre + x.id + '.titulo')) + '</button>' : '').join('') + '</div>').join('');
   }
+  // pestañas: clic o flechas (Izquierda/Derecha/Inicio/Fin); al elegir una se ve ese bloque sin cambiar el reto abierto
+  function elegirBloque(id, foco) { E.bloqueVista = id; pintarLista(); if (foco) { const b = $('#tab-' + id); if (b) b.focus(); } }
+  $('#bloques').addEventListener('click', e => { const b = e.target.closest('[data-b]'); if (b) elegirBloque(b.dataset.b, false); });
+  $('#bloques').addEventListener('keydown', e => {
+    const tabs = [...document.querySelectorAll('#bloques [data-b]')], i = tabs.findIndex(x => x.dataset.b === E.bloqueVista);
+    const j = e.key === 'ArrowRight' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' ? (i - 1 + tabs.length) % tabs.length : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+    if (j < 0) return; e.preventDefault(); elegirBloque(tabs[j].dataset.b, true);
+  });
   $('#temas').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (esReto()) cargarC(+b.dataset.k); else cargar(+b.dataset.k); irAReto(); });
 
   function limpiarPred() { $('#resp').value = ''; $('#fb').className = 'fb'; $('#fb').innerHTML = ''; }
@@ -2125,7 +2358,7 @@ const KORU = (function () {
   function pintarMirar() {
     const tr = E.traza, p = E.paso >= 0 ? tr.pasos[E.paso] : null, e = $('#err-codigo');
     pintarCodigo(p ? p.linea : 0);
-    $('#cajas').innerHTML = p ? p.vars.map(v => '<div class="caja' + (v.n === p.cambia ? ' cambia' : '') + '"><b>' + esc(v.n) + '</b><span>' + esc(v.v) + '</span>' + (v.f ? '<em>ƒ ' + esc(v.f) + '</em>' : '') + '</div>').join('') : '';
+    $('#cajas').innerHTML = p ? p.vars.map(v => '<div class="caja' + (v.n === p.cambia ? ' cambia' : '') + (v.c ? ' const' : '') + '"><b>' + esc(v.n) + '</b><span>' + esc(v.v) + '</span>' + (v.f ? '<em>ƒ ' + esc(v.f) + '</em>' : '') + (v.c ? '<em>' + esc(t('mirar.const')) + '</em>' : '') + '</div>').join('') : '';
     $('#pantalla').textContent = p ? p.salida.join('\n') : '';
     const fin = E.paso >= tr.pasos.length - 1;
     let nota = p ? textoNota(p.nota) : t('mirar.inicio');

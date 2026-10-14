@@ -169,7 +169,7 @@ oscuro solo cambia el marco.
 
 ### 💻 Computación — PseudoCoder
 
-Fundamentos de programación (variables, condicionales y bucles) sin escribir
+Fundamentos de programación (variables, constantes, condicionales y bucles) sin escribir
 una línea de código y sin atarse a un lenguaje: un pseudocódigo propio, con su
 intérprete dentro de la página. Lo que lo distingue: cuando la respuesta es
 incorrecta, no se queda en «mal». El intérprete vuelve a ejecutar el programa
@@ -181,6 +181,8 @@ lo intenta. Así puede decir *por qué* se ha equivocado.
   se comprueba por comportamiento, no por orden exacto), *Predecir* (qué
   mostrará este programa) y *Mirar* (ver cómo lo ejecuta la máquina, paso a paso,
   con las cajas y sus valores).
+- **Por bloques** — los temas se agrupan en pestañas (cajas; decidir y
+  repetir) y cada bloque se cierra con un repaso que mezcla lo anterior.
 - **Tres niveles de lenguaje** — `?nivel=primaria`, `eso` o `bach`: mismos
   ejercicios, con las frases adaptadas. Todos los textos viven en un solo sitio
   del fichero, para poder reescribirlos sin tocar el motor.
