@@ -399,6 +399,8 @@ mochis y sabores) se generaron con inteligencia artificial y se seleccionaron y
 prepararon para el proyecto. Los detalles están en
 [`assets/macarons/CREDITOS.md`](assets/macarons/CREDITOS.md).
 
+El modo Mochis está abierto a revisión cultural: si ves algo que corregir, escribe a h4ppypuk1ng@gmail.com.
+
 Igual con CRT, la mascota de PseudoCoder: sus ilustraciones se generaron con
 inteligencia artificial y se seleccionaron y prepararon para el proyecto
 ([`assets/crt/CREDITOS.md`](assets/crt/CREDITOS.md)).

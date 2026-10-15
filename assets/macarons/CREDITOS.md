@@ -17,6 +17,17 @@ ChatGPT/OpenAI y seleccionados para el proyecto Happypuking Lab.
 - **Licencia de distribución del proyecto:** CC BY-NC-SA 4.0, salvo que se
   indique expresamente otra licencia para un recurso concreto.
 
+## Revisión cultural abierta (Mochis y Mikan)
+
+Los sabores, las frases en japonés y el vestuario de Mikan se propusieron con ayuda de
+inteligencia artificial y **no los ha revisado una persona nativa**. El modo se publica
+con un aviso visible y está abierto a correcciones: quien corrija o aporte una mejora y
+quiera ser mencionado aparecerá aquí, con su permiso.
+
+Contacto: h4ppypuk1ng@gmail.com
+
+Personas que han revisado o aportado: _de momento, nadie; tu nombre puede ser el primero._
+
 Licencia: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
 
 > Nota: la atribución describe el proceso de creación y preparación de los

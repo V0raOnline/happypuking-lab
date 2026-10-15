@@ -579,6 +579,11 @@ body.skin-arcade[data-modo="mochis"] .mac-leyenda-frac { color: var(--mac-ink); 
 /* Aviso de borrador: solo se ve en un modo en vista previa (?previa=…). */
 .mac-previa-aviso { display: inline-block; margin: 0.6rem 0 0; padding: 1px 10px; border: 2px dashed var(--mac-gold); color: var(--mac-gold); font-family: 'VT323', monospace; font-size: 1.1rem; letter-spacing: 0.03em; }
 .mac-previa-aviso[hidden] { display: none; }
+/* Aviso de revisión cultural: se ve en el modo que lo pide (`revision: true` en MODOS), también publicado. */
+.mac-revision-aviso { margin: 0.6rem 0 0; padding: 0.45rem 0.8rem; border: 2px dashed var(--mac-gold); color: var(--mac-ink); font-size: 0.9rem; line-height: 1.4; max-width: 44rem; }
+.mac-revision-aviso[hidden] { display: none; }
+.mac-revision-aviso a { color: var(--mac-gold); text-decoration: underline; }
+body.skin-arcade[data-modo="mochis"] .mac-revision-aviso { border-radius: 10px; }
 @media (max-width: 520px) { .mac-minou.mc { height: 72px; } .mac-cartel { gap: 0.7rem; padding: 0.5rem 0.7rem; } }
 .mac-side-empty .mac-minou { margin-bottom: 0.6rem; }
 /* "À table!" lleva tilde: VT323, no Press Start 2P. */
@@ -759,6 +764,7 @@ button.mac-ayuda:hover, button.mac-ayuda:focus-visible { background: var(--mac-a
       <h2 class="mac-cartel-titulo" id="mac-titulo">Macarons de Mendeleyev</h2>
       <p class="mac-cartel-frase" id="mac-frase">À table! Vamos a comernos la tabla periódica, pero primero hay que ganársela.</p>
       <p class="mac-previa-aviso" id="mac-previa" role="note" hidden>Vista previa · pendiente de revisión</p>
+      <p class="mac-revision-aviso" id="mac-revision" role="note" hidden><strong>¿Hablas japonés o conoces bien su cultura?</strong> Queremos ser respetuosos. Este modo es una propuesta nuestra y no lo ha revisado nadie nativo. Si ves un error o algo inadecuado, escríbenos (<a href="mailto:h4ppypuk1ng@gmail.com">h4ppypuk1ng@gmail.com</a>): lo arreglamos y, si quieres, apareces en los créditos.</p>
     </div>
     <div class="mac-modos" id="mac-modos" role="radiogroup" aria-label="Pastelería" hidden></div>
   </div>
@@ -842,7 +848,8 @@ const MODOS = {
   // conviene que los valide alguien que sepa japonés antes de publicarlos.
   // Sabores en ASCII (sin macrones) para que se puedan teclear.
   mochis: {
-    listo: false,
+    listo: true,
+    revision: true,   // publicado con aviso: la revisión cultural sigue abierta (ver el aviso y assets/macarons/CREDITOS.md)
     etiqueta: 'Mochis',
     titulo: 'Mochis de Mendeleyev',
     frase: 'Itadakimasu! Vamos a comernos la tabla periódica, pero primero hay que ganársela.',
@@ -1522,6 +1529,7 @@ function aplicarModo(id, inicial) {
   if (!inicial && !m.previa) { try { localStorage.setItem(MODO_KEY, id); } catch (e) {} }
   document.getElementById('mac-titulo').textContent = m.titulo + (m.previa ? ' (vista previa)' : '');
   document.getElementById('mac-previa').hidden = !m.previa;
+  document.getElementById('mac-revision').hidden = !m.revision;
   document.getElementById('mac-frase').textContent = m.frase;
   const mesa = document.getElementById('mac-mesa');   // solo existe mientras el panel está vacío
   if (mesa) mesa.textContent = m.voz.mesa;
