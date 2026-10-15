@@ -2668,7 +2668,6 @@ const KORU = (function () {
   POSES.forEach(p => { new Image().src = RUTA(p); });
   const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)');
   let animCRT = null, baseCRT = 'idle', toques = 0, tToque = null;
-  setTimeout(() => POSES.forEach(p => { new Image().src = RUTA(p); }), 800);          // precarga: al cambiar de pose no se queda el hueco mientras llega la imagen
   function ponerPose(p) { const im = $('#crt-img'); if (im.dataset.pose !== p) { im.dataset.pose = p; im.src = RUTA(p); } }
   function mascota(estado) {
     const c = $('#cara'); c.dataset.estado = estado; baseCRT = estado;
