@@ -169,20 +169,30 @@ oscuro solo cambia el marco.
 
 ### 💻 Computación — PseudoCoder
 
-Fundamentos de programación (variables, constantes, condicionales y bucles) sin escribir
-una línea de código y sin atarse a un lenguaje: un pseudocódigo propio, con su
-intérprete dentro de la página. Lo que lo distingue: cuando la respuesta es
-incorrecta, no se queda en «mal». El intérprete vuelve a ejecutar el programa
-con los malentendidos típicos (una caja que guarda una foto y no un atajo, un
-«mientras» que funciona como un «si»…) y busca cuál reproduce lo que respondió quien
-lo intenta. Así puede decir *por qué* se ha equivocado.
+Fundamentos de programación (variables, constantes, tipos de datos, entrada de datos,
+condicionales, «según», bucles y «repetir … hasta») sin escribir una línea de código y
+sin atarse a un lenguaje: un pseudocódigo propio, con su intérprete dentro de la
+página. Lo que lo distingue: cuando la respuesta es incorrecta, no se queda en señalar
+el error. El intérprete vuelve a ejecutar el programa con los malentendidos típicos
+(una caja que guarda una foto y no un atajo, un «mientras» que funciona como un «si»,
+un «según» que sigue por los casos de después…) y busca cuál reproduce lo que
+respondió quien lo intenta. Así puede señalar qué regla equivocada explicaría la
+respuesta, sin dar por hecho qué pensaba la persona y sin dejarle con la pregunta.
 
 - **Tres modos** — *Construir* (arrastra las piezas hasta formar el programa;
   se comprueba por comportamiento, no por orden exacto), *Predecir* (qué
   mostrará este programa) y *Mirar* (ver cómo lo ejecuta la máquina, paso a paso,
   con las cajas y sus valores).
-- **Por bloques** — los temas se agrupan en pestañas (cajas; decidir y
-  repetir) y cada bloque se cierra con un repaso que mezcla lo anterior.
+- **Ver qué hace tu programa incompleto** — en *Construir*, aunque falten líneas,
+  el programa que has montado se ejecuta: dice qué muestra y se puede ver paso a
+  paso. Los errores típicos (intercambiar sin una caja auxiliar, contar al
+  revés…) traen una pista propia.
+- **Entrada de datos** — `leer` pide un dato a quien usa el programa; el
+  ejercicio indica qué escribe esa persona y se ve que siempre llega como texto
+  hasta que se convierte en número.
+- **Por bloques** — los temas se agrupan en cuatro pestañas (cajas; decidir;
+  repetir; datos) y los bloques de cajas y de repetir se cierran con un repaso
+  que mezcla lo anterior.
 - **Tres niveles de lenguaje** — `?nivel=primaria`, `eso` o `bach`: mismos
   ejercicios, con las frases adaptadas. Todos los textos viven en un solo sitio
   del fichero, para poder reescribirlos sin tocar el motor.
