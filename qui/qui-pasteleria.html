@@ -905,6 +905,9 @@ function rutasModo(m) {
 }
 let modoActual = (function loadModo() {
   if (PREVIA) return PREVIA;
+  // enlace directo a un modo ya publicado (?modo=mochis), p. ej. desde qui-mochis.html: no se guarda como preferencia
+  const pedido = new URLSearchParams(location.search).get('modo');
+  if (pedido && Object.hasOwn(MODOS, pedido) && MODOS[pedido].listo) return pedido;
   try {
     const m = localStorage.getItem(MODO_KEY);
     if (m && MODOS[m] && MODOS[m].listo) return m;

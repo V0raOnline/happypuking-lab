@@ -14,6 +14,10 @@ ChatGPT/OpenAI y seleccionados para el proyecto Happypuking Lab.
 - **Tarjeta para compartir (`og-pasteleria.png`):** composición de Minou y de los macarons de esta
   carpeta con un título tipografiado a partir de una fuente del sistema, hecha por V0ra y su asistente de
   código. Se genera con `FeaturesLab/herramientas-sprites/crear_tarjeta_pasteleria.py`.
+- **Tarjeta para compartir el modo Mochis (`assets/mochis/og-mochis.png`):** composición de Mikan y de los
+  mochis de `assets/mochis/` con un título tipografiado a partir de una fuente del sistema, hecha por V0ra y
+  su asistente de código. Se genera con `FeaturesLab/herramientas-sprites/crear_tarjeta_mochis.py`. El
+  enlace para compartir con esa tarjeta es `qui/qui-mochis.html`.
 - **Licencia de distribución del proyecto:** CC BY-NC-SA 4.0, salvo que se
   indique expresamente otra licencia para un recurso concreto.
 
