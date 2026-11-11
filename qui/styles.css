@@ -417,6 +417,7 @@ header {
 /* Empty cells */
 .el-empty { background: transparent; border-color: transparent; cursor: default; }
 .el-empty:hover { transform: none; }
+.el-empty::before { display: none; } /* sin tinte de categoría en celdas vacías (se veían azules en tema claro) */
 
 /* Period & group labels */
 .period-label, .group-label {
